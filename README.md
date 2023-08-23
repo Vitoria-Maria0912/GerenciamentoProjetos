@@ -7,4 +7,4 @@ Projeto desenvolvido na disciplina de Paradigmas de Linguagem de Programação -
       Jamilly Venâncio,
       João Pedro Angelo,
       Vitória Maria, 
-      e Yalle Carvalho
+      Yalle Carvalho
