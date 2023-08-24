@@ -129,8 +129,50 @@ main = deleteProfile
 
 
 --------------------------------------------------------------
+-- cria um projeto no sistema
+criaProject :: IO()
+criaProject = do
+    putStrLn "Vamos criar o seu projeto!"
+    
+    putStrLn "Qual o título do projeto?"
+
+    nome <- getLine
+    -- FUNÇÃO -> checa se já existe esse projeto com esse nome
+    if (Project.Utils.verificaNome nome == False) then do
+        putStrLn "Projeto já existente, por favor escolha outro nome."
+    
+    else do
+
+    putStrLn "Me diz uma descrição para o seu projeto:"
+
+    descricao <- getLine
+
+    putStrLn "Para completar, me diz sua senha:"
+
+    senha <- getLine
+
+    --gerará o ID do projeto
+
+    --let idProjeto = Project.Utils.gerarID
+    
+
+    --Falta criar Projects que irá manipular os dados (TXT ou CSV)
+    --Project irá colocar no arquivo o id como "chave de acesso" e depois salvará os arquivos obtidos com a Interação com o usuário
+    
+    --ProjectUtils.WriteProjeto(Projects.criaProject(read(idProjeto)) nome descricao senha)
+
+    putStrLn "Projeto criado!"
 
 
+
+
+
+
+
+
+
+
+---------------------------------------------------------------
 
 -- apaga um projeto do sistema
 removeProject :: IO()
