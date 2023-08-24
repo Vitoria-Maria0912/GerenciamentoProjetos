@@ -1,6 +1,9 @@
 # Gerenciamento de Projetos - PLP 2023.1
 Projeto desenvolvido na disciplina de Paradigmas de Linguagem de Programação - UFCG 2023.1
 
+**Visão geral:**
+Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, além de envolver códigos, também envolve pessoas. Pelo sistema, será possível gerenciar tanto as tarefas que serão desenvolvidas, quanto as pessoas que fazem parte do projeto.
+
 **Membros:**
 
       Íris Almeida,
