@@ -13,7 +13,6 @@ erroMenuPrincipal = do
 -- primeiro menu mostrado ao usuário
 menuPrincipal :: IO()
 menuPrincipal = do
-
     putStrLn "Menu Principal:\n"
     putStrLn $ "C - criar perfil\n"
             ++ "D - deletar perfil\n"
@@ -21,11 +20,11 @@ menuPrincipal = do
             ++ "R - remover projeto\n"
             ++ "L - listar projetos\n"
             ++ "E - solicitar entrada em um projeto\n"
+            ++ "B - visualizar banco de atividades"
             ++ "S - sair do sistema\n"
             ++ "\nEscolha uma opção: "
     option <- getLine
     putStrLn ""
-
     let lowerOption = map toLower option
     case lowerOption of 
         -- está como String, mas serão as funções
@@ -35,6 +34,7 @@ menuPrincipal = do
         "r" -> putStrLn "removeProject"
         "l" -> putStrLn "viewProjectsInProgress"
         "e" -> putStrLn "requestEntry"
+        "b" -> putStrLn "activitiesBank"
         "s" -> exitSistem
         _   -> erroMenuPrincipal
 
