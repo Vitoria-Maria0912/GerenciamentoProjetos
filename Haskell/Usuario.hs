@@ -1,3 +1,7 @@
-{-
- Neste arquivo, colocaremos as funções que manipulam o perfil de um usuário
- -}
+module Haskell.Usuario where
+
+
+data Usuario = Usuario {
+    -- Atributos aqui
+
+}

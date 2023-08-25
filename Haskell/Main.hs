@@ -5,6 +5,27 @@ import System.Exit (exitSuccess)
 import Haskell.FuncoesAuxiliares (verificaNomeUsuario)
 
 
+-- main
+main :: IO()
+main = do
+    menu
+    option <- getLine
+    let lowerOption = map toLower option
+    case lowerOption of
+        -- está como String, mas serão as funções
+        "c" -> putStrLn "createProfile"
+        "d" -> putStrLn "deleteProfile"
+        "p" -> putStrLn "createProject"
+        "r" -> putStrLn "removeProject"
+        "l" -> putStrLn "viewProjectsInProgress"
+        "e" -> putStrLn "requestEntry"
+        "f" -> putStrLn "createFeedback"
+        "m" -> putStrLn "chat"
+        "b" -> putStrLn "activitiesBank"
+        "s" -> exitSistem
+        _   -> erroMenuPrincipal
+
+
 -- caso o usuário digite o comando errado
 erroMenuPrincipal :: IO()
 erroMenuPrincipal = do
@@ -29,28 +50,7 @@ menu = do
             ++ "B - visualizar banco de atividades"
             ++ "S - sair do sistema\n"
             ++ "\nEscolha uma opção: "
-
-
--- primeiro menu mostrado ao usuário
-main :: IO()
-main = do
-    menu
-    option <- getLine
-    let lowerOption = map toLower option
-    case lowerOption of
-        -- está como String, mas serão as funções
-        "c" -> putStrLn "createProfile"
-        "d" -> putStrLn "deleteProfile"
-        "p" -> putStrLn "createProject"
-        "r" -> putStrLn "removeProject"
-        "l" -> putStrLn "viewProjectsInProgress"
-        "e" -> putStrLn "requestEntry"
-        "f" -> putStrLn "createFeedback"
-        "m" -> putStrLn "chat"
-        "b" -> putStrLn "activitiesBank"
-        "s" -> exitSistem
-        _   -> erroMenuPrincipal
-
+ 
 
 -- sai do sistema
 exitSistem :: IO()

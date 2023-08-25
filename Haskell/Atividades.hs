@@ -1,3 +1,7 @@
-{-
- Neste arquivo, colocaremos as funções que manipulam as atividades.
- -}
+module Haskell.Atividades where
+
+
+data Atividade = Atividade {
+    --Atributos da atividade
+
+} 
