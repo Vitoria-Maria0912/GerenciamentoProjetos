@@ -1,6 +1,5 @@
 import Data.Char (toLower)
 
-
 -- caso o usuário digite o comando errado
 erroMenuPrincipal :: IO()
 erroMenuPrincipal = do
@@ -86,6 +85,7 @@ createProject :: IO()
 createProject = do
 
     putStrLn "Vamos criar o seu projeto!"
+    putStrLn ".........................."
     putStrLn "Qual o título do projeto?"
     
     nome <- getLine    
@@ -95,7 +95,7 @@ createProject = do
         putStrLn "Projeto já existente, por favor escolha outro nome."
         
     else do
-        putStrLn "Me diz uma descrição para o seu projeto:"
+        putStrLn "\nDescreva, brevemente, seu projeto!"
         
         descricao <- getLine
 
@@ -126,7 +126,7 @@ removeProject = do
     let naoExiste = False -- <<<< é só para compilar 
 
     -- este `naoExiste` poderia ser a função usada anteriormente
-    -- em `criaProjeto` "Project.Utils.verificaNome nome"
+    -- em `createProject` "Project.Utils.verificaNome nome"
     if naoExiste 
         then putStrLn "Projeto inexistente!"
         
@@ -139,3 +139,49 @@ removeProject = do
             
         else 
             putStrLn "Você não pode executar essa ação. Você precisa ser gerente para realizá-la!"
+
+
+-- caso o usuário digite o comando errado volta para o menu
+erroMenuProjeto :: IO()
+erroMenuProjeto =  do
+    putStrLn   "----------------------------------"
+    putStrLn $ "Entrada Inválida. Tente novamente!" 
+    putStrLn   "----------------------------------\n"
+    menuProjeto
+
+
+menuTasks :: IO()
+menuTasks = do 
+
+    putStrLn "O que deseja fazer agora?\n"
+
+    putStrLn $ "A - adicionar uma tarefa\n"
+            ++ "G - gerenciar membros do projeto\n"
+            ++ "V - visualizar as tarefas do projeto\n"
+            ++ "R - remover uma tarefa\n"
+            ++ "F - finalizar o tarefa\n"
+            ++ "M - voltar ao menu principal\n"
+            ++ "S - sair do sistema\n"
+
+            ++ "\nEscolha uma opção: "
+
+    option <- getLine
+
+    let lowerOption = map toLower option
+
+    case lowerOption of 
+
+        -- está como String, mas serão as funções
+        "a" -> putStrLn "addTask"
+        "g" -> putStrLn "manageMembers"
+        "v" -> putStrLn "viewTask"
+        "r" -> putStrLn "removeTask"
+        "f" -> putStrLn "finishProject"
+        "m" -> menuPrincipal
+        "s" -> exitSistem
+
+        _   -> erroMenuProjeto
+
+
+exitSistem :: String
+exitSistem = "Você saiu do sistema! Até a próxima!"
