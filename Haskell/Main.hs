@@ -2,6 +2,7 @@ module Haskell.Main where
 import Data.Char (toLower)
 import qualified Haskell.FuncoesAuxiliares as FuncoesAuxiliares
 import System.Exit (exitSuccess)
+import Haskell.FuncoesAuxiliares (verificaNomeUsuario)
 
 
 -- caso o usuário digite o comando errado
@@ -86,7 +87,7 @@ createProject = do
     putStrLn "Qual o título do projeto?"
     nome <- getLine
     -- FUNÇÃO -> criar função para checar se já existe esse projeto com esse nome
-    if  FuncoesAuxiliares.verificaNome nome then do
+    if  FuncoesAuxiliares.verificaNomeProjeto nome then do
         putStrLn "Projeto já existente, por favor escolha outro nome."
         exitSistem -- coloquei para sair, para conseguir compilar e ficar mais simples
     else do
@@ -100,17 +101,12 @@ removeProject :: IO()
 removeProject = do
     putStrLn "Digite o nome do projeto que deseja deletar:"
     nome <- getLine
-    -- checar se o projeto existe
-    let naoExiste = False -- <<<< é só para compilar 
-    -- este `naoExiste` poderia ser a função usada anteriormente
-    -- em `createProject` "Project.Utils.verificaNome nome"
-    if naoExiste
+    if FuncoesAuxiliares.verificaNomeProjeto nome
         then putStrLn "Projeto inexistente!"
     else do
-    -- tem que ter uma verificação para saber se o usuário é gerente
-        let gerente = False  -- <<<< é só para compilar 
-        if gerente
+        putStrLn "Digite sua senha: "
+        senha <- getLine
+        if FuncoesAuxiliares.verificaSenhaUsuario senha
             then putStrLn "Projeto removido com sucesso."
         else
-            putStrLn "Você não pode executar essa ação. Você precisa ser gerente para realizá-la!"
-
+            putStrLn "Você não pode executar essa ação."
