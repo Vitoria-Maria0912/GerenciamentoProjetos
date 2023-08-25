@@ -13,7 +13,9 @@ erroMenuPrincipal = do
 -- primeiro menu mostrado ao usuário
 menuPrincipal :: IO()
 menuPrincipal = do
+
     putStrLn "Menu Principal:\n"
+    
     putStrLn $ "C - criar perfil\n"
             ++ "D - deletar perfil\n"
             ++ "P - criar projeto\n"
@@ -22,12 +24,18 @@ menuPrincipal = do
             ++ "E - solicitar entrada em um projeto\n"
             ++ "B - visualizar banco de atividades"
             ++ "S - sair do sistema\n"
+            
             ++ "\nEscolha uma opção: "
+            
     option <- getLine
+    
     putStrLn ""
+    
     let lowerOption = map toLower option
+    
     case lowerOption of 
         -- está como String, mas serão as funções
+        
         "c" -> putStrLn "createProfile"
         "d" -> putStrLn "deleteProfile" 
         "p" -> putStrLn "createProject"
@@ -47,38 +55,53 @@ exitSistem = putStrLn "Você saiu do sistema! Até a próxima!"
 -- função para receber as entradas do usuário, referente a criação do perfil
 createProfile :: IO()
 createProfile = do
+
     putStrLn "Olá! Qual o seu nome?"
+    
     name <- getLine
     -- criar uma função de amazenamento
-    putStrLn $ "\nParabéns, " ++ name  
-    ++ ", você está cadastrado(a) no Sistema de Gerenciamento de Projetos!"
+    putStrLn $ "\nParabéns, " ++ name
+            ++ ", você está cadastrado(a) no Sistema de Gerenciamento de Projetos!"
+            
     menuPrincipal
 
 
 -- função para receber as entradas do usuário, referente a exclusão de um perfil
 deleteProfile :: IO()
 deleteProfile = do
+
     putStrLn "Digite o nome do seu perfil: "
+    
     name <- getLine
+    
     putStrLn "Digite sua senha: "
+    
     senha <- getLine
     -- tem fazer uma função para remover do sistema
     putStrLn $ name ++ ", seu perfil foi deletado com sucesso!"
 
 
 -- função para receber as entradas referentes a criação de projeto
-criaProject :: IO()
-criaProject = do
+createProject :: IO()
+createProject = do
+
     putStrLn "Vamos criar o seu projeto!"
     putStrLn "Qual o título do projeto?"
+    
     nome <- getLine    
+    
     -- FUNÇÃO -> checa se já existe esse projeto com esse nome
     if (Project.Utils.verificaNome nome == False) then do
         putStrLn "Projeto já existente, por favor escolha outro nome."
+        
     else do
         putStrLn "Me diz uma descrição para o seu projeto:"
+        
         descricao <- getLine
-        putStrLn "Para completar, me diz sua senha:"
+
+        -- seria bom pedir a senha antes, não? 
+        putStrLn "Para completar, digite sua senha:"
+        
         senha <- getLine
     {-
         gerará o ID do projeto
@@ -94,16 +117,25 @@ criaProject = do
 -- recebe as entradas referentes a remoção de um projeto
 removeProject :: IO()
 removeProject = do
+
     putStrLn "Digite o nome do projeto que deseja deletar."
+    
     nome <- getLine
+    
     -- checar se o projeto existe
     let naoExiste = False -- <<<< é só para compilar 
+
+    -- este `naoExiste` poderia ser a função usada anteriormente
+    -- em `criaProjeto` "Project.Utils.verificaNome nome"
     if naoExiste 
         then putStrLn "Projeto inexistente!"
+        
     else do
     -- tem que ter uma verificação para saber se o usuário é gerente
         let gerente = False  -- <<<< é só para compilar 
+        
         if gerente
             then putStrLn "Projeto removido com sucesso."
+            
         else 
             putStrLn "Você não pode executar essa ação. Você precisa ser gerente para realizá-la!"
