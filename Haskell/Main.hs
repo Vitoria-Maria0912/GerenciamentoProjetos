@@ -9,6 +9,15 @@ erroMenuPrincipal = do
     menuPrincipal
 
 
+-- caso o usuário digite o comando errado volta para o menu
+erroMenuProjeto :: IO()
+erroMenuProjeto =  do
+    putStrLn   "----------------------------------"
+    putStrLn $ "Entrada Inválida. Tente novamente!" 
+    putStrLn   "----------------------------------\n"
+    menuProjeto
+    
+
 -- primeiro menu mostrado ao usuário
 menuPrincipal :: IO()
 menuPrincipal = do
@@ -20,7 +29,9 @@ menuPrincipal = do
             ++ "P - criar projeto\n"
             ++ "R - remover projeto\n"
             ++ "L - listar projetos\n"
-            ++ "E - solicitar entrada em um projeto\n"
+            ++ "E - solicitar entrada em um projeto\n" -- poderia ser através de um código
+            ++ "F - dar feedback de uma atividade realizada"
+            ++ "M - abrir caixa de mensagens"
             ++ "B - visualizar banco de atividades"
             ++ "S - sair do sistema\n"
             
@@ -41,6 +52,8 @@ menuPrincipal = do
         "r" -> putStrLn "removeProject"
         "l" -> putStrLn "viewProjectsInProgress"
         "e" -> putStrLn "requestEntry"
+        "f" -> putStrLn "createFeedback"
+        "m" -> putStrLn "chat"
         "b" -> putStrLn "activitiesBank"
         "s" -> exitSistem
         _   -> erroMenuPrincipal
@@ -118,7 +131,7 @@ createProject = do
 removeProject :: IO()
 removeProject = do
 
-    putStrLn "Digite o nome do projeto que deseja deletar."
+    putStrLn "Digite o nome do projeto que deseja deletar:"
     
     nome <- getLine
     
@@ -139,48 +152,6 @@ removeProject = do
             
         else 
             putStrLn "Você não pode executar essa ação. Você precisa ser gerente para realizá-la!"
-
-
--- caso o usuário digite o comando errado volta para o menu
-erroMenuProjeto :: IO()
-erroMenuProjeto =  do
-    putStrLn   "----------------------------------"
-    putStrLn $ "Entrada Inválida. Tente novamente!" 
-    putStrLn   "----------------------------------\n"
-    menuProjeto
-
-
-menuTasks :: IO()
-menuTasks = do 
-
-    putStrLn "O que deseja fazer agora?\n"
-
-    putStrLn $ "A - adicionar uma tarefa\n"
-            ++ "G - gerenciar membros do projeto\n"
-            ++ "V - visualizar as tarefas do projeto\n"
-            ++ "R - remover uma tarefa\n"
-            ++ "F - finalizar o tarefa\n"
-            ++ "M - voltar ao menu principal\n"
-            ++ "S - sair do sistema\n"
-
-            ++ "\nEscolha uma opção: "
-
-    option <- getLine
-
-    let lowerOption = map toLower option
-
-    case lowerOption of 
-
-        -- está como String, mas serão as funções
-        "a" -> putStrLn "addTask"
-        "g" -> putStrLn "manageMembers"
-        "v" -> putStrLn "viewTask"
-        "r" -> putStrLn "removeTask"
-        "f" -> putStrLn "finishProject"
-        "m" -> menuPrincipal
-        "s" -> exitSistem
-
-        _   -> erroMenuProjeto
 
 
 exitSistem :: String
