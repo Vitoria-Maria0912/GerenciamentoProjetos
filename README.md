@@ -1,5 +1,11 @@
-# Gerenciamento de Projetos - PLP 2023.1
-Projeto desenvolvido na disciplina de Paradigmas de Linguagem de Programação - UFCG 2023.1
+# Gerenciamento de Projetos - PLP UFCG - 2023.1
+
+     SSS   GGG    PPP  
+    SS     G      P  P 
+     SS    G GG   PPP  
+      SS   G  G   P    
+    SSS    GGGG   P    
+*Sistema de Gerenciamento de Projetos*
 
 **Visão geral:**
 
