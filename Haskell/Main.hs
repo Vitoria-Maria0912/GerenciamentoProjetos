@@ -16,16 +16,16 @@ main = do
     let lowerOption = map toLower option
     case lowerOption of
         -- está como String, mas serão as funções
-        "c" -> createUser
-        "d" -> deleteUser
-        "p" -> createProject
-        "r" -> removeProject
-        "l" -> viewProjectsInProgress
-        "e" -> requestEntry
-        "f" -> createFeedback
+        "c" -> cadastrarUsuario
+        "d" -> deletarUsario
+        "p" -> cadastrarProjeto
+        "r" -> removerProjeto
+        "l" -> visualizarProjetosPendentes
+        "e" -> solicitarEntrada
+        "f" -> criarFeedback
         "m" -> chat
-        "b" -> activitiesBank
-        "s" -> exitSistem
+        "b" -> bancoDeAtividades
+        "s" -> sairDoSistema
         _   -> erroMenuPrincipal
 
 
@@ -56,13 +56,13 @@ menu = do
  
 
 -- sai do sistema
-exitSistem :: IO()
-exitSistem = putStrLn "Você saiu do sistema! Até a próxima!"
+sairDoSistema :: IO()
+sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 
 
 -- função para receber as entradas do usuário, referente a criação do perfil
-createUser :: IO()
-createUser = do
+cadastrarUsuario:: IO()
+cadastrarUsuario = do
     putStrLn "Olá! Qual o seu nome?"
     name <- getLine
     putStrLn "Ótimo! Agora defina a sua senha!"
@@ -74,8 +74,8 @@ createUser = do
 
 
 -- função para receber as entradas do usuário, referente a exclusão de um perfil
-deleterUser :: IO()
-deleteUser = do
+deletarUsario :: IO()
+deletarUsario = do
     putStrLn "Digite o nome do seu perfil: "
     name <- getLine
     putStrLn "Digite sua senha: "
@@ -85,8 +85,8 @@ deleteUser = do
 
 
 -- função para receber as entradas referentes a criação de projeto
-createProject :: IO()
-createProject = do
+cadastrarProjeto :: IO()
+cadastrarProjeto = do
     putStrLn "Vamos criar o seu projeto!"
     putStrLn ".........................."
     putStrLn "Qual o título do projeto?"
@@ -102,8 +102,8 @@ createProject = do
 
 
 -- recebe as entradas referentes a remoção de um projeto
-removeProject :: IO()
-removeProject = do
+removerProjeto :: IO()
+removerProjeto = do
     putStrLn "Digite o nome do projeto que deseja deletar:"
     nome <- getLine
     if FuncoesAuxiliares.verificaNomeProjeto nome
@@ -118,8 +118,8 @@ removeProject = do
 
 
 -- captura os dados de um usuário que quer entrar em um projeto
-requestEntry :: IO ()
-requestEntry = do
+solicitarEntrada :: IO ()
+solicitarEntrada = do
     putStrLn "Solicitar Entrada em Projeto:\n"
     putStrLn "Digite o ID do projeto que deseja entrar: "
     idProjeto <- readLn :: IO Int
@@ -128,8 +128,8 @@ requestEntry = do
 
 
 -- função para receber as entradas de um feedback em uma atividade
-createFeedback :: IO ()
-createFeedback = do
+criarFeedback :: IO ()
+criarFeedback = do
     putStrLn "Dar Feedback de Atividade Realizada:\n"
     putStrLn "Digite o ID da atividade: "
     idAtividade <- readLn :: IO Int
@@ -152,16 +152,16 @@ chat = do
 
 
 -- função para visualizar o banco de atividades
-activitiesBank :: IO ()
-activitiesBank = do
+bancoDeAtividades :: IO ()
+bancoDeAtividades = do
     putStrLn "Visualizar Banco de Atividades:\n"
     -- Chame a função para listar as atividades do banco
     putStrLn "Atividades disponíveis no banco:"
 
 
 -- Função para listar projetos em andamento (L - Listar projetos)
-viewProjectsInProgress :: IO ()
-viewProjectsInProgress = do
+visualizarProjetosPendentes :: IO ()
+visualizarProjetosPendentes = do
     putStrLn "Listar Projetos em Andamento:\n"
     -- Chame a função para listar os projetos em andamento
     putStrLn "Projetos em andamento:"
