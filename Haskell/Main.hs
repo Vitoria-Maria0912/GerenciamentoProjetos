@@ -11,6 +11,7 @@ import qualified Haskell.Atividades
 -- main
 main :: IO()
 main = do
+    imprimirSGP
     menu
     option <- getLine
     let lowerOption = map toLower option
@@ -29,13 +30,16 @@ main = do
         _   -> erroMenuPrincipal
 
 
--- caso o usuário digite o comando errado
-erroMenuPrincipal :: IO()
-erroMenuPrincipal = do
-    putStrLn   "----------------------------------"
-    putStrLn   "Entrada Inválida. Tente novamente!"
-    putStrLn   "----------------------------------\n"
-    main
+
+-- Função para imprimir "S G P" de forma estilizada
+imprimirSGP :: IO ()
+imprimirSGP = do
+    putStrLn "   SSS    GGG    PPP  "
+    putStrLn "  SS      G      P  P "
+    putStrLn "   SS     G GG   PPP  "
+    putStrLn "     SS   G  G   P    "
+    putStrLn "   SSS    GGGG   P    \n"
+
 
 
 -- função que imprime o menu
@@ -55,9 +59,21 @@ menu = do
             ++ "\nEscolha uma opção: "
  
 
+
+-- caso o usuário digite o comando errado
+erroMenuPrincipal :: IO()
+erroMenuPrincipal = do
+    putStrLn   "----------------------------------"
+    putStrLn   "Entrada Inválida. Tente novamente!"
+    putStrLn   "----------------------------------\n"
+    main
+
+
+
 -- sai do sistema
 sairDoSistema :: IO()
 sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
+
 
 
 -- função para receber as entradas do usuário, referente a criação do perfil
@@ -73,6 +89,7 @@ cadastrarUsuario = do
     main
 
 
+
 -- função para receber as entradas do usuário, referente a exclusão de um perfil
 deletarUsario :: IO()
 deletarUsario = do
@@ -82,6 +99,7 @@ deletarUsario = do
     senha <- getLine
     -- tem fazer uma função para remover do sistema
     putStrLn $ name ++ ", seu perfil foi deletado com sucesso!"
+
 
 
 -- função para receber as entradas referentes a criação de projeto
@@ -101,6 +119,7 @@ cadastrarProjeto = do
         putStrLn "Projeto criado!"
 
 
+
 -- recebe as entradas referentes a remoção de um projeto
 removerProjeto :: IO()
 removerProjeto = do
@@ -117,6 +136,7 @@ removerProjeto = do
             putStrLn "Você não pode executar essa ação."
 
 
+
 -- captura os dados de um usuário que quer entrar em um projeto
 solicitarEntrada :: IO ()
 solicitarEntrada = do
@@ -125,6 +145,7 @@ solicitarEntrada = do
     idProjeto <- readLn :: IO Int
     -- Chame a função para solicitar entrada no projeto com o ID informado
     putStrLn "Solicitação enviada com sucesso!"
+
 
 
 -- função para receber as entradas de um feedback em uma atividade
@@ -139,6 +160,7 @@ criarFeedback = do
     putStrLn "Feedback adicionado com sucesso!"
 
 
+
 -- função para iniciar o chat
 chat :: IO ()
 chat = do
@@ -151,12 +173,14 @@ chat = do
     putStrLn "Mensagem enviada com sucesso!"
 
 
+
 -- função para visualizar o banco de atividades
 bancoDeAtividades :: IO ()
 bancoDeAtividades = do
     putStrLn "Visualizar Banco de Atividades:\n"
     -- Chame a função para listar as atividades do banco
     putStrLn "Atividades disponíveis no banco:"
+
 
 
 -- Função para listar projetos em andamento (L - Listar projetos)
