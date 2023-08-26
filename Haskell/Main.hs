@@ -6,6 +6,7 @@ import System.Exit (exitSuccess)
 import qualified Haskell.Projeto
 import qualified Haskell.Usuario
 import qualified Haskell.Atividades
+import qualified Haskell.FuncoesAuxiliares as FuncoesAuxiliares
 
 
 -- main
@@ -83,7 +84,8 @@ cadastrarUsuario = do
     name <- getLine
     putStrLn "Ótimo! Agora defina a sua senha!"
     password <- getLine
-    -- criar uma função de amazenamento
+    id <- FuncoesAuxiliares.geraID
+    Usuario.cadastraUsuario id password name
     putStrLn $ "\nParabéns, " ++ name
             ++ ", você está cadastrado(a) no Sistema de Gerenciamento de Projetos!"
     main

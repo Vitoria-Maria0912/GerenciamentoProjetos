@@ -44,3 +44,8 @@ verificaSenhaUsuario senha = do
         let usuarios = lines (unpack conteudo)
             senhas = map (dropWhile (/= ',')) usuarios
         return $ elem senha senhas
+
+
+
+geraID :: Int
+geraID = 0
