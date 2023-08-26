@@ -1,3 +1,5 @@
+{- main = entrada e saida, chama a funçao dos outros modulos que tem as funções.
+-}
 module Haskell.Main where
 import qualified Data.Char as Char
 import System.Exit (exitSuccess)
@@ -14,7 +16,7 @@ main = do
     let lowerOption = map toLower option
     case lowerOption of
         -- está como String, mas serão as funções
-        "c" -> createProfile
+        "c" -> usuario
         "d" -> deleteProfile
         "p" -> createProject
         "r" -> removeProject
