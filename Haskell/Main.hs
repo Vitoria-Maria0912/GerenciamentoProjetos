@@ -1,8 +1,13 @@
 module Haskell.Main where
-import Data.Char (toLower)
-import qualified Haskell.FuncoesAuxiliares as FuncoesAuxiliares
+
+import qualified Data.Char as Char
 import System.Exit (exitSuccess)
-import Haskell.FuncoesAuxiliares (verificaNomeUsuario)
+import qualified Haskell.Projeto
+import qualified Haskell.Usuario
+import qualified Haskell.Atividades
+
+-- restante do código do menu e das funções
+
 
 
 -- main
@@ -44,7 +49,7 @@ menu = do
             ++ "P - criar projeto\n"
             ++ "R - remover projeto\n"
             ++ "L - listar projetos\n"
-            ++ "E - solicitar entrada em um projeto\n" -- poderia ser através de um código
+            ++ "E - solicitar entrada em um projeto\n"
             ++ "F - dar feedback de uma atividade realizada"
             ++ "M - abrir caixa de mensagens"
             ++ "B - visualizar banco de atividades"
