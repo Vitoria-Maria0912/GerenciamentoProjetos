@@ -82,14 +82,18 @@ sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 cadastrarUsuario:: IO()
 cadastrarUsuario = do
     putStrLn "Olá! Qual o seu nome?"
-    name <- getLine
-    putStrLn "Ótimo! Agora defina a sua senha!"
-    password <- getLine
-    id <- FuncoesAuxiliares.geraIDUsuario
-    Usuario.cadastraUsuario id password name
-    putStrLn $ "\nParabéns, " ++ name
+    nome <- getLine
+    if FuncoesAuxiliares.verificaNomeUsuario nome then
+        putStrLn "Já tem usuário com esse nome!"
+        exitSistem
+    else do
+        putStrLn "Ótimo! Agora defina a sua senha!"
+        password <- getLine
+        id <- FuncoesAuxiliares.geraIDUsuario
+        Usuario.cadastraUsuario id password nome
+        putStrLn $ "\nParabéns, " ++ nome
             ++ ", você está cadastrado(a) no Sistema de Gerenciamento de Projetos!"
-    main
+        main
 
 
 
