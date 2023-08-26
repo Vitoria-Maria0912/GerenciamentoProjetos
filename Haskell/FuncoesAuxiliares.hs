@@ -1,4 +1,5 @@
 module Haskell.FuncoesAuxiliares where
+import Haskell.Usuario (Usuario)
 
  -- função para verificar se um projeto com certo nome já está cadastrado
  verificaNomeProjeto :: String -> Bool
@@ -13,3 +14,6 @@ module Haskell.FuncoesAuxiliares where
  -- função para verificar se uma senha já é usada por um usuário
  verificaSenhaUsuario :: String -> Bool
  verificaSenhaUsuario msg = True
+
+ verificaIdExistente :: Int -> [Usuario] -> Bool
+ verificaIdExistente id usuarios = elem id (map Usuario.idUsuario usuarios)
