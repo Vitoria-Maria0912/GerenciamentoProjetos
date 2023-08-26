@@ -1,15 +1,7 @@
 module Haskell.FuncoesAuxiliares where
-<<<<<<< HEAD
 import System.Directory (doesFileExist)
 import qualified Data.Text.IO as TIO
 import Data.Text (unpack)
-=======
-import Haskell.Usuario (Usuario)
-
- -- função para verificar se um projeto com certo nome já está cadastrado
- verificaNomeProjeto :: String -> Bool
- verificaNomeProjeto msg = True
->>>>>>> deb2b62d5900139f85f7681efbdcee4fae4c75c8
 
 
 
@@ -26,7 +18,6 @@ verificaNomeUsuario nome = do
         return $ elem nome nomes
 
 
-<<<<<<< HEAD
 
 -- Função para verificar se um nome de projeto já está sendo usado
 verificaNomeProjeto :: String -> IO Bool
@@ -53,12 +44,3 @@ verificaSenhaUsuario senha = do
         let usuarios = lines (unpack conteudo)
             senhas = map (dropWhile (/= ',')) usuarios
         return $ elem senha senhas
-=======
- -- função para verificar se uma senha já é usada por um usuário
- verificaSenhaUsuario :: String -> Bool
- verificaSenhaUsuario msg = True
-
--- função para verificar se um id existe
- verificaIdExistente :: Int -> [Usuario] -> Bool
- verificaIdExistente id usuarios = elem id (map Usuario.idUsuario usuarios)
->>>>>>> deb2b62d5900139f85f7681efbdcee4fae4c75c8

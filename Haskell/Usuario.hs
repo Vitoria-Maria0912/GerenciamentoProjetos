@@ -13,10 +13,14 @@ import Text.Read (readMaybe)
 data Usuario = Usuario {
     idUsuario:: Int, nome:: String, senha:: String} deriving (Show, Read, Eq)
 
+
+
 -- função que cadastra um usuário
 cadastrarUsario :: Int -> String -> String -> Usuario
 cadastraUsuario idUsuario nome senha = 
     (Usuario {idUsuario = idUsuario, nome = nome, senha = senha})
+
+
 
 -- função que adiciona o usuário no sistema checando se já não existe (será possivel fazer essa checagem por id?)
 adicionarUsuario :: Usuario -> [Usuario] -> [Usuario]
@@ -25,10 +29,14 @@ adicionarUsuario usuario usuarios =
         Just _ -> usuarios
         Nothing -> usuario : usuarios
 
+
+
 -- tentativa de função que remove um usuário (incompleta!!)
 removerUsuario :: Int -> [Usuario] -> [Usuario]
 removerUsuario idUsuario usuario = usuario { Usuario =
     filter (\usuario -> idUsuario usuario/= idUsuario) }  
+
+
 
 -- função que escreve os dados do usuário no txt
 escreverUsuario :: FilePath -> [Usuario] -> IO ()
@@ -36,13 +44,17 @@ escreverUsuario arquivo usuarios = appendFile arquivo conteudo
     where
         conteudo = unline $ map formatarUsuario usuarios
         formatarUsuario u = "ID: " ++ show (idUsuario u) ++ ", NOME: " ++ nome u ++ ", SENHA: " ++ senha u
-        
+
+
+
 -- função que le os dados do usuario do txt
 lerUsarios :: FilePath -> IO [Usuario.Usuario]
 lerUsuarios path = do
     conteudo <- readFile path
     let usuarios = mapMaybe Usuario.fromString $ lines conteudo
     return usuarios
+
+
 
 -- cria representação de um usuario em string?
 fromString :: String -> Maybe Usuario
