@@ -2,6 +2,7 @@ module Haskell.Usuario where
 
 
 data Usuario = Usuario {
-    -- Atributos aqui
+    idUsuario:: Int, nome:: String, senha:: String} deriving (Show, Read, Eq)
 
-}
+
+
