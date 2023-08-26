@@ -8,8 +8,6 @@ import qualified Haskell.Usuario
 import qualified Haskell.Atividades
 import Haskell.Projeto (Project(senha))
 import qualified Haskell.FuncoesAuxiliares as FuncoesAuxiliares
-import qualified Haskell.FuncoesAuxiliares as FuncoesAuxiliares
-import qualified Haskell.FuncoesAuxiliares as FuncoesAuxiliares
 
 
 -- main
