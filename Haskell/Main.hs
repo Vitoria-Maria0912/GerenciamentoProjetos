@@ -16,8 +16,8 @@ main = do
     let lowerOption = map toLower option
     case lowerOption of
         -- está como String, mas serão as funções
-        "c" -> usuario
-        "d" -> deleteProfile
+        "c" -> createUser
+        "d" -> deleteUser
         "p" -> createProject
         "r" -> removeProject
         "l" -> viewProjectsInProgress
@@ -61,8 +61,8 @@ exitSistem = putStrLn "Você saiu do sistema! Até a próxima!"
 
 
 -- função para receber as entradas do usuário, referente a criação do perfil
-usuario :: IO()
-usuario = do
+createUser :: IO()
+createUser = do
     putStrLn "Olá! Qual o seu nome?"
     name <- getLine
     putStrLn "Ótimo! Agora defina a sua senha!"
@@ -74,8 +74,8 @@ usuario = do
 
 
 -- função para receber as entradas do usuário, referente a exclusão de um perfil
-deleteProfile :: IO()
-deleteProfile = do
+deleterUser :: IO()
+deleteUser = do
     putStrLn "Digite o nome do seu perfil: "
     name <- getLine
     putStrLn "Digite sua senha: "
