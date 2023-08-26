@@ -13,9 +13,7 @@ data Atividade = Atividade {
 } deriving (Show)
 
 
-
 --Faltou a função de criar atividades
-
 
 
 -- função que atribui uma atividade a um membro
