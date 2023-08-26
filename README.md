@@ -11,8 +11,8 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
 
 **Membros:**
 
-Íris Almeida,
-Jamilly Venâncio,
-João Pedro Angelo,
-Vitória Maria, 
-Yalle Carvalho
+  Íris Almeida,
+  Jamilly Venâncio,
+  João Pedro Angelo,
+  Vitória Maria, 
+  Yalle Carvalho
