@@ -1,5 +1,3 @@
-# ESTE NÃO É O OFICIAL
-
 # Sistema de Gerenciamento de Projetos - PLP UFCG - 2023.1
 
                                                   ......   ......    ......   
