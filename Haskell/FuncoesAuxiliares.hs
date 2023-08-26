@@ -15,5 +15,6 @@ import Haskell.Usuario (Usuario)
  verificaSenhaUsuario :: String -> Bool
  verificaSenhaUsuario msg = True
 
+-- função para verificar se um id existe
  verificaIdExistente :: Int -> [Usuario] -> Bool
  verificaIdExistente id usuarios = elem id (map Usuario.idUsuario usuarios)
