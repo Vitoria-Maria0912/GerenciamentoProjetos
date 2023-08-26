@@ -1,4 +1,4 @@
-module Project where 
+module Projeto where 
 
 import Data.Char ()
 import Data.Set ()
@@ -11,17 +11,17 @@ import Data.List (find)
 import Data.Maybe (mapMaybe)
 import Text.Read (readMaybe)
 
-data Project = Project {
-    idProject :: Int, nome :: String , descricao :: String, senha :: String} deriving (Show, Read, Eq)
+data Projeto = Projeto {
+    idProjeto :: Int, nome :: String , descricao :: String, senha :: String} deriving (Show, Read, Eq)
 
-cadastraProject :: Int -> String -> String -> String -> Project
-cadastraProject idProject nome descricao senha = (Project {idProject = idProject, nome = nome, descricao = descricao})
+cadastraProjeto :: Int -> String -> String -> String -> Project
+cadastraProjeto idProject nome descricao senha = (Project {idProject = idProject, nome = nome, descricao = descricao})
 
 --finalizar depois *fazer a checagem novamente antes de adicionar ao "TXT" ?
-adicionaProject :: Project -> [Project] -> [Project]
+adicionaProjeto :: Project -> [Project] -> [Project]
 
-escreverProjects :: FilePath -> [Project] -> IO ()
+escreverProjeto :: FilePath -> [Project] -> IO ()
 escreverUsuarios arquivo projects = appendFile arquivo conteudo
   where
-    conteudo = unlines $ map formatarProject usuarios
-    formatarProject p = "ID: " ++ show (idProject p) ++ ", NOME: " ++ nome p ++ ", DESCRICAO: " ++ descricao p ++ ", SENHA:" ++ senha p
+    conteudo = unlines $ map formatarProjeto usuarios
+    formatarProjeto p = "ID: " ++ show (idProjeto p) ++ ", NOME: " ++ nome p ++ ", DESCRICAO: " ++ descricao p ++ ", SENHA:" ++ senha p
