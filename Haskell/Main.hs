@@ -14,15 +14,15 @@ main = do
     let lowerOption = map toLower option
     case lowerOption of
         -- está como String, mas serão as funções
-        "c" -> putStrLn "createProfile"
-        "d" -> putStrLn "deleteProfile"
-        "p" -> putStrLn "createProject"
-        "r" -> putStrLn "removeProject"
-        "l" -> putStrLn "viewProjectsInProgress"
-        "e" -> putStrLn "requestEntry"
-        "f" -> putStrLn "createFeedback"
-        "m" -> putStrLn "chat"
-        "b" -> putStrLn "activitiesBank"
+        "c" -> createProfile
+        "d" -> deleteProfile
+        "p" -> createProject
+        "r" -> removeProject
+        "l" -> viewProjectsInProgress
+        "e" -> requestEntry
+        "f" -> createFeedback
+        "m" -> chat
+        "b" -> activitiesBank
         "s" -> exitSistem
         _   -> erroMenuPrincipal
 
@@ -31,7 +31,7 @@ main = do
 erroMenuPrincipal :: IO()
 erroMenuPrincipal = do
     putStrLn   "----------------------------------"
-    putStrLn $ "Entrada Inválida. Tente novamente!"
+    putStrLn   "Entrada Inválida. Tente novamente!"
     putStrLn   "----------------------------------\n"
     main
 
@@ -111,3 +111,53 @@ removeProject = do
             then putStrLn "Projeto removido com sucesso."
         else
             putStrLn "Você não pode executar essa ação."
+
+
+-- captura os dados de um usuário que quer entrar em um projeto
+requestEntry :: IO ()
+requestEntry = do
+    putStrLn "Solicitar Entrada em Projeto:\n"
+    putStrLn "Digite o ID do projeto que deseja entrar: "
+    idProjeto <- readLn :: IO Int
+    -- Chame a função para solicitar entrada no projeto com o ID informado
+    putStrLn "Solicitação enviada com sucesso!"
+
+
+-- função para receber as entradas de um feedback em uma atividade
+createFeedback :: IO ()
+createFeedback = do
+    putStrLn "Dar Feedback de Atividade Realizada:\n"
+    putStrLn "Digite o ID da atividade: "
+    idAtividade <- readLn :: IO Int
+    putStrLn "Digite o seu feedback: "
+    feedback <- getLine
+    -- Chame a função para adicionar feedback à atividade com o ID informado
+    putStrLn "Feedback adicionado com sucesso!"
+
+
+-- função para iniciar o chat
+chat :: IO ()
+chat = do
+    putStrLn "Abrir Caixa de Mensagens:\n"
+    putStrLn "Digite o ID do destinatário ou 'geral' para mensagem geral: "
+    destinatario <- getLine
+    putStrLn "Digite a mensagem: "
+    mensagem <- getLine
+    -- Chame a função para enviar a mensagem ao destinatário
+    putStrLn "Mensagem enviada com sucesso!"
+
+
+-- função para visualizar o banco de atividades
+activitiesBank :: IO ()
+activitiesBank = do
+    putStrLn "Visualizar Banco de Atividades:\n"
+    -- Chame a função para listar as atividades do banco
+    putStrLn "Atividades disponíveis no banco:"
+
+
+-- Função para listar projetos em andamento (L - Listar projetos)
+viewProjectsInProgress :: IO ()
+viewProjectsInProgress = do
+    putStrLn "Listar Projetos em Andamento:\n"
+    -- Chame a função para listar os projetos em andamento
+    putStrLn "Projetos em andamento:"
