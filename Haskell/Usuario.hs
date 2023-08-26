@@ -33,7 +33,7 @@ adicionarUsuario usuario usuarios =
 
 -- tentativa de função que remove um usuário (incompleta!!)
 removerUsuario :: Int -> [Usuario] -> [Usuario]
-removerUsuario idUsuario usuario = usuario { Usuario =
+removerUsuario idUsuario usuario = usuario { usuario =
     filter (\usuario -> idUsuario usuario/= idUsuario) }  
 
 

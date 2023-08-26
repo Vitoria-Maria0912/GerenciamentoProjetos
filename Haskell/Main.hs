@@ -6,6 +6,9 @@ import System.Exit (exitSuccess)
 import qualified Haskell.Projeto
 import qualified Haskell.Usuario
 import qualified Haskell.Atividades
+import Haskell.Projeto (Project(senha))
+import qualified Haskell.FuncoesAuxiliares as FuncoesAuxiliares
+import qualified Haskell.FuncoesAuxiliares as FuncoesAuxiliares
 import qualified Haskell.FuncoesAuxiliares as FuncoesAuxiliares
 
 
@@ -84,7 +87,7 @@ cadastrarUsuario = do
     name <- getLine
     putStrLn "Ótimo! Agora defina a sua senha!"
     password <- getLine
-    id <- FuncoesAuxiliares.geraID
+    id <- FuncoesAuxiliares.geraIDUsuario
     Usuario.cadastraUsuario id password name
     putStrLn $ "\nParabéns, " ++ name
             ++ ", você está cadastrado(a) no Sistema de Gerenciamento de Projetos!"
@@ -99,9 +102,12 @@ deletarUsario = do
     name <- getLine
     putStrLn "Digite sua senha: "
     senha <- getLine
-    -- tem fazer uma função para remover do sistema
-    putStrLn $ name ++ ", seu perfil foi deletado com sucesso!"
-
+    if FuncoesAuxiliares.verificaNomeUsuario name
+        && FuncoesAuxiliares.verificaSenhaUsuario senhathen then do
+        Usuario.removerUsuario senha
+        putStrLn $ name ++ ", seu perfil foi deletado com sucesso!"
+    else do
+        putStrLn "Não há usuário com esse nome ou senha!"
 
 
 -- função para receber as entradas referentes a criação de projeto
@@ -111,13 +117,14 @@ cadastrarProjeto = do
     putStrLn ".........................."
     putStrLn "Qual o título do projeto?"
     nome <- getLine
-    -- FUNÇÃO -> criar função para checar se já existe esse projeto com esse nome
     if  FuncoesAuxiliares.verificaNomeProjeto nome then do
-        putStrLn "Projeto já existente, por favor escolha outro nome."
-        exitSistem -- coloquei para sair, para conseguir compilar e ficar mais simples
+        putStrLn "Nome já utilizado em outro projeto!"
+        exitSistem
     else do
         putStrLn "\nDescreva, brevemente, seu projeto!"
         descricao <- getLine
+        id <- FuncoesAuxiliares.geraIDProjeto
+        Projeto.cadastraProjeto id nome descricao
         putStrLn "Projeto criado!"
 
 
@@ -127,7 +134,7 @@ removerProjeto :: IO()
 removerProjeto = do
     putStrLn "Digite o nome do projeto que deseja deletar:"
     nome <- getLine
-    if FuncoesAuxiliares.verificaNomeProjeto nome
+    if not (FuncoesAuxiliares.verificaNomeProjeto nome)
         then putStrLn "Projeto inexistente!"
     else do
         putStrLn "Digite sua senha: "
@@ -145,8 +152,10 @@ solicitarEntrada = do
     putStrLn "Solicitar Entrada em Projeto:\n"
     putStrLn "Digite o ID do projeto que deseja entrar: "
     idProjeto <- readLn :: IO Int
-    -- Chame a função para solicitar entrada no projeto com o ID informado
-    putStrLn "Solicitação enviada com sucesso!"
+    if FuncoesAuxiliares.verificaIDProjeto idProjeto then do
+        -- funcao para solicitar entrada em projeto
+        putStrLn "Solicitação enviada com sucesso!"
+    else putStrLn "Projeto inexistente"
 
 
 
@@ -156,10 +165,12 @@ criarFeedback = do
     putStrLn "Dar Feedback de Atividade Realizada:\n"
     putStrLn "Digite o ID da atividade: "
     idAtividade <- readLn :: IO Int
-    putStrLn "Digite o seu feedback: "
-    feedback <- getLine
-    -- Chame a função para adicionar feedback à atividade com o ID informado
-    putStrLn "Feedback adicionado com sucesso!"
+    if FuncoesAuxiliares.verificaIDAtividade idAtividade then do
+        putStrLn "Digite o seu feedback: "
+        feedback <- getLine
+        -- chamar funcao para adicionar feedback
+        putStrLn "Feedback adicionado com sucesso!"
+    else putStrLn "Atividade inexistente"
 
 
 
@@ -167,7 +178,7 @@ criarFeedback = do
 chat :: IO ()
 chat = do
     putStrLn "Abrir Caixa de Mensagens:\n"
-    putStrLn "Digite o ID do destinatário ou 'geral' para mensagem geral: "
+    putStrLn "Digite o nome do destinatário: "
     destinatario <- getLine
     putStrLn "Digite a mensagem: "
     mensagem <- getLine

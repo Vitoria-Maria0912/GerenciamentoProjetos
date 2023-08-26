@@ -47,5 +47,31 @@ verificaSenhaUsuario senha = do
 
 
 
-geraID :: Int
-geraID = 0
+geraIDUsuario :: Int
+geraIDUsuario = 0
+
+
+
+geraIDProjeto :: Int
+geraIDProjeto = 0
+
+
+
+geraIDAtividade :: Int
+geraIDAtividade = 0
+
+
+
+verificaIDProjeto :: Int -> Bool
+verificaIDProjeto id = True
+
+
+
+verificaIDUsuario :: Int -> Bool
+verificaIDUsuario id = True
+
+
+
+verificaIDAtividade :: Int -> Bool
+verificaIDAtividade id = True
+
