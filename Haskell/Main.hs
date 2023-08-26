@@ -18,7 +18,6 @@ main = do
     option <- getLine
     let lowerOption = map toLower option
     case lowerOption of
-        -- está como String, mas serão as funções
         "c" -> cadastrarUsuario
         "d" -> deletarUsario
         "p" -> cadastrarProjeto
