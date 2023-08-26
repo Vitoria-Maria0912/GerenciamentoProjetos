@@ -1,13 +1,9 @@
 module Haskell.Main where
-
 import qualified Data.Char as Char
 import System.Exit (exitSuccess)
 import qualified Haskell.Projeto
 import qualified Haskell.Usuario
 import qualified Haskell.Atividades
-
--- restante do código do menu e das funções
-
 
 
 -- main
