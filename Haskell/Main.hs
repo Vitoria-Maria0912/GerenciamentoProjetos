@@ -59,10 +59,12 @@ exitSistem = putStrLn "Você saiu do sistema! Até a próxima!"
 
 
 -- função para receber as entradas do usuário, referente a criação do perfil
-createProfile :: IO()
-createProfile = do
+usuario :: IO()
+usuario = do
     putStrLn "Olá! Qual o seu nome?"
     name <- getLine
+    putStrLn "Ótimo! Agora defina a sua senha!"
+    password <- getLine
     -- criar uma função de amazenamento
     putStrLn $ "\nParabéns, " ++ name
             ++ ", você está cadastrado(a) no Sistema de Gerenciamento de Projetos!"
