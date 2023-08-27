@@ -62,6 +62,13 @@ addAtividadeDatabase idTarefa nomeTarefa descricaoTarefa statusTarefa membroResp
         hPutStr handle (unlines taskcontent)
 
 
+-- Remove projeto da base de dados
+removeProjetoDatabase :: String -> String -> IO()
+removeProjetoDatabase idProjeto nomeProjeto = do
+    let filePath = diretorioDatabase++nomeProjeto++"/idProjeto/"++idProjeto++"/"++nomeProjeto
+    removeFile (filePath ++ nomeProjeto)
+
+
 
 -- exibe Tarefas
 exibeTarefasDatabase :: String -> String -> String -> IO [String]

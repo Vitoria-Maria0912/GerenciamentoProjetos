@@ -15,8 +15,8 @@ menuGeral = do
     case lowerOption of
         "c" -> cadastro
         "d" -> deletarUsuario
-        --"p" -> cadastrarProjeto
-        --"r" -> removerProjeto
+        "p" -> cadastrarProjeto
+        "r" -> removerProjeto
         --"l" -> visualizarProjetosPendentes
         --"e" -> solicitarEntrada
         --"f" -> criarFeedback
@@ -138,3 +138,20 @@ cadastrarProjeto = do
 
 
 -- Função para remover um projeto
+removerProjeto :: IO()
+removerProjeto = do
+  clearScreen
+  putStrLn "Menu>Deletar Projeto"
+  putStrLn "| ######                                            "
+  putStrLn "| #     # ###### #      ###### #####   ##   #####   "
+  putStrLn "| #     # #      #      #        #    #  #  #    #  "
+  putStrLn "| #     # ###### #      #####    #   #    # #    #  "
+  putStrLn "| #     # #      #      #        #   ###### #####   " 
+  putStrLn "| #     # #      #      #        #   #    # #    #  "
+  putStrLn "| ######  ###### ###### ######   #   #    # #    #  "
+  putStrLn "\n"
+  putStrLn "Digite o nome do projeto:"
+  nomeProjeto <- getLine
+  putStrLn "Digite o ID do projeto:"
+  idProjeto <- getLine
+  removeProjeto nomeProjeto idProjeto      

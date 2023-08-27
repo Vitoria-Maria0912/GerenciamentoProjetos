@@ -25,3 +25,8 @@ data Projeto = Projeto {
 -- criação de projeto
 criaProjeto :: String -> String -> String -> String -> IO()
 criaProjeto = addProjetoDatabase
+
+
+-- remoção de projeto
+removeProjeto :: String -> String -> IO()
+removeProjeto = removeProjetoDatabase
