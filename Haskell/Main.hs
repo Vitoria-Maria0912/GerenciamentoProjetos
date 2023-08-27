@@ -36,11 +36,11 @@ main = do
 -- Função para imprimir "S G P" de forma estilizada
 imprimirSGP :: IO ()
 imprimirSGP = do
-    putStrLn "   SSS    GGG    PPP  "
-    putStrLn "  SS      G      P  P "
-    putStrLn "   SS     G GG   PPP  "
-    putStrLn "     SS   G  G   P    "
-    putStrLn "   SSS    GGGG   P    \n"
+    putStrLn "......   ......    ......"
+    putStrLn ".        .         .    ."
+    putStrLn "......   .  ...    ......"
+    putStrLn "     .   .    .    .     "
+    putStrLn "......   ......    .     "
 
 
 -- função que imprime o menu
