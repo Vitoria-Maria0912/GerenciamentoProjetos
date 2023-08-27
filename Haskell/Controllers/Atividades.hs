@@ -1,5 +1,5 @@
-module Haskell.Atividades where
-import Haskell.Usuario as Usuario
+module Haskell.Controllers.Atividades where
+import Haskell.Controllers.Usuario as Usuario ( Usuario )
 
 
 data Atividade = Atividade {
@@ -8,7 +8,7 @@ data Atividade = Atividade {
     descricaoAtividade :: String,
     statusAtividade :: String,
     membroResponsavel :: Maybe Usuario
-} deriving (Show)
+} 
 
 
 -- função que cria uma atividade

@@ -1,4 +1,4 @@
-module Haskell.Projeto where
+module Haskell.Controllers.Projeto where
 
 import Data.Char ()
 import Data.Set ()
@@ -9,7 +9,7 @@ import System.IO ()
 import Data.List (find)
 import Data.Maybe (mapMaybe)
 import Text.Read (readMaybe)
-import Haskell.Atividades (Atividade)
+import Haskell.Controllers.Atividades as Atividade (Atividade)
 
 
 data Projeto = Projeto {
@@ -17,7 +17,7 @@ data Projeto = Projeto {
     nomeProjeto :: String,
     descricaoProjeto :: String,
     atividadesProjeto :: [Atividade]
-} deriving (Show)
+} 
 
 
 -- cadastra um Projeto

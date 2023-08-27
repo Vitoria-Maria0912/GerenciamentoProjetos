@@ -78,13 +78,9 @@ cadastro = do
   putStrLn " |                                                                                            |"
   putStrLn " '--------------------------------------------------------------------------------------------'"
   putStrLn ""
-  putStrLn "Digite seu username: "
-  name <- getLine
   putStrLn "Digite seu nome: "
-  username <- getLine
+  nome <- getLine
   putStrLn "Digite sua senha: "
-  password <- getLine
-  putStrLn "Digite sua descrição: "
-  desc <- getLine
-  createUser name username password desc
+  senha <- getLine
+  criaUsuario nome senha
   menuPrincipal
