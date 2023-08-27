@@ -1,3 +1,4 @@
+module Haskell.Controllers.Usuario where
 import System.IO
 import Haskell.Database.Database -- import Database para realizar as funções
 
