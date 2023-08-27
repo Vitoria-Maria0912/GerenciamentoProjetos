@@ -8,6 +8,6 @@ data Usuario = User { nome :: String,
  password :: String
 }
 
-
+-- criação de usuário
 criaUsuario :: String -> String -> IO()
-criaUsuario = criaUsuarioDatabase -- Função que cria novos Users, executada em Database
+criaUsuario = criaUsuarioDatabase -- executada em Database
