@@ -122,16 +122,16 @@ cadastrarProjeto = do
     putStrLn "Vamos criar o seu projeto!"
     putStrLn ".........................."
     putStrLn "Qual o título do projeto?"
-    nome <- getLine
+    titulo <- getLine
     
-    if  FuncoesAuxiliares.verificaNomeProjeto nome then do
+    if FuncoesAuxiliares.verificaNomeProjeto titulo then do
         putStrLn "Nome já utilizado em outro projeto!"
-        exitSistem
+        menuPrincipal
     else do
         putStrLn "\nDescreva, brevemente, seu projeto!"
         descricao <- getLine
         id <- FuncoesAuxiliares.geraIDProjeto
-        Projeto.cadastraProjeto id nome descricao
+        Projeto.cadastraProjeto id titulo descricao
         putStrLn "Projeto criado!"
 
 
@@ -157,11 +157,11 @@ solicitarEntrada = do
     putStrLn "Solicitar Entrada em Projeto:\n"
     putStrLn "Digite o ID do projeto que deseja entrar: "
     idProjeto <- readLn :: IO Int
+    
     if FuncoesAuxiliares.verificaIDProjeto idProjeto then do
         -- funcao para solicitar entrada em projeto
         putStrLn "Solicitação enviada com sucesso!"
     else putStrLn "Projeto inexistente"
-
 
 
 -- função para receber as entradas de um feedback em uma atividade
@@ -170,13 +170,13 @@ criarFeedback = do
     putStrLn "Dar Feedback de Atividade Realizada:\n"
     putStrLn "Digite o ID da atividade: "
     idAtividade <- readLn :: IO Int
+    
     if FuncoesAuxiliares.verificaIDAtividade idAtividade then do
         putStrLn "Digite o seu feedback: "
         feedback <- getLine
         -- chamar funcao para adicionar feedback
         putStrLn "Feedback adicionado com sucesso!"
     else putStrLn "Atividade inexistente"
-
 
 
 -- função para iniciar o chat
@@ -191,7 +191,6 @@ chat = do
     putStrLn "Mensagem enviada com sucesso!"
 
 
-
 -- função para visualizar o banco de atividades
 bancoDeAtividades :: IO ()
 bancoDeAtividades = do
@@ -200,10 +199,55 @@ bancoDeAtividades = do
     putStrLn "Atividades disponíveis no banco:"
 
 
-
 -- Função para listar projetos em andamento (L - Listar projetos)
 visualizarProjetosPendentes :: IO ()
 visualizarProjetosPendentes = do
     putStrLn "Listar Projetos em Andamento:\n"
     -- Chame a função para listar os projetos em andamento
     putStrLn "Projetos em andamento:"
+
+
+menuRestritoAtividades :: IO()
+menuRestritoAtividades = do 
+
+    -- só quem terá acesso a este menu é o gerente do projeto
+
+    putStrLn "O que deseja fazer agora?\n"
+
+            ++ "C - criar uma atividade\n"
+            ++ "G - gerenciar membros do projeto\n"
+            ++ "R - remover uma tarefa\n"
+            ++ "P - voltar ao menu do projeto\n"
+            ++ "M - voltar ao menu principal\n"
+            ++ "S - sair do sistema\n"
+
+            ++ "\nEscolha uma opção: "
+
+    option <- getLine
+    let lowerOption = map toLower option
+    case lowerOption of 
+
+        "c" -> criaAtividade
+        "g" -> gerenciarMembros
+        "r" -> removeAtividade
+        "p" -> menuProjeto
+        "m" -> menuPrincipal
+        "s" -> exitSistem
+        _   -> erroMenuProjeto
+
+
+criaAtividade :: IO()
+criaAtividade = do
+    putStrLn "Digite um título para sua atividade:"
+    title <- getLine
+
+    putStrLn "Descreva, brevemente, o que se deve realizar para concluir esta atividade."
+    descricao <- getLine
+    putStrLn "Tarefa criada com sucesso!"
+
+
+removeAtividade :: IO()
+removeAtividade = do
+    putStrLn "Digite o nome da atividade que deseja remover:"
+    title <- getLine
+    putStrLn "Atividade removida com sucesso!"
