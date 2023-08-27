@@ -40,7 +40,11 @@ escreverProjeto arquivo projects = appendFile arquivo conteudo
     formatarProjeto p = "ID: " ++ show (idProjeto p) ++ ", NOME: " ++ nome p ++ ", DESCRICAO: " ++ descricao p ++ ", SENHA:" ++ senha p
 -}
 
--- Adiciona atividades ao projweto
+
+-- Falta remover Projeto --
+
+
+-- Adiciona atividades ao projeto
 adicionaAtividade :: Atividade -> Projeto -> Projeto
 adicionaAtividade atividade projeto =
     projeto { atividadesProjeto = atividadesProjeto projeto ++ [atividade] }

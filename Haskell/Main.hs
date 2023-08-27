@@ -36,11 +36,11 @@ main = do
 -- Função para imprimir "S G P" de forma estilizada
 imprimirSGP :: IO ()
 imprimirSGP = do
-    putStrLn "......   ......    ......"
-    putStrLn ".        .         .    ."
-    putStrLn "......   .  ...    ......"
-    putStrLn "     .   .    .    .     "
-    putStrLn "......   ......    .     "
+    putStrLn "   SSS    GGG    PPP  "
+    putStrLn "  SS      G      P  P "
+    putStrLn "   SS     G GG   PPP  "
+    putStrLn "     SS   G  G   P    "
+    putStrLn "   SSS    GGGG   P    \n"
 
 
 -- função que imprime o menu
@@ -54,9 +54,9 @@ menuPrincipal = do
             ++ "R - remover projeto\n"
             ++ "L - listar projetos\n"
             ++ "E - solicitar entrada em um projeto\n"
-            ++ "F - dar feedback de uma atividade realizada"
-            ++ "M - abrir caixa de mensagens"
-            ++ "B - visualizar banco de atividades"
+            ++ "F - dar feedback de uma atividade realizada\n"
+            ++ "M - abrir caixa de mensagens\n"
+            ++ "B - visualizar banco de atividades\n"
             ++ "S - sair do sistema\n"
             ++ "\nEscolha uma opção: "
 
