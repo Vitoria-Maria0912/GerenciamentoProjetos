@@ -11,50 +11,56 @@ import Text.Read (readMaybe)
 
 
 data Usuario = Usuario {
-    idUsuario:: Int, nome:: String, senha:: String} deriving (Show, Read, Eq)
+    idUsuario:: Int,
+    nome:: String,
+    senha:: String} deriving (Show, Read, Eq)
 
 
 -- função que cadastra um usuário
-cadastrarUsario :: Int -> String -> String -> Usuario
-cadastraUsuario idUsuario nome senha = 
+cadastraUsuario :: Int -> String -> String -> Usuario
+cadastraUsuario idUsuario nome senha =
     (Usuario {idUsuario = idUsuario, nome = nome, senha = senha})
 
 
--- criar uma função para checar se é gerente
-
+-- Função para verificar se uma senha de usuário está correta
+verificarSenha :: Usuario -> String -> String -> Bool
+verificarSenha usuario senha senhaUsuario = senhaUsuario == senha
 
 
 -- função que adiciona o usuário no sistema checando se já não existe (será possivel fazer essa checagem por id?)
 adicionarUsuario :: Usuario -> [Usuario] -> [Usuario]
-adicionarUsuario usuario usuarios = 
+adicionarUsuario usuario usuarios =
     case find (\u -> idUsuario u == idUsuario usuario) usuarios of
         Just _ -> usuarios
         Nothing -> usuario : usuarios
 
 
--- tentativa de função que remove um usuário (incompleta!!)
-removerUsuario :: Int -> [Usuario] -> [Usuario]
-removerUsuario idUsuario usuario = usuario { usuario =
-    filter (\usuario -> idUsuario usuario/= idUsuario) }  
+-- Função para remover um usuário de uma lista de usuários e atualizar o arquivo .txt
+removerUsuario :: Int -> [Usuario] -> FilePath -> IO [Usuario]
+removerUsuario idUsuario usuarios arquivo = do
+    let novosUsuarios = filter (\usuario -> idUsuario /= idUsuario) usuarios
+    escreverUsuario arquivo novosUsuarios
+    return novosUsuarios
 
 
 -- função que escreve os dados do usuário no txt
 escreverUsuario :: FilePath -> [Usuario] -> IO ()
 escreverUsuario arquivo usuarios = appendFile arquivo conteudo
     where
-        conteudo = unline $ map formatarUsuario usuarios
-        formatarUsuario u = "ID: " ++ show (idUsuario u) ++ ", NOME: " ++ nome u ++ ", SENHA: " ++ senha u
+        conteudo = unlines $ map formatarUsuario usuarios
+        formatarUsuario u = "ID: " ++ show (idUsuario u) ++
+         ", NOME: " ++ nome u ++ ", SENHA: " ++ senha u
 
 
 -- função que le os dados do usuario do txt
-lerUsarios :: FilePath -> IO [Usuario.Usuario]
+lerUsuarios :: FilePath -> IO [Usuario.Usuario]
 lerUsuarios path = do
     conteudo <- readFile path
     let usuarios = mapMaybe Usuario.fromString $ lines conteudo
     return usuarios
 
 
--- cria representação de um usuario em string?
+-- cria representação de um usuario em string
 fromString :: String -> Maybe Usuario
 fromString str = case words str of
     [idStr, nome, senha] -> do

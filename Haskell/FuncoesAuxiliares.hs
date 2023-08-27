@@ -4,7 +4,6 @@ import qualified Data.Text.IO as TIO
 import Data.Text (unpack)
 
 
-
 -- Função para verificar se um nome de usuário já está sendo usado
 verificaNomeUsuario :: String -> IO Bool
 verificaNomeUsuario nome = do
@@ -46,32 +45,22 @@ verificaSenhaUsuario senha = do
         return $ elem senha senhas
 
 
+-- Função para gerar um ID aleatório
+geraIDAleatorio ::  Int
+geraIDAleatorio = 0
 
+
+-- Função para gerar um ID de usuário aleatório
 geraIDUsuario :: Int
-geraIDUsuario = 0
+geraIDUsuario = geraIDAleatorio
 
 
-
-geraIDProjeto :: Int
-geraIDProjeto = 0
-
-
-
+-- Função para gerar um ID de atividade aleatório
 geraIDAtividade :: Int
-geraIDAtividade = 0
+geraIDAtividade = geraIDAleatorio
 
 
-
-verificaIDProjeto :: Int -> Bool
-verificaIDProjeto id = True
-
-
-
-verificaIDUsuario :: Int -> Bool
-verificaIDUsuario id = True
-
-
-
-verificaIDAtividade :: Int -> Bool
-verificaIDAtividade id = True
+-- Função para gerar um ID de projeto aleatório
+geraIDProjeto :: Int
+geraIDProjeto = geraIDAleatorio
 

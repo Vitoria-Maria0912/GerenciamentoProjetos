@@ -1,9 +1,9 @@
 module Haskell.Atividades where
 import Haskell.Usuario ( Usuario )
-import Haskell.Projeto ( Projeto )
 
 
 data Atividade = Atividade {
+    idAtividade :: Int,
     tituloAtividade :: String,
     descricaoAtividade :: String,
     statusAtividade :: String,
@@ -11,22 +11,25 @@ data Atividade = Atividade {
 } deriving (Show)
 
 
+-- função que cria uma atividade
+criaAtividade :: Int -> String -> String -> Atividade
+criaAtividade id titulo descricao =
+    Atividade { idAtividade = id, tituloAtividade = titulo, 
+    descricaoAtividade = descricao, 
+    statusAtividade = "Não Atribuída", membroResponsavel = Nothing }
 
---Faltou a função de criar atividades
+
+-- Modifica o status da atividade
+mudaStatus :: String -> Atividade -> Atividade
+mudaStatus novoStatus atividade = atividade { statusAtividade = novoStatus }
 
 
-
--- função que atribui uma atividade a um membro
+-- Membro responsável pela atividade
 atribuiMembro :: Atividade -> Usuario -> Atividade
 atribuiMembro atividade usuario = atividade { membroResponsavel = Just usuario }
 
 
--- por default uma atividade é não atribuída
--- função para modificar o status da atividade
-mudaStatus :: String -> Atividade
-mudaStatus novoStatus atividade = atividade { statusAtividade = novoStatus }
-
-
+-- Exibe o status da atividade
 mostraStatus :: Atividade -> String
 mostraStatus atividade = statusAtividade
 
