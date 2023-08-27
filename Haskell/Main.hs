@@ -315,7 +315,6 @@ statusAtividade :: IO()
 statusAtividade = do
 
     putStrLn "Digite o nome da atividade que deseja visualizar o status:"
-
     title <- getLine
 
     Atividades.mostra statusAtividade --- e os parâmetros
