@@ -4,6 +4,7 @@ import System.Exit (exitSuccess)
 import Data.Char (toLower)
 import Haskell.Util.ClearScreen
 import Haskell.Controllers.Usuario
+import Haskell.Controllers.Projeto
 
 -- main
 menuGeral :: IO()
@@ -13,7 +14,7 @@ menuGeral = do
     let lowerOption = map toLower option
     case lowerOption of
         "c" -> cadastro
-        --"d" -> deletarUsuario
+        "d" -> deletarUsuario
         --"p" -> cadastrarProjeto
         --"r" -> removerProjeto
         --"l" -> visualizarProjetosPendentes
@@ -64,6 +65,7 @@ sairDoSistema :: IO()
 sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 
 
+
 -- Função para cadastrar um novo usuário
 cadastro :: IO ()
 cadastro = do
@@ -77,13 +79,14 @@ cadastro = do
   putStrLn " | 888oooo88 o88o  o888o o888ooo88 o88o  o888o o88oooo888    o888o    o888o  88o8   88ooo88   |"
   putStrLn " |                                                                                            |"
   putStrLn " '--------------------------------------------------------------------------------------------'"
-  putStrLn ""
+  putStrLn "\n"
   putStrLn "Digite seu nome: "
   nome <- getLine
   putStrLn "Digite sua senha: "
   senha <- getLine
   criaUsuario nome senha
   menuPrincipal
+
 
 
 -- Função para deletar um usuário
@@ -98,8 +101,7 @@ deletarUsuario = do
   putStrLn "| #     # #      #      #        #   ###### #####   " 
   putStrLn "| #     # #      #      #        #   #    # #    #  "
   putStrLn "| ######  ###### ###### ######   #   #    # #    #  "
-  putStrLn "\n"
-                                 
+  putStrLn "\n"                          
   putStrLn "Digite nome do usuário:"
   nome <- getLine
   putStrLn "Digite sua senha:"
@@ -107,3 +109,32 @@ deletarUsuario = do
   -- Tem que ter uma função para verificar se a senha bate com o nome do usuário
   removeUsuario nome
   menuPrincipal
+
+
+
+-- Função para criar um projeto
+cadastrarProjeto :: IO()
+cadastrarProjeto = do
+  clearScreen
+  putStrLn "Menu>Cadastrar Projeto"
+  putStrLn "|  #####                            ######                                           "
+  putStrLn "| #     # #####  #   ##   #####     #     # #####   ####       # ###### #####  ####  "
+  putStrLn "| #       #    # #  #  #  #    #    #     # #    # #    #      # #        #   #    # "
+  putStrLn "| #       #    # # #    # #    #    ######  #    # #    #      # #####    #   #    # "
+  putStrLn "| #       #####  # ###### #####     #       #####  #    #      # #        #   #    # "
+  putStrLn "| #     # #   #  # #    # #   #     #       #   #  #    # #    # #        #   #    # "
+  putStrLn "|  #####  #    # # #    # #    #    #       #    #  ####   ####  ######   #    ####  "
+  putStrLn "\n"
+  putStrLn "Digite seu nome:"
+  nomeUsuario <- getLine
+  putStrLn "Digite o nome do projeto:"
+  nomeProjeto <- getLine
+  putStrLn "Digite a descrição do seu projeto:"
+  descricao <- getLine
+  putStrLn "Digite um ID para seu projeto:"
+  id <- getLine
+  criaProjeto id nomeProjeto descricao nomeUsuario
+
+
+
+-- Função para remover um projeto

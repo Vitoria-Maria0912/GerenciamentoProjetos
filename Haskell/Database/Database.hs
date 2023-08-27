@@ -44,6 +44,15 @@ pegaNomeDatabase nomeUsuario = do
 
 
 
+-- Adiciona projeto na base de dados
+addProjetoDatabase :: String -> String -> String -> String -> IO()
+addProjetoDatabase idProjeto nomeProjeto descricao gerente = do
+    let taskcontent = [idProjeto, nomeProjeto, descricao, gerente]
+    let filePath = diretorioDatabase++nomeProjeto++"/idProjeto"++idProjeto++"/"
+    withFile filePath WriteMode $ \handle -> do
+        hPutStr handle (unlines taskcontent)
+
+
 -- Adiciona tarefa na base de dados
 addAtividadeDatabase :: String -> String -> String -> String -> String -> IO()
 addAtividadeDatabase idTarefa nomeTarefa descricaoTarefa statusTarefa membroResponsavel = do
