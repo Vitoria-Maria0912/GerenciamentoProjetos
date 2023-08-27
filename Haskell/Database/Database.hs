@@ -6,9 +6,11 @@ import Control.Monad (filterM)
 import Haskell.Util.AbrirFecharArquivo
 
 
+
 -- Função que retorna o local padrão dos users criados
 diretorioDatabase :: String
 diretorioDatabase = "./Modules/Database/LocalUsers/"
+
 
 
 -- cria usuario na base de dados
@@ -21,6 +23,7 @@ criaUsuarioDatabase nome senha = do
     withFile (diretorioDatabase ++ nome ++ "/" ++ nome ++ ".txt") WriteMode $ \handle -> do
         hPutStrLn handle (unlines usuario)
     -- escreve um arquivo txt com os dados da lista anterior, onde o nome do arquivo é o username
+
 
 
 -- Função para deletar um user da base de dados
@@ -40,6 +43,7 @@ pegaNomeDatabase username = do
     return (linhas !! 1)
 
 
+
 -- Adiciona tarefa na base de dados
 addAtividadeDatabase :: String -> String -> String -> String -> String -> IO()
 addAtividadeDatabase idTarefa nomeTarefa descricaoTarefa statusTarefa membroResponsavel = do
@@ -49,6 +53,7 @@ addAtividadeDatabase idTarefa nomeTarefa descricaoTarefa statusTarefa membroResp
         hPutStr handle (unlines taskcontent)
 
 
+
 -- exibe Tarefas
 exibeTarefasDatabase :: String -> String -> String -> IO [String]
 exibeTarefasDatabase nomeTarefa descricaoTarefa idTarefa = do
@@ -56,6 +61,7 @@ exibeTarefasDatabase nomeTarefa descricaoTarefa idTarefa = do
     conteudo <- readFile filePath
     let linhas = lines conteudo
     return linhas
+
 
 
 -- remove tarefa
