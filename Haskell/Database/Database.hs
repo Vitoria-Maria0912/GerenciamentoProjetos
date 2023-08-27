@@ -9,7 +9,7 @@ import Haskell.Util.AbrirFecharArquivo
 
 -- Função que retorna o local padrão dos users criados
 diretorioDatabase :: String
-diretorioDatabase = "./Modules/Database/LocalUsers/"
+diretorioDatabase = "./Haskell/Database/LocalUsers/"
 
 
 
