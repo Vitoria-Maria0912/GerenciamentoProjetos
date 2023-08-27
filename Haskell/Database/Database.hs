@@ -29,16 +29,16 @@ criaUsuarioDatabase nome senha = do
 -- Função para deletar um user da base de dados
 -- usa uma função de deletar um arquivo passando o caminho do arquivo
 deletaUsuarioDatabase :: String -> IO()
-deletaUsuarioDatabase username = do 
-    removeFile (diretorioDatabase++username++"/"++username++".txt") 
+deletaUsuarioDatabase nomeUsuario = do 
+    removeFile (diretorioDatabase++nomeUsuario++"/"++nomeUsuario++".txt") 
 
 
 
 -- Função que retorna o nome de um usuário
 -- o termo 'conteudo' recebe os dados lidos no txt
 pegaNomeDatabase :: String -> IO String
-pegaNomeDatabase username = do 
-    conteudo <- readFile (diretorioDatabase++username++"/"++username ++ ".txt")
+pegaNomeDatabase nomeUsuario = do 
+    conteudo <- readFile (diretorioDatabase++nomeUsuario++"/"++nomeUsuario++ ".txt")
     let linhas = lines conteudo 
     return (linhas !! 1)
 

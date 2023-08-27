@@ -84,3 +84,26 @@ cadastro = do
   senha <- getLine
   criaUsuario nome senha
   menuPrincipal
+
+
+-- Função para deletar um usuário
+deletarUsuario :: IO()
+deletarUsuario = do
+  clearScreen
+  putStrLn "Menu>Deletar Usuário"
+  putStrLn "| ######                                            "
+  putStrLn "| #     # ###### #      ###### #####   ##   #####   "
+  putStrLn "| #     # #      #      #        #    #  #  #    #  "
+  putStrLn "| #     # ###### #      #####    #   #    # #    #  "
+  putStrLn "| #     # #      #      #        #   ###### #####   " 
+  putStrLn "| #     # #      #      #        #   #    # #    #  "
+  putStrLn "| ######  ###### ###### ######   #   #    # #    #  "
+  putStrLn "\n"
+                                 
+  putStrLn "Digite nome do usuário:"
+  nome <- getLine
+  putStrLn "Digite sua senha:"
+  senha <- getLine
+  -- Tem que ter uma função para verificar se a senha bate com o nome do usuário
+  removeUsuario nome
+  menuPrincipal

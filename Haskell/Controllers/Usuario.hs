@@ -11,3 +11,8 @@ data Usuario = User { nome :: String,
 -- criação de usuário
 criaUsuario :: String -> String -> IO()
 criaUsuario = criaUsuarioDatabase -- executada em Database
+
+
+-- remoção de usuário
+removeUsuario :: String -> IO()
+removeUsuario = deletaUsuarioDatabase -- executada em Database
