@@ -1,4 +1,4 @@
-module Projeto where
+module Haskell.Projeto where
 
 import Data.Char ()
 import Data.Set ()
@@ -16,32 +16,29 @@ data Projeto = Projeto {
     idProjeto :: Int,
     nomeProjeto :: String,
     descricaoProjeto :: String,
-    senhaProjeto :: String,
     atividadesProjeto :: [Atividade]
 } deriving (Show)
 
 
 -- cadastra um Projeto
-cadastraProjeto :: Int -> String -> String -> String -> Project
-cadastraProjeto idProject nome descricao senha = (Project {idProject = idProject, nome = nome, descricao = descricao})
+cadastraProjeto :: Int -> String -> String -> String -> Projeto
+cadastraProjeto idProjeto nome descricao senha = (Projeto {idProjeto = idProjeto, 
+nomeProjeto = nome, descricaoProjeto = descricao, atividadesProjeto = []})
 
-
--- exibe todas as atividades do projeto
-exibeAtividades :: Projeto -> [Atividades]
-exibeAtividades projeto = []
 
 
 --finalizar depois *fazer a checagem novamente antes de adicionar ao "TXT" ?
-adicionaProjeto :: Project -> [Project] -> [Project]
+-- adicionaProjeto :: Project -> [Project] -> [Project]
 
 
 -- Escreve projeto no arquivo .txt
-escreverProjeto :: FilePath -> [Project] -> IO ()
-escreverUsuarios arquivo projects = appendFile arquivo conteudo
+{-
+escreverProjeto :: FilePath -> [Projeto] -> IO ()
+escreverProjeto arquivo projects = appendFile arquivo conteudo
   where
     conteudo = unlines $ map formatarProjeto usuarios
     formatarProjeto p = "ID: " ++ show (idProjeto p) ++ ", NOME: " ++ nome p ++ ", DESCRICAO: " ++ descricao p ++ ", SENHA:" ++ senha p
-
+-}
 
 -- Adiciona atividades ao projweto
 adicionaAtividade :: Atividade -> Projeto -> Projeto
@@ -52,16 +49,10 @@ adicionaAtividade atividade projeto =
 -- Função para remover uma atividade de um projeto
 removerAtividade :: Projeto -> String -> Projeto
 removerAtividade projeto tituloAtividade =
-    projeto { atividadesProjeto = filter (\atividade -> tituloAtividade atividade /= tituloAtividade) (atividadesProjeto projeto) }
+    projeto { atividadesProjeto = filter (\atividade -> tituloAtividade /= tituloAtividade) (atividadesProjeto projeto) }
 
 
 
 -- Exibe todas as atividades do projeto
 exibeAtividades :: Projeto -> [Atividade]
 exibeAtividades = atividadesProjeto
-
-
--- Função para buscar uma atividade por título em um projeto
-buscarAtividadePorTitulo :: Projeto -> String -> Maybe Atividade
-buscarAtividadePorTitulo projeto titulo =
-    find (\atividade -> tituloAtividade atividade == titulo) (atividadesProjeto projeto)

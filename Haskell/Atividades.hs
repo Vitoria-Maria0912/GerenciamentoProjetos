@@ -1,5 +1,5 @@
 module Haskell.Atividades where
-import Haskell.Usuario ( Usuario )
+import Haskell.Usuario as Usuario
 
 
 data Atividade = Atividade {
@@ -29,12 +29,3 @@ atribuiMembro :: Atividade -> Usuario -> Atividade
 atribuiMembro atividade usuario = atividade { membroResponsavel = Just usuario }
 
 
--- Exibe o status da atividade
-mostraStatus :: Atividade -> String
-mostraStatus atividade = statusAtividade
-
-
--- função para remover a atividade
-removeAtividade :: Projeto -> String -> Projeto
-removeAtividade projeto titulo = projeto { atividadesProjeto =
-     filter (\atividade -> tituloAtividade atividade /= titulo) (atividadesProjeto projeto) }

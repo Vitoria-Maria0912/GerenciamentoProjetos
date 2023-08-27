@@ -6,9 +6,11 @@ import System.Exit (exitSuccess)
 import qualified Haskell.Projeto
 import qualified Haskell.Usuario
 import qualified Haskell.Atividades
-import Haskell.Projeto (Project(senha))
+import Haskell.Projeto
 import qualified Haskell.FuncoesAuxiliares as FuncoesAuxiliares
 import Data.Char (toLower)
+import qualified Haskell.Usuario as Usuario
+import qualified Haskell.Projeto as Projeto
 
 
 -- main
@@ -19,7 +21,7 @@ main = do
     let lowerOption = map toLower option
     case lowerOption of
         "c" -> cadastrarUsuario
-        "d" -> deletarUsario
+        "d" -> deletarUsuario
         "p" -> cadastrarProjeto
         "r" -> removerProjeto
         "l" -> visualizarProjetosPendentes
@@ -34,11 +36,11 @@ main = do
 -- Função para imprimir "S G P" de forma estilizada
 imprimirSGP :: IO ()
 imprimirSGP = do
-    putStrLn "......   ......    ......" ++ "/n"
-          ++ ".        .         .    ." ++ "/n"
-          ++ "......   .  ...    ......" ++ "/n"
-          ++ "     .   .    .    .     " ++ "/n"
-          ++ "......   ......    .     " ++ "/n"
+    putStrLn "   SSS    GGG    PPP  "
+    putStrLn "  SS      G      P  P "
+    putStrLn "   SS     G GG   PPP  "
+    putStrLn "     SS   G  G   P    "
+    putStrLn "   SSS    GGGG   P    \n"
 
 
 -- função que imprime o menu
@@ -84,11 +86,12 @@ cadastrarUsuario = do
     else do
         putStrLn "Ótimo! Agora defina a sua senha!"
         senha <- getLine
-        id <- FuncoesAuxiliares.geraIDUsuario
-        Usuario.cadastraUsuario id senha nome
+        -- id <- FUncoesAuxiliares.geraID
+        -- aqui invoca a função em usuario, para cadastrar
         putStrLn $ "\nParabéns, " ++ nome
             ++ ", você está cadastrado no Sistema de Gerenciamento de Projetos!"
         main
+
 
 
 -- Função para deletar um usuário
@@ -98,8 +101,9 @@ deletarUsuario = do
     nome <- getLine
     putStrLn "Digite sua senha: "
     senha <- getLine
-    if FuncoesAuxiliares.verificaNomeUsuario nome && FuncoesAuxiliares.verificaSenhaUsuario senha then do
-        Usuario.removerUsuario nome
+    -- deveria passar a senha abaixo, para verificar
+    if FuncoesAuxiliares.verificaNomeUsuario nome then do
+        -- aqui invoca a função em Usuário, para remover
         putStrLn $ nome ++ ", seu perfil foi deletado com sucesso!"
     else do
         putStrLn "Não há usuário com esse nome ou senha!"
@@ -118,8 +122,7 @@ cadastrarProjeto = do
     else do
         putStrLn "\nDescreva, brevemente, seu projeto!"
         descricao <- getLine
-        id <- FuncoesAuxiliares.geraIDProjeto
-        Projeto.cadastraProjeto id titulo descricao
+        -- aqui invoca a função em projeto, para cadastrar
         putStrLn "Projeto criado!"
 
 
@@ -132,7 +135,8 @@ removerProjeto = do
     else do
         putStrLn "Digite sua senha: "
         senha <- getLine
-        if FuncoesAuxiliares.verificaSenhaUsuario senha then putStrLn "Projeto removido com sucesso."
+        -- Abaixo, deveria ser: FuncoesAuxiliares.verificaSenhaUsuario senha
+        if True then putStrLn "Projeto removido com sucesso."
         else putStrLn "Você não pode executar essa ação."
 
 
@@ -142,7 +146,8 @@ solicitarEntrada = do
     putStrLn "Solicitar Entrada em Projeto:\n"
     putStrLn "Digite o ID do projeto que deseja entrar: "
     idProjeto <- readLn :: IO Int
-    if FuncoesAuxiliares.verificaIDProjeto idProjeto then do
+    -- Deveria ter uma função, talvez em FuncoesAuxiliares, para verificar o ID
+    if True then do
         putStrLn "Solicitação enviada com sucesso!"
     else putStrLn "Projeto inexistente"
 
@@ -153,7 +158,8 @@ criarFeedback = do
     putStrLn "Dar Feedback de Atividade Realizada:\n"
     putStrLn "Digite o ID da atividade: "
     idAtividade <- readLn :: IO Int
-    if FuncoesAuxiliares.verificaIDAtividade idAtividade then do
+    -- Deveria ter uma função, talvez em FuncoesAuxiliares, para verificar o ID
+    if True then do
         putStrLn "Digite o seu feedback: "
         feedback <- getLine
         -- Chame a função para adicionar feedback

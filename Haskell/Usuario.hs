@@ -1,4 +1,4 @@
-module Usuario where
+module Haskell.Usuario where
 import Data.Char ()
 import Data.Set ()
 import qualified Data.Text.IO as TIO
@@ -53,10 +53,10 @@ escreverUsuario arquivo usuarios = appendFile arquivo conteudo
 
 
 -- função que le os dados do usuario do txt
-lerUsuarios :: FilePath -> IO [Usuario.Usuario]
+lerUsuarios :: FilePath -> IO [Usuario]
 lerUsuarios path = do
     conteudo <- readFile path
-    let usuarios = mapMaybe Usuario.fromString $ lines conteudo
+    let usuarios = mapMaybe fromString $ lines conteudo
     return usuarios
 
 
