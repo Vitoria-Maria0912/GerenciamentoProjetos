@@ -29,19 +29,28 @@ criaUsuarioDatabase nome senha = do
 -- Função para deletar um user da base de dados
 -- usa uma função de deletar um arquivo passando o caminho do arquivo
 deletaUsuarioDatabase :: String -> IO()
-deletaUsuarioDatabase username = do 
-    removeFile (diretorioDatabase++username++"/"++username++".txt") 
+deletaUsuarioDatabase nomeUsuario = do 
+    removeFile (diretorioDatabase++nomeUsuario++"/"++nomeUsuario++".txt") 
 
 
 
 -- Função que retorna o nome de um usuário
 -- o termo 'conteudo' recebe os dados lidos no txt
 pegaNomeDatabase :: String -> IO String
-pegaNomeDatabase username = do 
-    conteudo <- readFile (diretorioDatabase++username++"/"++username ++ ".txt")
+pegaNomeDatabase nomeUsuario = do 
+    conteudo <- readFile (diretorioDatabase++nomeUsuario++"/"++nomeUsuario++ ".txt")
     let linhas = lines conteudo 
     return (linhas !! 1)
 
+
+
+-- Adiciona projeto na base de dados
+addProjetoDatabase :: String -> String -> String -> String -> IO()
+addProjetoDatabase idProjeto nomeProjeto descricao gerente = do
+    let taskcontent = [idProjeto, nomeProjeto, descricao, gerente]
+    let filePath = diretorioDatabase++nomeProjeto++"/idProjeto"++idProjeto++"/"
+    withFile filePath WriteMode $ \handle -> do
+        hPutStr handle (unlines taskcontent)
 
 
 -- Adiciona tarefa na base de dados
@@ -51,6 +60,13 @@ addAtividadeDatabase idTarefa nomeTarefa descricaoTarefa statusTarefa membroResp
     let filePath = diretorioDatabase++nomeTarefa++"/idTarefa/"++idTarefa++"/"++nomeTarefa
     withFile filePath WriteMode $ \handle -> do
         hPutStr handle (unlines taskcontent)
+
+
+-- Remove projeto da base de dados
+removeProjetoDatabase :: String -> String -> IO()
+removeProjetoDatabase idProjeto nomeProjeto = do
+    let filePath = diretorioDatabase++nomeProjeto++"/idProjeto/"++idProjeto++"/"++nomeProjeto
+    removeFile (filePath ++ nomeProjeto)
 
 
 
