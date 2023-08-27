@@ -1,5 +1,5 @@
-{- main = entrada e saida, chama a funçao dos outros modulos que tem as funções.
--}
+-- main = entrada e saida, chama a funçao dos outros modulos que tem as funções.
+
 module Haskell.Main where
 import qualified Data.Char as Char
 import System.Exit (exitSuccess)
@@ -31,7 +31,6 @@ main = do
         _   -> erroMenuPrincipal
 
 
-
 -- Função para imprimir "S G P" de forma estilizada
 imprimirSGP :: IO ()
 imprimirSGP = do
@@ -59,6 +58,7 @@ menuPrincipal = do
             ++ "S - sair do sistema\n"
             ++ "\nEscolha uma opção: "
 
+
 menuProjeto :: IO()
 menuProjeto = 
     let gerente = False -- tem que fazer a análise
@@ -76,11 +76,9 @@ erroMenuPrincipal = do
     main
 
 
-
 -- sai do sistema
 sairDoSistema :: IO()
 sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
-
 
 
 -- função para receber as entradas do usuário, referente a criação do perfil
@@ -88,6 +86,7 @@ cadastrarUsuario:: IO()
 cadastrarUsuario = do
     putStrLn "Olá! Qual o seu nome?"
     nome <- getLine
+    
     if FuncoesAuxiliares.verificaNomeUsuario nome then
         putStrLn "Já tem usuário com esse nome!"
         exitSistem
@@ -101,7 +100,6 @@ cadastrarUsuario = do
         main
 
 
-
 -- função para receber as entradas do usuário, referente a exclusão de um perfil
 deletarUsario :: IO()
 deletarUsario = do
@@ -109,6 +107,7 @@ deletarUsario = do
     name <- getLine
     putStrLn "Digite sua senha: "
     senha <- getLine
+    
     if FuncoesAuxiliares.verificaNomeUsuario name
         && FuncoesAuxiliares.verificaSenhaUsuario senhathen then do
         Usuario.removerUsuario senha
@@ -124,6 +123,7 @@ cadastrarProjeto = do
     putStrLn ".........................."
     putStrLn "Qual o título do projeto?"
     nome <- getLine
+    
     if  FuncoesAuxiliares.verificaNomeProjeto nome then do
         putStrLn "Nome já utilizado em outro projeto!"
         exitSistem
@@ -135,22 +135,20 @@ cadastrarProjeto = do
         putStrLn "Projeto criado!"
 
 
-
 -- recebe as entradas referentes a remoção de um projeto
 removerProjeto :: IO()
 removerProjeto = do
     putStrLn "Digite o nome do projeto que deseja deletar:"
     nome <- getLine
-    if not (FuncoesAuxiliares.verificaNomeProjeto nome)
-        then putStrLn "Projeto inexistente!"
-    else do
+    
+    | not (FuncoesAuxiliares.verificaNomeProjeto nome) = putStrLn "Projeto inexistente!"
+    | otherwise = do
         putStrLn "Digite sua senha: "
         senha <- getLine
         if FuncoesAuxiliares.verificaSenhaUsuario senha
             then putStrLn "Projeto removido com sucesso."
         else
             putStrLn "Você não pode executar essa ação."
-
 
 
 -- captura os dados de um usuário que quer entrar em um projeto
