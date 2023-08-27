@@ -4,7 +4,7 @@ import Haskell.Database.Database -- import Database para realizar as funções
 
 
 -- Definindo o tipo de dado que é USER, quais parâmetros recebe
-data Usuario = User { nome :: String,
+data Usuario = Usuario { nome :: String,
  password :: String
 }
 

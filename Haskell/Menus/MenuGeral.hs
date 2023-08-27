@@ -154,4 +154,24 @@ removerProjeto = do
   nomeProjeto <- getLine
   putStrLn "Digite o ID do projeto:"
   idProjeto <- getLine
-  removeProjeto nomeProjeto idProjeto      
+  removeProjeto nomeProjeto idProjeto
+
+
+
+-- Função para visualizar projetos pendentes
+
+
+
+-- Função para solicitar entrada em um projeto
+
+
+
+-- Função para criar feedback
+
+
+
+-- Função para entrar no chat
+
+
+
+-- Função para visualizar banco de atividades

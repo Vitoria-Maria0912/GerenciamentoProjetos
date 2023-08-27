@@ -53,6 +53,15 @@ addProjetoDatabase idProjeto nomeProjeto descricao gerente = do
         hPutStr handle (unlines taskcontent)
 
 
+
+-- Remove projeto da base de dados
+removeProjetoDatabase :: String -> String -> IO()
+removeProjetoDatabase idProjeto nomeProjeto = do
+    let filePath = diretorioDatabase++nomeProjeto++"/idProjeto/"++idProjeto++"/"++nomeProjeto
+    removeFile (filePath ++ nomeProjeto)
+
+
+
 -- Adiciona tarefa na base de dados
 addAtividadeDatabase :: String -> String -> String -> String -> String -> IO()
 addAtividadeDatabase idTarefa nomeTarefa descricaoTarefa statusTarefa membroResponsavel = do
@@ -61,12 +70,6 @@ addAtividadeDatabase idTarefa nomeTarefa descricaoTarefa statusTarefa membroResp
     withFile filePath WriteMode $ \handle -> do
         hPutStr handle (unlines taskcontent)
 
-
--- Remove projeto da base de dados
-removeProjetoDatabase :: String -> String -> IO()
-removeProjetoDatabase idProjeto nomeProjeto = do
-    let filePath = diretorioDatabase++nomeProjeto++"/idProjeto/"++idProjeto++"/"++nomeProjeto
-    removeFile (filePath ++ nomeProjeto)
 
 
 
