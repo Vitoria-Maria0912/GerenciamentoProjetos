@@ -8,13 +8,13 @@ import qualified Haskell.Usuario
 import qualified Haskell.Atividades
 import Haskell.Projeto (Project(senha))
 import qualified Haskell.FuncoesAuxiliares as FuncoesAuxiliares
+import Data.Char (toLower)
 
 
 -- main
 main :: IO()
 main = do
-    imprimirSGP
-    menu
+    menuPrincipal
     option <- getLine
     let lowerOption = map toLower option
     case lowerOption of
@@ -35,17 +35,17 @@ main = do
 -- Função para imprimir "S G P" de forma estilizada
 imprimirSGP :: IO ()
 imprimirSGP = do
-    putStrLn "   SSS    GGG    PPP  "
-    putStrLn "  SS      G      P  P "
-    putStrLn "   SS     G GG   PPP  "
-    putStrLn "     SS   G  G   P    "
-    putStrLn "   SSS    GGGG   P    \n"
-
+    putStrLn "......   ......    ......" ++ "/n"
+          ++ ".        .         .    ." ++ "/n"
+          ++ "......   .  ...    ......" ++ "/n"
+          ++ "     .   .    .    .     " ++ "/n"
+          ++ "......   ......    .     " ++ "/n"
 
 
 -- função que imprime o menu
-menu :: IO()
-menu = do
+menuPrincipal :: IO()
+menuPrincipal = do
+    imprimirSGP
     putStrLn "Menu Principal:\n"
     putStrLn $ "C - criar perfil\n"
             ++ "D - deletar perfil\n"
@@ -58,8 +58,14 @@ menu = do
             ++ "B - visualizar banco de atividades"
             ++ "S - sair do sistema\n"
             ++ "\nEscolha uma opção: "
- 
 
+menuProjeto :: IO()
+menuProjeto = 
+    let gerente = False -- tem que fazer a análise
+
+    | gerente = menuRestritoAtividades
+    | otherwise = menuPublicoAtividades
+    
 
 -- caso o usuário digite o comando errado
 erroMenuPrincipal :: IO()
