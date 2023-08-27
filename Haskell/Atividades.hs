@@ -3,12 +3,10 @@ import Haskell.Usuario ( Usuario )
 import Haskell.Projeto ( Projeto )
 
 
-data StatusAtividade = Concluida | Pendente | NaoAtribuida deriving (Show, Eq)
-
 data Atividade = Atividade {
     tituloAtividade :: String,
     descricaoAtividade :: String,
-    statusAtividade :: StatusAtividade,
+    statusAtividade :: String,
     membroResponsavel :: Maybe Usuario
 } deriving (Show)
 
@@ -23,11 +21,14 @@ atribuiMembro :: Atividade -> Usuario -> Atividade
 atribuiMembro atividade usuario = atividade { membroResponsavel = Just usuario }
 
 
-
+-- por default uma atividade é não atribuída
 -- função para modificar o status da atividade
-mudaStatus :: StatusAtividade -> Atividade -> Atividade
+mudaStatus :: String -> Atividade
 mudaStatus novoStatus atividade = atividade { statusAtividade = novoStatus }
 
+
+mostraStatus :: Atividade -> String
+mostraStatus atividade = statusAtividade
 
 
 -- função para remover a atividade

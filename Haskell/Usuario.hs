@@ -14,11 +14,13 @@ data Usuario = Usuario {
     idUsuario:: Int, nome:: String, senha:: String} deriving (Show, Read, Eq)
 
 
-
 -- função que cadastra um usuário
 cadastrarUsario :: Int -> String -> String -> Usuario
 cadastraUsuario idUsuario nome senha = 
     (Usuario {idUsuario = idUsuario, nome = nome, senha = senha})
+
+
+-- criar uma função para checar se é gerente
 
 
 
@@ -30,12 +32,10 @@ adicionarUsuario usuario usuarios =
         Nothing -> usuario : usuarios
 
 
-
 -- tentativa de função que remove um usuário (incompleta!!)
 removerUsuario :: Int -> [Usuario] -> [Usuario]
 removerUsuario idUsuario usuario = usuario { usuario =
     filter (\usuario -> idUsuario usuario/= idUsuario) }  
-
 
 
 -- função que escreve os dados do usuário no txt
@@ -46,14 +46,12 @@ escreverUsuario arquivo usuarios = appendFile arquivo conteudo
         formatarUsuario u = "ID: " ++ show (idUsuario u) ++ ", NOME: " ++ nome u ++ ", SENHA: " ++ senha u
 
 
-
 -- função que le os dados do usuario do txt
 lerUsarios :: FilePath -> IO [Usuario.Usuario]
 lerUsuarios path = do
     conteudo <- readFile path
     let usuarios = mapMaybe Usuario.fromString $ lines conteudo
     return usuarios
-
 
 
 -- cria representação de um usuario em string?
