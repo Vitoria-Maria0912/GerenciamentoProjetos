@@ -168,19 +168,44 @@ removerProjeto = do
 
 
 -- Função para visualizar projetos pendentes
+visualizarProjetosPendentes :: IO ()
+visualizarProjetosPendentes = do
+  -- Implementation logic for viewing pending projects
+  putStrLn "Implementação em andamento."
+  menuPrincipal
 
 
 
 -- Função para solicitar entrada em um projeto
+solicitarEntrada :: IO ()
+solicitarEntrada = do
+  -- Implementation logic for requesting entry into a project
+  putStrLn "Implementação em andamento."
+  menuPrincipal
 
 
 
 -- Função para criar feedback
+criarFeedback :: IO ()
+criarFeedback = do
+  -- Implementation logic for creating feedback
+  putStrLn "Implementação em andamento."
+  menuPrincipal
 
 
 
 -- Função para entrar no chat
+entrarNoChat :: IO ()
+entrarNoChat = do
+  -- Implementation logic for entering the chat
+  putStrLn "Implementação em andamento."
+  menuPrincipal
 
 
 
 -- Função para visualizar banco de atividades
+bancoDeAtividades :: IO ()
+bancoDeAtividades = do
+  -- Implementation logic for viewing activity bank
+  putStrLn "Implementação em andamento."
+  menuPrincipal
