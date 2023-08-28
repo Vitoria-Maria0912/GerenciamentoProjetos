@@ -19,11 +19,11 @@ menuGeral = do
         "d" -> deletarUsuario
         "p" -> cadastrarProjeto
         "r" -> removerProjeto
-        --"l" -> visualizarProjetosPendentes
-        --"e" -> solicitarEntrada
-        --"f" -> criarFeedback
-        --"m" -> chat
-        --"b" -> bancoDeAtividades
+        "l" -> visualizarProjetosPendentes
+        "e" -> solicitarEntrada
+        "f" -> criarFeedback
+        "m" -> chat
+        "b" -> bancoDeAtividades
         "s" -> sairDoSistema
         _   -> erroMenuPrincipal
 
@@ -195,8 +195,8 @@ criarFeedback = do
 
 
 -- Função para entrar no chat
-entrarNoChat :: IO ()
-entrarNoChat = do
+chat :: IO ()
+chat = do
   -- Implementation logic for entering the chat
   putStrLn "Implementação em andamento."
   menuPrincipal
