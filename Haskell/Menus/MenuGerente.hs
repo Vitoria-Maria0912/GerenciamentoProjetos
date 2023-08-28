@@ -1,7 +1,7 @@
 module Haskell.Menus.MenuGerente where
 import Haskell.Util.ClearScreen
 import Data.Char (toLower)
-import Haskell.Menus.MenuGeral (menuGeral)
+
 
 -- menuGerente
 imprimeMenu :: IO()
@@ -22,7 +22,6 @@ imprimeMenu = do
     putStrLn "|4. Remover membro do projeto                      |"
     putStrLn "|5. Atribuir membro a uma atividade                |"
     putStrLn "|6. Enviar mensagem a um membro                    |"
-    putStrLn "|7. Voltar ao menu principal                       |"
     putStrLn "|S. Sair do Sistema                                |"
     putStrLn ".--------------------------------------------------."
 
@@ -39,7 +38,6 @@ menuGerente = do
         "4" -> removeMembroProjeto
         "5" -> atribuirMembro
         "6" -> mensagemMembro
-        "7" -> menuPrincipal
         "s" -> sairDoSistema
         _   -> erroMenuGerente
 
@@ -119,10 +117,4 @@ mensagemMembro = do
     mensagem <- getLine
     -- invoca função para enviar mensagem a membro, em Mensagens.hs
     putStrLn "Mensagem enviada com sucesso!"
-    
 
--- Voltar ao menu principal
-menuPrincipal :: IO()
-menuPrincipal = do
-     putStrLn "Voltando ao menu principal..."
-     menuGeral

@@ -5,6 +5,7 @@ import Data.Char (toLower)
 import Haskell.Util.ClearScreen
 import Haskell.Controllers.Usuario
 import Haskell.Controllers.Projeto
+import Haskell.Menus.MenuGerente (menuGerente)
 
 -- menuGeral
 menuGeral :: IO()
@@ -13,6 +14,7 @@ menuGeral = do
     option <- getLine
     let lowerOption = map toLower option
     case lowerOption of
+        "g" -> menuGerente
         "c" -> cadastro
         "d" -> deletarUsuario
         "p" -> cadastrarProjeto
@@ -38,6 +40,7 @@ menuPrincipal = do
   putStrLn "|                                                  |"
   putStrLn "|Selecione uma opção:                              |"
   putStrLn "|                                                  |"
+  putStrLn "|G. Menu Gerenciamento de Projetos e atividades    |"
   putStrLn "|C. Cadastrar novo usuário                         |"
   putStrLn "|D. Deletar Perfil                                 |"
   putStrLn "|P. Criar Projeto                                  |"
