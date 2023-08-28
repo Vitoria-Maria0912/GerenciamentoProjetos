@@ -6,7 +6,7 @@ import Haskell.Util.ClearScreen
 import Haskell.Controllers.Usuario
 import Haskell.Controllers.Projeto
 
--- main
+-- menuGeral
 menuGeral :: IO()
 menuGeral = do
     menuPrincipal
