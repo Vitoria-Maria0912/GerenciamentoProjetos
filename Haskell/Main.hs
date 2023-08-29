@@ -135,21 +135,6 @@ cadastrarProjeto = do
         putStrLn "Projeto criado!"
 
 
--- recebe as entradas referentes a remoção de um projeto
-removerProjeto :: IO()
-removerProjeto = do
-    putStrLn "Digite o nome do projeto que deseja deletar:"
-    nome <- getLine
-    
-    | not (FuncoesAuxiliares.verificaNomeProjeto nome) = putStrLn "Projeto inexistente!"
-    | otherwise = do
-        putStrLn "Digite sua senha: "
-        senha <- getLine
-        if FuncoesAuxiliares.verificaSenhaUsuario senha
-            then putStrLn "Projeto removido com sucesso."
-        else
-            putStrLn "Você não pode executar essa ação."
-
 
 -- captura os dados de um usuário que quer entrar em um projeto
 solicitarEntrada :: IO ()
