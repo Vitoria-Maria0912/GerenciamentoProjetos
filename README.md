@@ -13,6 +13,5 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
 
     Íris Almeida,
     Jamilly Venâncio,
-    João Pedro Angelo,
     Vitória Maria, 
     Yalle Carvalho
