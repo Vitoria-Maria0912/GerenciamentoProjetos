@@ -144,28 +144,6 @@ cadastrarProjeto = do
 
 
 
--- Função para remover um projeto
-removerProjeto :: IO()
-removerProjeto = do
-  clearScreen
-  putStrLn "Menu>Deletar Projeto"
-  putStrLn "|---------------------------------------------------|"
-  putStrLn "| ######                                            |"
-  putStrLn "| #     # ###### #      ###### #####   ##   #####   |"
-  putStrLn "| #     # #      #      #        #    #  #  #    #  |"
-  putStrLn "| #     # ###### #      #####    #   #    # #    #  |"
-  putStrLn "| #     # #      #      #        #   ###### #####   |" 
-  putStrLn "| #     # #      #      #        #   #    # #    #  |"
-  putStrLn "| ######  ###### ###### ######   #   #    # #    #  |"
-  putStrLn "|---------------------------------------------------|"
-  putStrLn "\n"
-  putStrLn "Digite o nome do projeto:"
-  nomeProjeto <- getLine
-  putStrLn "Digite o ID do projeto:"
-  idProjeto <- getLine
-  removeProjeto nomeProjeto idProjeto
-
-
 
 -- Função para visualizar projetos pendentes
 visualizarProjetosPendentes :: IO ()

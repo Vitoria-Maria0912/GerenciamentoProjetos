@@ -28,5 +28,5 @@ criaProjeto = addProjetoDatabase
 
 
 -- remoção de projeto
-removeProjeto :: String -> String -> IO()
+removeProjeto :: String -> IO()
 removeProjeto = removeProjetoDatabase

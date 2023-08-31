@@ -76,6 +76,15 @@ removeAtividade = do
     putStrLn "Atividade removida com sucesso!"
 
 
+-- Função para remover um projeto
+removerProjeto :: IO()
+removerProjeto = do
+  putStrLn "Digite o ID do projeto:"
+  idProjeto <- getLine
+  removeProjeto idProjeto
+  putStrLn "Projeto removido com sucesso!"
+
+
 -- Visualizar membros do projeto
 membrosProjeto :: IO()
 membrosProjeto = do
