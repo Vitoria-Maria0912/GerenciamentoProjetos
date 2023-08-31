@@ -56,8 +56,8 @@ addProjetoDatabase idProjeto nomeProjeto descricao gerente = do
 -- Remove projeto da base de dados pelo ID
 removeProjetoDatabase :: String -> IO ()
 removeProjetoDatabase idProjeto = do
-let filePath = diretorioDatabase ++ idProjeto
-removeDirectoryRecursive filePath --remove o diretório
+    let filePath = diretorioDatabase ++ idProjeto
+    removeDirectoryRecursive filePath --remove o diretório
 
 -- Adiciona tarefa na base de dados
 addAtividadeDatabase :: String -> String -> String -> String -> String -> IO()
