@@ -88,7 +88,7 @@ cadastro = do
   if (Usuario.verificaIdExistente (read idUsuario) usuarios == False) then do
   criaUsuario idUsuario nome senha
 -- ver se o id que vai ser passado aqui vai ser o mesmo que foi gerado antes
-  putStrLn "Usuário cadastrado com sucesso. Seu id é:" (show idUsuario) -- nao sei se pode ficar assim
+  putStrLn "Usuário cadastrado com sucesso. Seu id é:" show (idUsuario) -- nao sei se pode ficar assim, ou se usuario o getUsuario aqui
   menuPrincipal
   else do
     putStrLn "O id já existe na base de dados."
