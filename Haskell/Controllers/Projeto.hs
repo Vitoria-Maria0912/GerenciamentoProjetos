@@ -18,7 +18,7 @@ data Projeto = Projeto {
     idProjeto :: Int,
     nomeProjeto :: String,
     descricaoProjeto :: String,
-    gerenteNome :: String,
+    idGerente :: Int,
     atividadesProjeto :: [Atividade]
 } 
 
@@ -33,6 +33,6 @@ removeProjeto :: String -> String -> IO()
 removeProjeto = removeProjetoDatabase
 
 -- checa se o usuario é gerente de algum projeto da lista de projetos. 
-ehGerente :: String -> [Projeto] -> Bool
-ehGerente nome gerentes = any (\projeto -> nome == gerenteNome projeto) gerentes
+ehGerente :: Int -> [Projeto] -> Bool
+ehGerente id gerentes = any (\projeto -> id == idGerente projeto) gerentes
 
