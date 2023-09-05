@@ -1,6 +1,7 @@
 module Haskell.Menus.MenuGeral where
 import qualified Data.Char as Char
 import System.Exit (exitSuccess)
+import System.Random
 import Data.Char (toLower)
 import Haskell.Util.ClearScreen
 import Haskell.Controllers.Usuario
@@ -74,20 +75,17 @@ cadastro :: IO ()
 cadastro = do
   clearScreen
   putStrLn "Menu>Cadastro"
-  putStrLn " .--------------------------------------------------------------------------------------------."
-  putStrLn " | oooooooo8     o      ooooooooo      o       oooooooo8 ooooooooooo oooooooooo    ooooooo    |"
-  putStrLn " |o888     88    888      888    88o   888     888        88  888  88  888    888 o888   888o |"
-  putStrLn " |888           8  88     888    888  8  88     888oooooo     888      888oooo88  888     888 |"
-  putStrLn " |888o     oo  8oooo88    888    888 8oooo88           888    888      888  88o   888o   o888 |"
-  putStrLn " | 888oooo88 o88o  o888o o888ooo88 o88o  o888o o88oooo888    o888o    o888o  88o8   88ooo88   |"
-  putStrLn " |                                                                                            |"
-  putStrLn " '--------------------------------------------------------------------------------------------'"
   putStrLn "\n"
   putStrLn "Digite seu nome: "
   nome <- getLine
   putStrLn "Digite sua senha: "
   senha <- getLine
-  criaUsuario nome senha
+
+-- cria um numero aleatorio para o id do usuario
+  numAleatorioUsuario <- randomRIO (1000, 9999 :: Int)
+
+  criaUsuario  numAleatorioUsuario nome senha
+  
   menuPrincipal
 
 
