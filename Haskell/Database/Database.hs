@@ -14,15 +14,16 @@ diretorioDatabase = "./Modules/Database/LocalUsers/"
 
 
 -- cria usuario na base de dados
-criaUsuarioDatabase :: String -> String -> IO()
-criaUsuarioDatabase nome senha = do
-    let usuario = [nome, senha] -- usuario é uma lista que guarda os parâmetros passados
-    createDirectory (diretorioDatabase ++ nome)
-    createDirectory (diretorioDatabase ++ "/" ++ nome ++ "/" ++ "listas")
-    createDirectory (diretorioDatabase ++ "/" ++ nome ++ "/" ++ "sharedWithMe")
-    withFile (diretorioDatabase ++ nome ++ "/" ++ nome ++ ".txt") WriteMode $ \handle -> do
+criaUsuarioDatabase :: String -> String -> String -> IO()
+criaUsuarioDatabase idUsuario nome senha = do
+    let usuario = [idUsuario, nome, senha] -- usuario é uma lista que guarda os parâmetros passados
+    createDirectory (diretorioDatabase ++ idUsuario)
+    createDirectory (diretorioDatabase ++ "/" ++ idUsuario ++ "/" ++ "listas")
+    createDirectory (diretorioDatabase ++ "/" ++ idUsuario ++ "/" ++ "sharedWithMe")
+    withFile (diretorioDatabase ++ nome ++ "/" ++ idUsuario ++ ".txt") WriteMode $ \handle -> do
         hPutStrLn handle (unlines usuario)
-    -- escreve um arquivo txt com os dados da lista anterior, onde o nome do arquivo é o username
+    -- escreve um arquivo txt com os dados da lista anterior, onde o nome do arquivo é o idUsuario
+    
 
 
 
