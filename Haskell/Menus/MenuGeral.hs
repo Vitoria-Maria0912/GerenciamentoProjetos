@@ -81,39 +81,39 @@ cadastro = do
   putStrLn "Digite sua senha: "
   senha <- getLine
 
+  numAleatorio <- randomRIO (1000, 9999 :: Int)
 -- cria um numero aleatorio para o id do usuario
-  numAleatorioUsuario <- randomRIO (1000, 9999 :: Int)
-
-  criaUsuario  numAleatorioUsuario nome senha
-  
+  idUsuario <- numAleatorioUsuario
+-- checa se já existe um usuario com esse Id (visto que numAleatorio é na verdade pseudorrandômicos
+  if (Usuario.verificaIdExistente (read idUsuario) usuarios == False) then do
+  criaUsuario idUsuario nome senha
+-- ver se o id que vai ser passado aqui vai ser o mesmo que foi gerado antes
+  putStrLn "Usuário cadastrado com sucesso. Seu id é:" (show idUsuario) -- nao sei se pode ficar assim
   menuPrincipal
-
-
+  else do
+    putStrLn "O id já existe na base de dados."
+    putStrLn ""
+    cadastro
+    
 
 -- Função para deletar um usuário
 deletarUsuario :: IO()
 deletarUsuario = do
   clearScreen
   putStrLn "Menu>Deletar Usuário"
-  putStrLn "|---------------------------------------------------|"
-  putStrLn "| ######                                            |"
-  putStrLn "| #     # ###### #      ###### #####   ##   #####   |"
-  putStrLn "| #     # #      #      #        #    #  #  #    #  |"
-  putStrLn "| #     # ###### #      #####    #   #    # #    #  |"
-  putStrLn "| #     # #      #      #        #   ###### #####   |" 
-  putStrLn "| #     # #      #      #        #   #    # #    #  |"
-  putStrLn "| ######  ###### ###### ######   #   #    # #    #  |"
-  putStrLn "|---------------------------------------------------|"
   putStrLn "\n"                          
-  putStrLn "Digite nome do usuário:"
-  nome <- getLine
-  putStrLn "Digite sua senha:"
-  senha <- getLine
-  -- Tem que ter uma função para verificar se a senha bate com o nome do usuário
-  removeUsuario nome
+  putStrLn "Digite o id do usuário"
+  idUsuario <- getLine
+  if (Usuario.verificaIdExistente (read idUsuario) usuarios == True) then do
+  removeUsuario idUsuario
+  putStrLn "Usuário deletado com sucesso."
   menuPrincipal
-
-
+  else do
+    putStrLn "O id não existe na base de dados."
+    putStrLn ""
+    deletarUsuario
+  
+  
 
 -- Função para criar um projeto
 cadastrarProjeto :: IO()
