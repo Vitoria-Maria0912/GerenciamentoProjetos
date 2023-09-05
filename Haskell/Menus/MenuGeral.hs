@@ -74,16 +74,16 @@ sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 cadastro :: IO ()
 cadastro = do
   clearScreen
-  putStrLn "Menu>Cadastro"
-  putStrLn "\n"
-  putStrLn "Digite seu nome: "
+  putStrLn $ "Menu>Cadastro"
+        ++ "\n"
+        ++ "Digite seu nome: "
   nome <- getLine
   putStrLn "Digite sua senha: "
   senha <- getLine
 
   numAleatorio <- randomRIO (1000, 9999 :: Int)
 -- cria um numero aleatorio para o id do usuario
-  idUsuario <- numAleatorioUsuario
+  idUsuario <- numAleatorio
 -- checa se já existe um usuario com esse Id (visto que numAleatorio é na verdade pseudorrandômicos
   if (Usuario.verificaIdExistente (read idUsuario) usuarios == False) then do
   criaUsuario idUsuario nome senha
@@ -91,8 +91,7 @@ cadastro = do
   putStrLn "Usuário cadastrado com sucesso. Seu id é:" show (idUsuario) -- nao sei se pode ficar assim, ou se usuario o getUsuario aqui
   menuPrincipal
   else do
-    putStrLn "O id já existe na base de dados."
-    putStrLn ""
+    putStrLn "O usuário já existe na base de dados." ++ "\n"
     cadastro
     
 
@@ -109,8 +108,7 @@ deletarUsuario = do
   putStrLn "Usuário deletado com sucesso."
   menuPrincipal
   else do
-    putStrLn "O id não existe na base de dados."
-    putStrLn ""
+    putStrLn "O usuário não existe na base de dados." ++ "\n"
     deletarUsuario
   
   
