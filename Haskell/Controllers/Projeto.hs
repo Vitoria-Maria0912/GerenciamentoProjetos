@@ -13,6 +13,7 @@ import Haskell.Controllers.Atividades as Atividade (Atividade)
 import Haskell.Database.Database
 
 
+
 data Projeto = Projeto {
     idProjeto :: Int,
     nomeProjeto :: String,
@@ -30,3 +31,8 @@ criaProjeto = addProjetoDatabase
 -- remoção de projeto
 removeProjeto :: String -> String -> IO()
 removeProjeto = removeProjetoDatabase
+
+-- checa se o usuario é gerente de algum projeto da lista de projetos. 
+ehGerente :: String -> [Projeto] -> Bool
+ehGerente nome gerentes = any (\projeto -> nome == gerenteNome projeto) gerentes
+
