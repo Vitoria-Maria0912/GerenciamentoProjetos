@@ -7,23 +7,15 @@ import Data.Char (toLower)
 imprimeMenu :: IO()
 imprimeMenu = do
     clearScreen
-    putStrLn ".-----------------------------------------------------------------------------------."
-    putStrLn "|MM    MM                           PPPPPP                  jjj        tt           |"
-    putStrLn "|MMM  MMM   eee  nn nnn  uu   uu    PP   PP rr rr   oooo          eee  tt     oooo  |"
-    putStrLn "|MM MM MM ee   e nnn  nn uu   uu    PPPPPP  rrr  r oo  oo   jjj ee   e tttt  oo  oo |"
-    putStrLn "|MM    MM eeeee  nn   nn uu   uu    PP      rr     oo  oo   jjj eeeee  tt    oo  oo |"
-    putStrLn "|MM    MM  eeeee nn   nn  uuuu u    PP      rr      oooo    jjj  eeeee  tttt  oooo  |"
-    putStrLn "|                                                         jjjj                      |"
-    putStrLn "|Selecione uma opção:                                                               |"
-    putStrLn "|                                                                                   |"
-    putStrLn "|1. Criar atividade                                                                 |"
-    putStrLn "|2. Deletar atividade                                                               |"
-    putStrLn "|3. Visualizar membros do projeto                                                   |"
-    putStrLn "|4. Remover membro do projeto                                                       |"
-    putStrLn "|5. Atribuir membro a uma atividade                                                 |"
-    putStrLn "|6. Enviar mensagem a um membro                                                     |"
-    putStrLn "|S. Sair do Sistema                                                                 |"
-    putStrLn ".-----------------------------------------------------------------------------------."
+    putStrLn $
+    "Selecione uma opção:" 
+     ++ "1. Criar atividade\n" 
+     ++ "2. Deletar atividade\n"
+     ++ "3. Visualizar membros do projeto\n"
+     ++ "4. Remover membro do projeto\n"
+     ++ "5. Atribuir membro a uma atividade\n"
+     ++ "6. Enviar mensagem a um membro\n"                                                    
+     ++ "S. Sair do Sistema"                                                               
 
 
 menuGerente :: IO()
@@ -45,9 +37,7 @@ menuGerente = do
 -- caso o usuário digite o comando errado
 erroMenuGerente :: IO()
 erroMenuGerente = do
-    putStrLn   "----------------------------------"
     putStrLn   "Entrada Inválida. Tente novamente!"
-    putStrLn   "----------------------------------\n"
     menuGerente
 
 
