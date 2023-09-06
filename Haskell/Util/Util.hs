@@ -11,6 +11,7 @@ verificaIdUsuario :: Int -> [Usuario] -> Bool
 verificaIdUsuario id usuarios = elem id (map Usuario.idUsuario usuarios)
 
 -- retorna a representacao do usuario em string (ver se precisa colocar na Database)
+-- !!!!! criar um getUsuario que formata todos os usuarios da database
 getUsuario:: Int -> [Usuario] -> Maybe String
 getUsuario id usuarios =
   case filter (\u -> idUsuario u == id) usuarios of [usuarioEncontrado] -> Just (formataUsuario usuarioEncontrado) 
@@ -21,3 +22,7 @@ formataUsuario:: Usuario -> String
 formataUsuario usuario = 
    "ID: " show (idUsuario usuario) ++ "\n" ++
    "Nome: " nome usuario ++ "\n"
+
+-- checa se o usuario é gerente de algum projeto da lista de projetos. 
+ehGerente :: Int -> [Projeto] -> Bool
+ehGerente id gerentes = any (\projeto -> id == idGerente projeto) gerentes
