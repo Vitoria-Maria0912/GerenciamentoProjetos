@@ -1,5 +1,6 @@
 module Menus.MenuGerente where
 import Controllers.Atividades as Atividades
+import Database.Database
 import Util.ClearScreen
 import Data.Char (toLower)
 
@@ -22,6 +23,7 @@ menuRestritoAtividades = do
             ++ "|                                                          |" ++ "\n"
             ++ "|                Selecione uma opção:                      |" ++ "\n"
             ++ "|                                                          |" ++ "\n"
+            -- ++ "|              E - Remover um projeto                      |" ++ "\n"
             ++ "|              C - Criar uma atividade                     |" ++ "\n"
             ++ "|              G - Gerenciar membros do projeto            |" ++ "\n"
             ++ "|              R - Remover uma atividade                   |" ++ "\n"
@@ -40,6 +42,7 @@ menuRestritoAtividades = do
     let lowerOption = map toLower option
     case lowerOption of 
 
+        "e" -> removerProjeto
         "c" -> criarAtividade
         "g" -> gerenciarMembros
         "r" -> removeAtividade
@@ -63,19 +66,28 @@ sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 -- cria atividade
 criaAtividade :: IO()
 criaAtividade = do
+    putStrLn "Digite o ID do projeto que deseja adicionar a atividade:"
+    idProjeto <- getLine
+
     putStrLn "Digite um título para sua atividade:"
-    title <- getLine
+    titulo <- getLine
+
     putStrLn "Descreva, brevemente, o que se deve realizar para concluir esta atividade."
     descricao <- getLine
-    -- invoca função de criação, em Atividades.hs
+
+    idAtividade <- randomRIO (1000, 9999 :: Int)
+
+    -- tem que checar se já existe
+    criaAtividade titulo descricao "Não atribuída" (show(idAtividade)) idProjeto "Não atribuído"
+
     putStrLn "Tarefa criada com sucesso!"
 
 
 -- remove atividade
 removeAtividade :: IO()
 removeAtividade = do
-    putStrLn "Digite o nome da atividade que deseja remover:"
-    title <- getLine
+    putStrLn "Digite o ID da atividade que deseja remover:"
+    idAtividade <- getLine
     -- invoca a função de remoção, em Atividades.hs
     putStrLn "Atividade removida com sucesso!"
 
@@ -117,4 +129,4 @@ criarFeedback :: IO ()
 criarFeedback = do
   -- Implementation logic for creating feedback
   putStrLn "Implementação em andamento."
-  menuPrincipal
+  menuRestritoAtividades

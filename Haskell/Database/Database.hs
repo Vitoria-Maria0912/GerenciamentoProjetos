@@ -49,32 +49,32 @@ addProjetoDatabase idProjeto nomeProjeto descricao gerente = do
 
 
 -- Remove projeto da base de dados
-removeProjetoDatabase :: String -> String -> IO()
-removeProjetoDatabase idProjeto nomeProjeto = do
-    let filePath = diretorioDatabase++nomeProjeto++"/idProjeto/"++idProjeto++"/"++nomeProjeto
-    removeFile (filePath ++ nomeProjeto)
+removeProjetoDatabase :: String -> IO ()
+removeProjetoDatabase idProjeto = do
+    let filePath = diretorioDatabase ++ idProjeto
+    removeDirectoryRecursive filePath 
 
 
 -- Adiciona tarefa na base de dados
 addAtividadeDatabase :: String -> String -> String -> String -> String -> IO()
-addAtividadeDatabase idTarefa nomeTarefa descricaoTarefa statusTarefa membroResponsavel = do
-    let taskcontent = [idTarefa, nomeTarefa, descricaoTarefa, statusTarefa, membroResponsavel]
-    let filePath = diretorioDatabase++nomeTarefa++"/idTarefa/"++idTarefa++"/"++nomeTarefa
+addAtividadeDatabase titulo descricao status idAtividade idProjeto = do
+    let conteudo = [titulo, descricao, status, idAtividade, idProjeto]
+    let filePath = diretorioDatabase ++ titulo ++ "/idTarefa/" ++ idAtividade ++ "/" ++ titulo
     withFile filePath WriteMode $ \handle -> do
-        hPutStr handle (unlines taskcontent)
+        hPutStr handle (unlines conteudo)
 
 
 -- exibe Tarefas
 exibeAtividadeDatabase :: String -> String -> String -> IO [String]
-exibeAtividadeDatabase nomeTarefa descricaoTarefa idTarefa = do
-    let filePath = diretorioDatabase++nomeTarefa++"/idTarefa/"++idTarefa++"/"++nomeTarefa
+exibeAtividadeDatabase titulo descricaoTarefa idTarefa = do
+    let filePath = diretorioDatabase ++ titulo ++ "/idTarefa/" ++ idTarefa ++ "/" ++ titulo
     conteudo <- readFile filePath
     let linhas = lines conteudo
     return linhas
 
 
 -- remove tarefa
-deleteAtividadeDatabase :: String -> String -> IO()
-deleteAtividadeDatabase nomeTarefa idTarefa = do
-    let filePath = diretorioDatabase++nomeTarefa++"/idTarefa/"++idTarefa++"/"++nomeTarefa
-    removeFile (filePath ++ nomeTarefa)
+removeAtividadeDatabase :: String -> IO()
+removeAtividadeDatabase idAtividade = do
+    let filePath = diretorioDatabase ++ idAtividade
+    removeFile (filePath ++ idAtividade)

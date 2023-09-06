@@ -9,7 +9,7 @@ import System.IO ()
 import Data.List (find)
 import Data.Maybe (mapMaybe)
 import Text.Read (readMaybe)
-import Controllers.Atividades as Atividade (Atividade)
+import Controllers.Atividades as Atividade
 import Database.Database
 
 
@@ -35,5 +35,5 @@ adicionaProjeto projeto projetos =
 
 
 -- remoção de projeto
-removeProjeto :: String -> String -> IO()
+removeProjeto :: String -> IO()
 removeProjeto = removeProjetoDatabase

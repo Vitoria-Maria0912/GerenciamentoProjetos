@@ -6,7 +6,15 @@ import Data.Char (toLower)
 import Util.ClearScreen
 import Controllers.Usuario
 import Controllers.Projeto
--- import Menus.MenuGerente
+
+
+-- caso o usuário digite o comando errado
+erroMenuPrincipal :: IO()
+erroMenuPrincipal = do
+    putStrLn $ "----------------------------------"
+          ++   "Entrada Inválida. Tente novamente!"
+          ++   "----------------------------------\n"
+    menuPrincipal
 
 
 menuPrincipal :: IO ()
@@ -46,16 +54,6 @@ menuPrincipal = do
       "s" -> sairDoSistema
       _   -> erroMenuPrincipal
 
-
--- caso o usuário digite o comando errado
-erroMenuPrincipal :: IO()
-erroMenuPrincipal = do
-    putStrLn   "----------------------------------"
-    putStrLn   "Entrada Inválida. Tente novamente!"
-    putStrLn   "----------------------------------\n"
-    menuPrincipal
-
-
 -- sai do sistema
 sairDoSistema :: IO()
 sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
@@ -77,9 +75,9 @@ cadastrarUsuario = do
     putStrLn "Digite sua senha: "
     senha <- getLine
 
-    let idUsuario = "randomRIO (1000, 9999 :: Int)"
+    idUsuario <- randomRIO (1000, 9999 :: Int)
 
-    criaUsuario idUsuario nome senha
+    criaUsuario (show(idUsuario)) nome senha
     menuPrincipal
 
 
@@ -106,41 +104,42 @@ cadastrarProjeto = do
           ++ "Digite seu nome:"
   nomeUsuario <- getLine
 
-  putStrLn "Digite o nome do projeto:"
+  putStrLn "Digite um título para o projeto:"
   nomeProjeto <- getLine
 
   putStrLn "Digite a descrição do seu projeto:"
   descricao <- getLine
 
-  --- o número aleatório : id <- randomRIO (1000, 9999 :: Int)
-  let id = ""
+  idProjeto <- randomRIO (1000, 9999 :: Int)
 
-  criaProjeto id nomeProjeto descricao nomeUsuario
+  criaProjeto (show (idProjeto)) nomeProjeto descricao nomeUsuario
 
 
 menuProjetos :: IO()
 menuProjetos = do 
 
-    putStrLn "Digite seu id:"
-    id <- getLine
-    putStrLn "Digite sua senha:"
-    senha <- getLine
+  putStrLn "Digite seu id:"
+  id <- getLine
+  putStrLn "Digite sua senha:"
+  senha <- getLine
+
+  -- let gerente = Util.ehGerente id "Projeto"
+
+  -- if gerente then menuRestritoAtividades
 
     -- verifica se é gerente e mostra o menu correspondente
-    putStrLn ""
+  putStrLn ""
 
 
--- Função para remover um projeto
 removerProjeto :: IO()
 removerProjeto = do
-  clearScreen
- 
-  putStrLn "Digite o nome do projeto:"
-  nomeProjeto <- getLine
-  putStrLn "Digite o ID do projeto:"
-  idProjeto <- getLine
-  removeProjeto nomeProjeto idProjeto
-  menuPrincipal
+    putStrLn "Digite o ID do projeto que deseja excluir:"
+    idProjeto <- getLine
+    putStrLn "Agora digite seu id:"
+    id <- getLine
+    -- ehGerente 
+    removeProjeto idProjeto
+    putStrLn "Projeto removido com sucesso!"
 
 
 -- Função para visualizar projetos pendentes
