@@ -4,52 +4,55 @@ import Util.ClearScreen
 import Data.Char (toLower)
 
 
--- menuGerente
-imprimeMenu :: IO()
-imprimeMenu = do
-    clearScreen
-    putStrLn ".-----------------------------------------------------------------------------------."
-    putStrLn "|MM    MM                           PPPPPP                  jjj        tt           |"
-    putStrLn "|MMM  MMM   eee  nn nnn  uu   uu    PP   PP rr rr   oooo          eee  tt     oooo  |"
-    putStrLn "|MM MM MM ee   e nnn  nn uu   uu    PPPPPP  rrr  r oo  oo   jjj ee   e tttt  oo  oo |"
-    putStrLn "|MM    MM eeeee  nn   nn uu   uu    PP      rr     oo  oo   jjj eeeee  tt    oo  oo |"
-    putStrLn "|MM    MM  eeeee nn   nn  uuuu u    PP      rr      oooo    jjj  eeeee  tttt  oooo  |"
-    putStrLn "|                                                         jjjj                      |"
-    putStrLn "|Selecione uma opção:                                                               |"
-    putStrLn "|                                                                                   |"
-    putStrLn "|1. Criar atividade                                                                 |"
-    putStrLn "|2. Deletar atividade                                                               |"
-    putStrLn "|3. Visualizar membros do projeto                                                   |"
-    putStrLn "|4. Remover membro do projeto                                                       |"
-    putStrLn "|5. Atribuir membro a uma atividade                                                 |"
-    putStrLn "|6. Enviar mensagem a um membro                                                     |"
-    putStrLn "|S. Sair do Sistema                                                                 |"
-    putStrLn ".-----------------------------------------------------------------------------------."
-
-
-menuGerente :: IO()
-menuGerente = do
-    imprimeMenu
-    option <- getLine
-    let lowerOption = map toLower option
-    case lowerOption of 
-        "1" -> criaAtividade
-        "2" -> removeAtividade
-        "3" -> membrosProjeto
-        "4" -> removeMembroProjeto
-        "5" -> atribuirMembro
-        "6" -> mensagemMembro
-        "s" -> sairDoSistema
-        _   -> erroMenuGerente
-
-
--- caso o usuário digite o comando errado
 erroMenuGerente :: IO()
 erroMenuGerente = do
     putStrLn   "----------------------------------"
     putStrLn   "Entrada Inválida. Tente novamente!"
     putStrLn   "----------------------------------\n"
-    menuGerente
+    menuRestritoAtividades
+
+
+menuRestritoAtividades :: IO()
+menuRestritoAtividades = do 
+
+    clearScreen
+    
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "|                   Menu Projeto                           |" ++ "\n"
+            ++ "|                                                          |" ++ "\n"
+            ++ "|                Selecione uma opção:                      |" ++ "\n"
+            ++ "|                                                          |" ++ "\n"
+            ++ "|              C - Criar uma atividade                     |" ++ "\n"
+            ++ "|              G - Gerenciar membros do projeto            |" ++ "\n"
+            ++ "|              R - Remover uma atividade                   |" ++ "\n"
+            ++ "|              I - Iniciar uma atividade                   |" ++ "\n"
+            ++ "|              F - Finalizar uma atividade                 |" ++ "\n"
+            ++ "|              V - Visualizar atividades do projeto        |" ++ "\n"
+            ++ "|              A - Visualizar status de uma atividade      |" ++ "\n"
+            ++ "|              O - Dar feedback em uma atividade           |" ++ "\n"
+            ++ "|              D - Atribuir atividade a um membro          |" ++ "\n"
+            ++ "|              J - Remover membro do projeto               |" ++ "\n"
+            ++ "|              M - Voltar ao menu principal                |" ++ "\n"
+            ++ "|              S - Sair do sistema                         |" ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+
+    option <- getLine
+    let lowerOption = map toLower option
+    case lowerOption of 
+
+        "c" -> criarAtividade
+        "g" -> gerenciarMembros
+        "r" -> removeAtividade
+        "i" -> comecarAtividade
+        "f" -> finalizarAtividade
+        "v" -> visualizarAtividades
+        "a" -> statusAtividade
+        "o" -> criarFeedback
+        "d" -> atribuirMembro
+        "j" -> removeMembroProjeto
+        "m" -> menuPrincipal
+        "s" -> sairDoSistema
+        _   -> erroMenuGerente
 
 
 -- sai do sistema
@@ -109,13 +112,9 @@ atribuirMembro = do
     putStrLn "Membro atribuído à atividade com sucesso!"
 
 
--- Enviar mensagem a um membro
-mensagemMembro :: IO()
-mensagemMembro = do
-    putStrLn "Digite o nome do membro:"
-    membro <- getLine
-    putStrLn "Digite a mensagem que deseja enviar:"
-    mensagem <- getLine
-    -- invoca função para enviar mensagem a membro, em Mensagens.hs
-    putStrLn "Mensagem enviada com sucesso!"
-
+-- Função para criar feedback
+criarFeedback :: IO ()
+criarFeedback = do
+  -- Implementation logic for creating feedback
+  putStrLn "Implementação em andamento."
+  menuPrincipal

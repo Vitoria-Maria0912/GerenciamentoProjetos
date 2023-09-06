@@ -17,7 +17,7 @@ data Projeto = Projeto {
     idProjeto :: Int,
     nomeProjeto :: String,
     descricaoProjeto :: String,
-    gerenteNome :: String,
+    idGerente :: Int,
     atividadesProjeto :: [Atividade]
 } 
 
@@ -25,6 +25,13 @@ data Projeto = Projeto {
 -- criação de projeto
 criaProjeto :: String -> String -> String -> String -> IO()
 criaProjeto = addProjetoDatabase
+
+
+adicionaProjeto :: Projeto -> [Projeto] -> [Projeto]
+adicionaProjeto projeto projetos = 
+    case find (\u -> nomeProjeto u == nomeProjeto projeto) projetos of 
+        Just _-> projetos
+        Nothing -> projeto : projetos
 
 
 -- remoção de projeto

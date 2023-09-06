@@ -6,24 +6,21 @@ import Control.Monad (filterM)
 import Util.AbrirFecharArquivo
 
 
-
 -- Função que retorna o local padrão dos users criados
 diretorioDatabase :: String
 diretorioDatabase = "./Modules/Database/LocalUsers/"
 
 
-
 -- cria usuario na base de dados
-criaUsuarioDatabase :: String -> String -> IO()
-criaUsuarioDatabase nome senha = do
-    let usuario = [nome, senha] -- usuario é uma lista que guarda os parâmetros passados
-    createDirectory (diretorioDatabase ++ nome)
-    createDirectory (diretorioDatabase ++ "/" ++ nome ++ "/" ++ "listas")
-    createDirectory (diretorioDatabase ++ "/" ++ nome ++ "/" ++ "sharedWithMe")
-    withFile (diretorioDatabase ++ nome ++ "/" ++ nome ++ ".txt") WriteMode $ \handle -> do
+criaUsuarioDatabase :: String -> String -> String -> IO()
+criaUsuarioDatabase idUsuario nome senha = do
+    let usuario = [idUsuario, nome, senha] -- usuario é uma lista que guarda os parâmetros passados
+    createDirectory (diretorioDatabase ++ idUsuario)
+    createDirectory (diretorioDatabase ++ "/" ++ idUsuario ++ "/" ++ "listas")
+    createDirectory (diretorioDatabase ++ "/" ++ idUsuario ++ "/" ++ "sharedWithMe")
+    withFile (diretorioDatabase ++ nome ++ "/" ++ idUsuario ++ ".txt") WriteMode $ \handle -> do
         hPutStrLn handle (unlines usuario)
     -- escreve um arquivo txt com os dados da lista anterior, onde o nome do arquivo é o username
-
 
 
 -- Função para deletar um user da base de dados
@@ -31,7 +28,6 @@ criaUsuarioDatabase nome senha = do
 deletaUsuarioDatabase :: String -> IO()
 deletaUsuarioDatabase nomeUsuario = do 
     removeFile (diretorioDatabase++nomeUsuario++"/"++nomeUsuario++".txt") 
-
 
 
 -- Função que retorna o nome de um usuário
@@ -43,7 +39,6 @@ pegaNomeDatabase nomeUsuario = do
     return (linhas !! 1)
 
 
-
 -- Adiciona projeto na base de dados
 addProjetoDatabase :: String -> String -> String -> String -> IO()
 addProjetoDatabase idProjeto nomeProjeto descricao gerente = do
@@ -53,13 +48,11 @@ addProjetoDatabase idProjeto nomeProjeto descricao gerente = do
         hPutStr handle (unlines taskcontent)
 
 
-
 -- Remove projeto da base de dados
 removeProjetoDatabase :: String -> String -> IO()
 removeProjetoDatabase idProjeto nomeProjeto = do
     let filePath = diretorioDatabase++nomeProjeto++"/idProjeto/"++idProjeto++"/"++nomeProjeto
     removeFile (filePath ++ nomeProjeto)
-
 
 
 -- Adiciona tarefa na base de dados
@@ -71,20 +64,17 @@ addAtividadeDatabase idTarefa nomeTarefa descricaoTarefa statusTarefa membroResp
         hPutStr handle (unlines taskcontent)
 
 
-
-
 -- exibe Tarefas
-exibeTarefasDatabase :: String -> String -> String -> IO [String]
-exibeTarefasDatabase nomeTarefa descricaoTarefa idTarefa = do
+exibeAtividadeDatabase :: String -> String -> String -> IO [String]
+exibeAtividadeDatabase nomeTarefa descricaoTarefa idTarefa = do
     let filePath = diretorioDatabase++nomeTarefa++"/idTarefa/"++idTarefa++"/"++nomeTarefa
     conteudo <- readFile filePath
     let linhas = lines conteudo
     return linhas
 
 
-
 -- remove tarefa
-deleteTaskDatabase :: String -> String -> IO()
-deleteTaskDatabase nomeTarefa idTarefa = do
+deleteAtividadeDatabase :: String -> String -> IO()
+deleteAtividadeDatabase nomeTarefa idTarefa = do
     let filePath = diretorioDatabase++nomeTarefa++"/idTarefa/"++idTarefa++"/"++nomeTarefa
     removeFile (filePath ++ nomeTarefa)

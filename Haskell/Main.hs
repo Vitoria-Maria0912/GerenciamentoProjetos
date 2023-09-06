@@ -1,6 +1,6 @@
 module Main where
-import Menus.MenuGeral (menuGeral)
+import Menus.MenuGeral (menuPrincipal)
 
 main :: IO ()
 main = do
-    menuGeral
+    menuPrincipal
