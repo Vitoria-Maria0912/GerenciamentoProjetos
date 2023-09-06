@@ -1,4 +1,4 @@
-module Haskell.Controllers.Projeto where
+module Controllers.Projeto where
 
 import Data.Char ()
 import Data.Set ()
@@ -9,8 +9,8 @@ import System.IO ()
 import Data.List (find)
 import Data.Maybe (mapMaybe)
 import Text.Read (readMaybe)
-import Haskell.Controllers.Atividades as Atividade (Atividade)
-import Haskell.Database.Database
+import Controllers.Atividades as Atividade (Atividade)
+import Database.Database
 
 
 data Projeto = Projeto {

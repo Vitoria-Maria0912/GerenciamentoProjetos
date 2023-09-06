@@ -1,5 +1,6 @@
-module Haskell.Menus.MenuGerente where
-import Haskell.Util.ClearScreen
+module Menus.MenuGerente where
+import Controllers.Atividades as Atividades
+import Util.ClearScreen
 import Data.Char (toLower)
 
 

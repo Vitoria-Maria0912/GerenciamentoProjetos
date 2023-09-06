@@ -1,6 +1,6 @@
-module Haskell.Controllers.Usuario where
+module Controllers.Usuario where
 import System.IO
-import Haskell.Database.Database -- import Database para realizar as funções
+import Database.Database -- import Database para realizar as funções
 
 
 -- Definindo o tipo de dado que é USER, quais parâmetros recebe

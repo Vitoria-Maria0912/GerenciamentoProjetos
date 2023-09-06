@@ -1,20 +1,22 @@
-module Haskell.Menus.MenuGeral where
+module Menus.MenuGeral where
 import qualified Data.Char as Char
 import System.Exit (exitSuccess)
 import Data.Char (toLower)
-import Haskell.Util.ClearScreen
-import Haskell.Controllers.Usuario
-import Haskell.Controllers.Projeto
-import Haskell.Menus.MenuGerente (menuGerente)
+import Util.ClearScreen
+import Controllers.Usuario
+import Controllers.Projeto
+-- import Menus.MenuGerente
 
 -- menuGeral
 menuGeral :: IO()
 menuGeral = do
+
     menuPrincipal
+
     option <- getLine
     let lowerOption = map toLower option
     case lowerOption of
-        "g" -> menuGerente
+        -- "g" -> menuGerente
         "c" -> cadastro
         "d" -> deletarUsuario
         "p" -> cadastrarProjeto
@@ -30,28 +32,24 @@ menuGeral = do
 
 menuPrincipal :: IO ()
 menuPrincipal = do
+
   clearScreen
-  putStrLn ".--------------------------------------------------."
-  putStrLn "|oooo     oooo ooooooooooo oooo   oooo ooooo  oooo |"
-  putStrLn "| 8888o   888   888    88   8888o  88   888    88  |"
-  putStrLn "| 88 888o8 88   888ooo8     88 888o88   888    88  |"
-  putStrLn "| 88  888  88   888    oo   88   8888   888    88  |"
-  putStrLn "|o88o  8  o88o o888ooo8888 o88o    88    888oo88   |"
-  putStrLn "|                                                  |"
-  putStrLn "|Selecione uma opção:                              |"
-  putStrLn "|                                                  |"
-  putStrLn "|G. Menu Gerenciamento de Projetos e atividades    |"
-  putStrLn "|C. Cadastrar novo usuário                         |"
-  putStrLn "|D. Deletar Perfil                                 |"
-  putStrLn "|P. Criar Projeto                                  |"
-  putStrLn "|R. Remover Projeto                                |"
-  putStrLn "|L. Listar Projetos em andamento                   |"
-  putStrLn "|E. Solicitar Entrada em projeto                   |"
-  putStrLn "|F. Dar feedback em uma atividade                  |"
-  putStrLn "|M. Caixa de Mensagens                             |"
-  putStrLn "|B. Visualizar Banco de atividades                 |"
-  putStrLn "|S. Sair do Sistema                                |"
-  putStrLn ".--------------------------------------------------."
+
+  putStrLn $ ".----------------------------------------------------------." ++ "\n"
+          ++ "|             Selecione uma opção:                         |" ++ "\n"
+          ++ "|                                                          |" ++ "\n"
+          ++ "|             G - Menu Gerenciamento de Projetos           |" ++ "\n"
+          ++ "|             C - Cadastrar novo usuário                   |" ++ "\n"
+          ++ "|             D - Deletar Perfil                           |" ++ "\n"
+          ++ "|             P - Criar Projeto                            |" ++ "\n"
+          ++ "|             R - Remover Projeto                          |" ++ "\n"
+          ++ "|             L - Listar Projetos em andamento             |" ++ "\n"
+          ++ "|             E - Solicitar Entrada em projeto             |" ++ "\n"
+          ++ "|             F - Dar feedback em uma atividade            |" ++ "\n"
+          ++ "|             M - Caixa de Mensagens                       |" ++ "\n"
+          ++ "|             B - Visualizar Banco de atividades           |" ++ "\n"
+          ++ "|             S - Sair do Sistema                          |" ++ "\n"
+          ++ ".----------------------------------------------------------." ++ "\n"
 
 
 -- caso o usuário digite o comando errado

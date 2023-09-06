@@ -1,5 +1,5 @@
-module Haskell.Main where
-import Haskell.Menus.MenuGeral (menuGeral)
+module Main where
+import Menus.MenuGeral (menuGeral)
 
 main :: IO ()
 main = do

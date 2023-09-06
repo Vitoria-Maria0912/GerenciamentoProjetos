@@ -1,4 +1,4 @@
-module Haskell.Util.ClearScreen where
+module Util.ClearScreen where
 
 import System.Info (os)
 import System.Process (system)

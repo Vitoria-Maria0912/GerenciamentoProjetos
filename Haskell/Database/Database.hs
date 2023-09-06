@@ -1,9 +1,9 @@
-module Haskell.Database.Database where
+module Database.Database where
 
 import System.IO
 import System.Directory
 import Control.Monad (filterM)
-import Haskell.Util.AbrirFecharArquivo
+import Util.AbrirFecharArquivo
 
 
 

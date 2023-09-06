@@ -1,4 +1,4 @@
-module Haskell.Util.AbrirFecharArquivo where
+module Util.AbrirFecharArquivo where
 import System.IO (withFile, IOMode(ReadWriteMode, WriteMode), hClose)
 
 -- Fecha o arquivo em questão para permitir a edição
