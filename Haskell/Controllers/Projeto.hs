@@ -31,8 +31,3 @@ criaProjeto = addProjetoDatabase
 -- remoção de projeto
 removeProjeto :: String -> String -> IO()
 removeProjeto = removeProjetoDatabase
-
--- checa se o usuario é gerente de algum projeto da lista de projetos. 
-ehGerente :: Int -> [Projeto] -> Bool
-ehGerente id gerentes = any (\projeto -> id == idGerente projeto) gerentes
-
