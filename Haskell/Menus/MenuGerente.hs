@@ -3,7 +3,7 @@ import Controllers.Atividades as Atividades
 import Database.Database
 import Util.ClearScreen
 import Data.Char (toLower)
-
+import Menus.MenuGeral (menuPrincipal)
 
 erroMenuGerente :: IO()
 erroMenuGerente = do
@@ -23,7 +23,6 @@ menuRestritoAtividades = do
             ++ "|                                                          |" ++ "\n"
             ++ "|                Selecione uma opção:                      |" ++ "\n"
             ++ "|                                                          |" ++ "\n"
-            -- ++ "|              E - Remover um projeto                      |" ++ "\n"
             ++ "|              C - Criar uma atividade                     |" ++ "\n"
             ++ "|              G - Gerenciar membros do projeto            |" ++ "\n"
             ++ "|              R - Remover uma atividade                   |" ++ "\n"
@@ -42,10 +41,9 @@ menuRestritoAtividades = do
     let lowerOption = map toLower option
     case lowerOption of 
 
-        "e" -> removerProjeto
         "c" -> criarAtividade
         "g" -> gerenciarMembros
-        "r" -> removeAtividade
+        "r" -> deletarAtividade
         "i" -> comecarAtividade
         "f" -> finalizarAtividade
         "v" -> visualizarAtividades
@@ -66,7 +64,7 @@ sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 -- cria atividade
 criaAtividade :: IO()
 criaAtividade = do
-    putStrLn "Digite o ID do projeto que deseja adicionar a atividade:"
+    putStrLn "Digite o ID do projeto que deseja adicionar uma atividade:"
     idProjeto <- getLine
 
     putStrLn "Digite um título para sua atividade:"
@@ -78,23 +76,45 @@ criaAtividade = do
     idAtividade <- randomRIO (1000, 9999 :: Int)
 
     -- tem que checar se já existe
-    criaAtividade titulo descricao "Não atribuída" (show(idAtividade)) idProjeto "Não atribuído"
+    Atividades.criarAtividade titulo descricao "Não atribuída" (show(idAtividade)) idProjeto "Não atribuído"
 
     putStrLn "Tarefa criada com sucesso!"
 
 
 -- remove atividade
-removeAtividade :: IO()
-removeAtividade = do
+deletarAtividade :: IO()
+deletarAtividade = do
     putStrLn "Digite o ID da atividade que deseja remover:"
     idAtividade <- getLine
-    -- invoca a função de remoção, em Atividades.hs
+
+    -- tem que checar se existe
+    -- Atividades.removeAtividade idAtividade
     putStrLn "Atividade removida com sucesso!"
 
 
+statusAtividade :: IO()
+statusAtividade = do
+
+    -- acessaria pelo nome ou pelo ID?
+    putStrLn "Digite o id da atividade que deseja visualizar o status:"
+    idAtividade <- getLine
+
+    -- tem que passar atividade, mas acho que seria melhor pelo ID
+    putStrLn "Atividades.mostraStatus titulo"
+
+visualizarAtividades :: IO()
+visualizarAtividades = do 
+
+    -- como acessar as atividades do projeto sem precisar digitar o título dele?
+    -- seria bom uma maneira de 'exibir o arquivo'
+    -- mas será possível ver apenas o nome ou, por exemplo, a quantidade de membros
+    -- em cada atividade?
+   
+    putStrLn "Projeto.exibeAtividades projeto"
+
 -- Visualizar membros do projeto
-membrosProjeto :: IO()
-membrosProjeto = do
+gerenciarMembros :: IO()
+gerenciarMembros = do
     putStrLn "Digite o nome do projeto:"
     projeto <- getLine
     -- invoca função para visualizar membros do projeto, em Projetos.hs
@@ -105,22 +125,24 @@ membrosProjeto = do
 -- Remover membro do projeto
 removeMembroProjeto :: IO()
 removeMembroProjeto = do
-    putStrLn "Digite o nome do projeto:"
-    projeto <- getLine
-    putStrLn "Digite o nome do membro que deseja remover:"
-    membro <- getLine
-    -- invoca função para remover membro do projeto, em Projetos.hs
+    putStrLn "Digite o ID do projeto:"
+    idProjeto <- getLine
+    putStrLn "Digite o ID do membro que deseja remover:"
+    membroResponsavel <- getLine
+    
+    -- Projeto.removeMembroProjeto idProjeto membroResponsavel
     putStrLn "Membro removido do projeto com sucesso!"
 
 
 -- Atribuir membro a uma atividade
 atribuirMembro :: IO()
 atribuirMembro = do
-    putStrLn "Digite o nome da atividade:"
-    atividade <- getLine
-    putStrLn "Digite o nome do membro que deseja atribuir:"
-    membro <- getLine
-    -- invoca função para atribuir membro a atividade, em Atividades.hs
+    putStrLn "Digite o ID da atividade:"
+    idAtividade <- getLine
+    putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
+    membroResponsavel <- getLine
+    
+    -- Atividades.atribuirMembro idAtividade membroResponsavel
     putStrLn "Membro atribuído à atividade com sucesso!"
 
 

@@ -12,9 +12,9 @@ data Atividade = Atividade {
 } deriving ()
 
 
-criaAtividade :: String -> String -> String -> String -> String -> Maybe Usuario -> Atividade
-criaAtividade titulo descricao status idAtividade idProjeto membroResponsavel =
-     Atividade { titulo = titulo, 
+criarAtividade :: String -> String -> String -> String -> String -> Maybe Usuario -> Atividade
+criarAtividade titulo descricao status idAtividade idProjeto membroResponsavel =
+    Atividade { titulo = titulo, 
                 descricao = descricao, 
                 idAtividade = idAtividade,
                 idProjeto = idProjeto,
@@ -22,8 +22,7 @@ criaAtividade titulo descricao status idAtividade idProjeto membroResponsavel =
                 membroResponsavel = membroResponsavel }
     
 
-
-removeAtividade :: String -> IO()
-removeAtividade = removeAtividadeDatabase
+removerAtividade :: String -> IO()
+removerAtividade = removeAtividadeDatabase
 
 

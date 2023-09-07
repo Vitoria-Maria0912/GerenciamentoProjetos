@@ -27,16 +27,16 @@ menuPrincipal = do
           ++ "|                                                          |" ++ "\n"
           ++ "|                   Selecione uma opção:                   |" ++ "\n"
           ++ "|                                                          |" ++ "\n"
-          ++ "|             G - Menu de Projetos                         |" ++ "\n"
+          ++ "|             G - Menu de projetos                         |" ++ "\n"
           ++ "|             C - Cadastrar novo usuário                   |" ++ "\n"
-          ++ "|             D - Deletar Perfil                           |" ++ "\n"
-          ++ "|             P - Criar Projeto                            |" ++ "\n"
-          ++ "|             R - Remover Projeto                          |" ++ "\n"
-          ++ "|             L - Listar Projetos em andamento             |" ++ "\n"
-          ++ "|             E - Solicitar Entrada em projeto             |" ++ "\n"
-          ++ "|             M - Caixa de Mensagens                       |" ++ "\n"
-          ++ "|             B - Visualizar Banco de atividades           |" ++ "\n"
-          ++ "|             S - Sair do Sistema                          |" ++ "\n"
+          ++ "|             D - Deletar perfil                           |" ++ "\n"
+          ++ "|             P - Criar projeto                            |" ++ "\n"
+          ++ "|             R - Remover projeto                          |" ++ "\n"
+          ++ "|             L - Listar projetos em andamento             |" ++ "\n"
+          ++ "|             E - Solicitar entrada em projeto             |" ++ "\n"
+          ++ "|             M - Caixa de mensagens                       |" ++ "\n"
+          ++ "|             B - Visualizar banco de atividades           |" ++ "\n"
+          ++ "|             S - Sair do sistema                          |" ++ "\n"
           ++ ".----------------------------------------------------------." ++ "\n"
 
   option <- getLine
@@ -118,7 +118,7 @@ cadastrarProjeto = do
 menuProjetos :: IO()
 menuProjetos = do 
 
-  putStrLn "Digite seu id:"
+  putStrLn "Digite seu ID:"
   id <- getLine
   putStrLn "Digite sua senha:"
   senha <- getLine

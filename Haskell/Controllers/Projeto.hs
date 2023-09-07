@@ -14,12 +14,15 @@ import Database.Database
 
 
 data Projeto = Projeto {
-    idProjeto :: Int,
+    idProjeto :: String,
     nomeProjeto :: String,
     descricaoProjeto :: String,
-    idGerente :: Int,
-    atividadesProjeto :: [Atividade]
-} 
+    idGerente :: String,
+    --como só contém os ID dos usuarios , não precisa ser necessariamente uma lista do tipo Usuario .
+    usuarios :: [String],
+    -- como só contém os ID das atividades , não precisa ser uma lista do tipo atividades , só podendo ter o ID .
+    atividades :: [String]
+} deriving ()
 
 
 -- criação de projeto
@@ -27,12 +30,13 @@ criaProjeto :: String -> String -> String -> String -> IO()
 criaProjeto = addProjetoDatabase
 
 
+-- adiciona um Projeto a uma lista de Projetos /recebe um projeto ,uma lista de projetos e retorna a lista atualizada 
+-- checagem conforme nome do projeto
 adicionaProjeto :: Projeto -> [Projeto] -> [Projeto]
 adicionaProjeto projeto projetos = 
     case find (\u -> nomeProjeto u == nomeProjeto projeto) projetos of 
         Just _-> projetos
         Nothing -> projeto : projetos
-
 
 -- remoção de projeto
 removeProjeto :: String -> IO()
