@@ -38,6 +38,7 @@ adicionaProjeto projeto projetos =
         Just _-> projetos
         Nothing -> projeto : projetos
 
+
 -- remoção de projeto
 removeProjeto :: String -> IO()
 removeProjeto = removeProjetoDatabase

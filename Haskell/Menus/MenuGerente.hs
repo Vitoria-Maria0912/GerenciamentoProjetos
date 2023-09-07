@@ -1,9 +1,10 @@
 module Menus.MenuGerente where
+
+import System.Random (Random(randomRIO))
 import Controllers.Atividades as Atividades
 import Database.Database
 import Util.ClearScreen
 import Data.Char (toLower)
-import Menus.MenuGeral (menuPrincipal)
 
 erroMenuGerente :: IO()
 erroMenuGerente = do
@@ -41,7 +42,7 @@ menuRestritoAtividades = do
     let lowerOption = map toLower option
     case lowerOption of 
 
-        "c" -> criarAtividade
+        "c" -> criaAtividade
         "g" -> gerenciarMembros
         "r" -> deletarAtividade
         "i" -> comecarAtividade
@@ -51,7 +52,7 @@ menuRestritoAtividades = do
         "o" -> criarFeedback
         "d" -> atribuirMembro
         "j" -> removeMembroProjeto
-        "m" -> menuPrincipal
+        -- "m" -> menuPrincipal
         "s" -> sairDoSistema
         _   -> erroMenuGerente
 
@@ -73,10 +74,12 @@ criaAtividade = do
     putStrLn "Descreva, brevemente, o que se deve realizar para concluir esta atividade."
     descricao <- getLine
 
-    idAtividade <- randomRIO (1000, 9999 :: Int)
+    idAtividade <- randomRIO (10000, 99999 :: Int)
 
     -- tem que checar se já existe
-    Atividades.criarAtividade titulo descricao "Não atribuída" (show(idAtividade)) idProjeto "Não atribuído"
+    let novaAtividade = Atividades.criarAtividade titulo descricao "Não atribuída" (show(idAtividade)) idProjeto
+
+    -- Atividades.adicionaAtividade novaAtividade Projeto.getAtividades
 
     putStrLn "Tarefa criada com sucesso!"
 
@@ -88,10 +91,45 @@ deletarAtividade = do
     idAtividade <- getLine
 
     -- tem que checar se existe
-    -- Atividades.removeAtividade idAtividade
+    Atividades.removerAtividade idAtividade
     putStrLn "Atividade removida com sucesso!"
 
 
+comecarAtividade :: IO()
+comecarAtividade = do
+    
+    -- acessaria pelo nome ou pelo ID?
+    putStrLn "Digite o id da atividade que deseja começar:"
+    idAtividade <- getLine
+
+    
+    -- se o usuário já está fazendo ela
+    -- poderia fazer a checagem:
+
+    -- let atividade = Projeto.getAtividade idAtividade
+
+    -- if status atividade == "Não atribuída!" then 
+    --     Atividades.mudaStatus "Pendente..."
+    --     putStrLn $ "Você começou a atividade: " ++ titulo atividade ---- FAZER O GET
+
+    -- else do
+    putStrLn "Esta atividade já está em andamento!"
+
+
+finalizarAtividade :: IO()
+finalizarAtividade = do
+
+    -- acessaria pelo nome ou pelo ID?
+    putStrLn "Digite o nome da atividade que deseja finalizar:"
+    titulo <- getLine
+
+    -- armazenar todas as atividades finalizadas daquele usuário
+    -- decidir como armazenar isso
+
+    -- Atividades.mudaStatus "Concluída!"
+
+    putStrLn "Atividade finalizada com sucesso!"
+    
 statusAtividade :: IO()
 statusAtividade = do
 

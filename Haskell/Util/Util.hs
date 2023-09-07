@@ -23,13 +23,30 @@ verificaIdUsuario id usuarios = elem id (map Usuario.idUsuario usuarios)
 verificaIdAtividade :: String -> [Atividades] -> Bool
 verificaIdAtividade id atividades = elem id (map Atividades.idAtividade atividades)
 
+-- É MELHOR PADRONIZAR PARA UM DOS 2 MODELOS
 
 --Verifica se existe o ID do projeto no database
 verificaIdProjeto :: String -> [Projeto.Projeto] -> Bool
 verificaId projetoId projetos = not $ any (\projeto -> Projeto.idProjeto usuario == projetoId) projetos
 
 
--- formata em string dados de um usuario  (ver se precisa colocar na Database)
+verificaSenhaUsuario :: String -> [Usuario] -> Bool
+verificaSenhaUsuario senha usuarios = elem senha (map Usuario.senha usuarios)
+
+
+verificaNomeProjeto :: String -> [Projeto.Projeto] -> Bool
+verificaNomeProjeto nome nomesProjetos = not $ any (\projeto -> nomeProjeto projeto == nome) nomesProjetos
+
+
+-- retorna a representacao do usuario em string (ver se precisa colocar na Database)
+getUsuario:: Int -> [Usuario] -> Maybe String
+getUsuario id usuarios =
+  case filter (\u -> idUsuario u == id) usuarios of 
+      [usuarioEncontrado] -> Just (formataUsuario usuarioEncontrado) 
+      _ -> Nothing
+
+
+-- formata em string dados de um usuario (ver se precisa colocar na Database)
 formataUsuario:: Usuario -> String
 formataUsuario usuario = 
    "ID: " ++ show (idUsuario usuario) ++ "\n" ++
