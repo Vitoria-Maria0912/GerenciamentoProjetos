@@ -15,15 +15,51 @@ data Atividade = Atividade {
     feedback :: Maybe [String]
 } 
 
-criarAtividade :: String -> String -> String -> String -> String -> Maybe String -> Maybe [String] -> IO()
-criarAtividade = criaAtividadeDatabase
+criarAtividade :: String -> String -> String -> String -> String -> Maybe String -> Maybe [String] -> Atividade
+criarAtividade titulo descricao status idProjetoAtividade idAtividade idMembroResponsavel feedback =
+    Atividade { titulo = titulo, 
+                descricao = descricao, 
+                idProjetoAtividade = idProjetoAtividade,
+                idAtividade = idAtividade,
+                status = status, 
+                idMembroResponsavel = idMembroResponsavel
+                feedback = feedback }
     
--- Adiciona uma atividade no sistema
+-- Adiciona uma atividade no sistema (com base no id)
 adicionaAtividade :: Atividade -> [Atividade] -> [Atividade]
 adicionaAtividade atividade atividades = 
     case find (\u -> idAtividade u == idAtividade atividade) atividades of 
         Just _-> atividades
         Nothing -> atividade : atividades
+        
+-- escreve atividade no txt
+escreverAtividades :: FilePath -> [Atividade] -> IO ()
+escreverAtividades arquivo atividades = appendFile arquivo conteudo
+  where
+    conteudo = unlines $ map formatarAtividade atividades
+    formatarAtividade a = "ID: " ++ show (idAtividade a) ++ ", TITULO: " ++ titulo a ++ ", DESCRIÇÃO: " ++ descricao a ", ID PROJETO: " ++ show (idProjetoAtividade a) ++ ", STATUS: " ++ status a ++ ", MEMBRO RESPONSÁVEL: " ++ membroResponsavel a
+
+-- le as atividades do txt e retorna a lista
+lerAtividades :: FilePath -> IO [Atividade.Atividade]
+lerAtividades path = do
+  conteudo <- readFile path
+  let atividades = mapMaybe Atividade.fromString $ lines conteudo
+  return atividades
+  
+-- converte uma string em um objeto do tipo Atividade
+fromString :: String -> Maybe Atividade
+fromString str = case words str of
+  [titulo, descricao, status, idProjetoAtividade, idAtividade, idMembroResponsavel, feedback] -> do
+    return Atividade {
+      titulo = titulo,
+      descricao = descricao,
+      status = status,
+      idProjetoAtividade = idProjetoAtividade,
+      idAtividade = idAtividade,
+      idMembroResponsavel = idMembroResponsavel,
+      feedback = feedback
+    }
+  _ -> Nothing
 
 -- Exibe uma Atividade, em formato de lista com todos os seus atributos
 getAtividades :: String -> [Atividade] -> Maybe [String] 
@@ -62,8 +98,8 @@ adicionaFeedback atividade comentario = do
         Just feedbacksAtuais -> Just (comentario : feedbacksAtuais)
         Nothing -> Just [comentario]
 
--- Remove uma atividade do sistema
-removerAtividade :: String -> IO()
-removerAtividade = removeAtividadeDatabase
+-- Remove uma atividade do sistema (comentado pra nao usar a database)
+-- removerAtividade :: String -> IO()
+-- removerAtividade = removeAtividadeDatabase
 
 
