@@ -40,15 +40,15 @@ escreverAtividades arquivo atividades = appendFile arquivo conteudo
     formatarAtividade a = "ID: " ++ show (idAtividade a) ++ ", TITULO: " ++ titulo a ++ ", DESCRIÇÃO: " ++ descricao a ", ID PROJETO: " ++ show (idProjetoAtividade a) ++ ", STATUS: " ++ status a ++ ", MEMBRO RESPONSÁVEL: " ++ membroResponsavel a
 
 -- le as atividades do txt e retorna a lista
-lerAtividades :: FilePath -> IO [Atividade.Atividade]
+lerAtividades :: FilePath -> IO [Atividade]
 lerAtividades path = do
   conteudo <- readFile path
-  let atividades = mapMaybe Atividade.fromString $ lines conteudo
+  let atividades = mapMaybe fromStringAtv $ lines conteudo
   return atividades
   
 -- converte uma string em um objeto do tipo Atividade
-fromString :: String -> Maybe Atividade
-fromString str = case words str of
+fromStringAtv :: String -> Maybe Atividade
+fromStringAtv str = case words str of
   [titulo, descricao, status, idProjetoAtividade, idAtividade, idMembroResponsavel, feedback] -> do
     return Atividade {
       titulo = titulo,
