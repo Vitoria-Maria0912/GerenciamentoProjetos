@@ -14,30 +14,15 @@ import qualified Atividades
 import qualified Usuario
 import qualified Projeto
 
+-- <<< USUÁRIOS >>>
 
 -- Verifica se o Usuario já existe no sistema
 verificaIdUsuario :: String -> [Usuario] -> Bool
 verificaIdUsuario id usuarios = elem id (map Usuario.idUsuario usuarios)
 
--- Verifica se a Atividade já existe no sistema
-verificaIdAtividade :: String -> [Atividades] -> Bool
-verificaIdAtividade id atividades = elem id (map Atividades.idAtividade atividades)
-
--- Verifica se o Projeto já existe no sistema
-verificaIdProjeto :: String -> [Projeto.Projeto] -> Bool
-verificaId projetoId projetos = not $ any (\projeto -> Projeto.idProjeto usuario == projetoId) projetos
-
 -- Verifica se a senha pertence ao usuário
 verificaSenhaUsuario :: String -> Usuario -> Bool
 verificaSenhaUsuario senha usuario = Usuario.senha == senha
-
--- Verifica se o nome do Projeto já existe no sistema
-verificaNomeProjeto :: String -> [Projeto.Projeto] -> Bool
-verificaNomeProjeto nome nomesProjetos = not $ any (\projeto -> nomeProjeto projeto == nome) nomesProjetos
-
--- Dá Upper Case para salvamento de dados afim de evitar na 'verificaçãoNomeProjeto' possivel erro ou geração de duplicata.
-toUpperCase :: String -> String
-toUpperCase str = map toUpper str
 
 -- Retorna a representação do usuário em String
 getUsuario:: String -> [Usuario] -> Maybe String
@@ -55,6 +40,30 @@ formataUsuario usuario =
 -- Verifica se o usuário é gerente de algum projeto do sistema 
 ehGerente :: Int -> [Projeto] -> Bool
 ehGerente id gerentes = any (\projeto -> id == idGerente projeto) gerentes
+
+
+-- <<< PROJETOS >>>
+
+-- Verifica se o Projeto já existe no sistema
+verificaIdProjeto :: String -> [Projeto.Projeto] -> Bool
+verificaId projetoId projetos = not $ any (\projeto -> Projeto.idProjeto usuario == projetoId) projetos
+
+-- Verifica se o nome do Projeto já existe no sistema
+verificaNomeProjeto :: String -> [Projeto.Projeto] -> Bool
+verificaNomeProjeto nome nomesProjetos = not $ any (\projeto -> nomeProjeto projeto == nome) nomesProjetos
+
+-- Dá Upper Case para salvamento de dados afim de evitar na 'verificaçãoNomeProjeto' possivel erro ou geração de duplicata.
+toUpperCase :: String -> String
+toUpperCase str = map toUpper str
+
+
+-- <<< ATIVIDADES >>>
+
+-- Verifica se a Atividade já existe no sistema
+verificaIdAtividade :: String -> [Atividades] -> Bool
+verificaIdAtividade id atividades = elem id (map Atividades.idAtividade atividades)
+
+
 
 
 

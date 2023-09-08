@@ -11,19 +11,12 @@ data Atividade = Atividade {
     idProjetoAtividade :: String, 
     idAtividade :: String,
     status :: String,
-    membroResponsavel :: Maybe Usuario,
+    idMembroResponsavel :: Maybe String,
     feedback :: Maybe [String]
 } 
 
-criarAtividade :: String -> String -> String -> String -> String -> Maybe Usuario -> Maybe [String] -> Atividade
-criarAtividade titulo descricao status idProjetoAtividade idAtividade membroResponsavel feedback =
-    Atividade { titulo = titulo, 
-                descricao = descricao, 
-                idProjetoAtividade = idProjetoAtividade,
-                idAtividade = idAtividade,
-                status = status, 
-                membroResponsavel = membroResponsavel,
-                feedback = feedback }
+criarAtividade :: String -> String -> String -> String -> String -> Maybe String -> Maybe [String] -> IO()
+criarAtividade = criaAtividadeDatabase
     
 -- Adiciona uma atividade no sistema
 adicionaAtividade :: Atividade -> [Atividade] -> [Atividade]
@@ -46,11 +39,20 @@ formataAtividade atividade =
     "Descrição: " ++ descricao atividade ++ "\n" ++
     "ID Projeto: " ++ idProjetoAtividade atividade ++ "\n" ++
     "ID Atividade: " ++ idAtividade atividade ++ "\n" ++
+    -- "ID Membro Responsável: " ++ (getMembroResponsavel (atividade)) ++ "\n" ++
     "Status: " ++ status atividade ++ "\n"]
     
 -- Muda o status de uma atividade
 mudaStatus :: Atividade -> String -> Atividade
 mudaStatus atividade novoStatus = atividade {status = novoStatus}
+
+-- Pega o ID do membro responsável pela atividade
+getMembroResponsavel :: Atividade -> Maybe String
+getMembroResponsavel atividade = do
+    let membroResponsavel = idMembroResponsavel atividade
+    case membroResponsavel of
+        Just usuarioCadastrado -> idMembroResponsavel atividade
+        _ -> Just "Não atribuído!"
 
 -- Adiciona um Feedback a uma atividade
 adicionaFeedback :: Atividade -> String -> Maybe [String]

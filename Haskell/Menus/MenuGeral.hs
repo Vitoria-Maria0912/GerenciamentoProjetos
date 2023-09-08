@@ -25,20 +25,20 @@ menuPrincipal = do
   clearScreen
 
   putStrLn $ ".----------------------------------------------------------." ++ "\n"
-            ++ "|                      Menu Principal                      |" ++ "\n"
-            ++ "|                                                          |" ++ "\n"
-            ++ "|                   Selecione uma opção:                   |" ++ "\n"
-            ++ "|                                                          |" ++ "\n"
-            ++ "|             G - Menu de projetos                         |" ++ "\n"
-            ++ "|             C - Cadastrar novo usuário                   |" ++ "\n"
-            ++ "|             D - Deletar perfil                           |" ++ "\n"
-            ++ "|             P - Criar projeto                            |" ++ "\n"
-            ++ "|             L - Listar projetos em andamento             |" ++ "\n"
-            ++ "|             E - Solicitar entrada em projeto             |" ++ "\n"
-            ++ "|             M - Caixa de mensagens                       |" ++ "\n"
-            ++ "|             B - Visualizar banco de atividades           |" ++ "\n"
-            ++ "|             S - Sair do sistema                          |" ++ "\n"
-            ++ ".----------------------------------------------------------." ++ "\n"
+          ++ "|                      Menu Principal                      |" ++ "\n"
+          ++ "|                                                          |" ++ "\n"
+          ++ "|                   Selecione uma opção:                   |" ++ "\n"
+          ++ "|                                                          |" ++ "\n"
+          ++ "|             G - Menu de projetos                         |" ++ "\n"
+          ++ "|             C - Cadastrar novo usuário                   |" ++ "\n"
+          ++ "|             D - Deletar perfil                           |" ++ "\n"
+          ++ "|             P - Criar projeto                            |" ++ "\n"
+          ++ "|             L - Listar projetos em andamento             |" ++ "\n"
+          ++ "|             E - Solicitar entrada em projeto             |" ++ "\n"
+          ++ "|             M - Caixa de mensagens                       |" ++ "\n"
+          ++ "|             B - Visualizar banco de atividades           |" ++ "\n"
+          ++ "|             S - Sair do sistema                          |" ++ "\n"
+          ++ ".----------------------------------------------------------." ++ "\n"
 
   option <- getLine
   let lowerOption = map toLower option
@@ -116,7 +116,7 @@ cadastrarProjeto = do
 
   criaProjeto (show (idProjeto)) nomeProjeto descricao nomeUsuario
 
--- Verifica se é gerente e mostra o menu correspondente
+-- Verifica se o usuário é gerente e mostra o menu correspondente
 menuProjetos :: IO()
 menuProjetos = do 
 
