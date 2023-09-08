@@ -27,19 +27,18 @@ escreverUsuarios :: FilePath -> [Usuario] -> IO ()
 escreverUsuarios arquivo usuarios = appendFile arquivo conteudo
   where
     conteudo = unlines $ map formatarUsuario usuarios
-    formatarUsuario u = "ID: " ++ show (idUsuario u) ++ ", NOME: " ++ nome u ++ ", FUNÇÃO: " ++ funcao u
+    formatarUsuario u = "ID: " ++ show (idUsuario u) ++ ", NOME: " ++ nome u ++ ", SENHA: " ++ senha u
     
 -- ler informações sobre usuários de um arquivo -> retorna uma lista de usuários
-lerUsuarios :: FilePath -> IO [Usuario.Usuario]
+lerUsuarios :: FilePath -> IO [Usuario]
 lerUsuarios path = do
   conteudo <- readFile path
-  let usuarios = mapMaybe Usuario.fromString $ lines conteudo
+  let usuarios = mapMaybe fromString $ lines conteudo
   return usuarios
   
 -- converte uma string em um objeto do tipo Usuario
 fromString :: String -> Maybe Usuario
 fromString str = case words str of
-  [idStr, nome, funcao] -> do
-    idUsuario <- readMaybe idStr
-    return Usuario{idUsuario = idUsuario, nome = nome, funcao = funcao}
+  [idStr, nome, senha] -> do
+    return Usuario{idUsuario = idUsuario, nome = nome, senha = senha}
   _ -> Nothing
