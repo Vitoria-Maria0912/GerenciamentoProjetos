@@ -77,8 +77,16 @@ cadastrarUsuario = do
 
     idUsuario <- randomRIO (1000, 9999 :: Int)
 
-    criaUsuario (show(idUsuario)) nome senha
-    menuPrincipal
+    usuarios <- Usuario.lerUsuarios "dados/usuarios.txt"
+    if (Util.verificaIdUsuario (read idUsuario) usuarios == False) then do
+        let usuario = Usuario.Usuario {Usuario.idUsuario = (show (idUsuario)), Usuario.nome = nome, Usuario.senha = senha}
+        let novosUsuarios = Usuario.adicionarUsuario usuario usuarios
+        Usuario.escreverUsuarios "dados/usuarios.txt" novosUsuarios
+        putStrLn $ "Usuário cadastrado com sucesso!" ++ "\n"
+        menuPrincipal
+    else do
+        putStrLn $ "O id já existe na base de dados." ++ "\n"
+        cadastrarUsuario
 
 
 -- Deleta um usuário do sistema
@@ -103,8 +111,8 @@ cadastrarProjeto = do
   clearScreen
 
   putStrLn $ "Cadastrar Projeto:" ++ "\n"
-          ++ "Digite seu nome:"
-  nomeUsuario <- getLine
+          ++ "Digite seu id:"
+  idUsuario <- getLine
 
   putStrLn "Digite um título para o projeto:"
   nomeProjeto <- getLine
@@ -114,7 +122,17 @@ cadastrarProjeto = do
 
   idProjeto <- randomRIO (100, 999 :: Int)
 
-  criaProjeto (show (idProjeto)) nomeProjeto descricao nomeUsuario
+  projetos <- Projeto.lerProjetos "dados/projetos.txt"
+    if (Projeto.verificaIdProjeto (read idProjeto) projetos == False) then do
+        let projeto = Projeto.Projeto {Projeto.idProjeto = (show (idProjeto)), Projeto.nomeProjeto = nomeProjeto, Projeto.descricao = descricao, Projeto.idGerente = idUsuario}
+        let novosProjetos = Projeto.adicionarProjeto projeto projetos
+        Projeto.escreverProjetos "dados/projetos.txt" novosProjetos
+        putStrLn $ "Projeto cadastrado com sucesso!" ++ "\n"
+        menuPrincipal
+    else do
+        putStrLn $ "O id já existe na base de dados." ++ "\n"
+        cadastrarProjeto
+
 
 -- Verifica se o usuário é gerente e mostra o menu correspondente
 menuProjetos :: IO()
