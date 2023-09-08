@@ -24,8 +24,15 @@ data Projeto = Projeto {
 } 
 
 
-criaProjeto :: String -> String -> String -> String -> IO()
-criaProjeto = addProjetoDatabase
+-- criação de projeto
+criaProjeto :: String -> String -> String -> String -> [String] -> [String] -> Projeto
+criaProjeto idProjeto nomeProjeto descricao idGerente usuarios atividades = 
+    Projeto {idProjeto = idProjeto, 
+            nomeProjeto = nomeProjeto, 
+            descricaoProjeto = descricao, 
+            idGerente = idGerente, 
+            usuarios = usuarios,  
+            atividades = atividades}
 
 -- Adiciona um projeto no sistema
 adicionaProjeto :: Projeto -> [Projeto] -> [Projeto]
@@ -74,6 +81,6 @@ fromString str = case words str of
                         atividades = atividades }
     _ -> Nothing
 
--- Remove um projeto do sistema
-removeProjeto :: String -> IO()
-removeProjeto = removeProjetoDatabase
+-- Remove um projeto do sistema (comentado pra excluir da database)
+-- removeProjeto :: String -> IO()
+-- removeProjeto = removeProjetoDatabase
