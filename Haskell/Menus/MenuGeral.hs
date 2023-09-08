@@ -6,7 +6,8 @@ import Data.Char (toLower)
 import Util.ClearScreen
 import Controllers.Usuario
 import Controllers.Projeto
-import Menus.MenuGerente (menuRestritoAtividades)
+import Menus.MenuGerente (menuRestritoProjeto)
+import Menus.MenuPublico (menuPublicoProjeto)
 
 
 -- caso o usuário digite o comando errado
@@ -24,21 +25,20 @@ menuPrincipal = do
   clearScreen
 
   putStrLn $ ".----------------------------------------------------------." ++ "\n"
-          ++ "|                      Menu Principal                      |" ++ "\n"
-          ++ "|                                                          |" ++ "\n"
-          ++ "|                   Selecione uma opção:                   |" ++ "\n"
-          ++ "|                                                          |" ++ "\n"
-          ++ "|             G - Menu de projetos                         |" ++ "\n"
-          ++ "|             C - Cadastrar novo usuário                   |" ++ "\n"
-          ++ "|             D - Deletar perfil                           |" ++ "\n"
-          ++ "|             P - Criar projeto                            |" ++ "\n"
-          ++ "|             R - Remover projeto                          |" ++ "\n"
-          ++ "|             L - Listar projetos em andamento             |" ++ "\n"
-          ++ "|             E - Solicitar entrada em projeto             |" ++ "\n"
-          ++ "|             M - Caixa de mensagens                       |" ++ "\n"
-          ++ "|             B - Visualizar banco de atividades           |" ++ "\n"
-          ++ "|             S - Sair do sistema                          |" ++ "\n"
-          ++ ".----------------------------------------------------------." ++ "\n"
+            ++ "|                      Menu Principal                      |" ++ "\n"
+            ++ "|                                                          |" ++ "\n"
+            ++ "|                   Selecione uma opção:                   |" ++ "\n"
+            ++ "|                                                          |" ++ "\n"
+            ++ "|             G - Menu de projetos                         |" ++ "\n"
+            ++ "|             C - Cadastrar novo usuário                   |" ++ "\n"
+            ++ "|             D - Deletar perfil                           |" ++ "\n"
+            ++ "|             P - Criar projeto                            |" ++ "\n"
+            ++ "|             L - Listar projetos em andamento             |" ++ "\n"
+            ++ "|             E - Solicitar entrada em projeto             |" ++ "\n"
+            ++ "|             M - Caixa de mensagens                       |" ++ "\n"
+            ++ "|             B - Visualizar banco de atividades           |" ++ "\n"
+            ++ "|             S - Sair do sistema                          |" ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
 
   option <- getLine
   let lowerOption = map toLower option
@@ -47,7 +47,6 @@ menuPrincipal = do
       "c" -> cadastrarUsuario
       "d" -> deletarUsuario
       "p" -> cadastrarProjeto
-      "r" -> removerProjeto
       "l" -> visualizarProjetosPendentes
       "e" -> solicitarEntrada
       "m" -> chat
@@ -60,7 +59,7 @@ sairDoSistema :: IO()
 sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 
 
--- Função para cadastrar um novo usuário
+-- Cadastra um usuário no sistema
 cadastrarUsuario :: IO ()
 cadastrarUsuario = do
 
@@ -82,9 +81,10 @@ cadastrarUsuario = do
     menuPrincipal
 
 
--- Função para deletar um usuário
+-- Deleta um usuário do sistema
 deletarUsuario :: IO()
 deletarUsuario = do
+
   clearScreen
                             
   putStrLn "Digite seu id:"
@@ -93,14 +93,15 @@ deletarUsuario = do
   senha <- getLine
   -- Tem que ter uma função para verificar se a senha bate com o nome do usuário
   removeUsuario id
+  clearScreen
   exitSuccess
-
 
 -- Função para criar um projeto
 cadastrarProjeto :: IO()
 cadastrarProjeto = do
 
   clearScreen
+
   putStrLn $ "Cadastrar Projeto:" ++ "\n"
           ++ "Digite seu nome:"
   nomeUsuario <- getLine
@@ -115,42 +116,29 @@ cadastrarProjeto = do
 
   criaProjeto (show (idProjeto)) nomeProjeto descricao nomeUsuario
 
-
+-- Verifica se é gerente e mostra o menu correspondente
 menuProjetos :: IO()
 menuProjetos = do 
 
-  putStrLn "Digite seu ID:"
-  idUsuario <- getLine
-  putStrLn "Digite o ID do projeto que deseja acessar:"
-  idProjeto <- getLine
-
-  -- let gerente = Util.ehGerente id "Projeto"
-
-  -- if gerente then menuRestritoAtividades
-  -- else menuPublicoAtividades
-
-    -- verifica se é gerente e mostra o menu correspondente
-  putStrLn ""
-
-
-removerProjeto :: IO()
-removerProjeto = do
     putStrLn "Digite seu ID:"
     idUsuario <- getLine
-    putStrLn "Digite o ID do projeto que deseja excluir:"
+    putStrLn "Digite o ID do projeto que deseja acessar:"
     idProjeto <- getLine
 
-    -- ehGerente 
-    removeProjeto idProjeto
-    putStrLn "Projeto removido com sucesso!"
+    -- let gerente = Util.ehGerente id "Projeto"
+
+    -- if gerente then menuRestritoAtividades
+    -- else menuPublicoAtividades
+    
+    putStrLn ""
 
 
 -- Função para visualizar projetos pendentes
 visualizarProjetosPendentes :: IO ()
 visualizarProjetosPendentes = do
   -- Implementation logic for viewing pending projects
-  putStrLn "Implementação em andamento."
-  menuPrincipal
+    putStrLn "Implementação em andamento."
+    menuPrincipal
 
 
 -- Função para solicitar entrada em um projeto
@@ -161,7 +149,7 @@ solicitarEntrada = do
   menuPrincipal
 
 
--- Função para entrar no chat
+-- Entra no chat
 chat :: IO ()
 chat = do
   -- Implementation logic for entering the chat
@@ -169,7 +157,7 @@ chat = do
   menuPrincipal
 
 
--- Função para visualizar banco de atividades
+-- Visualiza atividades cadastradas no sistema
 bancoDeAtividades :: IO ()
 bancoDeAtividades = do
   -- Implementation logic for viewing activity bank

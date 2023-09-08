@@ -11,7 +11,7 @@ diretorioDatabase :: String
 diretorioDatabase = "./Modules/Database/LocalUsers/"
 
 
--- cria usuario na base de dados
+-- Cria usuario na base de dados
 criaUsuarioDatabase :: String -> String -> String -> IO()
 criaUsuarioDatabase idUsuario nome senha = do
     let usuario = [idUsuario, nome, senha] -- usuario é uma lista que guarda os parâmetros passados
@@ -23,17 +23,17 @@ criaUsuarioDatabase idUsuario nome senha = do
     -- escreve um arquivo txt com os dados da lista anterior, onde o nome do arquivo é o username
 
 
--- Função para deletar um user da base de dados
+-- Função para deletar um usuário da base de dados
 -- usa uma função de deletar um arquivo passando o caminho do arquivo
 deletaUsuarioDatabase :: String -> IO()
 deletaUsuarioDatabase nomeUsuario = do 
     removeFile (diretorioDatabase++nomeUsuario++"/"++nomeUsuario++".txt") 
 
 
--- Função que retorna o nome de um usuário
--- o termo 'conteudo' recebe os dados lidos no txt
-pegaNomeDatabase :: String -> IO String
-pegaNomeDatabase nomeUsuario = do 
+-- Retorna o nome de um usuário
+-- 'conteudo' recebe os dados lidos no txt
+getNomeDatabase :: String -> IO String
+getNomeDatabase nomeUsuario = do 
     conteudo <- readFile (diretorioDatabase++nomeUsuario++"/"++nomeUsuario++ ".txt")
     let linhas = lines conteudo 
     return (linhas !! 1)
@@ -55,7 +55,7 @@ removeProjetoDatabase idProjeto = do
     removeDirectoryRecursive filePath 
 
 
--- Adiciona tarefa na base de dados
+-- Adiciona atividade na base de dados
 addAtividadeDatabase :: String -> String -> String -> String -> String -> IO()
 addAtividadeDatabase titulo descricao status idAtividade idProjeto = do
     let conteudo = [titulo, descricao, status, idAtividade, idProjeto]
@@ -64,7 +64,7 @@ addAtividadeDatabase titulo descricao status idAtividade idProjeto = do
         hPutStr handle (unlines conteudo)
 
 
--- exibe Tarefas
+-- Exibe atividade
 exibeAtividadeDatabase :: String -> String -> String -> IO [String]
 exibeAtividadeDatabase titulo descricaoTarefa idTarefa = do
     let filePath = diretorioDatabase ++ titulo ++ "/idTarefa/" ++ idTarefa ++ "/" ++ titulo
@@ -73,7 +73,7 @@ exibeAtividadeDatabase titulo descricaoTarefa idTarefa = do
     return linhas
 
 
--- remove tarefa
+-- Remove atividade
 removeAtividadeDatabase :: String -> IO()
 removeAtividadeDatabase idAtividade = do
     let filePath = diretorioDatabase ++ idAtividade

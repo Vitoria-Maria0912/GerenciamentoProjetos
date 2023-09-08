@@ -1,36 +1,34 @@
-module Menus.MenuPublicoProjeto where
+module Menus.MenuPublico where
 import Controllers.Atividades as Atividades
 import Util.ClearScreen
 import Data.Char (toLower)
 
--- todos os usuários tem acesso
 
--- caso o usuário digite o comando errado volta para o menu
+-- Caso o usuário digite o comando errado retorna ao menu
 erroMenuPublico :: IO()
 erroMenuPublico =  do
-    putStrLn   "----------------------------------"
-    putStrLn $ "Entrada Inválida. Tente novamente!" 
-    putStrLn   "----------------------------------\n"
-    menuPublicoAtividades
+    putStrLn $ "----------------------------------"
+            ++ "Entrada Inválida. Tente novamente!" 
+            ++ "----------------------------------\n"
+    menuPublicoProjeto
 
-
-menuPublicoAtividades :: IO()
-menuPublicoAtividades = do 
+-- Menu dos projetos, todos os usuários tem acesso
+menuPublicoProjeto :: IO()
+menuPublicoProjeto = do 
 
     clearScreen
 
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
-            ++ "|                     Menu Projeto                          |" ++ "\n"
-            ++ "|                                                           |" ++ "\n"
-            ++ "|                  Selecione uma opção:                     |" ++ "\n"
-            ++ "|                                                           |" ++ "\n"
-            ++ "|             I - Iniciar uma atividade                     |" ++ "\n"
-            ++ "|             F - Finalizar uma atividade                   |" ++ "\n"
-            ++ "|             V - Visualizar atividades do projeto          |" ++ "\n"
-            ++ "|             A - Visualizar status de uma atividade        |" ++ "\n"
-            ++ "|             O - Dar feedback em uma atividade             |" ++ "\n"
-            ++ "|             M - Voltar ao menu principal                  |" ++ "\n"
-            ++ "|             S - Sair do sistema                           |" ++ "\n"
+            ++ "|                    Menu Projeto                          |" ++ "\n"
+            ++ "|                                                          |" ++ "\n"
+            ++ "|                 Selecione uma opção:                     |" ++ "\n"
+            ++ "|                                                          |" ++ "\n"
+            ++ "|            I - Iniciar uma atividade                     |" ++ "\n"
+            ++ "|            F - Finalizar uma atividade                   |" ++ "\n"
+            ++ "|            V - Visualizar atividades do projeto          |" ++ "\n"
+            ++ "|            A - Visualizar status de uma atividade        |" ++ "\n"
+            ++ "|            O - Dar feedback em uma atividade             |" ++ "\n"
+            ++ "|            S - Sair do sistema                           |" ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
 
     option <- getLine
@@ -42,71 +40,95 @@ menuPublicoAtividades = do
         "v" -> visualizarAtividades
         "a" -> statusAtividade
         "o" -> criarFeedback
-        "m" -> menuPrincipal
         "s" -> sairDoSistema
         _   -> erroMenuPublico
 
+-- Sai do sistema
+sairDoSistema :: IO()
+sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 
+-- Inicia uma atividade
 comecarAtividade :: IO()
 comecarAtividade = do
     
-    -- acessaria pelo nome ou pelo ID?
-    putStrLn "Digite o nome da atividade que deseja começar:"
-    titulo <- getLine
+    putStrLn "Digite o ID da atividade que deseja começar:"
+    idAtividade <- getLine
+    putStrLn "Digite o ID do projeto que a atividade pertence:"
+    idProjeto <- getLine
 
-    -- se o usuário já está fazendo ela
-    -- poderia fazer a checagem:
+    -- let atividade = Projeto.getAtividade idAtividade
 
-    -- if Atividades.mostraStatus == "Não atribuída!" then 
+    -- if status atividade == "Não atribuída!" then 
     --     Atividades.mudaStatus "Pendente..."
-    --     putStrLn $ "Você começou a atividade: " ++ titulo
+    --     putStrLn $ "Você começou a atividade: " ++ atividade.titulo 
 
     -- else do
     putStrLn "Esta atividade já está em andamento!"
 
-    -- decidir como armazenar isso
-
-
+-- Finaliza uma atividade
 finalizarAtividade :: IO()
 finalizarAtividade = do
 
-    -- acessaria pelo nome ou pelo ID?
-    putStrLn "Digite o nome da atividade que deseja finalizar:"
-    titulo <- getLine
+    putStrLn "Digite o ID da atividade que deseja finalizar:"
+    idAtividade <- getLine
+    putStrLn "Digite o ID do projeto que a atividade pertence:"
+    idProjeto <- getLine
 
     -- armazenar todas as atividades finalizadas daquele usuário
     -- decidir como armazenar isso
 
-    -- Atividades.mudaStatus "Concluída!"
+    -- let atividade = Projeto.getAtividade idAtividade
+
+    -- Atividades.mudaStatus atividade "Concluída!"
 
     putStrLn "Atividade finalizada com sucesso!"
+    
+-- Mostra o status de uma atividade
+statusAtividade :: IO()
+statusAtividade = do
+
+    putStrLn "Digite o ID da atividade que deseja visualizar o status:"
+    idAtividade <- getLine
+    putStrLn "Digite o ID do projeto que a atividade pertence:"
+    idProjeto <- getLine
+
+    -- let atividade = Projeto.getAtividade idAtividade
+
+    putStrLn "atividade.status"
 
 
 visualizarAtividades :: IO()
 visualizarAtividades = do 
 
-    -- como acessar as atividades do projeto sem precisar digitar o título dele?
-    -- seria bom uma maneira de 'exibir o arquivo'
-    -- mas será possível ver apenas o nome ou, por exemplo, a quantidade de membros
+    putStrLn "Digite o ID do projeto que deseja visualizar as atividade:"
+    idProjeto <- getLine
+
+    -- será possível ver apenas o nome ou, por exemplo, a quantidade de membros
     -- em cada atividade?
+
+    -- let projeto = Projeto.getProjeto idProjeto
    
-    putStrLn "Projeto.exibeAtividades projeto"
-
-
-statusAtividade :: IO()
-statusAtividade = do
-
-    -- acessaria pelo nome ou pelo ID?
-    putStrLn "Digite o nome da atividade que deseja visualizar o status:"
-    titulo <- getLine
-
-    -- tem que passar atividade, mas acho que seria melhor pelo ID
-    putStrLn "Atividades.mostraStatus titulo"
-
+    putStrLn "projeto.exibeAtividades"
 
 -- Função para criar feedback
 criarFeedback :: IO ()
 criarFeedback = do
-  -- Implementation logic for creating feedback
-  putStrLn "Implementação em andamento."
-  menuPrincipal
+
+    putStrLn "Digite seu ID:"
+    idUsuario <- getLine
+    putStrLn "Digite o ID da atividade que deseja dar Feedback:"
+    idAtividade <- getLine
+    putStrLn "Digite o ID do projeto que a atividade pertence:"
+    idProjeto <- getLine
+    putStrLn "Digite um breve comentário sobre a atividade:"
+    comentario <- getLine
+
+    -- let projeto = getProjeto idProjeto
+    -- let atividade = Projeto.getAtividade idAtividade
+    -- let usuario = getUsuario idUsuario
+
+    -- if usuario ehGerente || usuario ehMembroResponsavel
+
+    -- Atividades.adicionaFeedback atividade "comentário"
+    
+    putStrLn ""

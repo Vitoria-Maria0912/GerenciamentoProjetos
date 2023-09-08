@@ -2,20 +2,21 @@ module Menus.MenuGerente where
 
 import System.Random (Random(randomRIO))
 import Controllers.Atividades as Atividades
+import Menus.MenuPublico as MenuPublico
 import Database.Database
 import Util.ClearScreen
 import Data.Char (toLower)
 
 erroMenuGerente :: IO()
 erroMenuGerente = do
-    putStrLn   "----------------------------------"
-    putStrLn   "Entrada Inválida. Tente novamente!"
-    putStrLn   "----------------------------------\n"
-    menuRestritoAtividades
+    putStrLn $ "----------------------------------"
+            ++ "Entrada Inválida. Tente novamente!"
+            ++ "----------------------------------\n"
+    menuRestritoProjeto
 
-
-menuRestritoAtividades :: IO()
-menuRestritoAtividades = do 
+-- Menu dos projetos, apenas os gerentes têm acesso
+menuRestritoProjeto :: IO()
+menuRestritoProjeto = do 
 
     clearScreen
     
@@ -24,43 +25,55 @@ menuRestritoAtividades = do
             ++ "|                                                          |" ++ "\n"
             ++ "|                Selecione uma opção:                      |" ++ "\n"
             ++ "|                                                          |" ++ "\n"
-            ++ "|              C - Criar uma atividade                     |" ++ "\n"
-            ++ "|              G - Gerenciar membros do projeto            |" ++ "\n"
-            ++ "|              R - Remover uma atividade                   |" ++ "\n"
-            ++ "|              I - Iniciar uma atividade                   |" ++ "\n"
-            ++ "|              F - Finalizar uma atividade                 |" ++ "\n"
-            ++ "|              V - Visualizar atividades do projeto        |" ++ "\n"
-            ++ "|              A - Visualizar status de uma atividade      |" ++ "\n"
-            ++ "|              O - Dar feedback em uma atividade           |" ++ "\n"
-            ++ "|              D - Atribuir atividade a um membro          |" ++ "\n"
-            ++ "|              J - Remover membro do projeto               |" ++ "\n"
-            ++ "|              M - Voltar ao menu principal                |" ++ "\n"
-            ++ "|              S - Sair do sistema                         |" ++ "\n"
+            ++ "|           P - Remover projeto                            |" ++ "\n"
+            ++ "|           C - Criar uma atividade                        |" ++ "\n"
+            ++ "|           G - Gerenciar membros do projeto               |" ++ "\n"
+            ++ "|           R - Remover uma atividade                      |" ++ "\n"
+            ++ "|           D - Atribuir atividade a um membro             |" ++ "\n"
+            ++ "|           J - Remover membro do projeto                  |" ++ "\n"
+            ++ "|           I - Iniciar uma atividade                      |" ++ "\n"
+            ++ "|           F - Finalizar uma atividade                    |" ++ "\n"
+            ++ "|           V - Visualizar atividades do projeto           |" ++ "\n"
+            ++ "|           A - Visualizar status de uma atividade         |" ++ "\n"
+            ++ "|           O - Dar feedback em uma atividade              |" ++ "\n"
+            ++ "|           S - Sair do sistema                            |" ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
-
+            
     option <- getLine
     let lowerOption = map toLower option
     case lowerOption of 
 
+        "p" -> removerProjeto
         "c" -> criaAtividade
         "g" -> gerenciarMembros
-        "r" -> deletarAtividade
-        "i" -> comecarAtividade
-        "f" -> finalizarAtividade
-        "v" -> visualizarAtividades
-        "a" -> statusAtividade
-        "o" -> criarFeedback
+        "r" -> deletarAtividade 
         "d" -> atribuirMembro
         "j" -> removeMembroProjeto
-        -- "m" -> menuPrincipal
-        "s" -> sairDoSistema
+        "i" -> MenuPublico.comecarAtividade
+        "f" -> MenuPublico.finalizarAtividade
+        "v" -> MenuPublico.visualizarAtividades
+        "a" -> MenuPublico.statusAtividade
+        "o" -> MenuPublico.criarFeedback
+        "s" -> MenuPublico.sairDoSistema
         _   -> erroMenuGerente
 
 
--- sai do sistema
-sairDoSistema :: IO()
-sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
+-- Remove um projeto do sistema
+removerProjeto :: IO()
+removerProjeto = do
 
+    putStrLn "Digite seu ID:"
+    idUsuario <- getLine
+    putStrLn "Digite o ID do projeto que deseja excluir:"
+    idProjeto <- getLine
+
+    -- let projeto = getProjeto idProjeto
+    -- let gerente = Util.ehGerente idUsuario projeto
+
+    -- if gerente then removeProjeto idProjeto putStrLn "Projeto removido com sucesso!"
+    -- else putStrLn "Você não tem permissão para deletar esse projeto!"
+
+    putStrLn ""
 
 -- cria atividade
 criaAtividade :: IO()
@@ -89,72 +102,19 @@ deletarAtividade :: IO()
 deletarAtividade = do
     putStrLn "Digite o ID da atividade que deseja remover:"
     idAtividade <- getLine
+    putStrLn "Digite o ID do projeto que a atividade pertence:"
+    idProjeto <- getLine
 
     -- tem que checar se existe
     Atividades.removerAtividade idAtividade
     putStrLn "Atividade removida com sucesso!"
 
 
-comecarAtividade :: IO()
-comecarAtividade = do
-    
-    -- acessaria pelo nome ou pelo ID?
-    putStrLn "Digite o id da atividade que deseja começar:"
-    idAtividade <- getLine
-
-    
-    -- se o usuário já está fazendo ela
-    -- poderia fazer a checagem:
-
-    -- let atividade = Projeto.getAtividade idAtividade
-
-    -- if status atividade == "Não atribuída!" then 
-    --     Atividades.mudaStatus "Pendente..."
-    --     putStrLn $ "Você começou a atividade: " ++ titulo atividade ---- FAZER O GET
-
-    -- else do
-    putStrLn "Esta atividade já está em andamento!"
-
-
-finalizarAtividade :: IO()
-finalizarAtividade = do
-
-    -- acessaria pelo nome ou pelo ID?
-    putStrLn "Digite o nome da atividade que deseja finalizar:"
-    titulo <- getLine
-
-    -- armazenar todas as atividades finalizadas daquele usuário
-    -- decidir como armazenar isso
-
-    -- Atividades.mudaStatus "Concluída!"
-
-    putStrLn "Atividade finalizada com sucesso!"
-    
-statusAtividade :: IO()
-statusAtividade = do
-
-    -- acessaria pelo nome ou pelo ID?
-    putStrLn "Digite o id da atividade que deseja visualizar o status:"
-    idAtividade <- getLine
-
-    -- tem que passar atividade, mas acho que seria melhor pelo ID
-    putStrLn "Atividades.mostraStatus titulo"
-
-visualizarAtividades :: IO()
-visualizarAtividades = do 
-
-    -- como acessar as atividades do projeto sem precisar digitar o título dele?
-    -- seria bom uma maneira de 'exibir o arquivo'
-    -- mas será possível ver apenas o nome ou, por exemplo, a quantidade de membros
-    -- em cada atividade?
-   
-    putStrLn "Projeto.exibeAtividades projeto"
-
 -- Visualizar membros do projeto
 gerenciarMembros :: IO()
 gerenciarMembros = do
-    putStrLn "Digite o nome do projeto:"
-    projeto <- getLine
+    putStrLn "Digite o ID do projeto:"
+    idProjeto <- getLine
     -- invoca função para visualizar membros do projeto, em Projetos.hs
     putStrLn "Membros do projeto:"
     -- imprime os membros do projeto
@@ -166,9 +126,9 @@ removeMembroProjeto = do
     putStrLn "Digite o ID do projeto:"
     idProjeto <- getLine
     putStrLn "Digite o ID do membro que deseja remover:"
-    membroResponsavel <- getLine
+    usuario <- getLine
     
-    -- Projeto.removeMembroProjeto idProjeto membroResponsavel
+    -- Projeto.removeMembroProjeto idProjeto usuario
     putStrLn "Membro removido do projeto com sucesso!"
 
 
@@ -177,16 +137,16 @@ atribuirMembro :: IO()
 atribuirMembro = do
     putStrLn "Digite o ID da atividade:"
     idAtividade <- getLine
+    putStrLn "Digite o ID do projeto que a atividade pertence:"
+    idProjeto <- getLine
     putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
     membroResponsavel <- getLine
-    
-    -- Atividades.atribuirMembro idAtividade membroResponsavel
+
+    -- let atividade = getAtividade idAtividade
+    -- Atividades.atribuirMembro atividade membroResponsavel
+
+    -- TEM QUE ARMAZENÁ-LOS
+
     putStrLn "Membro atribuído à atividade com sucesso!"
 
 
--- Função para criar feedback
-criarFeedback :: IO ()
-criarFeedback = do
-  -- Implementation logic for creating feedback
-  putStrLn "Implementação em andamento."
-  menuRestritoAtividades

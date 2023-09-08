@@ -13,25 +13,21 @@ import Controllers.Atividades as Atividade
 import Database.Database
 
 
+-- Definindo o tipo de dado Projeto
 data Projeto = Projeto {
     idProjeto :: String,
     nomeProjeto :: String,
     descricaoProjeto :: String,
     idGerente :: String,
-    --como só contém os ID dos usuarios , não precisa ser necessariamente uma lista do tipo Usuario .
     usuarios :: [String],
-    -- como só contém os ID das atividades , não precisa ser uma lista do tipo atividades , só podendo ter o ID .
     atividades :: [String]
-} deriving ()
+} 
 
 
--- criação de projeto
 criaProjeto :: String -> String -> String -> String -> IO()
 criaProjeto = addProjetoDatabase
 
-
--- adiciona um Projeto a uma lista de Projetos /recebe um projeto ,uma lista de projetos e retorna a lista atualizada 
--- checagem conforme nome do projeto
+-- Adiciona um projeto no sistema
 adicionaProjeto :: Projeto -> [Projeto] -> [Projeto]
 adicionaProjeto projeto projetos = 
     case find (\u -> nomeProjeto u == nomeProjeto projeto) projetos of 
@@ -39,6 +35,39 @@ adicionaProjeto projeto projetos =
         Nothing -> projeto : projetos
 
 
--- remoção de projeto
+escreverProjeto :: FilePath -> [Projeto] -> IO ()
+escreverProjeto arquivo projetos = appendFile arquivo conteudo
+  where
+    conteudo = unlines $ map formatarProjeto projetos
+    formatarProjeto projeto = "ID: " ++ idProjeto projeto ++ 
+                            ", NOME: " ++ nomeProjeto projeto ++ 
+                            ", DESCRICAO: " ++ descricaoProjeto projeto ++ 
+                            ", IDGERENTE: " ++ idGerente projeto ++ 
+                            ", ID S DE USUARIOS QUE TRABALHAM NO PROJETO: " ++ show (usuarios projeto) ++ 
+                            ", ID S DE ATIVIDADES ANEXADAS AO PROJETO: " ++ show (atividades projeto)
+
+
+lerProjetos :: FilePath -> IO [Projeto]
+lerProjetos path = do
+    conteudo <- readFile path
+    let projetos = mapMaybe fromString $ lines conteudo
+    return projetos
+
+
+fromString :: String -> Maybe Projeto
+fromString str = case words str of
+    [idProjeto, nomeProjeto, descricaoProjeto, idGerente,usuariosStr, atividadesStr] -> do
+        let atividades = words atividadesStr
+        let usuarios = words usuariosStr
+        return Projeto { idProjeto = idProjeto,
+                        nomeProjeto = nomeProjeto,
+                        descricaoProjeto = descricaoProjeto,
+                        idGerente = idGerente,
+                        usuarios = usuarios,
+                        atividades = atividades }
+    _ -> Nothing
+
+
+-- Remove um projeto do sistema
 removeProjeto :: String -> IO()
 removeProjeto = removeProjetoDatabase
