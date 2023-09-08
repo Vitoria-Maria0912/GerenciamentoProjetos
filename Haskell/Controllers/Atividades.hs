@@ -3,7 +3,8 @@ module Controllers.Atividades where
 import Data.List (find)
 import Controllers.Usuario
 import Database.Database
-
+import Persistencia.Persistencia
+import System.Random
 
 data Atividade = Atividade {
     titulo :: String,
@@ -66,4 +67,17 @@ adicionaFeedback atividade comentario = do
 removerAtividade :: String -> IO()
 removerAtividade = removeAtividadeDatabase
 
-
+-- Função para criar e salvar uma nova atividade
+criarESalvarAtividade :: String -> String -> String -> IO ()
+criarESalvarAtividade titulo descricao idProjeto = do
+    idAtiv <- gerarIdAtividade -- Implemente uma função para gerar IDs únicos
+    let novaAtividade = Atividade {
+        titulo = titulo,
+        descricao = descricao,
+        idProjetoAtividade = idProjeto,
+        idAtividade = idAtiv,
+        status = "Pendente",
+        idMembroResponsavel = Nothing,
+        feedback = Nothing
+    }
+    salvarAtividade novaAtividade

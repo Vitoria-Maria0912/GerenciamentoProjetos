@@ -1,6 +1,6 @@
 module Menus.MenuGerente where
 
-import System.Random (Random(randomRIO))
+import System.Random 
 import Controllers.Atividades as Atividades
 import Menus.MenuPublico as MenuPublico
 import Database.Database

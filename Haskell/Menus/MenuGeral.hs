@@ -1,7 +1,7 @@
 module Menus.MenuGeral where
 import qualified Data.Char as Char
 import System.Exit (exitSuccess)
-import System.Random (Random(randomRIO))
+import System.Random 
 import Data.Char (toLower)
 import Util.ClearScreen
 import Controllers.Usuario
