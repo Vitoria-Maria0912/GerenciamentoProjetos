@@ -53,6 +53,13 @@ lerProjetos path = do
     let projetos = mapMaybe fromString $ lines conteudo
     return projetos
 
+-- Obtem os IDs das atividades cadastradas em um projetos
+getIdsAtividades :: [Projeto] -> [String]
+getIdsAtividades projetos = concatMap atividades projetos
+
+-- Obtem os IDs dos usuários cadastrados em um projetos
+getIdsUsuarios :: [Projeto] -> [String]
+getIdsUsuarios projetos = concatMap usuarios projetos
 
 fromString :: String -> Maybe Projeto
 fromString str = case words str of
@@ -66,7 +73,6 @@ fromString str = case words str of
                         usuarios = usuarios,
                         atividades = atividades }
     _ -> Nothing
-
 
 -- Remove um projeto do sistema
 removeProjeto :: String -> IO()
