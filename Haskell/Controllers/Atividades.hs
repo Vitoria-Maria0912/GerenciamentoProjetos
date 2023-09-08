@@ -22,7 +22,7 @@ criarAtividade titulo descricao status idProjetoAtividade idAtividade idMembroRe
                 idProjetoAtividade = idProjetoAtividade,
                 idAtividade = idAtividade,
                 status = status, 
-                idMembroResponsavel = idMembroResponsavel
+                idMembroResponsavel = idMembroResponsavel,
                 feedback = feedback }
     
 -- Adiciona uma atividade no sistema (com base no id)
