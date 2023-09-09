@@ -37,7 +37,7 @@ escreverAtividades :: FilePath -> [Atividade] -> IO ()
 escreverAtividades arquivo atividades = appendFile arquivo conteudo
   where
     conteudo = unlines $ map formatarAtividade atividades
-    formatarAtividade a = "ID: " ++ show (idAtividade a) ++ ", TITULO: " ++ titulo a ++ ", DESCRIÇÃO: " ++ descricao a ", ID PROJETO: " ++ show (idProjetoAtividade a) ++ ", STATUS: " ++ status a ++ ", MEMBRO RESPONSÁVEL: " ++ membroResponsavel a
+    formatarAtividade a = "ID: " ++ idAtividade a ++ ", TITULO: " ++ titulo a ++ ", DESCRIÇÃO: " ++ descricao a ++ ", ID PROJETO: " ++ idProjetoAtividade a ++ ", STATUS: " ++ status a ++ ", MEMBRO RESPONSÁVEL: " ++ membroResponsavel a
 
 -- le as atividades do txt e retorna a lista
 lerAtividades :: FilePath -> IO [Atividade]
