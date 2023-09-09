@@ -75,17 +75,19 @@ cadastrarUsuario = do
     putStrLn "Digite sua senha: "
     senha <- getLine
 
-    idUsuario <- randomRIO (1000, 9999 :: Int)
+    idUsuario <- randomRIO (0000, 9999 :: Int)
 
-    usuarios <- Usuario.lerUsuarios "dados/usuarios.txt"
-    if (Util.verificaIdUsuario (read idUsuario) usuarios == False) then do
-        let usuario = Usuario.Usuario {Usuario.idUsuario = (show (idUsuario)), Usuario.nome = nome, Usuario.senha = senha}
-        let novosUsuarios = Usuario.adicionarUsuario usuario usuarios
-        Usuario.escreverUsuarios "dados/usuarios.txt" novosUsuarios
-        putStrLn $ "Usuário cadastrado com sucesso!" ++ "\n"
+    usuarios <- lerUsuarios "Database/LocalUsers/usuarios.txt"
+
+    if (verificaIdUsuario (show(idUsuario)) usuarios == False) then do
+        let usuario = Usuario {Usuario.idUsuario = show(idUsuario), Usuario.nome = nome, Usuario.senha = senha}
+          -- getUsuario (show(idUsuario)) usuarios
+        let novosUsuarios = adicionarUsuario usuario usuarios
+        escreverUsuarios "Database/LocalUsers/usuarios.txt" novosUsuarios
+        putStrLn $ "Usuário cadastrado com sucesso! Seu ID é " ++ show(idUsuario) ++ "\n"
         menuPrincipal
     else do
-        putStrLn $ "O id já existe na base de dados." ++ "\n"
+        putStrLn $ "O ID já existe na base de dados.\n"
         cadastrarUsuario
 
 
