@@ -19,12 +19,11 @@ data Projeto = Projeto {
     nomeProjeto :: String,
     descricaoProjeto :: String,
     idGerente :: String,
-    usuarios :: [String],
-    atividades :: [String]
+    membros :: Maybe [String],
+    atividades :: Maybe [String]
 } 
 
 
--- criação de projeto (por enquanto ainda ta relacionada a database)
 criaProjeto :: String -> String -> String -> String -> Maybe [String] -> Maybe [String] -> IO()
 criaProjeto = addProjetoDatabase
 
@@ -44,9 +43,9 @@ escreverProjeto arquivo projetos = appendFile arquivo conteudo
                             ", NOME: " ++ nomeProjeto projeto ++ 
                             ", DESCRICAO: " ++ descricaoProjeto projeto ++ 
                             ", IDGERENTE: " ++ idGerente projeto ++ 
-                            ", ID S DE USUARIOS QUE TRABALHAM NO PROJETO: " ++ show (usuarios projeto) ++ 
+                            ", ID S DE USUARIOS QUE TRABALHAM NO PROJETO: " ++ show (membros projeto) ++ 
                             ", ID S DE ATIVIDADES ANEXADAS AO PROJETO: " ++ show (atividades projeto)
-                            
+
 -- Acho que faz mais sentido estar aqui, do que em Atividades
 -- Adiciona uma atividade a um projeto
 adicionaAtividade :: Atividade -> [Atividade] -> [Atividade]
@@ -55,12 +54,14 @@ adicionaAtividade atividade atividades =
         Just _-> atividades
         Nothing -> atividade : atividades
 
+
 lerProjetos :: FilePath -> IO [Projeto]
 lerProjetos path = do
     conteudo <- readFile path
     let projetos = mapMaybe fromString $ lines conteudo
     return projetos
 
+-- Obtem os IDs das atividades cadastradas em um projetos
 getIdsAtividades :: Projeto -> [String]
 getIdsAtividades projeto = 
     case atividades projeto of
@@ -73,6 +74,7 @@ getIdsUsuarios projeto =
     case membros projeto of
         Just membrosProjeto -> [unlines membrosProjeto]
         _ -> []
+
 
 fromString :: String -> Maybe Projeto
 fromString str = case words str of
@@ -87,6 +89,6 @@ fromString str = case words str of
                         atividades = Just atividades }
     _ -> Nothing
 
--- Remove um projeto do sistema (excluir da database depois)
+-- Remove um projeto do sistema
 removeProjeto :: String -> IO()
 removeProjeto = removeProjetoDatabase
