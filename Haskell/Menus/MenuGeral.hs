@@ -75,7 +75,7 @@ cadastrarUsuario = do
     putStrLn "Digite sua senha: "
     senha <- getLine
 
-    idUsuario <- randomRIO (0000, 9999 :: Int)
+    idUsuario <- randomRIO (1000, 9999 :: Int)
 
     usuarios <- lerUsuarios "Database/LocalUsers/usuarios.txt"
 
@@ -101,10 +101,10 @@ deletarUsuario = do
   id <- getLine
   putStrLn "Digite sua senha:"
   senha <- getLine
-  -- Tem que ter uma função para verificar se a senha bate com o nome do usuário
-  removeUsuario id
+  
+  removeEAtualizaUsuarios idUsuario "Database/LocalUsers/usuarios.txt"
+  menuPrincipal
   clearScreen
-  exitSuccess
 
 -- Função para criar um projeto
 cadastrarProjeto :: IO()
@@ -124,16 +124,16 @@ cadastrarProjeto = do
 
   idProjeto <- randomRIO (100, 999 :: Int)
 
-  projetos <- Projeto.lerProjetos "dados/projetos.txt"
-    if (Projeto.verificaIdProjeto (read idProjeto) projetos == False) then do
-        let projeto = Projeto.Projeto {Projeto.idProjeto = (show (idProjeto)), Projeto.nomeProjeto = nomeProjeto, Projeto.descricao = descricao, Projeto.idGerente = idUsuario}
-        let novosProjetos = Projeto.adicionarProjeto projeto projetos
-        Projeto.escreverProjetos "dados/projetos.txt" novosProjetos
-        putStrLn $ "Projeto cadastrado com sucesso!" ++ "\n"
-        menuPrincipal
-    else do
+  projetos <- Projeto.lerProjetos "Database/LocalUsers/projetos.txt"
+  --  if (Projeto.verificaIdProjeto (read idProjeto) projetos == False) then do
+  --      let projeto = Projeto.Projeto {Projeto.idProjeto = (show (idProjeto)), Projeto.nomeProjeto = nomeProjeto, Projeto.descricao = descricao, Projeto.idGerente = idUsuario}
+  --      let novosProjetos = Projeto.adicionarProjeto projeto projetos
+  --      Projeto.escreverProjetos "dados/projetos.txt" novosProjetos
+  --      putStrLn $ "Projeto cadastrado com sucesso!" ++ "\n"
+  --      menuPrincipal
+  --  else do
         putStrLn $ "O id já existe na base de dados." ++ "\n"
-        cadastrarProjeto
+  --      cadastrarProjeto
 
 
 -- Verifica se o usuário é gerente e mostra o menu correspondente
@@ -145,10 +145,12 @@ menuProjetos = do
     putStrLn "Digite o ID do projeto que deseja acessar:"
     idProjeto <- getLine
 
-    -- let gerente = Util.ehGerente id "Projeto"
+    let projeto = getProjeto idProjeto projetos
 
-    -- if gerente then menuRestritoAtividades
-    -- else menuPublicoAtividades
+    let gerente = Util.ehGerente id "Projeto"
+
+    if gerente then menuRestritoAtividades
+    else menuPublicoAtividades
     
     putStrLn ""
 
@@ -164,9 +166,17 @@ visualizarProjetosPendentes = do
 -- Função para solicitar entrada em um projeto
 solicitarEntrada :: IO ()
 solicitarEntrada = do
-  -- Implementation logic for requesting entry into a project
-  putStrLn "Implementação em andamento."
-  menuPrincipal
+  putStrLn "Digite seu ID:"
+    idUsuario <- getLine
+    putStrLn "Digite o ID do projeto que deseja ingressar:"
+    idProjeto <- getLine
+
+    projetos <- lerProjetos "dados/projetos.txt"
+
+    let projeto = getProjeto idProjeto projetos
+
+    putStrLn "Implementação em andamento."
+    menuPrincipal
 
 
 -- Entra no chat
