@@ -76,8 +76,3 @@ formatarUsuario :: Usuario -> String
 formatarUsuario u = "ID: " ++ show (idUsuario u) ++ 
                    ", NOME: " ++ nome u ++ 
                    ", SENHA: " ++ senha u
-    
-formatarUsuario :: Usuario -> String
-formatarUsuario u = "ID: " ++ show (idUsuario u) ++ 
-                   ", NOME: " ++ nome u ++ 
-                   ", SENHA: " ++ senha u
