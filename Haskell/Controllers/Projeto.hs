@@ -24,15 +24,9 @@ data Projeto = Projeto {
 } 
 
 
--- criação de projeto
-criaProjeto :: String -> String -> String -> String -> [String] -> [String] -> Projeto
-criaProjeto idProjeto nomeProjeto descricao idGerente usuarios atividades = 
-    Projeto {idProjeto = idProjeto, 
-            nomeProjeto = nomeProjeto, 
-            descricaoProjeto = descricao, 
-            idGerente = idGerente, 
-            usuarios = usuarios,  
-            atividades = atividades}
+-- criação de projeto (por enquanto ainda ta relacionada a database)
+criaProjeto :: String -> String -> String -> String -> Maybe [String] -> Maybe [String] -> IO()
+criaProjeto = addProjetoDatabase
 
 -- Adiciona um projeto no sistema
 adicionaProjeto :: Projeto -> [Projeto] -> [Projeto]
@@ -52,7 +46,14 @@ escreverProjeto arquivo projetos = appendFile arquivo conteudo
                             ", IDGERENTE: " ++ idGerente projeto ++ 
                             ", ID S DE USUARIOS QUE TRABALHAM NO PROJETO: " ++ show (usuarios projeto) ++ 
                             ", ID S DE ATIVIDADES ANEXADAS AO PROJETO: " ++ show (atividades projeto)
-
+                            
+-- Acho que faz mais sentido estar aqui, do que em Atividades
+-- Adiciona uma atividade a um projeto
+adicionaAtividade :: Atividade -> [Atividade] -> [Atividade]
+adicionaAtividade atividade atividades = 
+    case find (\u -> idAtividade u == idAtividade atividade) atividades of 
+        Just _-> atividades
+        Nothing -> atividade : atividades
 
 lerProjetos :: FilePath -> IO [Projeto]
 lerProjetos path = do
@@ -60,27 +61,32 @@ lerProjetos path = do
     let projetos = mapMaybe fromString $ lines conteudo
     return projetos
 
--- Obtem os IDs das atividades cadastradas em um projetos
-getIdsAtividades :: [Projeto] -> [String]
-getIdsAtividades projetos = concatMap atividades projetos
+getIdsAtividades :: Projeto -> [String]
+getIdsAtividades projeto = 
+    case atividades projeto of
+        Just atividadesProjeto -> [unlines atividadesProjeto] 
+        _ -> []
 
 -- Obtem os IDs dos usuários cadastrados em um projetos
-getIdsUsuarios :: [Projeto] -> [String]
-getIdsUsuarios projetos = concatMap usuarios projetos
+getIdsUsuarios :: Projeto -> [String]
+getIdsUsuarios projeto = 
+    case membros projeto of
+        Just membrosProjeto -> [unlines membrosProjeto]
+        _ -> []
 
 fromString :: String -> Maybe Projeto
 fromString str = case words str of
-    [idProjeto, nomeProjeto, descricaoProjeto, idGerente,usuariosStr, atividadesStr] -> do
+    [idProjeto, nomeProjeto, descricaoProjeto, idGerente, membrosStr, atividadesStr] -> do
         let atividades = words atividadesStr
-        let usuarios = words usuariosStr
+        let membros = words membrosStr
         return Projeto { idProjeto = idProjeto,
                         nomeProjeto = nomeProjeto,
                         descricaoProjeto = descricaoProjeto,
                         idGerente = idGerente,
-                        usuarios = usuarios,
-                        atividades = atividades }
+                        membros = Just membros,
+                        atividades = Just atividades }
     _ -> Nothing
 
--- Remove um projeto do sistema (comentado pra excluir da database)
--- removeProjeto :: String -> IO()
--- removeProjeto = removeProjetoDatabase
+-- Remove um projeto do sistema (excluir da database depois)
+removeProjeto :: String -> IO()
+removeProjeto = removeProjetoDatabase
