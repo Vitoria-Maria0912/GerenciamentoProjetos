@@ -27,7 +27,9 @@ escreverUsuarios :: FilePath -> [Usuario] -> IO ()
 escreverUsuarios arquivo usuarios = appendFile arquivo conteudo
   where
     conteudo = unlines $ map formatarUsuario usuarios
-    formatarUsuario u = "ID: " ++ show (idUsuario u) ++ ", NOME: " ++ nome u ++ ", SENHA: " ++ senha u
+    formatarUsuario u = "ID: " ++ show (idUsuario u) ++ 
+                      ", NOME: " ++ nome u ++ 
+                      ", SENHA: " ++ senha u
     
 -- ler informações sobre usuários de um arquivo -> retorna uma lista de usuários
 lerUsuarios :: FilePath -> IO [Usuario]
