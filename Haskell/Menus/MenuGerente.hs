@@ -1,25 +1,25 @@
 module Menus.MenuGerente where
 
-import System.Random (Random(randomRIO))
+import System.Random
 import Controllers.Atividades as Atividades
 import Menus.MenuPublico as MenuPublico
 import Database.Database
 import Util.ClearScreen
 import Data.Char (toLower)
 
+
+-- Exibe erro e retorna ao menu
 erroMenuGerente :: IO()
 erroMenuGerente = do
-    putStrLn $ "----------------------------------"
-            ++ "Entrada Inválida. Tente novamente!"
-            ++ "----------------------------------\n"
+    putStrLn $ "------------------------------------------------------------\n"
+            ++ "|            Entrada Inválida. Tente novamente!            |\n"
+            ++ "------------------------------------------------------------\n"
     menuRestritoProjeto
 
 -- Menu dos projetos, apenas os gerentes têm acesso
 menuRestritoProjeto :: IO()
 menuRestritoProjeto = do 
 
-    clearScreen
-    
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
             ++ "|                   Menu Projeto                           |" ++ "\n"
             ++ "|                                                          |" ++ "\n"
@@ -67,15 +67,15 @@ removerProjeto = do
     putStrLn "Digite o ID do projeto que deseja excluir:"
     idProjeto <- getLine
 
-    -- let projeto = getProjeto idProjeto
+    -- let projeto = Database.getProjeto idProjeto
     -- let gerente = Util.ehGerente idUsuario projeto
 
-    -- if gerente then removeProjeto idProjeto putStrLn "Projeto removido com sucesso!"
+    -- if gerente then do Database.removeProjeto idProjeto putStrLn "Projeto removido com sucesso!"
     -- else putStrLn "Você não tem permissão para deletar esse projeto!"
 
     putStrLn ""
 
--- cria atividade
+-- Cria uma atividade em um projeto
 criaAtividade :: IO()
 criaAtividade = do
     putStrLn "Digite o ID do projeto que deseja adicionar uma atividade:"
@@ -96,8 +96,7 @@ criaAtividade = do
 
     putStrLn "Tarefa criada com sucesso!"
 
-
--- remove atividade
+-- Remove uma atividade de um projeto
 deletarAtividade :: IO()
 deletarAtividade = do
     putStrLn "Digite o ID da atividade que deseja remover:"
@@ -105,16 +104,23 @@ deletarAtividade = do
     putStrLn "Digite o ID do projeto que a atividade pertence:"
     idProjeto <- getLine
 
-    -- tem que checar se existe
-    Atividades.removerAtividade idAtividade
-    putStrLn "Atividade removida com sucesso!"
+    -- let projeto = getProjeto idProjeto
+    -- let atividade = projeto.getAtividade idAtividade
+    -- let atividadeExiste = Util.verificaIdAtividade projeto idAtividade
 
+    -- if atividadeExiste then do atividades.removerAtividade idAtividade putStrLn "Atividade removida com sucesso!"
+    -- else putStrLn "Atividade inexistente!"
+
+    putStrLn ""
 
 -- Visualizar membros do projeto
 gerenciarMembros :: IO()
 gerenciarMembros = do
     putStrLn "Digite o ID do projeto:"
     idProjeto <- getLine
+
+    -- let projeto = getProjeto idProjeto
+    
     -- invoca função para visualizar membros do projeto, em Projetos.hs
     putStrLn "Membros do projeto:"
     -- imprime os membros do projeto
@@ -128,7 +134,9 @@ removeMembroProjeto = do
     putStrLn "Digite o ID do membro que deseja remover:"
     usuario <- getLine
     
-    -- Projeto.removeMembroProjeto idProjeto usuario
+    -- let projeto = getProjeto idProjeto
+
+    -- projeto.removeMembroProjeto idProjeto usuario
     putStrLn "Membro removido do projeto com sucesso!"
 
 
@@ -142,11 +150,10 @@ atribuirMembro = do
     putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
     membroResponsavel <- getLine
 
+    -- let projeto = Projeto.
     -- let atividade = getAtividade idAtividade
     -- Atividades.atribuirMembro atividade membroResponsavel
 
     -- TEM QUE ARMAZENÁ-LOS
 
     putStrLn "Membro atribuído à atividade com sucesso!"
-
-
