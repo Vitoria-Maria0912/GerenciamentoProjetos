@@ -12,7 +12,7 @@ data Usuario = Usuario {
 
 -- cria um usuario
 criaUsuario :: String -> String -> String -> Usuario
-criasuario idUsuario nome senha = 
+criaUsuario idUsuario nome senha = 
   (Usuario {idUsuario = idUsuario, nome = nome, senha = senha})
 
 -- checa se existe um usuario com esse id, e se nao existe, adiciona na lista de usuários
