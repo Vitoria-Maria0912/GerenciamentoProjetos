@@ -10,13 +10,16 @@ import Data.Time (parseTimeM, defaultTimeLocale)
 import Data.List
 import System.IO.Unsafe (unsafePerformIO)
 
-import qualified Atividades
-import qualified Usuario
-import qualified Projeto
+import Controllers.Atividades
+import Controllers.Usuario
+import Controllers.Projeto
+
+-- by Yalle
+import Control.Monad (mapM)
 
 -- <<< USUÁRIOS >>>
 
--- Verifica se o Usuario já existe no sistema
+-- -- Verifica se o Usuario já existe no sistema
 verificaIdUsuario :: String -> [Usuario] -> Bool
 verificaIdUsuario id usuarios = elem id (map Usuario.idUsuario usuarios)
 
@@ -25,12 +28,6 @@ verificaSenhaUsuario :: String -> Usuario -> Bool
 verificaSenhaUsuario senhaUsuario usuario = (senha usuario == senhaUsuario)
 
 -- Retorna a representação do usuário em String
-getUsuario:: String -> [Usuario] -> Maybe String
-getUsuario id usuarios =
-  case filter (\u -> idUsuario u == id) usuarios of 
-      [usuarioEncontrado] -> Just (formataUsuario usuarioEncontrado) 
-      _ -> Nothing
-
 getUsuarioToString:: String -> [Usuario] -> Maybe String
 getUsuarioToString id usuarios =
   case filter (\u -> idUsuario u == id) usuarios of 
@@ -40,8 +37,13 @@ getUsuarioToString id usuarios =
         formataUsuario usuario = "ID: " ++ show (idUsuario usuario) ++ "\n" ++
                                  "Nome: " ++ nome usuario ++ "\n"
 
+getUsuario :: String -> [Usuario] -> Usuario
+getUsuario id usuarios = case filter (\u -> idUsuario u == id) usuarios of
+                              [usuarioEncontrado] -> usuarioEncontrado
+                              _ -> error "Usuário não encontrado!"
+
 -- Verifica se o usuário é gerente de algum projeto do sistema 
-ehGerente :: Int -> [Projeto] -> Bool
+ehGerente :: String -> [Projeto] -> Bool
 ehGerente id gerentes = any (\projeto -> id == idGerente projeto) gerentes
 
 
@@ -98,4 +100,3 @@ escreverAtividades :: FilePath -> [Atividade] -> IO ()
 escreverAtividades arquivo atividades = appendFile arquivo conteudo
   where
     conteudo = unlines (concatMap formataAtividade atividades)
-
