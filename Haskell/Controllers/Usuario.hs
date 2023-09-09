@@ -27,9 +27,6 @@ escreverUsuarios :: FilePath -> [Usuario] -> IO ()
 escreverUsuarios arquivo usuarios = appendFile arquivo conteudo
   where
     conteudo = unlines $ map formatarUsuario usuarios
-    formatarUsuario u = "ID: " ++ show (idUsuario u) ++ 
-                      ", NOME: " ++ nome u ++ 
-                      ", SENHA: " ++ senha u
     
 -- ler informações sobre usuários de um arquivo -> retorna uma lista de usuários
 lerUsuarios :: FilePath -> IO [Usuario]
@@ -44,3 +41,27 @@ fromString str = case words str of
   [idStr, nome, senha] -> do
     return Usuario{idUsuario = idUsuario, nome = nome, senha = senha}
   _ -> Nothing
+
+removerUsuario:: String -> [Usuario] -> [Usuario]
+removerUsuario _ [] = []
+removerUsuario idParaRemover (u:us)
+  |idUsuario u == idParaRemover = us -- se o ID do usuário é igual ao ID a ser removido, omite esse usuario
+  |otherwise = u : removerUsuario idParaRemover us  -- caso nao, mantem e chama recursivamente
+
+-- Remoção de um Usuário, pelo ID
+removeEAtualizaUsuarios :: String -> FilePath -> IO()
+removeEAtualizaUsuarios idParaRemover arquivo = do 
+    usuarios <- lerUsuarios arquivo
+    let usuariosAtualizados = removerUsuario idParaRemover usuarios
+    reescreverUsuarios arquivo usuariosAtualizados
+
+reescreverUsuarios :: FilePath -> [Usuario] -> IO ()
+reescreverUsuarios arquivo usuarios = withFile arquivo WriteMode $ \handle -> do
+    let conteudo = unlines $ map formatarUsuario usuarios
+    hPutStr handle conteudo
+    hClose handle -- ver se precisa 
+    
+formatarUsuario :: Usuario -> String
+formatarUsuario u = "ID: " ++ show (idUsuario u) ++ 
+                   ", NOME: " ++ nome u ++ 
+                   ", SENHA: " ++ senha u
