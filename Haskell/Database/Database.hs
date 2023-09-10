@@ -5,23 +5,24 @@ import System.Directory
 import Control.Monad (filterM)
 import Util.AbrirFecharArquivo
 
+
 -- <<< DIRETÓRIOS >>>
 
 -- Função que retorna o local padrão dos users criados
 diretorioDatabase :: String
-diretorioDatabase = "./Modules/Database/"
+diretorioDatabase = "./Database/"
 
 -- Função que retorna o local padrão dos usuários criados
 diretorioDatabaseUsuario :: String
-diretorioDatabaseUsuario = "./Modules/Database/LocalUsers/"
+diretorioDatabaseUsuario = "./Database/LocalUsers/"
 
 -- Função que retorna o local padrão dos users criados
 diretorioDatabaseProjetos :: String
-diretorioDatabaseProjetos = "./Modules/Database/LocalProjects/"
+diretorioDatabaseProjetos = "./Database/LocalProjects/"
 
 -- -- Função que retorna o local padrão dos users criados
 diretorioDatabaseAtividades :: String
-diretorioDatabaseAtividades = "./Modules/Database/LocalProjects/LocalTasks"
+diretorioDatabaseAtividades = "./Database/LocalProjects/LocalTasks/"
 
 
 -- <<< USUÁRIOS >>>
@@ -31,8 +32,8 @@ criaUsuarioDatabase :: String -> String -> String -> IO()
 criaUsuarioDatabase idUsuario nome senha = do
     let usuario = [idUsuario, nome, senha] -- usuario é uma lista que guarda os parâmetros passados
     createDirectory (diretorioDatabaseUsuario ++ idUsuario)
-    createDirectory (diretorioDatabaseUsuario ++ "/" ++ idUsuario ++ "/" ++ "listas")
-    createDirectory (diretorioDatabaseUsuario ++ "/" ++ idUsuario ++ "/" ++ "sharedWithMe")
+    createDirectory (diretorioDatabaseUsuario ++ idUsuario ++ "/" ++ "Nome")
+    createDirectory (diretorioDatabaseUsuario ++ idUsuario ++ "/" ++ "Senha")
     withFile (diretorioDatabaseUsuario ++ nome ++ "/" ++ idUsuario ++ ".txt") WriteMode $ \handle -> do
         hPutStrLn handle (unlines usuario)
     -- escreve um arquivo txt com os dados da lista anterior, onde o nome do arquivo é o username
@@ -55,9 +56,9 @@ getNomeDatabase nomeUsuario = do
 -- <<< PROJETOS >>>
 
 -- Adiciona projeto na base de dados
-addProjetoDatabase :: String -> String -> String -> String -> IO()
-addProjetoDatabase idProjeto nomeProjeto descricao gerente = do
-    let taskcontent = [idProjeto, nomeProjeto, descricao, gerente]
+addProjetoDatabase :: String -> String -> String -> String -> Maybe [String] -> Maybe [String] -> IO()
+addProjetoDatabase idProjeto nomeProjeto descricao gerente membros atividades = do
+    let taskcontent = [idProjeto, nomeProjeto, descricao, gerente] -- está faltando 
     let filePath = diretorioDatabaseProjetos ++ nomeProjeto ++ "/idProjeto" ++ idProjeto ++ "/"
     withFile filePath WriteMode $ \handle -> do
         hPutStr handle (unlines taskcontent)
@@ -72,16 +73,16 @@ removeProjetoDatabase idProjeto = do
 -- <<< ATIVIDADES >>>
 
 -- Cria atividade na base de dados
-criaAtividadeDatabase ::  String -> String -> String -> String -> String -> Maybe String -> Maybe [String] -> IO() -- parâmetros errados
+criaAtividadeDatabase ::  String -> String -> String -> String -> String -> Maybe String -> Maybe [String] -> IO() 
 criaAtividadeDatabase titulo descricao status idProjetoAtividade idAtividade idMembroResponsavel feedback = do
-    let atividade = [titulo, descricao, status, idProjetoAtividade, idAtividade, show(feedback)] 
+    let atividade = [titulo, descricao, status, idProjetoAtividade, idAtividade, show(feedback)] -- e o idMembroResponsavel?
     createDirectory (diretorioDatabaseAtividades ++ idAtividade)
 
 -- Adiciona atividade na base de dados
 addAtividadeDatabase :: String -> String -> String -> String -> String -> IO()
-addAtividadeDatabase titulo descricao status idAtividade idProjeto = do
-    let conteudo = [titulo, descricao, status, idAtividade, idProjeto]
-    let filePath = diretorioDatabaseAtividades ++ titulo ++ "/idTarefa/" ++ idAtividade ++ "/" ++ titulo
+addAtividadeDatabase titulo descricao status idProjetoAtividade idProjeto = do
+    let conteudo = [titulo, descricao, status, idProjetoAtividade, idProjeto]
+    let filePath = diretorioDatabaseAtividades ++ titulo ++ "/idTarefa/" ++ idProjetoAtividade ++ "/" ++ titulo
     withFile filePath WriteMode $ \handle -> do
         hPutStr handle (unlines conteudo)
 
