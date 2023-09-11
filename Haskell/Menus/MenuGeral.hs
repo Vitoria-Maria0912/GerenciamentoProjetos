@@ -98,29 +98,24 @@ deletarUsuario = do
   putStrLn "Digite sua senha:"
   senha <- getLine
 
-  removeEAtualizaUsuarios idUsuario "Database/LocalUsers/usuarios.txt"
-  menuPrincipal
+  numUsuarios <- getNumDeUsuarios "Controllers/dados.json"
 
- -- usuarios <- lerUsuarios "Database/LocalUsers/usuarios.txt"
+-- FALTA VERIFICAÇÃO DA SENHA E SE O ID EXISTE
+  removerUsuario "Controllers/dados.json" idUsuario
 
-  --if (verificaIdUsuario (show(idUsuario)) usuarios == True) then do
-    --let usuario = getUsuario idUsuario usuarios
+  numUsuariosAtt <- getNumDeUsuarios "Controllers/dados.jason"
 
-   -- if (verificaSenhaUsuario senha usuario == True) then do 
-        -- remove.. 
-        --putStrLn "Usuário deletado com sucesso!\n"
-        --exitSuccess
-    --else do
-        --putStrLn "Senha ou ID incorretos! Tente novamente!\n"
-        --menuPrincipal
-  --else do 
-        --putStrLn "ID inexistente! Tente novamente!\n"
-        
-
-
+  -- VERIFICAÇÃO TEMPORÁRIA -> MUDAR PRA VERIFICAR POR ID
+  if numUsuariosAtt < numUsuarios then do  
+    putStrLn("Usuário removido com sucesso!")
+    menuPrincipal
+  else do
+     putStrLn ("Por favor, tente novamente")
+     cadastrarUsuario
   -- Tem que ter uma função para verificar se a senha bate com o nome do usuário
   
   clearScreen
+
   
 -- Função para criar um projeto
 cadastrarProjeto :: IO()
