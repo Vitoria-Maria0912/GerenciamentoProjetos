@@ -48,8 +48,9 @@ getUsuario path = do
 
 salvarUsuario :: String -> Int -> String -> String -> IO()
 salvarUsuario jsonFilePath idUsuario nome senha = do
- let novoId = (length getUsuario) + 1
- let u = Usuario novoId nome senha
+ let novoId = (length (getUsuario jsonFilePath)) + 1
+ let ativ = Atividade "ok"
+ let u = Usuario novoId nome senha [ativ]
  let userList = (getUsuario jsonFilePath) ++ [u]
 
  B.writeFile "../Temp.json" $ encode userList
@@ -60,4 +61,5 @@ salvarUsuario jsonFilePath idUsuario nome senha = do
 
 main :: IO()
 main = do
-    salvarUsuario "./dados.json" 1000 ".." "..."
+    salvarUsuario "./dados.json" 1000 "Iris" "Iago"
+    putStrLn (show (getUsuario "./dados.json"))
