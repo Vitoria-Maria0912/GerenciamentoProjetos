@@ -23,23 +23,14 @@ data Usuario = Usuario {
 } deriving (Show, Generic)
 
 
-data Atividade = Atividade {
-    nomes :: String
-} deriving (Show, Generic)
-
 instance FromJSON Usuario
 instance ToJSON Usuario
 
-instance FromJSON Atividade
-instance ToJSON Atividade
-
--- não funciona ainda
--- getUsarioPorID :: Int-> [Usuario] -> Usuario
--- getUsarioPorID _ [] = Usuario (-1) ""
--- getUsarioPorID idUsuarioS (x:xs)
---  | (idUsuario x) == idUsuarioS = x
---  | otherwise = getUsarioPorID idUsuarioS xs
-
+getUsarioPorID :: Int-> [Usuario] -> Usuario
+getUsarioPorID _ [] = Usuario (-1) "" ""
+getUsarioPorID idUsuarioS (x:xs)     
+  | (idUsuario x) == idUsuarioS = x
+  | otherwise = getUsarioPorID idUsuarioS xs
 
 
 getUsuario :: String -> [Usuario]
@@ -53,8 +44,7 @@ getUsuario path = do
 salvarUsuario :: String -> Int -> String -> String -> IO()
 salvarUsuario jsonFilePath idUsuario nome senha = do
  let novoId = (length (getUsuario jsonFilePath)) + 1
- let ativ = Atividade "ok"
- let u = Usuario novoId nome senha [ativ]
+ let u = Usuario novoId nome senha
  let userList = (getUsuario jsonFilePath) ++ [u]
 
  B.writeFile "../Temp.json" $ encode userList
@@ -85,3 +75,4 @@ main = do
     putStrLn (show (getUsuario "./dados.json"))
     removerUsuario "./dados.json" 1
     putStrLn (show (getUsuario "./dados.json"))
+    putStrLn (show (getUsarioPorID 6 (getUsuario "./dados.json")))
