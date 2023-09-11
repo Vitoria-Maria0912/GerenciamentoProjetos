@@ -59,6 +59,9 @@ removerUsuario jsonFilePath idUsuario = do
  removeFile jsonFilePath
  renameFile "../Temp.json" jsonFilePath
 
+getNumDeUsuarios :: String -> Int
+getNumDeUsuarios jsonFilePath = length (getUsuario jsonFilePath)
+
 
 
 main :: IO()
