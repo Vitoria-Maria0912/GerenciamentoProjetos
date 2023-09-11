@@ -33,18 +33,14 @@ instance ToJSON Usuario
 instance FromJSON Atividade
 instance ToJSON Atividade
 
+-- não funciona ainda
+-- getUsarioPorID :: Int-> [Usuario] -> Usuario
+-- getUsarioPorID _ [] = Usuario (-1) ""
+-- getUsarioPorID idUsuarioS (x:xs)
+--  | (idUsuario x) == idUsuarioS = x
+--  | otherwise = getUsarioPorID idUsuarioS xs
 
-getUsuarioPorID :: Int-> [Usuario] -> Usuario
-getUsuarioPorID _ [] = Usuario (-1) ""
-getUsuairoPorID idUsuario (x:xs)
- | (idUsuario x) == idUsuario = x
- | otherwise = getUsuarioPorID idUsuario xs
 
-removerPessoasPorID :: Int -> [Usuario] -> [Usuario]
-removerPessoasPorID _ [] = []
-removePessoasPorID idUsuario (x:xs)
- | (idUsuario x) == idUsuario = xs
- | otherwise = [x] ++ (removerPessoasPorID idUsuario xs)
 
 getUsuario :: String -> [Usuario]
 getUsuario path = do
@@ -65,9 +61,27 @@ salvarUsuario jsonFilePath idUsuario nome senha = do
  removeFile jsonFilePath
  renameFile "../Temp.json" jsonFilePath
 
+ -- remove usuario pelo ID
+removeUsarioPorID :: Int -> [Usuario] -> [Usuario]
+removeUsarioPorID _ [] = []
+removeUsarioPorID idUsuarioS(x:xs)
+ | (idUsuario x) == idUsuarioS = xs
+ | otherwise = [x] ++ (removeUsarioPorID idUsuarioS xs)
+
+removerUsuario :: String -> Int -> IO()
+removerUsuario jsonFilePath idUsuario = do
+ let usuarios = getUsuario jsonFilePath
+ let novosUsuarios = removeUsarioPorID idUsuario usuarios
+
+ B.writeFile "../Temp.json" $ encode novosUsuarios
+ removeFile jsonFilePath
+ renameFile "../Temp.json" jsonFilePath
+
 
 
 main :: IO()
 main = do
     salvarUsuario "./dados.json" 1000 "Iris" "Iago"
+    putStrLn (show (getUsuario "./dados.json"))
+    removerUsuario "./dados.json" 1
     putStrLn (show (getUsuario "./dados.json"))
