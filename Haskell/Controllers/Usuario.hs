@@ -69,5 +69,5 @@ salvarUsuario jsonFilePath idUsuario nome senha = do
 
 main :: IO()
 main = do
-    salvarUsuario "./dados.json" 1000 "Iris" "Iago"
-    putStrLn (show (getUsuario "./dados.json"))
+    salvarUsuario "Database/usuarios.json" 1000 "Iris" "Iago"
+    putStrLn (show (getUsuario "Databas/usuarios.json"))
