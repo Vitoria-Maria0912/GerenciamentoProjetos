@@ -6,14 +6,6 @@ import GHC.Generics
 import System.IO.Unsafe
 import System.IO
 import System.Directory
-import Data.Char ()
-import Data.Set ()
-import qualified Data.Text.IO as TIO
-import Data.Time
-import Data.List (find)
-
-import Data.Maybe (mapMaybe)
-import Text.Read (readMaybe)
 
 -- Definindo o tipo de dado Usuário
 data Usuario = Usuario { 
