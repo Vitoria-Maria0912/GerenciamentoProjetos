@@ -22,8 +22,16 @@ data Usuario = Usuario {
     senha :: String
 } deriving (Show, Generic)
 
-instance FromJSON People
-instance ToJSON People
+
+data Atividade = Atividade {
+    nomes :: String
+} deriving (Show, Generic)
+
+instance FromJSON Usuario
+instance ToJSON Usuario
+
+instance FromJSON Atividade
+instance ToJSON Atividade
 
 
 getUsuarioPorID :: Int-> [Usuario] -> Usuario
