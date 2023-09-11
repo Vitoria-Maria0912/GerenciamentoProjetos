@@ -64,8 +64,9 @@ sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 -- Cadastra um usuário no sistema
 cadastrarUsuario :: IO ()
 cadastrarUsuario = do
-
     clearScreen
+
+    numUsuarios <- getNumDeUsuarios "Controllers/dados.json"
 
     putStrLn $ "Cadastro: " ++ "\n\n"
             ++ "Digite seu nome: "
@@ -75,20 +76,18 @@ cadastrarUsuario = do
     putStrLn "Digite sua senha: "
     senha <- getLine
 
-    idUsuario <- randomRIO (0000, 9999 :: Int)
+    idUsuario <- randomRIO (0, 10 :: Int)
 
-    usuarios <- lerUsuarios "Database/LocalUsers/usuarios.txt"
+    -- falta colocar verificações
 
-    if (verificaIdUsuario (show(idUsuario)) usuarios == False) then do
-        let usuario = Usuario {Usuario.idUsuario = show(idUsuario), Usuario.nome = nome, Usuario.senha = senha}
-          -- getUsuario (show(idUsuario)) usuarios
-        let novosUsuarios = adicionarUsuario usuario usuarios
-        escreverUsuarios "Database/LocalUsers/usuarios.txt" novosUsuarios
-        putStrLn $ "Usuário cadastrado com sucesso! Seu ID é " ++ show(idUsuario) ++ "\n"
-        menuPrincipal
+    salvarUsuario "Controllers/dados.json" idUsuario nome senha
+    numUsuariosAtt <- getNumDeUsuarios "Controllers/dados.jason"
+    if numUsuariosAtt > numUsuarios then do -- verificacao TEMPORÁRIA (melhorar depois)
+      putStrLn ("Usuário cadastrado com sucesso!") -- adicionar o ID aqui depois
+      menuPrincipal
     else do
-        putStrLn $ "O ID já existe na base de dados.\n"
-        cadastrarUsuario
+      putStrLn ("Por favor, tente novamnete")
+      cadastrarUsuario
 
 -- Deleta um usuário do sistema
 deletarUsuario :: IO()
