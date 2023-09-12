@@ -18,6 +18,14 @@ data Usuario = Usuario {
 instance FromJSON Usuario
 instance ToJSON Usuario
 
+{-
+instance Show Usuario where
+  show :: Usuario -> String
+  show (Usuario idUsuario nome _) =  "Olá Usuario:\n" ++
+                                       "Seu idUsuario: " ++ show idUsuario ++ "\n" ++
+                                       "Nome: " ++ nome
+-}
+
 getUsarioPorID :: Int-> [Usuario] -> Usuario
 getUsarioPorID _ [] = Usuario (-1) "" ""
 getUsarioPorID idUsuarioS (x:xs)     
