@@ -20,6 +20,8 @@ import Data.List (find)
 -- import Data.List (find)
 -- import Data.Maybe (mapMaybe)
 -- import Text.Read (readMaybe)
+
+
 import Controllers.Usuario
 import Controllers.Atividades
 -- import Database.Database
@@ -39,7 +41,7 @@ data Projeto = Projeto {
     atividades :: Maybe [Atividade]
 } deriving (Show, Generic) 
 
---Salva e cria projeto
+--Salva e cria projeto(atualizar para random)
 salvarProjeto :: String -> Projeto -> IO ()
 salvarProjeto jsonFilePath projeto = do
     let projetos = lerProjetos jsonFilePath
@@ -71,24 +73,41 @@ removeProjetoPorID idProjetoS (x:xs)
   | idProjeto x == idProjetoS = xs
   | otherwise = x : removeProjetoPorID idProjetoS xs
 
+-- SE DER PRECISA SER IMPLEMENTADO: muda status
+--PRECISA SER IMPLEMENTADO: remove projeto do arquivo.JSON 
+--PRECISA SER IMPLEMENTADO: adicionar o id de atividade (getAtividade)  a uma lista de atividade que tá em projeto . Get e retornar uma lista de atividades ou um IO e sobrescrever?
+--Cria um novo projeto , sobrescreve  e apaga o antigo
+
+editaAtividadesProjeto :: String -> Projeto-> [Int] -> Int -> IO()
+editaAtividadesProjeto jsonFilePath projeto atividades idAtividade = do
+ let atividadesList = getTodasAtividades jsonFilePath 
+ let p = atividades atividades idAtividade
+ let newatividadesList = (deletarAtividade atividades atividadesList) ++ [p]
+
+ B.writeFile "../Temp.json" $ encode newatividadesList
+ removeFile jsonFilePath
+ renameFile "../Temp.json" jsonFilePath
+
+removeatividadesJSON :: String -> Projeto-> Int -> IO()
+removeatividadesJSON jsonFilePath projeto atividades = do
+ let atividadesList = getTodasAtividades jsonFilePath
+ let newatividadesList = deletarAtividade atividades atividadesList
+
+ B.writeFile "../Temp.json" $ encode newatividadesList
+ removeFile jsonFilePath
+ renameFile "../Temp.json" jsonFilePath
 
 
--- Adiciona um projeto no sistema
--- adicionaProjeto :: Projeto -> [Projeto] -> [Projeto]
--- adicionaProjeto projeto projetos = 
---     case find (\u -> nomeProjeto u == nomeProjeto projeto) projetos of 
---         Just _-> projetos
---         Nothing -> projeto : projetos
 
-
-
--- Acho que faz mais sentido estar aqui, do que em Atividades
+-- Acho que faz mais sentido estar aqui, do que em Atividades(Qual atividade ficaria em quaal projeto?)
 -- Adiciona uma atividade a um projeto
-adicionaAtividade :: Atividade -> [Atividade] -> [Atividade]
+adicionaAtividade :: Atividade -> [Atividade] -> [Atividade] 
 adicionaAtividade atividade atividades = 
     case find (\u -> idAtividade u == idAtividade atividade) atividades of 
         Just _-> atividades
         Nothing -> atividade : atividades
+
+
 
 -- Lê o arquivo projetos.json
 lerProjetos :: String -> [Projeto]
@@ -99,6 +118,7 @@ lerProjetos filePath = do
         Nothing -> []
         Just out -> out
 
+
 getAtividadeDoProjeto :: Int -> [Atividade] -> Maybe Atividade
 getAtividadeDoProjeto _ [] = Nothing
 getAtividadeDoProjeto id (x:xs) 
@@ -106,12 +126,14 @@ getAtividadeDoProjeto id (x:xs)
   | otherwise = getAtividadeDoProjeto id xs
 
 
--- -- Obtem os IDs das atividades cadastradas em um projetos
+-- -- Obtem os IDs das atividades cadastradas em um projetos(retorna todas as atividades em projeto)
 -- getIdsAtividades :: Projeto -> [String]
 -- getIdsAtividades projeto = 
 --     case atividades projeto of
 --         Just atividadesProjeto -> [unlines atividadesProjeto] 
 --         _ -> []
+
+
 
 -- -- Obtem os IDs dos usuários cadastrados em um projetos
 -- getIdsUsuarios :: Projeto -> [String]
@@ -135,7 +157,8 @@ getAtividadeDoProjeto id (x:xs)
 --     _ -> Nothing
 
 
--- -- Escreve um projeto no arquivo.txt
+--REFATORAR PARA MOSTRAR UM PROJETO ESPECIFICO
+-- -- Escreve um projeto no arquivo.txt 
 -- escreverProjeto :: FilePath -> [Projeto] -> IO ()
 -- escreverProjeto arquivo projetos = appendFile arquivo conteudo
 --   where
@@ -155,4 +178,4 @@ getAtividadeDoProjeto id (x:xs)
 
 
 
---PRECISA SER IMPLEMENTADO: adicionar uma atividade a um projeto
+

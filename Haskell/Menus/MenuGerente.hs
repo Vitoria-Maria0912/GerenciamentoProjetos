@@ -44,17 +44,17 @@ menuRestritoProjeto = do
     case lowerOption of 
 
         "p" -> removerProjeto
-        "c" -> criaAtividade
-        "g" -> gerenciarMembros
-        "r" -> deletarAtividade 
-        "d" -> atribuirMembro
+        -- "c" -> criaAtividade
+        -- "g" -> gerenciarMembros
+        -- "r" -> deletarAtividade 
+        -- "d" -> atribuirMembro
         "j" -> removeMembroProjeto
-        "i" -> MenuPublico.comecarAtividade
-        "f" -> MenuPublico.finalizarAtividade
-        "v" -> MenuPublico.visualizarAtividades
-        "a" -> MenuPublico.statusAtividade
-        "o" -> MenuPublico.criarFeedback
-        "s" -> MenuPublico.sairDoSistema
+        -- "i" -> MenuPublico.comecarAtividade
+        -- "f" -> MenuPublico.finalizarAtividade
+        -- "v" -> MenuPublico.visualizarAtividades
+        -- "a" -> MenuPublico.statusAtividade
+        -- "o" -> MenuPublico.criarFeedback
+        -- "s" -> MenuPublico.sairDoSistema
         _   -> erroMenuGerente
 
 
@@ -75,55 +75,55 @@ removerProjeto = do
 
     putStrLn ""
 
--- Cria uma atividade em um projeto
-criaAtividade :: IO()
-criaAtividade = do
-    putStrLn "Digite o ID do projeto que deseja adicionar uma atividade:"
-    idProjeto <- getLine
+-- -- Cria uma atividade em um projeto
+-- criaAtividade :: IO()
+-- criaAtividade = do
+--     putStrLn "Digite o ID do projeto que deseja adicionar uma atividade:"
+--     idProjeto <- getLine
 
-    putStrLn "Digite um título para sua atividade:"
-    titulo <- getLine
+--     putStrLn "Digite um título para sua atividade:"
+--     titulo <- getLine
 
-    putStrLn "Descreva, brevemente, o que se deve realizar para concluir esta atividade."
-    descricao <- getLine
+--     putStrLn "Descreva, brevemente, o que se deve realizar para concluir esta atividade."
+--     descricao <- getLine
 
-    idAtividade <- randomRIO (10000, 99999 :: Int)
+--     idAtividade <- randomRIO (10000, 99999 :: Int)
 
-    -- tem que checar se já existe
-    let novaAtividade = Atividades.criarAtividade titulo descricao "Não atribuída" (show(idAtividade)) idProjeto
+--     -- tem que checar se já existe
+--     let novaAtividade = Atividades.criarAtividade titulo descricao "Não atribuída" (show(idAtividade)) idProjeto
 
-    -- Atividades.adicionaAtividade novaAtividade Projeto.getAtividades
+--     -- Atividades.adicionaAtividade novaAtividade Projeto.getAtividades
 
-    putStrLn "Tarefa criada com sucesso!"
+--     putStrLn "Tarefa criada com sucesso!"
 
--- Remove uma atividade de um projeto
-deletarAtividade :: IO()
-deletarAtividade = do
-    putStrLn "Digite o ID da atividade que deseja remover:"
-    idAtividade <- getLine
-    putStrLn "Digite o ID do projeto que a atividade pertence:"
-    idProjeto <- getLine
+-- -- Remove uma atividade de um projeto
+-- deletarAtividade :: IO()
+-- deletarAtividade = do
+--     putStrLn "Digite o ID da atividade que deseja remover:"
+--     idAtividade <- getLine
+--     putStrLn "Digite o ID do projeto que a atividade pertence:"
+--     idProjeto <- getLine
 
-    -- let projeto = getProjeto idProjeto
-    -- let atividade = projeto.getAtividade idAtividade
-    -- let atividadeExiste = Util.verificaIdAtividade projeto idAtividade
+--     -- let projeto = getProjeto idProjeto
+--     -- let atividade = projeto.getAtividade idAtividade
+--     -- let atividadeExiste = Util.verificaIdAtividade projeto idAtividade
 
-    -- if atividadeExiste then do atividades.removerAtividade idAtividade putStrLn "Atividade removida com sucesso!"
-    -- else putStrLn "Atividade inexistente!"
+--     -- if atividadeExiste then do atividades.removerAtividade idAtividade putStrLn "Atividade removida com sucesso!"
+--     -- else putStrLn "Atividade inexistente!"
 
-    putStrLn ""
+--     putStrLn ""
 
--- Visualizar membros do projeto
-gerenciarMembros :: IO()
-gerenciarMembros = do
-    putStrLn "Digite o ID do projeto:"
-    idProjeto <- getLine
+-- -- Visualizar membros do projeto
+-- gerenciarMembros :: IO()
+-- gerenciarMembros = do
+--     putStrLn "Digite o ID do projeto:"
+--     idProjeto <- getLine
 
-    -- let projeto = getProjeto idProjeto
+--     -- let projeto = getProjeto idProjeto
     
-    -- invoca função para visualizar membros do projeto, em Projetos.hs
-    putStrLn "Membros do projeto:"
-    -- imprime os membros do projeto
+--     -- invoca função para visualizar membros do projeto, em Projetos.hs
+--     putStrLn "Membros do projeto:"
+--     -- imprime os membros do projeto
 
 
 -- Remover membro do projeto
@@ -140,20 +140,20 @@ removeMembroProjeto = do
     putStrLn "Membro removido do projeto com sucesso!"
 
 
--- Atribuir membro a uma atividade
-atribuirMembro :: IO()
-atribuirMembro = do
-    putStrLn "Digite o ID da atividade:"
-    idAtividade <- getLine
-    putStrLn "Digite o ID do projeto que a atividade pertence:"
-    idProjeto <- getLine
-    putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
-    membroResponsavel <- getLine
+-- -- Atribuir membro a uma atividade
+-- atribuirMembro :: IO()
+-- atribuirMembro = do
+--     putStrLn "Digite o ID da atividade:"
+--     idAtividade <- getLine
+--     putStrLn "Digite o ID do projeto que a atividade pertence:"
+--     idProjeto <- getLine
+--     putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
+--     membroResponsavel <- getLine
 
-    -- let projeto = Projeto.
-    -- let atividade = getAtividade idAtividade
-    -- Atividades.atribuirMembro atividade membroResponsavel
+--     -- let projeto = Projeto.
+--     -- let atividade = getAtividade idAtividade
+--     -- Atividades.atribuirMembro atividade membroResponsavel
 
-    -- TEM QUE ARMAZENÁ-LOS
+--     -- TEM QUE ARMAZENÁ-LOS
 
-    putStrLn "Membro atribuído à atividade com sucesso!"
+--     putStrLn "Membro atribuído à atividade com sucesso!"

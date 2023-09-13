@@ -43,12 +43,12 @@ menuPrincipal = do
   option <- getLine
   let lowerOption = map toLower option
   case lowerOption of
-      "g" -> menuProjetos
-      "c" -> cadastrarUsuario
-      "d" -> deletarUsuario
+      -- "g" -> menuProjetos
+      -- "c" -> cadastrarUsuario
+      -- "d" -> deletarUsuario
       "p" -> cadastrarProjeto
       "l" -> visualizarProjetosPendentes
-      "m" -> chat
+      -- "m" -> chat
       "b" -> bancoDeAtividades
       "s" -> sairDoSistema
       _   -> erroMenuPrincipal 
@@ -59,60 +59,60 @@ menuPrincipal = do
 sairDoSistema :: IO()
 sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 
--- Cadastra um usuário no sistema
-cadastrarUsuario :: IO ()
-cadastrarUsuario = do
-    clearScreen
+-- -- Cadastra um usuário no sistema
+-- cadastrarUsuario :: IO ()
+-- cadastrarUsuario = do
+--     clearScreen
 
-    numUsuarios <- getNumDeUsuarios "Controllers/dados.json"
+--     numUsuarios <- getNumDeUsuarios "Controllers/dados.json"
 
-    putStrLn $ "Cadastro: " ++ "\n\n"
-            ++ "Digite seu nome: "
+--     putStrLn $ "Cadastro: " ++ "\n\n"
+--             ++ "Digite seu nome: "
 
-    nome <- getLine
+--     nome <- getLine
 
-    putStrLn "Digite sua senha: "
-    senha <- getLine
+--     putStrLn "Digite sua senha: "
+--     senha <- getLine
 
-    idUsuario <- randomRIO (0, 10 :: Int)
+--     idUsuario <- randomRIO (0, 10 :: Int)
 
-    -- falta colocar verificações
+--     -- falta colocar verificações
 
-    salvarUsuario "Controllers/dados.json" idUsuario nome senha
-    numUsuariosAtt <- getNumDeUsuarios "Controllers/dados.jason"
-    if numUsuariosAtt > numUsuarios then do -- verificacao TEMPORÁRIA (melhorar depois)
-      putStrLn ("Usuário cadastrado com sucesso!") -- adicionar o ID aqui depois
-      menuPrincipal
-    else do
-      putStrLn ("Por favor, tente novamnete")
-      cadastrarUsuario
+--     salvarUsuario "Controllers/dados.json" idUsuario nome senha
+--     numUsuariosAtt <- getNumDeUsuarios "Controllers/dados.jason"
+--     if numUsuariosAtt > numUsuarios then do -- verificacao TEMPORÁRIA (melhorar depois)
+--       putStrLn ("Usuário cadastrado com sucesso!") -- adicionar o ID aqui depois
+--       menuPrincipal
+--     else do
+--       putStrLn ("Por favor, tente novamnete")
+--       cadastrarUsuario
 
--- Deleta um usuário do sistema
-deletarUsuario :: IO()
-deletarUsuario = do
+-- -- Deleta um usuário do sistema
+-- deletarUsuario :: IO()
+-- deletarUsuario = do
                             
-  putStrLn "Digite seu id:"
-  idUsuario <- getLine
-  putStrLn "Digite sua senha:"
-  senha <- getLine
+--   putStrLn "Digite seu id:"
+--   idUsuario <- getLine
+--   putStrLn "Digite sua senha:"
+--   senha <- getLine
 
-  numUsuarios <- getNumDeUsuarios "Controllers/dados.json"
+--   numUsuarios <- getNumDeUsuarios "Controllers/dados.json"
 
--- FALTA VERIFICAÇÃO DA SENHA E SE O ID EXISTE
-  removerUsuario "Controllers/dados.json" idUsuario
+-- -- FALTA VERIFICAÇÃO DA SENHA E SE O ID EXISTE
+--   removerUsuario "Controllers/dados.json" idUsuario
 
-  numUsuariosAtt <- getNumDeUsuarios "Controllers/dados.jason"
+--   numUsuariosAtt <- getNumDeUsuarios "Controllers/dados.jason"
 
-  -- VERIFICAÇÃO TEMPORÁRIA -> MUDAR PRA VERIFICAR POR ID
-  if numUsuariosAtt < numUsuarios then do  
-    putStrLn("Usuário removido com sucesso!")
-    menuPrincipal
-  else do
-     putStrLn ("Por favor, tente novamente")
-     cadastrarUsuario
-  -- Tem que ter uma função para verificar se a senha bate com o nome do usuário
+--   -- VERIFICAÇÃO TEMPORÁRIA -> MUDAR PRA VERIFICAR POR ID
+--   if numUsuariosAtt < numUsuarios then do  
+--     putStrLn("Usuário removido com sucesso!")
+--     menuPrincipal
+--   else do
+--      putStrLn ("Por favor, tente novamente")
+--      cadastrarUsuario
+--   -- Tem que ter uma função para verificar se a senha bate com o nome do usuário
   
-  clearScreen
+--   clearScreen
 
   
 -- Função para criar um projeto
