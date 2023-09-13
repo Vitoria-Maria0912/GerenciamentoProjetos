@@ -1,3 +1,6 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
+
 module Controllers.Usuario where
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
@@ -26,13 +29,14 @@ instance Show Usuario where
                                        "Nome: " ++ nome
 -}
 
+-- retorna o usuario de acordo com o ID
 getUsarioPorID :: Int-> [Usuario] -> Usuario
 getUsarioPorID _ [] = Usuario (-1) "" ""
 getUsarioPorID idUsuarioS (x:xs)     
   | (idUsuario x) == idUsuarioS = x
   | otherwise = getUsarioPorID idUsuarioS xs
 
-
+-- retorna a lista de usuários lida do arquivo
 getUsuario :: String -> [Usuario]
 getUsuario path = do
  let file = unsafePerformIO( B.readFile path )
@@ -41,6 +45,7 @@ getUsuario path = do
   Nothing -> []
   Just out -> out
 
+-- cria e salva o usuario no arquivo
 salvarUsuario :: String -> Int -> String -> String -> IO()
 salvarUsuario jsonFilePath idUsuario nome senha = do
  let novoId = (length (getUsuario jsonFilePath)) + 1
@@ -58,6 +63,7 @@ removeUsarioPorID idUsuarioS(x:xs)
  | (idUsuario x) == idUsuarioS = xs
  | otherwise = [x] ++ (removeUsarioPorID idUsuarioS xs)
 
+-- remove o usuario do arquivo
 removerUsuario :: String -> Int -> IO()
 removerUsuario jsonFilePath idUsuario = do
  let usuarios = getUsuario jsonFilePath
@@ -67,6 +73,7 @@ removerUsuario jsonFilePath idUsuario = do
  removeFile jsonFilePath
  renameFile "../Temp.json" jsonFilePath
 
+-- retorna o numero de usuarios cadastrados até o momento (apagar depois de refazer o menu)
 getNumDeUsuarios :: String -> Int
 getNumDeUsuarios jsonFilePath = length (getUsuario jsonFilePath)
 
