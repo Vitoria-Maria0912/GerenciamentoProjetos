@@ -35,7 +35,6 @@ menuPrincipal = do
           ++ "|             D - Deletar perfil                           |" ++ "\n"
           ++ "|             P - Criar projeto                            |" ++ "\n"
           ++ "|             L - Listar projetos em andamento             |" ++ "\n"
-          ++ "|             E - Solicitar entrada em projeto             |" ++ "\n"
           ++ "|             M - Caixa de mensagens                       |" ++ "\n"
           ++ "|             B - Visualizar banco de atividades           |" ++ "\n"
           ++ "|             S - Sair do sistema                          |" ++ "\n"
@@ -49,7 +48,6 @@ menuPrincipal = do
       "d" -> deletarUsuario
       "p" -> cadastrarProjeto
       "l" -> visualizarProjetosPendentes
-      "e" -> solicitarEntrada
       "m" -> chat
       "b" -> bancoDeAtividades
       "s" -> sairDoSistema
@@ -64,8 +62,9 @@ sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 -- Cadastra um usuário no sistema
 cadastrarUsuario :: IO ()
 cadastrarUsuario = do
-
     clearScreen
+
+    numUsuarios <- getNumDeUsuarios "Controllers/dados.json"
 
     putStrLn $ "Cadastro: " ++ "\n\n"
             ++ "Digite seu nome: "
@@ -75,20 +74,18 @@ cadastrarUsuario = do
     putStrLn "Digite sua senha: "
     senha <- getLine
 
-    idUsuario <- randomRIO (0000, 9999 :: Int)
+    idUsuario <- randomRIO (0, 10 :: Int)
 
-    usuarios <- lerUsuarios "Database/LocalUsers/usuarios.txt"
+    -- falta colocar verificações
 
-    if (verificaIdUsuario (show(idUsuario)) usuarios == False) then do
-        let usuario = Usuario {Usuario.idUsuario = show(idUsuario), Usuario.nome = nome, Usuario.senha = senha}
-          -- getUsuario (show(idUsuario)) usuarios
-        let novosUsuarios = adicionarUsuario usuario usuarios
-        escreverUsuarios "Database/LocalUsers/usuarios.txt" novosUsuarios
-        putStrLn $ "Usuário cadastrado com sucesso! Seu ID é " ++ show(idUsuario) ++ "\n"
-        menuPrincipal
+    salvarUsuario "Controllers/dados.json" idUsuario nome senha
+    numUsuariosAtt <- getNumDeUsuarios "Controllers/dados.jason"
+    if numUsuariosAtt > numUsuarios then do -- verificacao TEMPORÁRIA (melhorar depois)
+      putStrLn ("Usuário cadastrado com sucesso!") -- adicionar o ID aqui depois
+      menuPrincipal
     else do
-        putStrLn $ "O ID já existe na base de dados.\n"
-        cadastrarUsuario
+      putStrLn ("Por favor, tente novamnete")
+      cadastrarUsuario
 
 -- Deleta um usuário do sistema
 deletarUsuario :: IO()
@@ -99,29 +96,24 @@ deletarUsuario = do
   putStrLn "Digite sua senha:"
   senha <- getLine
 
-  removeEAtualizaUsuarios idUsuario "Database/LocalUsers/usuarios.txt"
-  menuPrincipal
+  numUsuarios <- getNumDeUsuarios "Controllers/dados.json"
 
- -- usuarios <- lerUsuarios "Database/LocalUsers/usuarios.txt"
+-- FALTA VERIFICAÇÃO DA SENHA E SE O ID EXISTE
+  removerUsuario "Controllers/dados.json" idUsuario
 
-  --if (verificaIdUsuario (show(idUsuario)) usuarios == True) then do
-    --let usuario = getUsuario idUsuario usuarios
+  numUsuariosAtt <- getNumDeUsuarios "Controllers/dados.jason"
 
-   -- if (verificaSenhaUsuario senha usuario == True) then do 
-        -- remove.. 
-        --putStrLn "Usuário deletado com sucesso!\n"
-        --exitSuccess
-    --else do
-        --putStrLn "Senha ou ID incorretos! Tente novamente!\n"
-        --menuPrincipal
-  --else do 
-        --putStrLn "ID inexistente! Tente novamente!\n"
-        
-
-
+  -- VERIFICAÇÃO TEMPORÁRIA -> MUDAR PRA VERIFICAR POR ID
+  if numUsuariosAtt < numUsuarios then do  
+    putStrLn("Usuário removido com sucesso!")
+    menuPrincipal
+  else do
+     putStrLn ("Por favor, tente novamente")
+     cadastrarUsuario
   -- Tem que ter uma função para verificar se a senha bate com o nome do usuário
   
   clearScreen
+
   
 -- Função para criar um projeto
 cadastrarProjeto :: IO()
@@ -174,22 +166,6 @@ menuProjetos = do
 visualizarProjetosPendentes :: IO ()
 visualizarProjetosPendentes = do
   -- Implementation logic for viewing pending projects
-    putStrLn "Implementação em andamento."
-    menuPrincipal
-
-
--- Função para solicitar entrada em um projeto
-solicitarEntrada :: IO ()
-solicitarEntrada = do
-    putStrLn "Digite seu ID:"
-    idUsuario <- getLine
-    putStrLn "Digite o ID do projeto que deseja ingressar:"
-    idProjeto <- getLine
-
-    projetos <- lerProjetos "dados/projetos.txt"
-
-    let projeto = getProjeto idProjeto projetos
-
     putStrLn "Implementação em andamento."
     menuPrincipal
 

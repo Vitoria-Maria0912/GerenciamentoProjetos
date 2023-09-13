@@ -1,78 +1,88 @@
-module Controllers.Usuario where
-import System.IO
-import Database.Database 
-import Data.Char ()
-import Data.Set ()
-import qualified Data.Text.IO as TIO
-import Data.Time
-import System.Directory ()
-import Data.List (find)
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
 
-import Data.Maybe (mapMaybe)
-import Text.Read (readMaybe)
+module Controllers.Usuario where
+import Data.Aeson
+import qualified Data.ByteString.Lazy as B
+import qualified Data.ByteString.Lazy.Char8 as BC
+import GHC.Generics
+import System.IO.Unsafe
+import System.IO
+import System.Directory
 
 -- Definindo o tipo de dado Usuário
 data Usuario = Usuario { 
-    idUsuario :: String,
+    idUsuario :: Int,
     nome :: String,
     senha :: String
-}
-
--- Criação de um usuário
-criaUsuario :: String -> String -> String -> Usuario
-criaUsuario idUsuario nome senha = 
-  (Usuario {idUsuario = idUsuario, nome = nome, senha = senha})
-
-removerUsuario:: String -> [Usuario] -> [Usuario]
-removerUsuario _ [] = []
-removerUsuario idParaRemover (u:us)
-  |idUsuario u == idParaRemover = us -- se o ID do usuário é igual ao ID a ser removido, omite esse usuario
-  |otherwise = u : removerUsuario idParaRemover us  -- caso nao, mantem e chama recursivamente
-
--- Remoção de um Usuário, pelo ID
-removeEAtualizaUsuarios :: String -> FilePath -> IO()
-removeEAtualizaUsuarios idParaRemover arquivo = do 
-    usuarios <- lerUsuarios arquivo
-    let usuariosAtualizados = removerUsuario idParaRemover usuarios
-    reescreverUsuarios arquivo usuariosAtualizados
-
-reescreverUsuarios :: FilePath -> [Usuario] -> IO ()
-reescreverUsuarios arquivo usuarios = withFile arquivo WriteMode $ \handle -> do
-    let conteudo = unlines $ map formatarUsuario usuarios
-    hPutStr handle conteudo
-    hClose handle -- ver se precisa 
+} deriving (Show, Generic)
 
 
--- Checa se existe um usuario com esse id, e se nao existe, adiciona na lista de usuários
-adicionarUsuario :: Usuario -> [Usuario] -> [Usuario]
-adicionarUsuario usuario usuarios =
-    case find (\u -> idUsuario u == idUsuario usuario) usuarios of
-        Just _ -> usuarios
-        Nothing -> usuario : usuarios
+instance FromJSON Usuario
+instance ToJSON Usuario
 
--- escreve informações sobre usuários em um arquivo (funcionando)
-escreverUsuarios :: FilePath -> [Usuario] -> IO ()
-escreverUsuarios arquivo usuarios = appendFile arquivo conteudo
-  where
-    conteudo = unlines $ map formatarUsuario usuarios
-  
+{-
+instance Show Usuario where
+  show :: Usuario -> String
+  show (Usuario idUsuario nome _) =  "Olá Usuario:\n" ++
+                                       "Seu idUsuario: " ++ show idUsuario ++ "\n" ++
+                                       "Nome: " ++ nome
+-}
+
+-- retorna o usuario de acordo com o ID
+getUsarioPorID :: Int-> [Usuario] -> Usuario
+getUsarioPorID _ [] = Usuario (-1) "" ""
+getUsarioPorID idUsuarioS (x:xs)     
+  | (idUsuario x) == idUsuarioS = x
+  | otherwise = getUsarioPorID idUsuarioS xs
+
+-- retorna a lista de usuários lida do arquivo
+getUsuario :: String -> [Usuario]
+getUsuario path = do
+ let file = unsafePerformIO( B.readFile path )
+ let decodedFile = decode file :: Maybe [Usuario]
+ case decodedFile of
+  Nothing -> []
+  Just out -> out
+
+-- cria e salva o usuario no arquivo
+salvarUsuario :: String -> Int -> String -> String -> IO()
+salvarUsuario jsonFilePath idUsuario nome senha = do
+ let novoId = (length (getUsuario jsonFilePath)) + 1
+ let u = Usuario novoId nome senha
+ let userList = (getUsuario jsonFilePath) ++ [u]
+
+ B.writeFile "../Temp.json" $ encode userList
+ removeFile jsonFilePath
+ renameFile "../Temp.json" jsonFilePath
+
+ -- remove usuario pelo ID
+removeUsarioPorID :: Int -> [Usuario] -> [Usuario]
+removeUsarioPorID _ [] = []
+removeUsarioPorID idUsuarioS(x:xs)
+ | (idUsuario x) == idUsuarioS = xs
+ | otherwise = [x] ++ (removeUsarioPorID idUsuarioS xs)
+
+-- remove o usuario do arquivo
+removerUsuario :: String -> Int -> IO()
+removerUsuario jsonFilePath idUsuario = do
+ let usuarios = getUsuario jsonFilePath
+ let novosUsuarios = removeUsarioPorID idUsuario usuarios
+
+ B.writeFile "../Temp.json" $ encode novosUsuarios
+ removeFile jsonFilePath
+ renameFile "../Temp.json" jsonFilePath
+
+-- retorna o numero de usuarios cadastrados até o momento (apagar depois de refazer o menu)
+getNumDeUsuarios :: String -> Int
+getNumDeUsuarios jsonFilePath = length (getUsuario jsonFilePath)
 
 
--- ler informações sobre usuários de um arquivo -> retorna uma lista de usuários
-lerUsuarios :: FilePath -> IO [Usuario]
-lerUsuarios path = do
-  conteudo <- readFile path
-  let usuarios = mapMaybe fromString $ lines conteudo
-  return usuarios
 
--- converte uma string em um objeto do tipo Usuario
-fromString :: String -> Maybe Usuario
-fromString str = case words str of
-  [idUsuario, nome, senha] -> do
-    return Usuario{idUsuario = idUsuario, nome = nome, senha = senha}
-  _ -> Nothing
-
-formatarUsuario :: Usuario -> String
-formatarUsuario u = "ID: " ++ show (idUsuario u) ++ 
-                   ", NOME: " ++ nome u ++ 
-                   ", SENHA: " ++ senha u
+main :: IO()
+main = do
+    salvarUsuario "./dados.json" 1000 "Iris" "Iago"
+    putStrLn (show (getUsuario "./dados.json"))
+    removerUsuario "./dados.json" 1
+    putStrLn (show (getUsuario "./dados.json"))
+    putStrLn (show (getUsarioPorID 6 (getUsuario "./dados.json")))

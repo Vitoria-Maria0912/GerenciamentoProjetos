@@ -47,7 +47,7 @@ menuPublicoProjeto = do
 sairDoSistema :: IO()
 sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 
--- Inicia uma atividade
+-- Inicia uma atividade --> PODERIA COLOCAR AQUI SÓ A FUNÇÃO QUE MUDA O STATUS PRA PENDENTE
 comecarAtividade :: IO()
 comecarAtividade = do
     
@@ -65,7 +65,7 @@ comecarAtividade = do
     -- else do
     putStrLn "Esta atividade já está em andamento!"
 
--- Finaliza uma atividade
+-- Finaliza uma atividade --> PODERIA COLOCAR AQUI SÓ A FUNÇÃO QUE MUDA O STATUS PRA CONCLUÍDO
 finalizarAtividade :: IO()
 finalizarAtividade = do
 
