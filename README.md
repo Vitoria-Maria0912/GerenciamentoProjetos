@@ -94,14 +94,14 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
 
  ### Pode ser executado de duas maneiras:
              
-**- Compila:**
+**Compila:**
 
     ghc -o projeto Main.hs
-**- Executa:** 
+**Executa:** 
 
     ./projeto
     
-**- Compila e executa:** 
+**Compila e executa:** 
 
     runhaskell Main.hs 
 
