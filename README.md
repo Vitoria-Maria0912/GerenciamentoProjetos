@@ -62,40 +62,38 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
  - Haskell
 
  ### Instalação - Linux
-   1. sudo apt-get update
-   2. sudo apt-get install ghc cabal-install
+   sudo apt-get update
+   sudo apt-get install ghc cabal-install
 
  ### Instalação - MacOs
-   1. /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   2. brew update
-   3. brew install ghc cabal-install
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   brew update
+   brew install ghc cabal-install
 
  ### Instalação - Windows
    Acesse este link para o download : https://www.haskell.org/platform/windows.html
 
 
 ### Bibliotecas necessárias:
-   1. cabal install --lib aeson
-   2. cabal install --lib random
+   cabal install --lib aeson
+   cabal install --lib random
 
 
 ### Caso ocorra erro de compilação execute:
-    - Linux 
-            -> sudo apt remove curl
-            -> sudo apt install curl
-
-    - MacOs
-            -> brew uninstall curl
-            -> brew install curl
+  - Linux 
+          sudo apt remove curl
+          sudo apt install curl
+  
+  - MacOs
+          brew uninstall curl
+          brew install curl
 
  ### Pode ser executado de duas maneiras:
              
-    - Para compilar:
-                      -> ghc -o projeto Main.hs
-    - Para executar:
-                      -> ./projeto
-    - Compila e executa:
-                      -> runhaskell Main.hs 
+  - Para compilar: ghc -o projeto Main.hs
+  - Para executar: ./projeto
+    
+  - Compila e executa: runhaskell Main.hs 
 
  ### Desenvolvedoras:
    - Íris Almeida - [Github] (https://github.com/irisalmeida)
