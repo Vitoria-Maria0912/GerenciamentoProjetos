@@ -39,9 +39,18 @@ data Projeto = Projeto {
     atividades :: Maybe [Atividade]
 } deriving (Show, Generic) 
 
+--Salva e cria projeto
+salvarProjeto :: String -> Projeto -> IO ()
+salvarProjeto jsonFilePath projeto = do
+    let projetos = lerProjetos jsonFilePath
+    let novoId = length projetos + 1
+    let projetoComId = projeto { idProjeto = novoId }
+    let projetosAtualizados = projetos ++ [projetoComId]
 
--- criaProjeto :: String -> String -> String -> String -> Maybe [String] -> Maybe [String] -> IO()
--- criaProjeto = addProjetoDatabase
+    B.writeFile "../Temp.json" $ encode projetosAtualizados
+    removeFile jsonFilePath
+    renameFile "../Temp.json" jsonFilePath
+
 
 -- Verifica se o usuário é gerente de algum projeto do sistema 
 ehGerente :: Int -> [Projeto] -> Bool
@@ -70,6 +79,8 @@ removeProjetoPorID idProjetoS (x:xs)
 --     case find (\u -> nomeProjeto u == nomeProjeto projeto) projetos of 
 --         Just _-> projetos
 --         Nothing -> projeto : projetos
+
+
 
 -- Acho que faz mais sentido estar aqui, do que em Atividades
 -- Adiciona uma atividade a um projeto
