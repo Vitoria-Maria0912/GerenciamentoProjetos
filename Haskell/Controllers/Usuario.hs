@@ -23,11 +23,11 @@ instance ToJSON Usuario
 
 
 -- | Função que retorna os dados de um usuário de acordo com o seu ID
-getUsario:: Int-> [Usuario] -> Usuario
-getUsario _ [] = Usuario (-1) "" ""
-getUsario idUsuarioS (x:xs)     
-  | (idUsuario x) == idUsuarioS = x
-  | otherwise = getUsarioPorID idUsuarioS xs
+getUsario:: Int-> [Usuario] -> Maybe Usuario
+getUsario _ [] = Nothing
+getUsario id (x:xs)     
+  | idUsuario x == id = Just x
+  | otherwise = getUsario id xs
 
 -- | Função que retorna a lista atual de usuários cadastrados no sistema lendo o arquivo.
 getUsuarios :: String -> [Usuario]
