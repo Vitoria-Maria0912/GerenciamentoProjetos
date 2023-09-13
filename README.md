@@ -56,44 +56,54 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
    
 
  ### Pré-requesitos
- Você precisa ter a linguagens Haskell, o compilador ghc e o interpretador ghci em seu computador.
+ - Possuir a linguagens Haskell, o compilador ghc e o interpretador ghci instalados em seu computador.
 
  ### Construído em
  - Haskell
 
- ### Instalação - Linux
-   sudo apt-get update
-   sudo apt-get install ghc cabal-install
+ ### Instalação 
+ **Linux**
+ 
+     sudo apt-get update
+     sudo apt-get install ghc cabal-install
+ **MacOs**
+ 
+     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+     brew update
+     brew install ghc cabal-install
+**Windows**
 
- ### Instalação - MacOs
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   brew update
-   brew install ghc cabal-install
-
- ### Instalação - Windows
-   Acesse este link para o download : https://www.haskell.org/platform/windows.html
+    https://www.haskell.org/platform/windows.html
 
 
 ### Bibliotecas necessárias:
-   cabal install --lib aeson
-   cabal install --lib random
+     cabal install --lib aeson
+     cabal install --lib random
 
 
 ### Caso ocorra erro de compilação execute:
-  - Linux 
-          sudo apt remove curl
-          sudo apt install curl
-  
-  - MacOs
-          brew uninstall curl
-          brew install curl
+**Linux** 
+
+    sudo apt remove curl
+    sudo apt install curl
+
+**MacOs**
+
+    brew uninstall curl
+    brew install curl
 
  ### Pode ser executado de duas maneiras:
              
-  - Para compilar: ghc -o projeto Main.hs
-  - Para executar: ./projeto
+**- Compila:**
+
+    ghc -o projeto Main.hs
+**- Executa:** 
+
+    ./projeto
     
-  - Compila e executa: runhaskell Main.hs 
+**- Compila e executa:** 
+
+    runhaskell Main.hs 
 
  ### Desenvolvedoras:
    - Íris Almeida - [Github] (https://github.com/irisalmeida)
