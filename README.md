@@ -15,7 +15,7 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
 
 **1. Interface do usuário:**
    
-  **- Criação de perfil:**
+  _**- Criação de perfil:**
   O usuário irá se cadastrar com seu nome e senha. O sistema retorna o ID do usuário.
      
   **- Criação de projetos:**
