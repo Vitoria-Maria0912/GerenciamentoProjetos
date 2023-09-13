@@ -49,7 +49,6 @@ menuPrincipal = do
       "d" -> deletarUsuario
       "p" -> cadastrarProjeto
       "l" -> visualizarProjetosPendentes
-      "e" -> solicitarEntrada
       "m" -> chat
       "b" -> bancoDeAtividades
       "s" -> sairDoSistema
@@ -168,22 +167,6 @@ menuProjetos = do
 visualizarProjetosPendentes :: IO ()
 visualizarProjetosPendentes = do
   -- Implementation logic for viewing pending projects
-    putStrLn "Implementação em andamento."
-    menuPrincipal
-
-
--- Função para solicitar entrada em um projeto
-solicitarEntrada :: IO ()
-solicitarEntrada = do
-    putStrLn "Digite seu ID:"
-    idUsuario <- getLine
-    putStrLn "Digite o ID do projeto que deseja ingressar:"
-    idProjeto <- getLine
-
-    projetos <- lerProjetos "dados/projetos.txt"
-
-    let projeto = getProjeto idProjeto projetos
-
     putStrLn "Implementação em andamento."
     menuPrincipal
 
