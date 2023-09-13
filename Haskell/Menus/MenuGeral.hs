@@ -35,7 +35,6 @@ menuPrincipal = do
           ++ "|             D - Deletar perfil                           |" ++ "\n"
           ++ "|             P - Criar projeto                            |" ++ "\n"
           ++ "|             L - Listar projetos em andamento             |" ++ "\n"
-          ++ "|             E - Solicitar entrada em projeto             |" ++ "\n"
           ++ "|             M - Caixa de mensagens                       |" ++ "\n"
           ++ "|             B - Visualizar banco de atividades           |" ++ "\n"
           ++ "|             S - Sair do sistema                          |" ++ "\n"
