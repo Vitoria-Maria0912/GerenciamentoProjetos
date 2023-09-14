@@ -59,12 +59,13 @@ menuPrincipal = do
 sairDoSistema :: IO()
 sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 
--- Cadastra um usuário no sistema
+-- | Função que cadastra um usuário no sistema
 cadastrarUsuario :: IO ()
 cadastrarUsuario = do
+
     clearScreen
 
-    numUsuarios <- getNumDeUsuarios "Controllers/dados.json"
+    let userFilePath = "Database/usuarios.json"
 
     putStrLn $ "Cadastro: " ++ "\n\n"
             ++ "Digite seu nome: "
@@ -74,48 +75,48 @@ cadastrarUsuario = do
     putStrLn "Digite sua senha: "
     senha <- getLine
 
-    idUsuario <- randomRIO (0, 10 :: Int)
+    idUsuario <- randomRIO (0000, 9999 :: Int)
 
-    -- falta colocar verificações
+    let usuarioNoSistema = (getUsuario idUsuario (getUsuarios userFilePath))
 
-    salvarUsuario "Controllers/dados.json" idUsuario nome senha
-    numUsuariosAtt <- getNumDeUsuarios "Controllers/dados.jason"
-    if numUsuariosAtt > numUsuarios then do -- verificacao TEMPORÁRIA (melhorar depois)
-      putStrLn ("Usuário cadastrado com sucesso!") -- adicionar o ID aqui depois
-      menuPrincipal
-    else do
-      putStrLn ("Por favor, tente novamnete")
-      cadastrarUsuario
+    case (usuarioNoSistema) of
+      Just _ -> do
+        putStrLn $ "------------------------------------------------------------." ++ "\n"
+                ++ "|             Falha no cadastro! Tente novamente.            |" ++ "\n"
+                ++  "------------------------------------------------------------" ++ "\n"
+        cadastrarUsuario
 
--- Deleta um usuário do sistema
+      Nothing -> do
+        salvarUsuario userFilePath idUsuario nome senha
+        putStrLn $ "Usuário cadastrado com sucesso! Seu ID é " ++ show(idUsuario) ++ "\n"
+        menuPrincipal
+
+-- | Função que deleta um usuário do sistema
 deletarUsuario :: IO()
 deletarUsuario = do
+  let userFilePath = "Database/usuarios.json"
                             
   putStrLn "Digite seu id:"
-  idUsuario <- getLine
+  idUsuario <- readLn :: IO Int
   putStrLn "Digite sua senha:"
   senha <- getLine
 
-  numUsuarios <- getNumDeUsuarios "Controllers/dados.json"
+  let usuarioNoSistema = (getUsuario idUsuario (getUsuarios userFilePath))
 
--- FALTA VERIFICAÇÃO DA SENHA E SE O ID EXISTE
-  removerUsuario "Controllers/dados.json" idUsuario
+  case (usuarioNoSistema) of
+    Just _ -> do
+      removerUsuario userFilePath idUsuario
+      putStrLn("Usuário removido com sucesso!")
+      menuPrincipal
 
-  numUsuariosAtt <- getNumDeUsuarios "Controllers/dados.jason"
-
-  -- VERIFICAÇÃO TEMPORÁRIA -> MUDAR PRA VERIFICAR POR ID
-  if numUsuariosAtt < numUsuarios then do  
-    putStrLn("Usuário removido com sucesso!")
-    menuPrincipal
-  else do
-     putStrLn ("Por favor, tente novamente")
-     cadastrarUsuario
-  -- Tem que ter uma função para verificar se a senha bate com o nome do usuário
+    Nothing -> do
+       putStrLn $ "------------------------------------------------------------." ++ "\n"
+                ++"|            Falha ao tentar remover! Tente novamente.      |" ++ "\n"
+                ++ "------------------------------------------------------------" ++ "\n"
+      deletarUsuario
+                
   
-  clearScreen
-
-  
--- Função para criar um projeto
+-- | Função para criar um projeto
 cadastrarProjeto :: IO()
 cadastrarProjeto = do
 
@@ -133,6 +134,35 @@ cadastrarProjeto = do
 
     projetos <- lerProjetos "dados/projetos.txt"
 
+    putStrLn "Você gostaria de adicionar membros no seu projeto agora? (s/n)" 
+    addMembro <- getLine
+
+    let usuarios = getUsuarios "Controllers/usuarios.json"
+
+      if addMembro == "s" then do
+        putStrLn $ "Digite o ID do(s) usuário(s) que você deseja adicionar de acordo com a lista abaixo:" ++ "\n"
+        
+        mapM_ imprimirUsuario usuarios
+
+        putStrLn "Digite o(s) ID(s) que deseja adicionar:"
+        usuariosAadd <- getLine
+         -- provavelmente isso vai ser uma lista de 1 ou mais IDs que precisarão ser adicionados no projeto.
+         -- chamar aqui função que add o membro no projeto
+        putStrLn "Membros cadastrados com sucesso!"
+      else
+        putStrLn "Ok, você poderá adicionar os membros posteriormente"
+    
+    putStrLn "Você gostaria de adicionar atividades no seu projeto agora? (s/n)"
+    addAtv <- getLine  
+
+      if addAtv == "s" then do
+         -- retorna as atividades do banco com ids
+        -- recebe o ids das atividades que gostaria de adicionar
+        -- adiciona as atividades no projeto pelo ID
+      else 
+        putStrLn "Ok, você poderá adicionar as atividades posteriormente"
+
+
   -- if (verificaIdProjeto (show (idProjeto)) projetos == False) then do
   --     criaProjeto (show (idProjeto)) nomeProjeto descricao nomeUsuario Nothing Nothing
   --     let projeto = getProjeto (show (idProjeto)) projetos
@@ -141,10 +171,10 @@ cadastrarProjeto = do
   --     putStrLn $ "Projeto cadastrado com sucesso!\n"
   --     menuPrincipal
   -- else do
-    putStrLn $ "O ID já existe na base de dados.\n"
+    --putStrLn $ "O ID já existe na base de dados.\n"
     -- cadastrarProjeto
 
--- Verifica se o usuário é gerente e mostra o menu correspondente
+-- | Função que verifica se o usuário é gerente e mostra o menu correspondente
 menuProjetos :: IO()
 menuProjetos = do 
 
@@ -162,14 +192,14 @@ menuProjetos = do
     if gerente then menuRestritoProjeto
     else menuPublicoProjeto
     
--- Função para visualizar projetos pendentes
+-- | Função para visualizar projetos pendentes
 visualizarProjetosPendentes :: IO ()
 visualizarProjetosPendentes = do
   -- Implementation logic for viewing pending projects
     putStrLn "Implementação em andamento."
     menuPrincipal
 
--- Entra no chat
+-- | Função para entrar no chat
 chat :: IO ()
 chat = do
   -- Implementation logic for entering the chat
