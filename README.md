@@ -56,21 +56,57 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
    
 
  ### Pré-requesitos
- Você precisa ter a linguagens Haskell, o compilador ghc e o interpretador ghci em seu computador.
+ - Possuir a linguagens Haskell, o compilador ghc e o interpretador ghci instalados em seu computador.
 
- ### Instalação
- adicionar passos da instalação necessária aqui
-
- ### Construído com
+ ### Construído em
  - Haskell
 
+ ### Instalação:
+ **Linux**
+ 
+     sudo apt-get update
+     sudo apt-get install ghc cabal-install
+ **MacOs**
+ 
+     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+     brew update
+     brew install ghc cabal-install
+**Windows**
 
- ### Autoras:
+    https://www.haskell.org/platform/windows.html
+
+
+### Bibliotecas necessárias:
+     cabal install --lib aeson
+     cabal install --lib random
+
+
+### Caso ocorra erro de compilação execute:
+**Linux** 
+
+    sudo apt remove curl
+    sudo apt install curl
+
+**MacOs**
+
+    brew uninstall curl
+    brew install curl
+
+ ### Pode ser executado de duas maneiras:
+             
+**Compila**
+
+    ghc -o projeto Main.hs
+**Executa** 
+
+    ./projeto
+    
+**Compila e executa** 
+
+    runhaskell Main.hs 
+
+ ### Desenvolvedoras:
    - Íris Almeida - [Github] (https://github.com/irisalmeida)
    - Jamilly Venâncio - [Github] (https://github.com/venanciojamilly)
-   - Vitória Maria - [Github] (https://github.com/Vitoria-Maria0912)
-  -  Yalle Carvalho - [Github] (https://github.com/yallecarvalho)
-
-
-
-
+   - Vitória Maria do Nascimento - [Github] (https://github.com/Vitoria-Maria0912)
+   - Yalle Carvalho - [Github] (https://github.com/yallecarvalho)
