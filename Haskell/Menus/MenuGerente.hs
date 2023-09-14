@@ -3,9 +3,10 @@ module Menus.MenuGerente where
 import System.Random
 import Controllers.Atividades as Atividades
 import Menus.MenuPublico as MenuPublico
-import Database.Database
+--import Database.Database
 import Util.ClearScreen
 import Data.Char (toLower)
+import Controllers.Projeto 
 
 
 -- Exibe erro e retorna ao menu
@@ -43,37 +44,77 @@ menuRestritoProjeto = do
     let lowerOption = map toLower option
     case lowerOption of 
 
-        "p" -> removerProjeto
+           "p" -> removerProjeto
         -- "c" -> criaAtividade
         -- "g" -> gerenciarMembros
         -- "r" -> deletarAtividade 
         -- "d" -> atribuirMembro
-        "j" -> removeMembroProjeto
+        --"j" -> removeMembroProjeto
         -- "i" -> MenuPublico.comecarAtividade
         -- "f" -> MenuPublico.finalizarAtividade
         -- "v" -> MenuPublico.visualizarAtividades
         -- "a" -> MenuPublico.statusAtividade
         -- "o" -> MenuPublico.criarFeedback
         -- "s" -> MenuPublico.sairDoSistema
-        _   -> erroMenuGerente
+       -- _   -> erroMenuGerente
 
 
--- Remove um projeto do sistema
-removerProjeto :: IO()
-removerProjeto = do
 
+
+-- -- Remove um projeto do sistema
+-- removerProjeto :: IO()
+-- removerProjeto = do
+
+--     putStrLn "Digite seu ID:"
+--     idUsuario <- getLine
+--     putStrLn "Digite o ID do projeto que deseja excluir:"
+--     idProjeto <- getLine
+
+--     -- let projeto = Database.getProjeto idProjeto
+--     -- let gerente = Util.ehGerente idUsuario projeto
+
+--     -- if gerente then do Database.removeProjeto idProjeto putStrLn "Projeto removido com sucesso!"
+--     -- else putStrLn "Você não tem permissão para deletar esse projeto!"
+
+--     putStrLn ""
+
+
+removerProjeto :: [Projeto] -> IO ()
+removerProjeto projetos = do
     putStrLn "Digite seu ID:"
     idUsuario <- getLine
     putStrLn "Digite o ID do projeto que deseja excluir:"
-    idProjeto <- getLine
+    idProjetoStr <- getLine
+    let idProjeto = read idProjetoStr :: Int
 
-    -- let projeto = Database.getProjeto idProjeto
-    -- let gerente = Util.ehGerente idUsuario projeto
+    -- Agora, você pode chamar a função do controller para remover o projeto
+    let projetosAtualizados = removeProjetoPorID idProjeto projetos
 
-    -- if gerente then do Database.removeProjeto idProjeto putStrLn "Projeto removido com sucesso!"
-    -- else putStrLn "Você não tem permissão para deletar esse projeto!"
+    -- Você pode adicionar a lógica para escrever os projetos atualizados em um arquivo aqui, se necessário.
 
-    putStrLn ""
+    putStrLn "Projeto removido com sucesso!"
+
+
+
+{-
+-- -- Remove um projeto do sistema
+removerProjeto :: IO ()
+removerProjeto = do
+    putStrLn "Digite seu ID:"
+    idUsuario <- getLine
+    putStrLn "Digite o ID do projeto que deseja excluir:"
+    idProjetoStr <- getLine
+    let idProjeto = read idProjetoStr :: Int
+
+    -- Agora, você pode chamar a função do controller para remover o projeto
+    projetosAtualizados <- return (removeProjetoPorID idProjeto projeto)
+
+
+    -- Você pode adicionar a lógica para escrever os projetos atualizados em um arquivo aqui, se necessário.
+
+    putStrLn "Projeto removido com sucesso!"
+-}
+
 
 -- -- Cria uma atividade em um projeto
 -- criaAtividade :: IO()
@@ -126,18 +167,18 @@ removerProjeto = do
 --     -- imprime os membros do projeto
 
 
--- Remover membro do projeto
-removeMembroProjeto :: IO()
-removeMembroProjeto = do
-    putStrLn "Digite o ID do projeto:"
-    idProjeto <- getLine
-    putStrLn "Digite o ID do membro que deseja remover:"
-    usuario <- getLine
+-- -- Remover membro do projeto
+-- removeMembroProjeto :: IO()
+-- removeMembroProjeto = do
+--     putStrLn "Digite o ID do projeto:"
+--     idProjeto <- getLine
+--     putStrLn "Digite o ID do membro que deseja remover:"
+--     usuario <- getLine
     
-    -- let projeto = getProjeto idProjeto
+--     -- let projeto = getProjeto idProjeto
 
-    -- projeto.removeMembroProjeto idProjeto usuario
-    putStrLn "Membro removido do projeto com sucesso!"
+--     -- projeto.removeMembroProjeto idProjeto usuario
+--     putStrLn "Membro removido do projeto com sucesso!"
 
 
 -- -- Atribuir membro a uma atividade

@@ -1,1 +1,33 @@
-
+{
+    "idProjeto": 1,
+    "nomeProjeto": "Meu Projeto",
+    "descricaoProjeto": "Este é um projeto de exemplo",
+    "idGerente": 123,
+    "membros": [
+      {
+        "idUsuario": 456,
+        "nomeUsuario": "João",
+        "emailUsuario": "joao@example.com"
+      },
+      {
+        "idUsuario": 789,
+        "nomeUsuario": "Maria",
+        "emailUsuario": "maria@example.com"
+      }
+    ],
+    "atividades": [
+      {
+        "idAtividade": 101,
+        "nomeAtividade": "Atividade 1",
+        "descricaoAtividade": "Realizar tarefa 1",
+        "statusAtividade": "Em andamento"
+      },
+      {
+        "idAtividade": 102,
+        "nomeAtividade": "Atividade 2",
+        "descricaoAtividade": "Realizar tarefa 2",
+        "statusAtividade": "Concluída"
+      }
+    ]
+  }
+  

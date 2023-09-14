@@ -1,5 +1,6 @@
 module Menus.MenuGeral where
 import qualified Data.Char as Char
+import qualified Data.ByteString.Lazy as B
 import System.Exit (exitSuccess)
 import System.Random 
 import Data.Char (toLower)
@@ -7,10 +8,13 @@ import Util.ClearScreen
 import Util.Util
 import Controllers.Usuario
 import Controllers.Projeto
+import Controllers.Atividades
 import Menus.MenuGerente (menuRestritoProjeto)
-import Menus.MenuPublico (menuPublicoProjeto)
-import qualified Controllers.Usuario as Usuario
-import qualified Control.Category as Usuario
+import Data.Aeson (encode)
+
+--import Menus.MenuPublico (menuPublicoProjeto)
+
+
 
 
 -- Exibe erro e retorna ao menu
@@ -47,9 +51,9 @@ menuPrincipal = do
       -- "c" -> cadastrarUsuario
       -- "d" -> deletarUsuario
       "p" -> cadastrarProjeto
-      "l" -> visualizarProjetosPendentes
+    --  "l" -> visualizarProjetosPendentes
       -- "m" -> chat
-      "b" -> bancoDeAtividades
+    --  "b" -> bancoDeAtividades
       "s" -> sairDoSistema
       _   -> erroMenuPrincipal 
 
@@ -114,54 +118,88 @@ sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
   
 --   clearScreen
 
-  
+
+
 -- Função para criar um projeto
-cadastrarProjeto :: IO()
+cadastrarProjeto :: IO ()
 cadastrarProjeto = do
-
-    putStrLn $ "Cadastrar Projeto:" ++ "\n"
-            ++ "Digite seu nome:"
-    nomeUsuario <- getLine
-
-    putStrLn "Digite um título para o projeto:"
+    putStrLn "Cadastrar Projeto:"
+    putStrLn "Digite o nome do projeto:"
     nomeProjeto <- getLine
 
-    putStrLn "Digite a descrição do seu projeto:"
-    descricao <- getLine
+    putStrLn "Digite a descrição do projeto:"
+    descricaoProjeto <- getLine
 
-    idProjeto <- randomRIO (100, 999 :: Int)
+    putStrLn "Digite o ID do gerente:"
+    idGerenteStr <- getLine
+    let idGerente = read idGerenteStr :: Int
 
-    projetos <- lerProjetos "dados/projetos.txt"
+    jsonFilePath <- return "Controllers/projetos.json" 
 
-  -- if (verificaIdProjeto (show (idProjeto)) projetos == False) then do
-  --     criaProjeto (show (idProjeto)) nomeProjeto descricao nomeUsuario Nothing Nothing
-  --     let projeto = getProjeto (show (idProjeto)) projetos
-  --     let novosProjetos = adicionarProjeto projeto projetos
-  --     escreverProjetos "dados/projetos.txt" novosProjetos
-  --     putStrLn $ "Projeto cadastrado com sucesso!\n"
-  --     menuPrincipal
-  -- else do
-    putStrLn $ "O ID já existe na base de dados.\n"
-    -- cadastrarProjeto
+    -- Chame a função do controller para criar o projeto
+    criaProjeto jsonFilePath nomeProjeto descricaoProjeto idGerente
 
--- Verifica se o usuário é gerente e mostra o menu correspondente
-menuProjetos :: IO()
-menuProjetos = do 
+    putStrLn "Projeto cadastrado com sucesso!"
 
-    putStrLn "Digite seu ID:"
-    idUsuario <- getLine
-    putStrLn "Digite o ID do projeto que deseja acessar:"
-    idProjeto <- getLine
 
-    projetos <- lerProjetos "dados/projetos.txt"
 
-    let projeto = getProjeto idProjeto projetos
 
-    let gerente = ehGerente idUsuario projetos
 
-    if gerente then menuRestritoProjeto
-    else menuPublicoProjeto
+
+
+ 
+-- cadastrarProjeto :: IO()
+-- cadastrarProjeto = do
+
+--     putStrLn $ "Cadastrar Projeto:" ++ "\n"
+--             ++ "Digite seu nome:"
+--     nomeUsuario <- getLine
+
+--     putStrLn "Digite um título para o projeto:"
+--     nomeProjeto <- getLine
+
+--     putStrLn "Digite a descrição do seu projeto:"
+--     descricao <- getLine
+
+--     idProjeto <- randomRIO (100, 999 :: Int)
+
+--     projetos <- lerProjetos "dados/projetos.txt"
+
+--   -- if (verificaIdProjeto (show (idProjeto)) projetos == False) then do
+--   --     criaProjeto (show (idProjeto)) nomeProjeto descricao nomeUsuario Nothing Nothing
+--   --     let projeto = getProjeto (show (idProjeto)) projetos
+--   --     let novosProjetos = adicionarProjeto projeto projetos
+--   --     escreverProjetos "dados/projetos.txt" novosProjetos
+--   --     putStrLn $ "Projeto cadastrado com sucesso!\n"
+--   --     menuPrincipal
+--   -- else do
+--     putStrLn $ "O ID já existe na base de dados.\n"
+--     -- cadastrarProjeto
+
+
+
+-- -- Verifica se o usuário é gerente e mostra o menu correspondente
+-- menuProjetos :: IO()
+-- menuProjetos = do 
+
+--     putStrLn "Digite seu ID:"
+--     idUsuario <- getLine
+--     putStrLn "Digite o ID do projeto que deseja acessar:"
+--     idProjeto <- getLine
+
+--     projetos <- lerProjetos "dados/projetos.txt"
+
+--     let projeto = getProjeto idProjeto projetos
+
+--     let gerente = ehGerente idUsuario projetos
+
+--     if gerente then menuRestritoProjeto
+--     else menuPublicoProjeto
     
+
+
+
+{-
 -- Função para visualizar projetos pendentes
 visualizarProjetosPendentes :: IO ()
 visualizarProjetosPendentes = do
@@ -183,4 +221,4 @@ bancoDeAtividades = do
   -- Implementation logic for viewing activity bank
   putStrLn "Implementação em andamento."
   menuPrincipal
-
+-}

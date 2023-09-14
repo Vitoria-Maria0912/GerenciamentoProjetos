@@ -10,6 +10,7 @@ import System.IO.Unsafe
 import System.IO
 import System.Directory
 import Data.List (find)
+import qualified Data.ByteString.Lazy as B
 
 -- import Data.Char ()
 -- import Data.Set ()
@@ -29,7 +30,15 @@ import Controllers.Atividades
 instance FromJSON Projeto
 instance ToJSON Projeto
 -------------------------------------------
+--MENU GERAL:
+-- -> cadastrarProjeto
+-- -> visualizarProjetosPendentes
 
+--MENU GERENTE:
+-- -> em criaAtividade adicionar ao projeto
+-- -> em deletaAtividade remover do projeto
+-- -> removerProjeto
+-- -> bancoDeAtividades
 
 -- Definindo o tipo de dado Projeto
 data Projeto = Projeto {
@@ -41,17 +50,39 @@ data Projeto = Projeto {
     atividades :: Maybe [Atividade]
 } deriving (Show, Generic) 
 
---Salva e cria projeto(atualizar para random)
-salvarProjeto :: String -> Projeto -> IO ()
-salvarProjeto jsonFilePath projeto = do
+-- Cria um novo projeto e o adiciona ao arquivo JSON
+criaProjeto :: String -> String -> String -> Int -> IO ()
+criaProjeto jsonFilePath nomeProjeto descricaoProjeto idGerente = do
     let projetos = lerProjetos jsonFilePath
     let novoId = length projetos + 1
-    let projetoComId = projeto { idProjeto = novoId }
-    let projetosAtualizados = projetos ++ [projetoComId]
+    let projeto = Projeto novoId nomeProjeto descricaoProjeto idGerente Nothing Nothing
+    let projetosAtualizados = projetos ++ [projeto]
 
     B.writeFile "../Temp.json" $ encode projetosAtualizados
     removeFile jsonFilePath
     renameFile "../Temp.json" jsonFilePath
+
+
+
+
+
+
+-- Remove um projeto da lista de projetos
+apagarProjeto :: Int -> [Projeto] -> [Projeto]
+apagarProjeto _ [] = []
+apagarProjeto id (x:xs)
+  | idProjeto x == id = xs
+  | otherwise = x : apagarProjeto id xs
+
+-- Remove um projeto do arquivo JSON
+deletarProjeto :: String -> Int -> IO ()
+deletarProjeto filePath idProjeto = do
+    let projetos = lerProjetos filePath
+    let projetosAtualizados = apagarProjeto idProjeto projetos
+
+    B.writeFile "../Temp.json" $ encode projetosAtualizados
+    removeFile filePath
+    renameFile "../Temp.json" filePath
 
 
 -- Verifica se o usuário é gerente de algum projeto do sistema 
@@ -65,6 +96,13 @@ getProjeto id (x:xs)
   | idProjeto x == id = Just x
   | otherwise = getProjeto id xs
 
+-- Recebe um ID de projeto e uma lista de projetos e retorna True se encontrar um projeto com o ID correspondente na lista
+verificaIdProjeto :: Int -> [Projeto] -> Bool
+verificaIdProjeto _ [] = False
+verificaIdProjeto id (x:xs)
+  | idProjeto x == id = True
+  | otherwise = verificaIdProjeto id xs
+
 
 -- Remove um projeto do sistema por meio do ID
 removeProjetoPorID :: Int -> [Projeto] -> [Projeto]
@@ -73,29 +111,35 @@ removeProjetoPorID idProjetoS (x:xs)
   | idProjeto x == idProjetoS = xs
   | otherwise = x : removeProjetoPorID idProjetoS xs
 
+
+
+
 -- SE DER PRECISA SER IMPLEMENTADO: muda status
 --PRECISA SER IMPLEMENTADO: remove projeto do arquivo.JSON 
 --PRECISA SER IMPLEMENTADO: adicionar o id de atividade (getAtividade)  a uma lista de atividade que tá em projeto . Get e retornar uma lista de atividades ou um IO e sobrescrever?
 --Cria um novo projeto , sobrescreve  e apaga o antigo
 
-editaAtividadesProjeto :: String -> Projeto-> [Int] -> Int -> IO()
-editaAtividadesProjeto jsonFilePath projeto atividades idAtividade = do
- let atividadesList = getTodasAtividades jsonFilePath 
- let p = atividades atividades idAtividade
- let newatividadesList = (deletarAtividade atividades atividadesList) ++ [p]
 
- B.writeFile "../Temp.json" $ encode newatividadesList
- removeFile jsonFilePath
- renameFile "../Temp.json" jsonFilePath
 
-removeatividadesJSON :: String -> Projeto-> Int -> IO()
-removeatividadesJSON jsonFilePath projeto atividades = do
- let atividadesList = getTodasAtividades jsonFilePath
- let newatividadesList = deletarAtividade atividades atividadesList
 
- B.writeFile "../Temp.json" $ encode newatividadesList
- removeFile jsonFilePath
- renameFile "../Temp.json" jsonFilePath
+-- editaAtividadesProjeto :: String -> Projeto-> [Int] -> Int -> IO()
+-- editaAtividadesProjeto jsonFilePath projeto atividades idAtividade = do
+--  let atividadesList = getTodasAtividades jsonFilePath 
+--  let p = atividades atividades idAtividade
+--  let newatividadesList = (deletarAtividade atividades atividadesList) ++ [p]
+
+--  B.writeFile "../Temp.json" $ encode newatividadesList
+--  removeFile jsonFilePath
+--  renameFile "../Temp.json" jsonFilePath
+
+-- removeatividadesJSON :: String -> Projeto-> Int -> IO()
+-- removeatividadesJSON jsonFilePath projeto atividades = do
+--  let atividadesList = getTodasAtividades jsonFilePath
+--  let newatividadesList = deletarAtividade atividades atividadesList
+
+--  B.writeFile "../Temp.json" $ encode newatividadesList
+--  removeFile jsonFilePath
+--  renameFile "../Temp.json" jsonFilePath
 
 
 
