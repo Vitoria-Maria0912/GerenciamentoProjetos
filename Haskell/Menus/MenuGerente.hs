@@ -1,19 +1,21 @@
 module Menus.MenuGerente where
 
 import System.Random
-import Controllers.Atividades as Atividades
-import Menus.MenuPublico as MenuPublico
-import Database.Database
-import Util.ClearScreen
+import Data.Maybe
+import System.Exit (exitSuccess)
+import Controllers.Atividades
+import Controllers.Projeto
+import Menus.MenuPublico
 import Data.Char (toLower)
 
 
 -- Exibe erro e retorna ao menu
 erroMenuGerente :: IO()
 erroMenuGerente = do
-    putStrLn $ "------------------------------------------------------------\n"
-            ++ "|            Entrada Inválida. Tente novamente!            |\n"
-            ++ "------------------------------------------------------------\n"
+    clearScreen
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "|            Entrada Inválida. Tente novamente!            |" ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
     menuRestritoProjeto
 
 -- Menu dos projetos, apenas os gerentes têm acesso
@@ -26,16 +28,14 @@ menuRestritoProjeto = do
             ++ "|                Selecione uma opção:                      |" ++ "\n"
             ++ "|                                                          |" ++ "\n"
             ++ "|           P - Remover projeto                            |" ++ "\n"
+            ++ "|           B - Visualizar banco de atividades             |" ++ "\n"
             ++ "|           C - Criar uma atividade                        |" ++ "\n"
-            ++ "|           G - Gerenciar membros do projeto               |" ++ "\n"
             ++ "|           R - Remover uma atividade                      |" ++ "\n"
-            ++ "|           D - Atribuir atividade a um membro             |" ++ "\n"
-            ++ "|           J - Remover membro do projeto                  |" ++ "\n"
             ++ "|           I - Iniciar uma atividade                      |" ++ "\n"
             ++ "|           F - Finalizar uma atividade                    |" ++ "\n"
             ++ "|           V - Visualizar atividades do projeto           |" ++ "\n"
             ++ "|           A - Visualizar status de uma atividade         |" ++ "\n"
-            ++ "|           O - Dar feedback em uma atividade              |" ++ "\n"
+            ++ "|           G - Gerenciar membros do projeto               |" ++ "\n"
             ++ "|           S - Sair do sistema                            |" ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
             
@@ -43,117 +43,209 @@ menuRestritoProjeto = do
     let lowerOption = map toLower option
     case lowerOption of 
 
-        "p" -> removerProjeto
+        "p" -> deletarProjeto
+        -- "b" -> bancoDeAtividades
         "c" -> criaAtividade
-        "g" -> gerenciarMembros
-        "r" -> deletarAtividade 
-        "d" -> atribuirMembro
-        "j" -> removeMembroProjeto
-        "i" -> MenuPublico.comecarAtividade
-        "f" -> MenuPublico.finalizarAtividade
-        "v" -> MenuPublico.visualizarAtividades
-        "a" -> MenuPublico.statusAtividade
-        "o" -> MenuPublico.criarFeedback
-        "s" -> MenuPublico.sairDoSistema
+        "r" -> deletaAtividade 
+        "i" -> comecarAtividade
+        "f" -> finalizarAtividade
+        -- "v" -> visualizarAtividades
+        "a" -> statusAtividade
+        -- "g" -> gerenciarMembros
+        "s" -> sairDoSistema
         _   -> erroMenuGerente
 
+-- Função do menu para remover um projeto pelo ID
+deletarProjeto :: IO ()
+deletarProjeto = do
 
--- Remove um projeto do sistema
-removerProjeto :: IO()
-removerProjeto = do
+  let projectFilePath = "Database/projetos.json"
+  
+  putStrLn $ "Remover Projeto: \n\n" 
+           ++ "Digite o ID do projeto que deseja excluir:"
+  idProjeto <- readLn :: IO Int
 
-    putStrLn "Digite seu ID:"
-    idUsuario <- getLine
-    putStrLn "Digite o ID do projeto que deseja excluir:"
-    idProjeto <- getLine
+  -- Ler projetos do arquivo
+  let projetoNoSistema = (getProjeto idProjeto (getTodosProjetos projectFilePath))
+  
+  -- Verificar se o projeto com o ID especificado existe
+  case (projetoNoSistema) of
+    Just projeto -> do
+      removerProjeto projectFilePath idProjeto
+      putStrLn $ ".------------------------------------------------------------." ++ "\n"
+               ++ "|              Projeto removido com sucesso!                |" ++ "\n"
+               ++ ".------------------------------------------------------------." ++ "\n"
+      menuRestritoProjeto
+    Nothing -> do
+      putStrLn $ ".-------------------------------------------------------------." ++ "\n"
+               ++ "|   Projeto não encontrado! Verifique o ID e tente novamente  |" ++ "\n"
+               ++ ".-------------------------------------------------------------." ++ "\n"
+      deletarProjeto
 
-    -- let projeto = Database.getProjeto idProjeto
-    -- let gerente = Util.ehGerente idUsuario projeto
-
-    -- if gerente then do Database.removeProjeto idProjeto putStrLn "Projeto removido com sucesso!"
-    -- else putStrLn "Você não tem permissão para deletar esse projeto!"
-
-    putStrLn ""
 
 -- Cria uma atividade em um projeto
 criaAtividade :: IO()
 criaAtividade = do
-    putStrLn "Digite o ID do projeto que deseja adicionar uma atividade:"
-    idProjeto <- getLine
 
-    putStrLn "Digite um título para sua atividade:"
-    titulo <- getLine
+    -- exibir bancoDeAtividades
 
-    putStrLn "Descreva, brevemente, o que se deve realizar para concluir esta atividade."
-    descricao <- getLine
+    putStrLn $ "Criar atividade: \n\n"
+            ++ "Digite o ID do projeto que deseja adicionar uma atividade: "
+    idProjeto <- readLn :: IO Int
 
-    idAtividade <- randomRIO (10000, 99999 :: Int)
+    let projetosDoSistema = getTodosProjetos  "Database/projetos.json"
 
-    -- tem que checar se já existe
-    let novaAtividade = Atividades.criarAtividade titulo descricao "Não atribuída" (show(idAtividade)) idProjeto
+    let projetos = (getProjeto idProjeto projetosDoSistema)
 
-    -- Atividades.adicionaAtividade novaAtividade Projeto.getAtividades
+    case (projetos) of
+        Just projeto -> do
+            putStrLn "Digite um título para sua atividade: "
+            titulo <- getLine
 
-    putStrLn "Tarefa criada com sucesso!"
+            putStrLn "Descreva, brevemente, o que se deve realizar para concluir esta atividade."
+            descricao <- getLine
 
+            idAtividade <- randomRIO (00000, 99999 :: Int)
+
+            let atividadeNoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
+
+            case (atividadeNoSistema) of
+                Just _ ->  do
+                    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                            ++ "|            Falha no cadastro! Tente novamente.           |" ++ "\n"
+                            ++ ".----------------------------------------------------------." ++ "\n"
+                    criaAtividade
+                    
+                Nothing -> do
+                        criarAtividade "Database/atividades.json" titulo descricao idProjeto idAtividade Nothing Nothing
+                        -- ADICIONAR DO PROJETO
+                        putStrLn $ "Tarefa criada com sucesso! O ID dessa atividade é \n"  ++ show(idAtividade)
+
+        Nothing -> do
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "|            Falha no cadastro! Tente novamente.           |" ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                criaAtividade
+            
 -- Remove uma atividade de um projeto
-deletarAtividade :: IO()
-deletarAtividade = do
-    putStrLn "Digite o ID da atividade que deseja remover:"
-    idAtividade <- getLine
-    putStrLn "Digite o ID do projeto que a atividade pertence:"
-    idProjeto <- getLine
+deletaAtividade :: IO()
+deletaAtividade = do
 
-    -- let projeto = getProjeto idProjeto
-    -- let atividade = projeto.getAtividade idAtividade
-    -- let atividadeExiste = Util.verificaIdAtividade projeto idAtividade
+--  exibir bancoDeAtividades
 
-    -- if atividadeExiste then do atividades.removerAtividade idAtividade putStrLn "Atividade removida com sucesso!"
-    -- else putStrLn "Atividade inexistente!"
+    putStrLn $ "Deletar atividade: \n\n"
+            ++ "Digite o ID da atividade que deseja remover:"
+    idAtividade <- readLn :: IO Int
 
-    putStrLn ""
+    let atividadesNoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
 
--- Visualizar membros do projeto
-gerenciarMembros :: IO()
-gerenciarMembros = do
-    putStrLn "Digite o ID do projeto:"
-    idProjeto <- getLine
+    case (atividadesNoSistema) of
+        Just _ ->  do
+                -- DELETAR DO PROJETO
+                deletarAtividade "Database/atividades.json" idAtividade
+                putStrLn $ "\n Atividade de ID " ++ show(idAtividade) ++ " removida do projeto com sucesso!"
 
-    -- let projeto = getProjeto idProjeto
+        Nothing -> do
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "|            Falha ao remover! Tente novamente.           |" ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                deletaAtividade
+            
+-- Visualizar todos os membros do projeto
+-- gerenciarMembros :: IO()
+-- gerenciarMembros = do
+
+--     putStrLn $ "Gerenciamento de membros: \n\n"
+--             ++ "Digite o ID do projeto:"
+--     idProjeto <- readLn :: IO Int
+
+--     let projetosDoSistema = lerProjetos "Database/projetos.json"
+
+--     let projetos = (getProjeto idProjeto projetosDoSistema)
+
+--     case (projetos) of
+--         Just projeto -> do
+--                         -- invoca função para visualizar membros do projeto, em Projetos.hs
+--                         putStrLn "Membros do projeto:"
+--                         -- imprime os membros do projeto
+
+--                         putStrLn $ ".----------------------------------------------------------." ++ "\n" 
+--                                 ++ "|                O que deseja fazer agora?                 |" ++ "\n"
+--                                 ++ "|                                                          |" ++ "\n"
+--                                 ++ "|                  Selecione uma opção:                    |" ++ "\n"
+--                                 ++ "|                                                          |" ++ "\n"
+--                                 ++ "|           D - Atribuir atividade a um membro             |" ++ "\n"
+--                                 ++ "|           M - Adicionar membro ao projeto                |" ++ "\n"
+--                                 ++ "|           R - Remover membro do projeto                  |" ++ "\n"
+--                                 ++ "|           V - Voltar ao menu do projeto                  |" ++ "\n"
+--                                 ++ ".----------------------------------------------------------." ++ "\n"
+
+--                         option <- getLine
+--                         let lowerOption = map toLower option
+--                         case lowerOption of 
+
+--                                 -- "a" -> atribuirMembro
+--                                 -- "n" -> adicionaNovoMembro
+--                                 -- "r" -> removeMembroProjeto
+--                                 "v" -> menuRestritoProjeto
+--                                 _   -> erroMenuGerente
+--         Nothing -> do
+--                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
+--                         ++ "|              ID inválido, tente novamente.               |" ++ "\n"
+--                         ++ ".----------------------------------------------------------." ++ "\n"
+--                 gerenciarMembros
+
+-- Adiciona um novo membro a um projeto
+-- adicionaNovoMembro :: IO()
+-- adicionaNovoMembro = do
+
+--     putStrLn $ "Adicionar novo membro: \n\n" 
+--             ++ "Digite o ID do projeto:"
+--     idProjeto <- getLine
+--     putStrLn "Digite o ID do membro que deseja adicionar:"
+--     idUsuario <- getLine
+
+--     putStrLn "Membro adicionado com sucesso!"
+
+-- -- Remover membro do projeto
+-- removeMembroProjeto :: IO()
+-- removeMembroProjeto = do
+
+--     putStrLn $ "Remover membro do projeto: \n\n" 
+--             ++ "Digite o ID do projeto:"
+--     idProjeto <- getLine
+--     putStrLn "Digite o ID do membro que deseja remover:"
+--     idUsuario <- getLine
     
-    -- invoca função para visualizar membros do projeto, em Projetos.hs
-    putStrLn "Membros do projeto:"
-    -- imprime os membros do projeto
+--     projetos <- lerProjetos "Database/projetos.json"
+
+--     let projeto = getProjeto idProjeto projetos
+
+--     -- projeto.removeMembroProjeto idProjeto usuario
+--     putStrLn "Membro removido do projeto com sucesso!"
 
 
--- Remover membro do projeto
-removeMembroProjeto :: IO()
-removeMembroProjeto = do
-    putStrLn "Digite o ID do projeto:"
-    idProjeto <- getLine
-    putStrLn "Digite o ID do membro que deseja remover:"
-    usuario <- getLine
-    
-    -- let projeto = getProjeto idProjeto
+-- -- Atribuir membro a uma atividade
+-- atribuirMembro :: IO()
+-- atribuirMembro = do
 
-    -- projeto.removeMembroProjeto idProjeto usuario
-    putStrLn "Membro removido do projeto com sucesso!"
+--     putStrLn $ "Atribuir uma atividade a um membro: \n\n" 
+--             ++ "Digite o ID da atividade:"
+--     idAtividade <- getLine
+--     putStrLn "Digite o ID do projeto que a atividade pertence:"
+--     idProjeto <- getLine
+--     putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
+--     idMembroResponsavel <- getLine
 
+--     -- let projeto = getProjeto id
+--     -- let atividade = getAtividade idAtividade
+--     -- Atividades.atribuirMembro atividade membroResponsavel
 
--- Atribuir membro a uma atividade
-atribuirMembro :: IO()
-atribuirMembro = do
-    putStrLn "Digite o ID da atividade:"
-    idAtividade <- getLine
-    putStrLn "Digite o ID do projeto que a atividade pertence:"
-    idProjeto <- getLine
-    putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
-    membroResponsavel <- getLine
+--     -- TEM QUE ARMAZENÁ-LOS
 
-    -- let projeto = Projeto.
-    -- let atividade = getAtividade idAtividade
-    -- Atividades.atribuirMembro atividade membroResponsavel
+--     putStrLn "Membro atribuído à atividade com sucesso!"
 
-    -- TEM QUE ARMAZENÁ-LOS
-
-    putStrLn "Membro atribuído à atividade com sucesso!"
+-- -- Visualiza atividades cadastradas no sistema
+-- bancoDeAtividades :: IO ()
+-- bancoDeAtividades = do
+--   putStrLn "Implementação em andamento."
