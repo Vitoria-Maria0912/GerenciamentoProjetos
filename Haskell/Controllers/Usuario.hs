@@ -45,8 +45,7 @@ imprimirUsuario u = putStrLn $ "ID: " ++ show (idUsuario u) ++ ", Nome: " ++ nom
 -- | Função que salva e escreve o usuario no arquivo diretamente
 salvarUsuario :: String -> Int -> String -> String -> IO()
 salvarUsuario jsonFilePath idUsuario nome senha = do
- let novoId = (length (getUsuarios jsonFilePath)) + 1
- let u = Usuario novoId nome senha
+ let u = Usuario idUsuario nome senha
  let userList = (getUsuarios jsonFilePath) ++ [u]
 
  B.writeFile "../Temp.json" $ encode userList
