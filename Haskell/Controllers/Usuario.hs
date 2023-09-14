@@ -70,10 +70,6 @@ removerUsuario jsonFilePath idUsuario = do
  removeFile jsonFilePath
  renameFile "../Temp.json" jsonFilePath
 
--- | Função que retorna o numero de usuarios atuais do sistema (de acordo com o arquivo)
-getNumDeUsuarios :: String -> Int
-getNumDeUsuarios jsonFilePath = length (getUsuarios jsonFilePath)
-
 
 
 main :: IO()
