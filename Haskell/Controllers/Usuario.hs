@@ -14,7 +14,8 @@ import System.Directory
 data Usuario = Usuario { 
     idUsuario :: Int,
     nome :: String,
-    senha :: String
+    senha :: String,
+    mensagens :: [Mensagem]
 } deriving (Show, Generic)
 
 
@@ -68,6 +69,41 @@ removerUsuario jsonFilePath idUsuario = do
  B.writeFile "../Temp.json" $ encode novosUsuarios
  removeFile jsonFilePath
  renameFile "../Temp.json" jsonFilePath
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------PARTE USUÁRIO - MENSAGEM----------------------------------------------------------------------------------------------------------
+-- função que envia mensagem geral para todos os usuários do projeto do REMETENTE (pegar no main o idUsuario e seu projeto referente)
+-- *falta decidir se passa o caminho do filepath no main ou aqui.
+enviarMensagemGeral :: Usuario -> String -> [Usuario] -> String -> IO ()
+enviarMensagemGeral remetente conteudo usuarios jsonFilePath = do
+    let updateUsuarios = map (\u -> if u == remetente then u { mensagens = MensagemGeral remetente conteudo : mensagens u } else u) usuarios
+  -- B.writeFile jsonFilePath $ encode updatedUsuarios
+    B.writeFile "../Temp.json" $ encode updateUsuarios
+    removeFile jsonFilePath
+    renameFile "../Temp.json" jsonFilePath
+
+-- função que envia mensagem privada para um usuário do projeto do Remetente (pegar no main o idusuario e seu projeto referente)
+enviarMensagemPrivada :: Usuario -> Usuario -> String -> [Usuario] -> String -> IO ()
+enviarMensagemPrivada remetente destinatario conteudo usuarios jsonFilePath = do
+    let updateUsuarios = map (\u -> if u == remetente then u { mensagens = MensagemPrivada remetente destinatario conteudo : mensagens u } else u) usuarios
+     B.writeFile "../Temp.json" $ encode updateUsuarios
+    removeFile jsonFilePath
+    renameFile "../Temp.json" jsonFilePath
+
+-- função que pega todas as mensagens do usuário (caixa de mensagem)
+getMensagensDoUsuario :: Usuario -> IO ()
+mostrarMensagensDoUsuario usuario = do
+    putStrLn "Mensagens do usuário:"
+    mapM_ mostrarMensagem (mensagens usuario)
+
+--formatação para exibição para o usuário
+mostrarMensagem :: Mensagem -> IO ()
+mostrarMensagem mensagem = do
+    putStrLn $ "Remetente: " ++ nome (remetente mensagem)
+    putStrLn $ "Conteúdo: " ++ conteudo mensagem
+    putStrLn "-------------------"
+----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
