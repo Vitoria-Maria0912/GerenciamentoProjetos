@@ -4,13 +4,15 @@
 module Controllers.Usuario where
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
-import qualified Data.ByteString.Lazy.Char8 as BC
 import GHC.Generics
 import System.IO.Unsafe
-import System.IO
 import System.Directory
 
--- Definindo o tipo de dado Usuário
+instance FromJSON Usuario
+instance ToJSON Usuario
+
+
+-- | Definindo o tipo de dado Usuário
 data Usuario = Usuario { 
     idUsuario :: Int,
     nome :: String,
@@ -18,71 +20,57 @@ data Usuario = Usuario {
 } deriving (Show, Generic)
 
 
-instance FromJSON Usuario
-instance ToJSON Usuario
+-- | Função que retorna os dados de um usuário de acordo com o seu ID
+getUsuario:: Int-> [Usuario] -> Maybe Usuario
+getUsuario _ [] = Nothing
+getUsuario usuarioId (x:xs)     
+  | idUsuario x == usuarioId = Just x
+  | otherwise = getUsuario usuarioId xs
 
-{-
-instance Show Usuario where
-  show :: Usuario -> String
-  show (Usuario idUsuario nome _) =  "Olá Usuario:\n" ++
-                                       "Seu idUsuario: " ++ show idUsuario ++ "\n" ++
-                                       "Nome: " ++ nome
--}
-
--- retorna o usuario de acordo com o ID
-getUsarioPorID :: Int-> [Usuario] -> Usuario
-getUsarioPorID _ [] = Usuario (-1) "" ""
-getUsarioPorID idUsuarioS (x:xs)     
-  | (idUsuario x) == idUsuarioS = x
-  | otherwise = getUsarioPorID idUsuarioS xs
-
--- retorna a lista de usuários lida do arquivo
-getUsuario :: String -> [Usuario]
-getUsuario path = do
+-- | Função que retorna a lista atual de usuários cadastrados no sistema lendo o arquivo.
+getUsuarios :: String -> [Usuario]
+getUsuarios path = do
  let file = unsafePerformIO( B.readFile path )
  let decodedFile = decode file :: Maybe [Usuario]
  case decodedFile of
   Nothing -> []
-  Just out -> out
+  Just usuarios -> usuarios
 
--- cria e salva o usuario no arquivo
+-- | Função que imprime o usuário omitindo informação sensível
+imprimirUsuario :: Usuario -> IO()
+imprimirUsuario u = putStrLn $ "ID: " ++ show (idUsuario u) ++ ", Nome: " ++ nome u
+
+-- | Função que salva e escreve o usuario no arquivo diretamente
 salvarUsuario :: String -> Int -> String -> String -> IO()
 salvarUsuario jsonFilePath idUsuario nome senha = do
- let novoId = (length (getUsuario jsonFilePath)) + 1
- let u = Usuario novoId nome senha
- let userList = (getUsuario jsonFilePath) ++ [u]
+  let usuario = Usuario idUsuario nome senha
+  let userList = (getUsuarios jsonFilePath) ++ [usuario]
 
- B.writeFile "../Temp.json" $ encode userList
- removeFile jsonFilePath
- renameFile "../Temp.json" jsonFilePath
+  B.writeFile "../Temp.json" $ encode userList
+  removeFile jsonFilePath
+  renameFile "../Temp.json" jsonFilePath
 
- -- remove usuario pelo ID
+-- | Função que remove usuario pelo ID
 removeUsarioPorID :: Int -> [Usuario] -> [Usuario]
 removeUsarioPorID _ [] = []
 removeUsarioPorID idUsuarioS(x:xs)
  | (idUsuario x) == idUsuarioS = xs
  | otherwise = [x] ++ (removeUsarioPorID idUsuarioS xs)
 
--- remove o usuario do arquivo
+-- | Função que remove usuario da lista de usuarios reescrevendo o arquivo.
 removerUsuario :: String -> Int -> IO()
 removerUsuario jsonFilePath idUsuario = do
- let usuarios = getUsuario jsonFilePath
- let novosUsuarios = removeUsarioPorID idUsuario usuarios
+  let usuarios = getUsuarios jsonFilePath
+  let novosUsuarios = removeUsarioPorID idUsuario usuarios
 
- B.writeFile "../Temp.json" $ encode novosUsuarios
- removeFile jsonFilePath
- renameFile "../Temp.json" jsonFilePath
+  B.writeFile "../Temp.json" $ encode novosUsuarios
+  removeFile jsonFilePath
+  renameFile "../Temp.json" jsonFilePath
 
--- retorna o numero de usuarios cadastrados até o momento (apagar depois de refazer o menu)
+-- | Função que verifica se a senha pertence ao usuário
+verificaSenhaUsuario :: Usuario -> String -> Bool
+verificaSenhaUsuario usuario senhaUsuario = ((senha usuario) == senhaUsuario)
+
+-- | Função que retorna o numero de usuarios atuais do sistema (de acordo com o arquivo)
 getNumDeUsuarios :: String -> Int
-getNumDeUsuarios jsonFilePath = length (getUsuario jsonFilePath)
-
-
-
-main :: IO()
-main = do
-    salvarUsuario "./dados.json" 1000 "Iris" "Iago"
-    putStrLn (show (getUsuario "./dados.json"))
-    removerUsuario "./dados.json" 1
-    putStrLn (show (getUsuario "./dados.json"))
-    putStrLn (show (getUsarioPorID 6 (getUsuario "./dados.json")))
+getNumDeUsuarios jsonFilePath = length (getUsuarios jsonFilePath)

@@ -1,50 +1,74 @@
+{-# LANGUAGE DeriveGeneric #-} -- <<<<<<<<<<<<<<<<<<<<
 module Controllers.Projeto where
 
-import Data.Char ()
-import Data.Set ()
-import qualified Data.Text.IO as TIO
-import Data.Time
-import System.Directory ()
-import System.IO ()
+-------------------------------------------
+import System.IO.Unsafe (unsafePerformIO)
+import qualified Data.ByteString.Lazy as B
+import Data.Aeson
+import GHC.Generics
+import System.IO.Unsafe
+import System.IO
+import System.Directory
 import Data.List (find)
-import Data.Maybe (mapMaybe)
-import Text.Read (readMaybe)
-import Controllers.Atividades as Atividade
-import Database.Database
+
+-- import Data.Char ()
+-- import Data.Set ()
+-- import qualified Data.Text.IO as TIO
+-- import Data.Time
+-- import System.Directory ()
+-- import System.IO ()
+-- import Data.List (find)
+-- import Data.Maybe (mapMaybe)
+-- import Text.Read (readMaybe)
+import Controllers.Usuario
+import Controllers.Atividades
+-- import Database.Database
+
+instance FromJSON Projeto
+instance ToJSON Projeto
+-------------------------------------------
 
 
 -- Definindo o tipo de dado Projeto
 data Projeto = Projeto {
-    idProjeto :: String,
+    idProjeto :: Int,
     nomeProjeto :: String,
     descricaoProjeto :: String,
-    idGerente :: String,
-    membros :: Maybe [String],
-    atividades :: Maybe [String]
-} 
+    idGerente :: Int,
+    membros :: Maybe [Usuario],
+    atividades :: Maybe [Atividade]
+} deriving (Show, Generic) 
 
 
-criaProjeto :: String -> String -> String -> String -> Maybe [String] -> Maybe [String] -> IO()
-criaProjeto = addProjetoDatabase
+-- Cria um novo projeto e o adiciona ao arquivo JSON
+criaProjeto :: String -> Int -> String -> String -> Int -> Maybe[Usuario] -> Maybe[Atividade] -> IO ()
+criaProjeto jsonFilePath idProjeto nomeProjeto descricaoProjeto idGerente membros atividades = do
+    let projeto = Projeto idProjeto nomeProjeto descricaoProjeto idGerente Nothing Nothing
+    let projetosAtualizados = (getTodosProjetos jsonFilePath) ++ [projeto]
 
--- Adiciona um projeto no sistema
-adicionaProjeto :: Projeto -> [Projeto] -> [Projeto]
-adicionaProjeto projeto projetos = 
-    case find (\u -> nomeProjeto u == nomeProjeto projeto) projetos of 
-        Just _-> projetos
-        Nothing -> projeto : projetos
+    B.writeFile "../Temp.json" $ encode projetosAtualizados
+    removeFile jsonFilePath
+    renameFile "../Temp.json" jsonFilePath
 
+-- Verifica se o usuário é gerente de algum projeto do sistema 
+ehGerente :: Int -> [Projeto] -> Bool
+ehGerente gerenteId gerentes = any (\projeto -> gerenteId == (idGerente projeto)) gerentes
 
-escreverProjeto :: FilePath -> [Projeto] -> IO ()
-escreverProjeto arquivo projetos = appendFile arquivo conteudo
-  where
-    conteudo = unlines $ map formatarProjeto projetos
-    formatarProjeto projeto = "ID: " ++ idProjeto projeto ++ 
-                            ", NOME: " ++ nomeProjeto projeto ++ 
-                            ", DESCRICAO: " ++ descricaoProjeto projeto ++ 
-                            ", IDGERENTE: " ++ idGerente projeto ++ 
-                            ", ID S DE USUARIOS QUE TRABALHAM NO PROJETO: " ++ show (membros projeto) ++ 
-                            ", ID S DE ATIVIDADES ANEXADAS AO PROJETO: " ++ show (atividades projeto)
+-- Obtém um projeto a partir do ID
+getProjeto :: Int -> [Projeto] -> Maybe Projeto
+getProjeto _ [] = Nothing
+getProjeto id (x:xs)
+  | idProjeto x == id = Just x
+  | otherwise = getProjeto id xs
+
+-- Obtém todos os projetos cadastrados no sistema
+getTodosProjetos :: String -> [Projeto]
+getTodosProjetos filePath = do
+    let arquivo = unsafePerformIO(B.readFile filePath)
+    let decodedFile = decode arquivo :: Maybe [Projeto]
+    case decodedFile of
+        Nothing -> []
+        Just out -> out
 
 -- Acho que faz mais sentido estar aqui, do que em Atividades
 -- Adiciona uma atividade a um projeto
@@ -54,41 +78,50 @@ adicionaAtividade atividade atividades =
         Just _-> atividades
         Nothing -> atividade : atividades
 
+-- | Função que retorna a atividade de um projeto
+getAtividadeDoProjeto :: Int -> [Atividade] -> Maybe Atividade
+getAtividadeDoProjeto _ [] = Nothing
+getAtividadeDoProjeto id (x:xs) 
+  | id == (idAtividade x) = Just x
+  | otherwise = getAtividadeDoProjeto id xs
 
-lerProjetos :: FilePath -> IO [Projeto]
-lerProjetos path = do
-    conteudo <- readFile path
-    let projetos = mapMaybe fromString $ lines conteudo
-    return projetos
+-- | Função que remove projeto pelo ID
+removeProjetoPorID :: Int -> [Projeto] -> [Projeto]
+removeProjetoPorID _ [] = []
+removeProjetoPorID idProjetoS(x:xs)
+ | (idProjeto x) == idProjetoS = xs
+ | otherwise = [x] ++ (removeProjetoPorID idProjetoS xs)
+
+-- | Função que remove projeto da lista de usuarios reescrevendo o arquivo.
+removerProjeto :: String -> Int -> IO()
+removerProjeto jsonFilePath idProjeto = do
+  let projetos = getTodosProjetos jsonFilePath
+  let novosProjetos = removeProjetoPorID idProjeto projetos
+
+
+  B.writeFile "../Temp.json" $ encode novosProjetos
+  removeFile jsonFilePath
+  renameFile "../Temp.json" jsonFilePath
+
 
 -- Obtem os IDs das atividades cadastradas em um projetos
-getIdsAtividades :: Projeto -> [String]
-getIdsAtividades projeto = 
-    case atividades projeto of
-        Just atividadesProjeto -> [unlines atividadesProjeto] 
-        _ -> []
+-- getIdsAtividades :: Projeto -> [Atividade]
+-- getIdsAtividades projeto = 
+--     case atividades projeto of
+--         Just atividadesProjeto -> [unlines atividadesProjeto] 
+--         _ -> []
 
--- Obtem os IDs dos usuários cadastrados em um projetos
-getIdsUsuarios :: Projeto -> [String]
-getIdsUsuarios projeto = 
-    case membros projeto of
-        Just membrosProjeto -> [unlines membrosProjeto]
-        _ -> []
+-- -- Obtem os IDs dos usuários cadastrados em um projetos
+-- getIdsUsuarios :: Projeto -> [String]
+-- getIdsUsuarios projeto = 
+--     case membros projeto of
+--         Just membrosProjeto -> [unlines membrosProjeto]
+--         _ -> []
 
 
-fromString :: String -> Maybe Projeto
-fromString str = case words str of
-    [idProjeto, nomeProjeto, descricaoProjeto, idGerente, membrosStr, atividadesStr] -> do
-        let atividades = words atividadesStr
-        let membros = words membrosStr
-        return Projeto { idProjeto = idProjeto,
-                        nomeProjeto = nomeProjeto,
-                        descricaoProjeto = descricaoProjeto,
-                        idGerente = idGerente,
-                        membros = Just membros,
-                        atividades = Just atividades }
-    _ -> Nothing
 
--- Remove um projeto do sistema
-removeProjeto :: String -> IO()
-removeProjeto = removeProjetoDatabase
+
+-- SERIA MELHOR EM PROJETO.hs?
+-- Verifica se a Atividade já existe no sistema
+-- verificaIdAtividade :: Projeto -> String -> Bool 
+-- verificaIdAtividade projeto atividadeId = any (\idAtividade -> idAtividade == atividadeId) (getIdsAtividades projeto)

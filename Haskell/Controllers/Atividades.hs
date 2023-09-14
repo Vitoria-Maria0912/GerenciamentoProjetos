@@ -1,21 +1,69 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
 module Controllers.Atividades where
 
-import Data.List (find)
-import Controllers.Usuario
-import Database.Database
+import qualified Data.ByteString.Lazy as B
+import Data.Aeson
+import GHC.Generics
+import System.IO.Unsafe
+import System.Directory
+
+instance FromJSON Atividade
+instance ToJSON Atividade
+
 
 data Atividade = Atividade {
     titulo :: String,
     descricao :: String,
-    idProjetoAtividade :: String, 
-    idAtividade :: String,
     status :: String,
-    idMembroResponsavel :: Maybe String,
-    feedback :: Maybe [String]
-} 
+    idProjetoAtividade :: Int, 
+    idAtividade :: Int,
+    idMembroResponsavel :: Maybe Int, 
+    feedbacks :: Maybe [String]
+} deriving (Show, Generic)
 
-criarAtividade :: String -> String -> String -> String -> String -> Maybe String -> Maybe [String] -> IO()
-criarAtividade = criaAtividadeDatabase
+
+-- Cria uma atividade
+criarAtividade :: String -> String -> String -> Int -> Int -> Maybe Int -> Maybe [String] -> IO()
+criarAtividade   filePath titulo descricao idProjetoAtividade idAtividade idMembroResponsavel feedback = do
+  let atividade = Atividade titulo descricao "Não atribuída!" idProjetoAtividade idAtividade idMembroResponsavel feedback
+  escreverAtividade filePath atividade
+
+-- Adiciona atividades à atividades.json
+escreverAtividade :: String -> Atividade -> IO()
+escreverAtividade filePath atividade = do
+
+  let listaAtividades = (getTodasAtividades filePath) ++ [atividade]
+
+  B.writeFile "../Temp.json" $ encode listaAtividades
+  removeFile filePath
+  renameFile "../Temp.json" filePath
+
+-- Lê o arquivo projetos.json
+lerAtividades :: String -> [Atividade]
+lerAtividades filePath = do
+    let arquivo = unsafePerformIO(B.readFile filePath)
+    let decodedFile = decode arquivo :: Maybe [Atividade]
+    case decodedFile of
+        Nothing -> []
+        Just out -> out
+
+-- Remove uma atividade da lista de atividades
+apagarAtividade :: Int -> [Atividade] -> [Atividade]
+apagarAtividade _ [] = []
+apagarAtividade atividadeId (x:xs)
+  | idAtividade x == atividadeId = xs
+  | otherwise = x : apagarAtividade atividadeId xs
+
+-- Remove uma atividade do arquivo.JSON
+deletarAtividade :: String -> Int -> IO()
+deletarAtividade filePath idAtividade = do
+    let atividades = getTodasAtividades filePath
+    let atividadesAtualizadas = apagarAtividade idAtividade atividades
+
+    B.writeFile "../Temp.json" $ encode atividadesAtualizadas
+    removeFile filePath
+    renameFile "../Temp.json" filePath
 
 -- Muda o status de uma atividade
 mudaStatus :: Atividade -> String -> Atividade
@@ -29,43 +77,81 @@ getMembroResponsavel atividade = do
         Just _ -> show (idMembroResponsavel atividade)
         _ -> "Não atribuído!"
 
+-- Verifica se um usuário (através do ID) é responsável por alguma atividade
+ehMembroResponsavel :: Int -> [Atividade] -> Bool
+ehMembroResponsavel membroResponsavelId atividades =
+    any (\atividade ->
+        case idMembroResponsavel atividade of
+            Just responsavelId -> responsavelId == membroResponsavelId
+            Nothing -> False
+        ) atividades
+
+-- Pega o status da atividade
+getStatus :: Atividade -> String
+getStatus atividade = status atividade
+
 -- Adiciona um Feedback a uma atividade
-adicionaFeedback :: Atividade -> String -> Maybe [String]
-adicionaFeedback atividade comentario = do
-    let maybeFeedback = feedback atividade
-    case maybeFeedback of
-        Just feedbacksAtuais -> Just (comentario : feedbacksAtuais)
-        Nothing -> Just [comentario]
+adicionaFeedback :: Atividade -> String -> [String]
+adicionaFeedback atividade novoFeedback = do
+    case (feedbacks atividade) of
+        Just feedbacksAtuais -> feedbacksAtuais ++ [novoFeedback]
+        Nothing -> [novoFeedback]
 
+-- Obtém os feedbacks da atividade
+getFeedbacks :: Atividade -> Maybe [String]
+getFeedbacks atividade = (feedbacks atividade)
+    
+-- Remove uma atividade do arquivo.JSON
+criarFeedbacks :: String -> Int -> String -> IO()
+criarFeedbacks filePath idAtividade novoFeedback = do
+    let todasAtividades = (getTodasAtividades filePath)
+    let atividade = (getAtividade idAtividade todasAtividades)
+    case atividade of
+        Just atividadeEncontrada -> do
+                let feedbacksAtualizados = (adicionaFeedback atividadeEncontrada novoFeedback)
+                (deletarAtividade filePath idAtividade)
+                let atividadesTemporarias = (getTodasAtividades filePath)
+                let atividadesAtualizadas = atividadesTemporarias ++ [atividadeEncontrada]
+                
+                B.writeFile "../Temp.json" $ encode atividadesAtualizadas
+                removeFile filePath
+                renameFile "../Temp.json" filePath
 
--- YALLE FEZ:
+                mapM_ print feedbacksAtualizados
+                
+        Nothing -> error "Atividade inexistente!"
+    
 
+-- Obtém uma atividade a partir do ID
+getAtividade :: Int -> [Atividade] -> Maybe Atividade
+getAtividade _ [] = Nothing
+getAtividade atividadeId (x:xs)
+  | idAtividade x == atividadeId = Just x
+  | otherwise = getAtividade atividadeId xs
 
+-- Obtém as todas atividades cadastradas no sistema
+getTodasAtividades :: String -> [Atividade]
+getTodasAtividades filePath = do
+    let arquivo = unsafePerformIO(B.readFile filePath)
+    let decodedFile = decode arquivo :: Maybe [Atividade]
+    case decodedFile of
+        Nothing -> []
+        Just out -> out
 
--- (NÃO COMPILA)
--- le as atividades do txt e retorna a lista
--- lerAtividades :: FilePath -> IO [Atividade]
--- lerAtividades path = do
---     conteudo <- readFile path
---     let atividades = mapMaybe fromStringAtv $ lines conteudo
---     return atividades
-  
--- (NÃO COMPILA)
--- converte uma string em um objeto do tipo Atividade
--- fromStringAtv :: String -> Maybe Atividade
--- fromStringAtv str = case words str of
---   [titulo, descricao, status, idProjetoAtividade, idAtividade, idMembroResponsavel, feedback] -> do
---     return Atividade {titulo = titulo,
---                       descricao = descricao, 
---                       status = status, 
---                       idProjetoAtividade = idProjetoAtividade, 
---                       idAtividade = idAtividade, 
---                       idMembroResponsavel = idMembroResponsavel, 
---                       feedback = feedback}
---   _ -> Nothing
+-- Exibe uma Atividade, em formato de lista com todos os seus atributos
+getAtividadesToString :: Int -> [Atividade] -> Maybe [String] 
+getAtividadesToString atividadeId atividades =
+    case filter (\u -> idAtividade u == atividadeId) atividades of
+        [atividadeEncontrada] -> Just (formataAtividade atividadeEncontrada)
+        _ -> Nothing
 
-
-
-
+-- Formata a atividade em uma lista com todos os seus atributos
+formataAtividade:: Atividade -> [String]
+formataAtividade atividade = ["Titulo: " ++ (titulo atividade) ++ "\n" ++
+                              "Descrição: " ++ (descricao atividade) ++ "\n" ++
+                              "ID Projeto: " ++ show (idProjetoAtividade atividade) ++ "\n" ++
+                              "ID Atividade: " ++ show (idAtividade atividade) ++ "\n" ++
+                              "ID Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++
+                              "Status: " ++ status atividade ++ "\n"]
 
 

@@ -1,22 +1,25 @@
 module Menus.MenuPublico where
-import Controllers.Atividades as Atividades
-import Util.ClearScreen
+
+import System.Info (os)
+import System.Process (system)
+import Controllers.Atividades
 import Data.Char (toLower)
+import Controllers.Usuario
+import Controllers.Projeto
+import Controllers.Atividades
 
-
--- Caso o usuário digite o comando errado retorna ao menu
+-- Exibe erro e retorna ao menu
 erroMenuPublico :: IO()
 erroMenuPublico =  do
-    putStrLn $ "----------------------------------"
-            ++ "Entrada Inválida. Tente novamente!" 
-            ++ "----------------------------------\n"
+    clearScreen
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "|            Entrada Inválida. Tente novamente!            |" ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
     menuPublicoProjeto
 
 -- Menu dos projetos, todos os usuários tem acesso
 menuPublicoProjeto :: IO()
 menuPublicoProjeto = do 
-
-    clearScreen
 
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
             ++ "|                    Menu Projeto                          |" ++ "\n"
@@ -37,98 +40,182 @@ menuPublicoProjeto = do
 
         "i" -> comecarAtividade
         "f" -> finalizarAtividade
-        "v" -> visualizarAtividades
+        -- "v" -> visualizarAtividades
         "a" -> statusAtividade
-        "o" -> criarFeedback
+        "o" -> criaFeedback
         "s" -> sairDoSistema
         _   -> erroMenuPublico
 
 -- Sai do sistema
 sairDoSistema :: IO()
-sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
+sairDoSistema = do
+    clearScreen
+    putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
+                    ++ "|            Você saiu do sistema! Até a próxima!          |" ++ "\n"
+                    ++ ".----------------------------------------------------------." ++ "\n"
 
--- Inicia uma atividade --> PODERIA COLOCAR AQUI SÓ A FUNÇÃO QUE MUDA O STATUS PRA PENDENTE
+
+-- Inicia uma atividade
 comecarAtividade :: IO()
 comecarAtividade = do
+
+    putStrLn $ "Começar atividade: \n\n"
+            ++ "Digite seu ID:"
+    idUsuario <- readLn :: IO Int
     
-    putStrLn "Digite o ID da atividade que deseja começar:"
-    idAtividade <- getLine
-    putStrLn "Digite o ID do projeto que a atividade pertence:"
-    idProjeto <- getLine
+    let usuariosDoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
 
-    -- let atividade = Projeto.getAtividade idAtividade
+    case (usuariosDoSistema) of
+        Just usuario -> do
+                putStrLn "Digite o ID da atividade que deseja começar:"
+                idAtividade <- readLn :: IO Int
+                let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
 
-    -- if status atividade == "Não atribuída!" then 
-    --     Atividades.mudaStatus "Pendente..."
-    --     putStrLn $ "Você começou a atividade: " ++ atividade.titulo 
+                case (atividadeDoSistema) of
+                    Just atividade -> do
+                        if status atividade == "Não atribuída!" then do
+                            let statusAtividade = mudaStatus atividade "Pendente..."
+                            -- ADICIONAR ÁS ATIVIDADES DO USUÁRIO
+                            putStrLn $ "Título: " ++ titulo atividade ++ "\n"
+                                    ++ "Descrição: " ++ descricao atividade ++ "\n"
+                                    ++ "Status: " ++ status statusAtividade
 
-    -- else do
-    putStrLn "Esta atividade já está em andamento!"
+                        else do
+                            putStrLn "Esta atividade já está em andamento!"
 
--- Finaliza uma atividade --> PODERIA COLOCAR AQUI SÓ A FUNÇÃO QUE MUDA O STATUS PRA CONCLUÍDO
+                    Nothing -> do
+                            putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                    ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                                    ++ ".----------------------------------------------------------." ++ "\n"
+                            comecarAtividade
+        Nothing -> do
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                comecarAtividade
+
+    
+
+-- Finaliza uma atividade
 finalizarAtividade :: IO()
 finalizarAtividade = do
-
-    putStrLn "Digite o ID da atividade que deseja finalizar:"
-    idAtividade <- getLine
-    putStrLn "Digite o ID do projeto que a atividade pertence:"
-    idProjeto <- getLine
-
-    -- armazenar todas as atividades finalizadas daquele usuário
-    -- decidir como armazenar isso
-
-    -- let atividade = Projeto.getAtividade idAtividade
-
-    -- Atividades.mudaStatus atividade "Concluída!"
-
-    putStrLn "Atividade finalizada com sucesso!"
     
+    putStrLn $ "Finalizar atividade: \n\n"
+            ++ "Digite seu ID:"
+    idUsuario <- readLn :: IO Int
+
+    let usuarioNoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
+
+    case (usuarioNoSistema) of
+        Just usuario -> do
+                putStrLn "Digite o ID da atividade que deseja finalizar:"
+                idAtividade <- readLn :: IO Int
+                let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
+
+                case (atividadeDoSistema) of
+                    Just atividade -> do
+                        let statusAtividade = mudaStatus atividade "Concluída"
+                        -- ADICIONAR ÁS ATIVIDADES DO USUÁRIO
+                        putStrLn $ "Título: " ++ titulo atividade ++ "\n"
+                                ++ "Descrição: " ++ descricao atividade ++ "\n"
+                                ++ "Status: " ++ status statusAtividade
+
+                    Nothing -> do
+                            putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                    ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                                    ++ ".----------------------------------------------------------." ++ "\n"
+                            finalizarAtividade
+        Nothing -> do
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                finalizarAtividade
+
 -- Mostra o status de uma atividade
 statusAtividade :: IO()
 statusAtividade = do
 
     putStrLn "Digite o ID da atividade que deseja visualizar o status:"
-    idAtividade <- getLine
-    putStrLn "Digite o ID do projeto que a atividade pertence:"
-    idProjeto <- getLine
+    idAtividade <- readLn :: IO Int
 
-    -- let atividade = Projeto.getAtividade idAtividade
+    let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
 
-    putStrLn "atividade.status"
+    case (atividadeDoSistema) of
+        Just atividade -> do
+            let statusAtividade = getStatus atividade 
+            putStrLn $ "Título: " ++ titulo atividade ++ "\n"
+                    ++ "Descrição: " ++ descricao atividade ++ "\n"
+                    ++ "Status: " ++ statusAtividade
+
+        Nothing -> do
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                statusAtividade
 
 
-visualizarAtividades :: IO()
-visualizarAtividades = do 
+-- visualizarAtividades :: IO()
+-- visualizarAtividades = do 
 
-    putStrLn "Digite o ID do projeto que deseja visualizar as atividade:"
-    idProjeto <- getLine
+--     putStrLn "Digite o ID do projeto que deseja visualizar as atividade:"
+--     idProjeto <- readLn :: IO Int
 
-    -- será possível ver apenas o nome ou, por exemplo, a quantidade de membros
-    -- em cada atividade?
+--     -- será possível ver apenas o nome ou, por exemplo, a quantidade de membros
+--     -- em cada atividade?
 
-    -- let projeto = Projeto.getProjeto idProjeto
+--     -- let projeto = Projeto.getProjeto idProjeto
    
-    putStrLn "projeto.exibeAtividades"
+--     putStrLn "projeto.exibeAtividades"
+
 
 -- Função para criar feedback
-criarFeedback :: IO ()
-criarFeedback = do
+criaFeedback :: IO ()
+criaFeedback = do
 
-    putStrLn "Digite seu ID:"
-    idUsuario <- getLine
-    putStrLn "Digite o ID da atividade que deseja dar Feedback:"
-    idAtividade <- getLine
-    putStrLn "Digite o ID do projeto que a atividade pertence:"
-    idProjeto <- getLine
-    putStrLn "Digite um breve comentário sobre a atividade:"
-    comentario <- getLine
+    putStrLn $ "Comente sobre uma atividade que você criou ou foi designado: \n\n"
+            ++ "Digite seu ID:"
+    idUsuario <- readLn :: IO Int
 
-    -- let projeto = getProjeto idProjeto
-    -- let atividade = Projeto.getAtividade idAtividade
-    -- let usuario = getUsuario idUsuario
+    let usuariosCadastrados = (getUsuarios "Database/usuarios.json")
+    let usuarioNoSistema = (getUsuario idUsuario usuariosCadastrados)
 
-    -- if usuario ehGerente || usuario ehMembroResponsavel
+    case (usuarioNoSistema) of
+        Just usuario -> do
+                putStrLn "Digite o ID da atividade que deseja dar Feedback:"
+                idAtividade <- readLn :: IO Int
+                putStrLn "Escreva um breve comentário sobre a atividade:"
+                comentario <- getLine
+                let projetosCadastrados = (getTodosProjetos "Database/projetos.json")
+                let atividadesCadastradas = (getTodasAtividades "Database/atividades.json")
+                let atividadeDoSistema = (getAtividade idAtividade atividadesCadastradas)
+                case (atividadeDoSistema) of
+                    Just atividade -> do
+                        if (ehGerente idUsuario projetosCadastrados) || (ehMembroResponsavel idUsuario atividadesCadastradas) then do
+                            criarFeedbacks "Database/atividades.json" idAtividade comentario
+                        else
+                            putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                    ++ "|     Você não está autorizado a realizar esta ação!       |" ++ "\n"
+                                    ++ ".----------------------------------------------------------." ++ "\n"
 
-    -- Atividades.adicionaFeedback atividade "comentário"
-    
-    putStrLn ""
+                    Nothing -> do
+                            putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                    ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                                    ++ ".----------------------------------------------------------." ++ "\n"
+                            criaFeedback
+        Nothing -> do
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                criaFeedback
+
+-- Limpa a tela, deixando apenas o atual comando
+clearScreen :: IO ()
+clearScreen = do
+    case os of
+        "linux" -> do
+            _ <- system "clear"
+            return ()
+        "mingw32" -> do
+            _ <- system "cls"
+            return ()
+        _ -> return ()

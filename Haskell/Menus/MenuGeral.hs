@@ -1,30 +1,29 @@
 module Menus.MenuGeral where
+
 import qualified Data.Char as Char
 import System.Exit (exitSuccess)
-import System.Random 
+import System.Random
 import Data.Char (toLower)
-import Util.ClearScreen
-import Util.Util
+import Data.Maybe
 import Controllers.Usuario
 import Controllers.Projeto
 import Menus.MenuGerente (menuRestritoProjeto)
-import Menus.MenuPublico (menuPublicoProjeto)
-import qualified Controllers.Usuario as Usuario
-import qualified Control.Category as Usuario
+import Menus.MenuPublico (menuPublicoProjeto, clearScreen)
 
 
 -- Exibe erro e retorna ao menu
 erroMenuPrincipal :: IO()
 erroMenuPrincipal = do
-    putStrLn $ "------------------------------------------------------------\n"
-          ++   "|            Entrada Inválida. Tente novamente!            |\n"
-          ++   "------------------------------------------------------------\n"
+    clearScreen
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "|            Entrada Inválida. Tente novamente!            |" ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
     menuPrincipal
 
-
+-- Menu principal com as principais funcionalidades
 menuPrincipal :: IO ()
 menuPrincipal = do
-
+  
   putStrLn $ ".----------------------------------------------------------." ++ "\n"
           ++ "|                      Menu Principal                      |" ++ "\n"
           ++ "|                                                          |" ++ "\n"
@@ -36,7 +35,6 @@ menuPrincipal = do
           ++ "|             P - Criar projeto                            |" ++ "\n"
           ++ "|             L - Listar projetos em andamento             |" ++ "\n"
           ++ "|             M - Caixa de mensagens                       |" ++ "\n"
-          ++ "|             B - Visualizar banco de atividades           |" ++ "\n"
           ++ "|             S - Sair do sistema                          |" ++ "\n"
           ++ ".----------------------------------------------------------." ++ "\n"
 
@@ -47,24 +45,24 @@ menuPrincipal = do
       "c" -> cadastrarUsuario
       "d" -> deletarUsuario
       "p" -> cadastrarProjeto
-      "l" -> visualizarProjetosPendentes
-      "m" -> chat
-      "b" -> bancoDeAtividades
+    --   "l" -> visualizarProjetosPendentes
+    --   "m" -> chat
       "s" -> sairDoSistema
       _   -> erroMenuPrincipal 
 
-  clearScreen
-
 -- Sai do sistema
 sairDoSistema :: IO()
-sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
+sairDoSistema = do
+    clearScreen
+    putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
+                    ++ "|            Você saiu do sistema! Até a próxima!          |" ++ "\n"
+                    ++ ".----------------------------------------------------------." ++ "\n"
 
--- Cadastra um usuário no sistema
+-- | Função que cadastra um usuário no sistema
 cadastrarUsuario :: IO ()
 cadastrarUsuario = do
-    clearScreen
 
-    numUsuarios <- getNumDeUsuarios "Controllers/dados.json"
+    let userFilePath = "Database/usuarios.json"
 
     putStrLn $ "Cadastro: " ++ "\n\n"
             ++ "Digite seu nome: "
@@ -74,113 +72,120 @@ cadastrarUsuario = do
     putStrLn "Digite sua senha: "
     senha <- getLine
 
-    idUsuario <- randomRIO (0, 10 :: Int)
+    idUsuario <- randomRIO (0000, 9999 :: Int)
 
-    -- falta colocar verificações
+    let usuarioNoSistema = (getUsuario idUsuario (getUsuarios userFilePath))
 
-    salvarUsuario "Controllers/dados.json" idUsuario nome senha
-    numUsuariosAtt <- getNumDeUsuarios "Controllers/dados.jason"
-    if numUsuariosAtt > numUsuarios then do -- verificacao TEMPORÁRIA (melhorar depois)
-      putStrLn ("Usuário cadastrado com sucesso!") -- adicionar o ID aqui depois
-      menuPrincipal
-    else do
-      putStrLn ("Por favor, tente novamnete")
-      cadastrarUsuario
+    case (usuarioNoSistema) of
+      Just _ -> do
+        putStrLn $ "------------------------------------------------------------." ++ "\n"
+                ++ "|             Falha no cadastro! Tente novamente.            |" ++ "\n"
+                ++  "------------------------------------------------------------" ++ "\n"
+        cadastrarUsuario
+
+      Nothing -> do
+        salvarUsuario userFilePath idUsuario nome senha
+        putStrLn $ "Usuário cadastrado com sucesso! Seu ID é " ++ show(idUsuario)
+        
+        
+-- | Função que cadastra um usuário no sistema
+cadastrarProjeto :: IO ()
+cadastrarProjeto = do
+
+    let projectFilePath = "Database/projetos.json"
+
+    putStrLn $ "Criar projeto: " ++ "\n\n"
+            ++ "Digite o nome do seu projeto: "
+
+    nomeProjeto <- getLine
+
+    putStrLn "Digite a descrição do projeto : "
+    descricaoProjeto <- getLine
+
+    putStrLn "Digite seu ID:"
+    idUsuario <- readLn :: IO Int
+
+    idProjeto <- randomRIO (000, 999 :: Int)
+
+    let projetoNoSistema = (getProjeto idProjeto (getTodosProjetos projectFilePath))
+
+    case (projetoNoSistema) of
+      Just _ -> do
+        putStrLn $ "------------------------------------------------------------." ++ "\n"
+                ++ "|             Falha no cadastro! Tente novamente.            |" ++ "\n"
+                ++  "------------------------------------------------------------" ++ "\n"
+        cadastrarProjeto
+
+      Nothing -> do
+        criaProjeto projectFilePath idProjeto nomeProjeto descricaoProjeto idUsuario Nothing Nothing
+        putStrLn $ "Projeto criado com sucesso! Seu ID é " ++ show(idProjeto)
+        menuPrincipal
 
 -- Deleta um usuário do sistema
 deletarUsuario :: IO()
 deletarUsuario = do
+
+  let userFilePath = "Database/usuarios.json"
                             
-  putStrLn "Digite seu id:"
-  idUsuario <- getLine
-  putStrLn "Digite sua senha:"
-  senha <- getLine
+  putStrLn $ "Deletar usuário: \n\n"
+          ++ "Digite seu id:"
+  idUsuario <- readLn :: IO Int
 
-  numUsuarios <- getNumDeUsuarios "Controllers/dados.json"
+  let usuarioNoSistema = (getUsuario idUsuario (getUsuarios userFilePath))
 
--- FALTA VERIFICAÇÃO DA SENHA E SE O ID EXISTE
-  removerUsuario "Controllers/dados.json" idUsuario
+  case (usuarioNoSistema) of
+    Just usuario -> do
+      putStrLn "Digite sua senha:"
+      senha <- getLine
+      if (verificaSenhaUsuario usuario senha) then do
+          removerUsuario userFilePath idUsuario
+          putStrLn("Usuário removido com sucesso!")
+          sairDoSistema
+      else do
+          putStrLn $ ".------------------------------------------------------------." ++ "\n"
+                  ++ "|              Senha incorreta! Tente novamente.             |" ++ "\n"
+                  ++ ".------------------------------------------------------------." ++ "\n"
+          deletarUsuario
 
-  numUsuariosAtt <- getNumDeUsuarios "Controllers/dados.jason"
-
-  -- VERIFICAÇÃO TEMPORÁRIA -> MUDAR PRA VERIFICAR POR ID
-  if numUsuariosAtt < numUsuarios then do  
-    putStrLn("Usuário removido com sucesso!")
-    menuPrincipal
-  else do
-     putStrLn ("Por favor, tente novamente")
-     cadastrarUsuario
-  -- Tem que ter uma função para verificar se a senha bate com o nome do usuário
-  
-  clearScreen
-
-  
--- Função para criar um projeto
-cadastrarProjeto :: IO()
-cadastrarProjeto = do
-
-    putStrLn $ "Cadastrar Projeto:" ++ "\n"
-            ++ "Digite seu nome:"
-    nomeUsuario <- getLine
-
-    putStrLn "Digite um título para o projeto:"
-    nomeProjeto <- getLine
-
-    putStrLn "Digite a descrição do seu projeto:"
-    descricao <- getLine
-
-    idProjeto <- randomRIO (100, 999 :: Int)
-
-    projetos <- lerProjetos "dados/projetos.txt"
-
-  -- if (verificaIdProjeto (show (idProjeto)) projetos == False) then do
-  --     criaProjeto (show (idProjeto)) nomeProjeto descricao nomeUsuario Nothing Nothing
-  --     let projeto = getProjeto (show (idProjeto)) projetos
-  --     let novosProjetos = adicionarProjeto projeto projetos
-  --     escreverProjetos "dados/projetos.txt" novosProjetos
-  --     putStrLn $ "Projeto cadastrado com sucesso!\n"
-  --     menuPrincipal
-  -- else do
-    putStrLn $ "O ID já existe na base de dados.\n"
-    -- cadastrarProjeto
+    Nothing -> do
+          putStrLn $ ".-----------------------------------------------------------." ++ "\n"
+                  ++ "|            Falha ao tentar remover! Tente novamente.      |" ++ "\n"
+                  ++ ".-----------------------------------------------------------." ++ "\n"
+          deletarUsuario
 
 -- Verifica se o usuário é gerente e mostra o menu correspondente
 menuProjetos :: IO()
 menuProjetos = do 
 
-    putStrLn "Digite seu ID:"
-    idUsuario <- getLine
-    putStrLn "Digite o ID do projeto que deseja acessar:"
-    idProjeto <- getLine
+    let projectFilePath = "Database/projetos.json"    
+    putStrLn $ "Menu de projetos: \n\n"
+            ++ "Digite seu ID:"
+    idUsuario <- readLn :: IO Int
 
-    projetos <- lerProjetos "dados/projetos.txt"
+    let usuarios = getUsuarios "Database/usuarios.json"
 
-    let projeto = getProjeto idProjeto projetos
+    if isNothing (getUsuario idUsuario usuarios) then do 
+        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                ++ "|                ID inválido. Tente novamente!             |" ++ "\n"
+                ++ ".----------------------------------------------------------." ++ "\n"
+        menuProjetos
 
-    let gerente = ehGerente idUsuario projetos
+    else do
+        let projetos = getTodosProjetos projectFilePath
+        let gerente = ehGerente idUsuario projetos
 
-    if gerente then menuRestritoProjeto
-    else menuPublicoProjeto
+        if gerente then menuRestritoProjeto
+        else menuPublicoProjeto
+
     
--- Função para visualizar projetos pendentes
-visualizarProjetosPendentes :: IO ()
-visualizarProjetosPendentes = do
-  -- Implementation logic for viewing pending projects
-    putStrLn "Implementação em andamento."
-    menuPrincipal
+-- -- Função para visualizar projetos pendentes
+-- visualizarProjetosPendentes :: IO ()
+-- visualizarProjetosPendentes = do
+--     putStrLn "Implementação em andamento."
+--     menuPrincipal
 
--- Entra no chat
-chat :: IO ()
-chat = do
-  -- Implementation logic for entering the chat
-  putStrLn "Implementação em andamento."
-  menuPrincipal
-
-
--- Visualiza atividades cadastradas no sistema
-bancoDeAtividades :: IO ()
-bancoDeAtividades = do
-  -- Implementation logic for viewing activity bank
-  putStrLn "Implementação em andamento."
-  menuPrincipal
-
+-- -- Entra no chat
+-- chat :: IO ()
+-- chat = do
+--   putStrLn "Implementação em andamento."
+--   menuPrincipal
