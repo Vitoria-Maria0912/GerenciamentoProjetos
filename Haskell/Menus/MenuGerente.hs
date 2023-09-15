@@ -5,11 +5,12 @@ import Data.Maybe
 import System.Exit (exitSuccess)
 import Controllers.Atividades
 import Controllers.Projeto
+import Controllers.Usuario
 import Menus.MenuPublico
 import Data.Char (toLower)
 
 
--- Exibe erro e retorna ao menu
+-- | Exibe erro e retorna ao menu
 erroMenuGerente :: IO()
 erroMenuGerente = do
     clearScreen
@@ -18,7 +19,7 @@ erroMenuGerente = do
             ++ ".----------------------------------------------------------." ++ "\n"
     menuRestritoProjeto
 
--- Menu dos projetos, apenas os gerentes têm acesso
+-- | Menu dos projetos, apenas os gerentes têm acesso
 menuRestritoProjeto :: IO()
 menuRestritoProjeto = do 
 
@@ -28,6 +29,7 @@ menuRestritoProjeto = do
             ++ "|                Selecione uma opção:                      |" ++ "\n"
             ++ "|                                                          |" ++ "\n"
             ++ "|           P - Remover projeto                            |" ++ "\n"
+            ++ "|           G - Gerenciar membros do projeto               |" ++ "\n"
             ++ "|           B - Visualizar banco de atividades             |" ++ "\n"
             ++ "|           C - Criar uma atividade                        |" ++ "\n"
             ++ "|           R - Remover uma atividade                      |" ++ "\n"
@@ -35,7 +37,7 @@ menuRestritoProjeto = do
             ++ "|           F - Finalizar uma atividade                    |" ++ "\n"
             ++ "|           V - Visualizar atividades do projeto           |" ++ "\n"
             ++ "|           A - Visualizar status de uma atividade         |" ++ "\n"
-            ++ "|           G - Gerenciar membros do projeto               |" ++ "\n"
+            ++ "|           O - Dar feedback em uma atividade              |" ++ "\n"
             ++ "|           S - Sair do sistema                            |" ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
             
@@ -44,6 +46,7 @@ menuRestritoProjeto = do
     case lowerOption of 
 
         "p" -> deletarProjeto
+        -- "g" -> gerenciarMembros
         -- "b" -> bancoDeAtividades
         "c" -> criaAtividade
         "r" -> deletaAtividade 
@@ -51,38 +54,57 @@ menuRestritoProjeto = do
         "f" -> finalizarAtividade
         -- "v" -> visualizarAtividades
         "a" -> statusAtividade
-        -- "g" -> gerenciarMembros
+        "o" -> criaFeedback
         "s" -> sairDoSistema
         _   -> erroMenuGerente
 
--- Função do menu para remover um projeto pelo ID
+-- | Função do menu para remover um projeto pelo ID
 deletarProjeto :: IO ()
 deletarProjeto = do
 
   let projectFilePath = "Database/projetos.json"
-  
+
   putStrLn $ "Remover Projeto: \n\n" 
-           ++ "Digite o ID do projeto que deseja excluir:"
-  idProjeto <- readLn :: IO Int
+          ++ "Digite seu ID: "
+  idUsuario <- readLn :: IO Int
 
-  -- Ler projetos do arquivo
-  let projetoNoSistema = (getProjeto idProjeto (getTodosProjetos projectFilePath))
+  let usuarios = getUsuarios "Database/usuarios.json"
+  let usuarioNoSistema = (getUsuario idUsuario usuarios)
+
+  if isJust (getUsuario idUsuario usuarios) then do 
+
+        putStrLn "Digite o ID do projeto que deseja excluir:"
+        idProjeto <- readLn :: IO Int
+
+        let projetoNoSistema = (getProjeto idProjeto (getTodosProjetos projectFilePath))
   
-  -- Verificar se o projeto com o ID especificado existe
-  case (projetoNoSistema) of
-    Just projeto -> do
-      removerProjeto projectFilePath idProjeto
-      putStrLn $ ".------------------------------------------------------------." ++ "\n"
-               ++ "|              Projeto removido com sucesso!                |" ++ "\n"
-               ++ ".------------------------------------------------------------." ++ "\n"
-      menuRestritoProjeto
-    Nothing -> do
-      putStrLn $ ".-------------------------------------------------------------." ++ "\n"
-               ++ "|   Projeto não encontrado! Verifique o ID e tente novamente  |" ++ "\n"
-               ++ ".-------------------------------------------------------------." ++ "\n"
-      deletarProjeto
+        case (projetoNoSistema) of
+                Just projeto -> do
+                        if (idGerente projeto == idUsuario) then do
+                                removerProjeto projectFilePath idProjeto
+                                clearScreen
+                                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                        ++ "|              Projeto removido com sucesso!               |" ++ "\n"
+                                        ++ ".----------------------------------------------------------." ++ "\n"
+                        else do
+                                clearScreen
+                                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                        ++ "|      Você não tem permissão para realizar esta ação.     |" ++ "\n"
+                                        ++ ".----------------------------------------------------------." ++ "\n"
+                        menuRestritoProjeto
 
-
+                Nothing -> do
+                        clearScreen
+                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                ++ "|           Projeto inexistente! Tente novamente!          |" ++ "\n"
+                                ++ ".----------------------------------------------------------." ++ "\n"
+                        deletarProjeto
+  else do
+        clearScreen
+        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                ++ "|             ID inexistente! Tente novamente!             |" ++ "\n"
+                ++ ".----------------------------------------------------------." ++ "\n"
+        deletarProjeto
 
 -- Cria uma atividade em um projeto
 criaAtividade :: IO()
@@ -113,18 +135,18 @@ criaAtividade = do
             case (atividadeNoSistema) of
                 Just _ ->  do
                     putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                            ++ "|            Falha no cadastro! Tente novamente.           |" ++ "\n"
+                            ++ "|            Falha no cadastro! Tente novamente!           |" ++ "\n"
                             ++ ".----------------------------------------------------------." ++ "\n"
                     criaAtividade
                     
                 Nothing -> do
-                        criarAtividade "Database/atividades.json" titulo descricao idProjeto idAtividade Nothing Nothing
-                        -- ADICIONAR DO PROJETO
-                        putStrLn "Tarefa criada com sucesso!"
+                        adicionaAtividadeAoProjeto "Database/atividades.json" titulo descricao idProjeto idAtividade Nothing Nothing
+                        putStrLn $ "Atividade criada com sucesso!  ID da atividade é: " ++ show(idAtividade)
+                        menuRestritoProjeto
 
         Nothing -> do
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                        ++ "|            Falha no cadastro! Tente novamente.           |" ++ "\n"
+                        ++ "|           Projeto inexistente! Tente novamente!          |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
                 criaAtividade
             
@@ -141,13 +163,17 @@ deletaAtividade = do
     let atividadesNoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
 
     case (atividadesNoSistema) of
-        Just _ ->  do
-                -- DELETAR DO PROJETO
-                deletarAtividade "Database/atividades.json" idAtividade
+        Just atividade ->  do
+                deletarAtividadeProjeto "Database/atividades.json" (idProjetoAtividade atividade) idAtividade
+                clearScreen
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "|              Atividade removida com sucesso!             |" ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                menuRestritoProjeto
 
         Nothing -> do
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                        ++ "|            Falha no cadastro! Tente novamente.           |" ++ "\n"
+                        ++ "|          Atividade inexistente! Tente novamente.         |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
                 deletaAtividade
             

@@ -117,7 +117,8 @@ criarFeedbacks filePath idAtividade novoFeedback = do
                 removeFile filePath
                 renameFile "../Temp.json" filePath
 
-                mapM_ print feedbacksAtualizados
+                -- PRECISA RETIRAR OU MODIFICAR ESSE RETORNO
+                mapM_ putStrLn $ feedbacksAtualizados
                 
         Nothing -> error "Atividade inexistente!"
     

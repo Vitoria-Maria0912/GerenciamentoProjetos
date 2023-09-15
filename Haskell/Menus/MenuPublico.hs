@@ -2,13 +2,12 @@ module Menus.MenuPublico where
 
 import System.Info (os)
 import System.Process (system)
-import Controllers.Atividades
 import Data.Char (toLower)
 import Controllers.Usuario
 import Controllers.Projeto
 import Controllers.Atividades
 
--- Exibe erro e retorna ao menu
+-- | Exibe erro e retorna ao menu
 erroMenuPublico :: IO()
 erroMenuPublico =  do
     clearScreen
@@ -17,7 +16,7 @@ erroMenuPublico =  do
             ++ ".----------------------------------------------------------." ++ "\n"
     menuPublicoProjeto
 
--- Menu dos projetos, todos os usuários tem acesso
+-- | Menu dos projetos, todos os usuários tem acesso
 menuPublicoProjeto :: IO()
 menuPublicoProjeto = do 
 
@@ -46,7 +45,7 @@ menuPublicoProjeto = do
         "s" -> sairDoSistema
         _   -> erroMenuPublico
 
--- Sai do sistema
+-- | Sai do sistema
 sairDoSistema :: IO()
 sairDoSistema = do
     clearScreen
@@ -54,8 +53,7 @@ sairDoSistema = do
                     ++ "|            Você saiu do sistema! Até a próxima!          |" ++ "\n"
                     ++ ".----------------------------------------------------------." ++ "\n"
 
-
--- Inicia uma atividade
+-- | Iniciar uma atividade
 comecarAtividade :: IO()
 comecarAtividade = do
 
@@ -75,28 +73,28 @@ comecarAtividade = do
                     Just atividade -> do
                         if status atividade == "Não atribuída!" then do
                             let statusAtividade = mudaStatus atividade "Pendente..."
-                            -- ADICIONAR ÁS ATIVIDADES DO USUÁRIO
-                            putStrLn $ "Título: " ++ titulo atividade ++ "\n"
-                                    ++ "Descrição: " ++ descricao atividade ++ "\n"
-                                    ++ "Status: " ++ status statusAtividade
+                        --     adicionaAtividadeAoUsuario idAtividade usuario
+                            putStrLn $ "\n" ++ "Título: " ++ titulo atividade ++ "\n"
+                                            ++ "Descrição: " ++ descricao atividade ++ "\n"
+                                            ++ "Status: " ++ status statusAtividade
 
                         else do
                             putStrLn "Esta atividade já está em andamento!"
 
                     Nothing -> do
+                            clearScreen
                             putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                     ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
                                     ++ ".----------------------------------------------------------." ++ "\n"
                             comecarAtividade
         Nothing -> do
+                clearScreen
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                         ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
                 comecarAtividade
 
-    
-
--- Finaliza uma atividade
+-- | Finaliza uma atividade
 finalizarAtividade :: IO()
 finalizarAtividade = do
     
@@ -115,23 +113,25 @@ finalizarAtividade = do
                 case (atividadeDoSistema) of
                     Just atividade -> do
                         let statusAtividade = mudaStatus atividade "Concluída"
-                        -- ADICIONAR ÁS ATIVIDADES DO USUÁRIO
-                        putStrLn $ "Título: " ++ titulo atividade ++ "\n"
-                                ++ "Descrição: " ++ descricao atividade ++ "\n"
-                                ++ "Status: " ++ status statusAtividade
+                        -- adicionaAtividadeAoUsuario idAtividade usuario
+                        putStrLn $ "\n" ++ "Título: " ++ titulo atividade ++ "\n"
+                                        ++ "Descrição: " ++ descricao atividade ++ "\n"
+                                        ++ "Status: " ++ status statusAtividade
 
                     Nothing -> do
+                            clearScreen
                             putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                     ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
                                     ++ ".----------------------------------------------------------." ++ "\n"
                             finalizarAtividade
         Nothing -> do
+                clearScreen
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                        ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                        ++ "|            ID inexistente! Tente novamente!              |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
                 finalizarAtividade
 
--- Mostra o status de uma atividade
+-- | Mostra o status de uma atividade
 statusAtividade :: IO()
 statusAtividade = do
 
@@ -143,13 +143,14 @@ statusAtividade = do
     case (atividadeDoSistema) of
         Just atividade -> do
             let statusAtividade = getStatus atividade 
-            putStrLn $ "Título: " ++ titulo atividade ++ "\n"
-                    ++ "Descrição: " ++ descricao atividade ++ "\n"
-                    ++ "Status: " ++ statusAtividade
+            putStrLn $ "\n" ++ "Título: " ++ titulo atividade ++ "\n"
+                            ++ "Descrição: " ++ descricao atividade ++ "\n"
+                            ++ "Status: " ++ statusAtividade
 
         Nothing -> do
+                clearScreen
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                        ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                        ++ "|            ID inexistente! Tente novamente!              |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
                 statusAtividade
 
@@ -168,7 +169,7 @@ statusAtividade = do
 --     putStrLn "projeto.exibeAtividades"
 
 
--- Função para criar feedback
+-- | Função para criar feedback
 criaFeedback :: IO ()
 criaFeedback = do
 
@@ -183,32 +184,37 @@ criaFeedback = do
         Just usuario -> do
                 putStrLn "Digite o ID da atividade que deseja dar Feedback:"
                 idAtividade <- readLn :: IO Int
-                putStrLn "Escreva um breve comentário sobre a atividade:"
-                comentario <- getLine
+
                 let projetosCadastrados = (getTodosProjetos "Database/projetos.json")
                 let atividadesCadastradas = (getTodasAtividades "Database/atividades.json")
                 let atividadeDoSistema = (getAtividade idAtividade atividadesCadastradas)
+
                 case (atividadeDoSistema) of
                     Just atividade -> do
                         if (ehGerente idUsuario projetosCadastrados) || (ehMembroResponsavel idUsuario atividadesCadastradas) then do
+                            putStrLn "Escreva um breve comentário sobre a atividade:"
+                            comentario <- getLine
                             criarFeedbacks "Database/atividades.json" idAtividade comentario
-                        else
+                        else do
+                            clearScreen
                             putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                     ++ "|     Você não está autorizado a realizar esta ação!       |" ++ "\n"
                                     ++ ".----------------------------------------------------------." ++ "\n"
 
                     Nothing -> do
+                            clearScreen
                             putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                                    ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                                    ++ "|            ID inexistente! Tente novamente!              |" ++ "\n"
                                     ++ ".----------------------------------------------------------." ++ "\n"
                             criaFeedback
         Nothing -> do
+                clearScreen
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                        ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                        ++ "|            ID inexistente! Tente novamente!              |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
                 criaFeedback
 
--- Limpa a tela, deixando apenas o atual comando
+-- | Limpa a tela, deixando apenas o atual comando
 clearScreen :: IO ()
 clearScreen = do
     case os of

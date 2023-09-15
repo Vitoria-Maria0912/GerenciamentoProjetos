@@ -36,6 +36,10 @@ getUsuarios path = do
   Nothing -> []
   Just usuarios -> usuarios
 
+-- MUDEI AQUI ------------------------------------------------- INCOMPLETO
+-- adicionaAtividadeAoUsuario :: Int -> Usuario -> IO()
+-- adicionaAtividadeAoUsuario idAtividade usuario = do
+
 -- | Função que imprime o usuário omitindo informação sensível
 imprimirUsuario :: Usuario -> IO()
 imprimirUsuario u = putStrLn $ "ID: " ++ show (idUsuario u) ++ ", Nome: " ++ nome u

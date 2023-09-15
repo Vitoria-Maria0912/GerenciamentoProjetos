@@ -1,7 +1,6 @@
-{-# LANGUAGE DeriveGeneric #-} -- <<<<<<<<<<<<<<<<<<<<
+{-# LANGUAGE DeriveGeneric #-} 
 module Controllers.Projeto where
 
--------------------------------------------
 import System.IO.Unsafe (unsafePerformIO)
 import qualified Data.ByteString.Lazy as B
 import Data.Aeson
@@ -11,22 +10,11 @@ import System.IO
 import System.Directory
 import Data.List (find)
 
--- import Data.Char ()
--- import Data.Set ()
--- import qualified Data.Text.IO as TIO
--- import Data.Time
--- import System.Directory ()
--- import System.IO ()
--- import Data.List (find)
--- import Data.Maybe (mapMaybe)
--- import Text.Read (readMaybe)
 import Controllers.Usuario
 import Controllers.Atividades
--- import Database.Database
 
 instance FromJSON Projeto
 instance ToJSON Projeto
--------------------------------------------
 
 
 -- Definindo o tipo de dado Projeto
@@ -50,6 +38,16 @@ criaProjeto jsonFilePath idProjeto nomeProjeto descricaoProjeto idGerente membro
     removeFile jsonFilePath
     renameFile "../Temp.json" jsonFilePath
 
+-- MUDEI AQUI ------------------------------------------------- INCOMPLETO
+deletarAtividadeProjeto :: String -> Int -> Int -> IO()
+deletarAtividadeProjeto filePath idProjeto idAtividade = do
+  deletarAtividade filePath idAtividade
+
+-- MUDEI AQUI ------------------------------------------------- INCOMPLETO
+adicionaAtividadeAoProjeto :: String -> String -> String -> Int -> Int -> Maybe Int -> Maybe [String] -> IO()
+adicionaAtividadeAoProjeto filePath titulo descricao idProjetoAtividade idAtividade idMembroResponsavel feedback = do
+  criarAtividade "Database/atividades.json" titulo descricao idProjetoAtividade idAtividade Nothing Nothing
+
 -- Verifica se o usuário é gerente de algum projeto do sistema 
 ehGerente :: Int -> [Projeto] -> Bool
 ehGerente gerenteId gerentes = any (\projeto -> gerenteId == (idGerente projeto)) gerentes
@@ -70,7 +68,6 @@ getTodosProjetos filePath = do
         Nothing -> []
         Just out -> out
 
--- Acho que faz mais sentido estar aqui, do que em Atividades
 -- Adiciona uma atividade a um projeto
 adicionaAtividade :: Atividade -> [Atividade] -> [Atividade]
 adicionaAtividade atividade atividades = 
@@ -97,7 +94,6 @@ removerProjeto :: String -> Int -> IO()
 removerProjeto jsonFilePath idProjeto = do
   let projetos = getTodosProjetos jsonFilePath
   let novosProjetos = removeProjetoPorID idProjeto projetos
-
 
   B.writeFile "../Temp.json" $ encode novosProjetos
   removeFile jsonFilePath
