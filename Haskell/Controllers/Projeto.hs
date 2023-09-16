@@ -117,8 +117,6 @@ verificaIdProjeto id (x:xs)
 --Cria um novo projeto , sobrescreve  e apaga o antigo
 
 
-
-
 -- editaAtividadesProjeto :: String -> Projeto-> [Int] -> Int -> IO()
 -- editaAtividadesProjeto jsonFilePath projeto atividades idAtividade = do
 --  let atividadesList = getTodasAtividades jsonFilePath 
