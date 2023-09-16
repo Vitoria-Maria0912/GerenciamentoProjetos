@@ -1,0 +1,93 @@
+[
+    {
+      "descricao": "Desenvolver um aplicativo mobile para iOS",
+      "feedbacks": null,
+      "idAtividade": 1,
+      "idMembroResponsavel": null,
+      "idProjetoAtividade": 101,
+      "status": "Não atribuída!",
+      "titulo": "Desenvolvimento iOS"
+    },
+    {
+      "descricao": "Configurar um servidor web usando Apache",
+      "feedbacks": null,
+      "idAtividade": 2,
+      "idMembroResponsavel": null,
+      "idProjetoAtividade": 102,
+      "status": "Não atribuída!",
+      "titulo": "Configuração do Servidor"
+    },
+    {
+      "descricao": "Criar um algoritmo de ordenação eficiente",
+      "feedbacks": null,
+      "idAtividade": 3,
+      "idMembroResponsavel": null,
+      "idProjetoAtividade": 103,
+      "status": "Não atribuída!",
+      "titulo": "Algoritmo de Ordenação"
+    },
+    {
+      "descricao": "Realizar testes de segurança em um sistema",
+      "feedbacks": null,
+      "idAtividade": 4,
+      "idMembroResponsavel": null,
+      "idProjetoAtividade": 104,
+      "status": "Não atribuída!",
+      "titulo": "Testes de Segurança"
+    },
+    {
+      "descricao": "Criar um site responsivo usando HTML e CSS",
+      "feedbacks": null,
+      "idAtividade": 5,
+      "idMembroResponsavel": null,
+      "idProjetoAtividade": 105,
+      "status": "Não atribuída!",
+      "titulo": "Desenvolvimento Web"
+    },
+    {
+      "descricao": "Otimizar o desempenho de um banco de dados SQL",
+      "feedbacks": null,
+      "idAtividade": 6,
+      "idMembroResponsavel": null,
+      "idProjetoAtividade": 106,
+      "status": "Não atribuída!",
+      "titulo": "Otimização de Banco de Dados"
+    },
+    {
+      "descricao": "Desenvolver um jogo em Unity",
+      "feedbacks": null,
+      "idAtividade": 7,
+      "idMembroResponsavel": null,
+      "idProjetoAtividade": 107,
+      "status": "Não atribuída!",
+      "titulo": "Desenvolvimento de Jogos"
+    },
+    {
+      "descricao": "Configurar um firewall para proteção de rede",
+      "feedbacks": null,
+      "idAtividade": 8,
+      "idMembroResponsavel": null,
+      "idProjetoAtividade": 108,
+      "status": "Não atribuída!",
+      "titulo": "Configuração de Firewall"
+    },
+    {
+      "descricao": "Programar um chatbot com IA",
+      "feedbacks": null,
+      "idAtividade": 9,
+      "idMembroResponsavel": null,
+      "idProjetoAtividade": 109,
+      "status": "Não atribuída!",
+      "titulo": "Desenvolvimento de Chatbot"
+    },
+    {
+      "descricao": "Criar um programa de análise de dados em Python",
+      "feedbacks": null,
+      "idAtividade": 10,
+      "idMembroResponsavel": null,
+      "idProjetoAtividade": 110,
+      "status": "Não atribuída!",
+      "titulo": "Análise de Dados em Python"
+    }
+  ]
+  
