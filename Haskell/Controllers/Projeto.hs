@@ -50,21 +50,16 @@ data Projeto = Projeto {
     atividades :: Maybe [Atividade]
 } deriving (Show, Generic) 
 
--- Cria um novo projeto e o adiciona ao arquivo JSON
-criaProjeto :: String -> String -> String -> Int -> IO ()
-criaProjeto jsonFilePath nomeProjeto descricaoProjeto idGerente = do
+
+criaProjeto :: Int -> String -> String -> Int  -> IO ()
+criaProjeto jsonFilePath idProjeto nomeProjeto descricaoProjeto idGerente
     let projetos = lerProjetos jsonFilePath
-    let novoId = length projetos + 1
-    let projeto = Projeto novoId nomeProjeto descricaoProjeto idGerente Nothing Nothing
+    let projeto = Projeto idProjeto nomeProjeto descricaoProjeto idGerente 
     let projetosAtualizados = projetos ++ [projeto]
 
     B.writeFile "../Temp.json" $ encode projetosAtualizados
     removeFile jsonFilePath
     renameFile "../Temp.json" jsonFilePath
-
-
-
-
 
 
 -- Remove um projeto da lista de projetos
@@ -75,6 +70,7 @@ apagarProjeto id (x:xs)
   | otherwise = x : apagarProjeto id xs
 
 -- Remove um projeto do arquivo JSON
+--Passar a função 
 deletarProjeto :: String -> Int -> IO ()
 deletarProjeto filePath idProjeto = do
     let projetos = lerProjetos filePath
@@ -83,6 +79,15 @@ deletarProjeto filePath idProjeto = do
     B.writeFile "../Temp.json" $ encode projetosAtualizados
     removeFile filePath
     renameFile "../Temp.json" filePath
+
+
+-- Remove um projeto do sistema por meio do ID
+removeProjetoPorID :: Int -> [Projeto] -> [Projeto]
+removeProjetoPorID _ [] = [] -- Casamento de padrões para lista vazia
+removeProjetoPorID idProjetoS (x:xs)
+  | idProjeto x == idProjetoS = xs
+  | otherwise = x : removeProjetoPorID idProjetoS xs
+
 
 
 -- Verifica se o usuário é gerente de algum projeto do sistema 
@@ -102,14 +107,6 @@ verificaIdProjeto _ [] = False
 verificaIdProjeto id (x:xs)
   | idProjeto x == id = True
   | otherwise = verificaIdProjeto id xs
-
-
--- Remove um projeto do sistema por meio do ID
-removeProjetoPorID :: Int -> [Projeto] -> [Projeto]
-removeProjetoPorID _ [] = [] -- Casamento de padrões para lista vazia
-removeProjetoPorID idProjetoS (x:xs)
-  | idProjeto x == idProjetoS = xs
-  | otherwise = x : removeProjetoPorID idProjetoS xs
 
 
 

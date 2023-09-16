@@ -119,11 +119,14 @@ sairDoSistema = putStrLn "Você saiu do sistema! Até a próxima!"
 --   clearScreen
 
 
-
 -- Função para criar um projeto
 cadastrarProjeto :: IO ()
 cadastrarProjeto = do
     putStrLn "Cadastrar Projeto:"
+    putStrLn "Digite o ID do projeto:"
+    idProjetoStr <- getLine
+    let idProjeto = read idProjetoStr :: Int
+
     putStrLn "Digite o nome do projeto:"
     nomeProjeto <- getLine
 
@@ -137,14 +140,9 @@ cadastrarProjeto = do
     jsonFilePath <- return "Controllers/projetos.json" 
 
     -- Chame a função do controller para criar o projeto
-    criaProjeto jsonFilePath nomeProjeto descricaoProjeto idGerente
+    criaProjeto idProjeto jsonFilePath nomeProjeto descricaoProjeto idGerente
 
     putStrLn "Projeto cadastrado com sucesso!"
-
-
-
-
-
 
 
  

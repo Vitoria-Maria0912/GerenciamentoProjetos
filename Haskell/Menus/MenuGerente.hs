@@ -44,7 +44,7 @@ menuRestritoProjeto = do
     let lowerOption = map toLower option
     case lowerOption of 
 
-           "p" -> removerProjeto
+        --   "p" -> removerProjeto
         -- "c" -> criaAtividade
         -- "g" -> gerenciarMembros
         -- "r" -> deletarAtividade 
@@ -78,7 +78,7 @@ menuRestritoProjeto = do
 
 --     putStrLn ""
 
-
+{-
 removerProjeto :: [Projeto] -> IO ()
 removerProjeto projetos = do
     putStrLn "Digite seu ID:"
@@ -93,7 +93,7 @@ removerProjeto projetos = do
     -- Você pode adicionar a lógica para escrever os projetos atualizados em um arquivo aqui, se necessário.
 
     putStrLn "Projeto removido com sucesso!"
-
+-}
 
 
 {-
