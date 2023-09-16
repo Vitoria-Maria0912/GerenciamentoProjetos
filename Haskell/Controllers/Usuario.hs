@@ -1,12 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
 
+
 module Controllers.Usuario where
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
 import GHC.Generics
 import System.IO.Unsafe
 import System.Directory
+import Controllers.Atividades (Atividade(idAtividade))
 
 instance FromJSON Usuario
 instance ToJSON Usuario
@@ -16,7 +18,8 @@ instance ToJSON Usuario
 data Usuario = Usuario { 
     idUsuario :: Int,
     nome :: String,
-    senha :: String
+    senha :: String,
+    atividadesAtribuidas :: [Int]
 } deriving (Show, Generic)
 
 
@@ -36,18 +39,19 @@ getUsuarios path = do
   Nothing -> []
   Just usuarios -> usuarios
 
--- MUDEI AQUI ------------------------------------------------- INCOMPLETO
--- adicionaAtividadeAoUsuario :: Int -> Usuario -> IO()
--- adicionaAtividadeAoUsuario idAtividade usuario = do
+
+adicionaAtividadeAoUsuario :: Usuario -> Int -> [Int]
+adicionaAtividadeAoUsuario usuario idAtividade = 
+    atividadesAtribuidas usuario ++ [idAtividade]
 
 -- | Função que imprime o usuário omitindo informação sensível
 imprimirUsuario :: Usuario -> IO()
 imprimirUsuario u = putStrLn $ "ID: " ++ show (idUsuario u) ++ ", Nome: " ++ nome u
 
 -- | Função que salva e escreve o usuario no arquivo diretamente
-salvarUsuario :: String -> Int -> String -> String -> IO()
-salvarUsuario jsonFilePath idUsuario nome senha = do
-  let usuario = Usuario idUsuario nome senha
+salvarUsuario :: String -> Int -> String -> String -> [Int] -> IO()
+salvarUsuario jsonFilePath idUsuario nome senha atividadesAtribuidas = do
+  let usuario = Usuario idUsuario nome senha atividadesAtribuidas 
   let userList = (getUsuarios jsonFilePath) ++ [usuario]
 
   B.writeFile "../Temp.json" $ encode userList

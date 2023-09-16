@@ -140,7 +140,7 @@ criaAtividade = do
                     criaAtividade
                     
                 Nothing -> do
-                        adicionaAtividadeAoProjeto "Database/atividades.json" titulo descricao idProjeto idAtividade Nothing Nothing
+                        adicionaAtividadeAoProjeto "Database/atividades.json" titulo descricao idProjeto idAtividade [] Nothing
                         putStrLn $ "Atividade criada com sucesso!  ID da atividade é: " ++ show(idAtividade)
                         menuRestritoProjeto
 
@@ -178,48 +178,51 @@ deletaAtividade = do
                 deletaAtividade
             
 -- Visualizar todos os membros do projeto
--- gerenciarMembros :: IO()
--- gerenciarMembros = do
+gerenciarMembros :: IO ()
+gerenciarMembros = do
+    putStrLn $ "Gerenciamento de membros: \n\n"
+             ++ "Digite o ID do projeto:"
+    idProjeto <- readLn :: IO Int
 
---     putStrLn $ "Gerenciamento de membros: \n\n"
---             ++ "Digite o ID do projeto:"
---     idProjeto <- readLn :: IO Int
+    let projetosDoSistema = getTodosProjetos "Database/projetos.json"
+    let projetoMaybe = getProjeto idProjeto projetosDoSistema
 
---     let projetosDoSistema = lerProjetos "Database/projetos.json"
+    case projetoMaybe of
+        Just projeto -> do
+            putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                     ++ "|                O que deseja fazer agora?                 |" ++ "\n"
+                     ++ "|                                                          |" ++ "\n"
+                     ++ "|                  Selecione uma opção:                    |" ++ "\n"
+                     ++ "|                                                          |" ++ "\n"
+                     ++ "|           M - Visualizar membros do projeto              |" ++ "\n"
+                     ++ "|           A - Atribuir atividade a um membro             |" ++ "\n"
+                     ++ "|           N - Adicionar membro ao projeto                |" ++ "\n"
+                     ++ "|           R - Remover membro do projeto                  |" ++ "\n"
+                     ++ "|           V - Voltar ao menu do projeto                  |" ++ "\n"
+                     ++ ".----------------------------------------------------------." ++ "\n"
+                     
+            option <- getLine
+            let lowerOption = map toLower option
+            case lowerOption of 
+                "m" -> visualizarMembros
+                -- "a" -> atribuirMembro
+                -- "n" -> adicionaNovoMembro
+                -- "r" -> removeMembroProjeto
+                "v" -> menuRestritoProjeto
+                _   -> erroMenuGerente
+        Nothing -> do
+            putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                    ++ "|              ID inválido, tente novamente.               |" ++ "\n"
+                    ++ ".----------------------------------------------------------." ++ "\n"
+            gerenciarMembros
 
---     let projetos = (getProjeto idProjeto projetosDoSistema)
 
---     case (projetos) of
---         Just projeto -> do
---                         -- invoca função para visualizar membros do projeto, em Projetos.hs
---                         putStrLn "Membros do projeto:"
---                         -- imprime os membros do projeto
+visualizarMembros:: IO()
+visualizarMembros = do
 
---                         putStrLn $ ".----------------------------------------------------------." ++ "\n" 
---                                 ++ "|                O que deseja fazer agora?                 |" ++ "\n"
---                                 ++ "|                                                          |" ++ "\n"
---                                 ++ "|                  Selecione uma opção:                    |" ++ "\n"
---                                 ++ "|                                                          |" ++ "\n"
---                                 ++ "|           D - Atribuir atividade a um membro             |" ++ "\n"
---                                 ++ "|           M - Adicionar membro ao projeto                |" ++ "\n"
---                                 ++ "|           R - Remover membro do projeto                  |" ++ "\n"
---                                 ++ "|           V - Voltar ao menu do projeto                  |" ++ "\n"
---                                 ++ ".----------------------------------------------------------." ++ "\n"
-
---                         option <- getLine
---                         let lowerOption = map toLower option
---                         case lowerOption of 
-
---                                 -- "a" -> atribuirMembro
---                                 -- "n" -> adicionaNovoMembro
---                                 -- "r" -> removeMembroProjeto
---                                 "v" -> menuRestritoProjeto
---                                 _   -> erroMenuGerente
---         Nothing -> do
---                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
---                         ++ "|              ID inválido, tente novamente.               |" ++ "\n"
---                         ++ ".----------------------------------------------------------." ++ "\n"
---                 gerenciarMembros
+        let membros = getMembrosDoProjeto (getProjeto idProjeto (getTodosProjetos "Database/projetos.json"))
+        putStrLn "Membros do projeto:"
+        putStrLn (imprimirListaDeIds membros)
 
 -- Adiciona um novo membro a um projeto
 -- adicionaNovoMembro :: IO()
@@ -263,9 +266,13 @@ deletaAtividade = do
 --     putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
 --     idMembroResponsavel <- getLine
 
---     -- let projeto = getProjeto id
---     -- let atividade = getAtividade idAtividade
+--     let membroNoProjeto = (idMembroResponsavel (getMembrosNoProjeto idProjeto))
+--     case (membroNoProjeto) of
+--         Just _ -> do
+                
+
 --     -- Atividades.atribuirMembro atividade membroResponsavel
+--  --CHAMAR MÉTODO QUE ADICIONA ATIVIDADE(ID) A LISTA DE ATIVIDADES DE UM USUARIO
 
 --     -- TEM QUE ARMAZENÁ-LOS
 

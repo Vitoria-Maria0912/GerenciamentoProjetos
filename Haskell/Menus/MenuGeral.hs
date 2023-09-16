@@ -76,7 +76,7 @@ cadastrarUsuario = do
         cadastrarUsuario
 
       Nothing -> do
-        salvarUsuario userFilePath idUsuario nome senha
+        salvarUsuario userFilePath idUsuario nome senha []
         clearScreen
         putStrLn $ ".----------------------------------------------------------." ++ "\n"
                 ++ "        Usuário cadastrado com sucesso! Seu ID é " ++ show(idUsuario) ++ "\n"

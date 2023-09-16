@@ -23,15 +23,15 @@ data Projeto = Projeto {
     nomeProjeto :: String,
     descricaoProjeto :: String,
     idGerente :: Int,
-    membros :: Maybe [Usuario],
+    membros :: [Int],
     atividades :: Maybe [Atividade]
 } deriving (Show, Generic) 
 
 
 -- Cria um novo projeto e o adiciona ao arquivo JSON
-criaProjeto :: String -> Int -> String -> String -> Int -> Maybe[Usuario] -> Maybe[Atividade] -> IO ()
+criaProjeto :: String -> Int -> String -> String -> Int -> [Int] -> Maybe[Atividade] -> IO ()
 criaProjeto jsonFilePath idProjeto nomeProjeto descricaoProjeto idGerente membros atividades = do
-    let projeto = Projeto idProjeto nomeProjeto descricaoProjeto idGerente Nothing Nothing
+    let projeto = Projeto idProjeto nomeProjeto descricaoProjeto idGerente membros Nothing
     let projetosAtualizados = (getTodosProjetos jsonFilePath) ++ [projeto]
 
     B.writeFile "../Temp.json" $ encode projetosAtualizados
@@ -44,9 +44,9 @@ deletarAtividadeProjeto filePath idProjeto idAtividade = do
   deletarAtividade filePath idAtividade
 
 -- MUDEI AQUI ------------------------------------------------- INCOMPLETO
-adicionaAtividadeAoProjeto :: String -> String -> String -> Int -> Int -> Maybe Int -> Maybe [String] -> IO()
+adicionaAtividadeAoProjeto :: String -> String -> String -> Int -> Int -> Int -> Maybe [String] -> IO()
 adicionaAtividadeAoProjeto filePath titulo descricao idProjetoAtividade idAtividade idMembroResponsavel feedback = do
-  criarAtividade "Database/atividades.json" titulo descricao idProjetoAtividade idAtividade Nothing Nothing
+  criarAtividade "Database/atividades.json" titulo descricao idProjetoAtividade idAtividade idMembroResponsavel Nothing
 
 -- Verifica se o usuário é gerente de algum projeto do sistema 
 ehGerente :: Int -> [Projeto] -> Bool
@@ -107,12 +107,12 @@ removerProjeto jsonFilePath idProjeto = do
 --         Just atividadesProjeto -> [unlines atividadesProjeto] 
 --         _ -> []
 
--- -- Obtem os IDs dos usuários cadastrados em um projetos
--- getIdsUsuarios :: Projeto -> [String]
--- getIdsUsuarios projeto = 
---     case membros projeto of
---         Just membrosProjeto -> [unlines membrosProjeto]
---         _ -> []
+--  Obtem os IDs dos usuários cadastrados em um projetos
+getMembrosDoProjeto :: Projeto -> [Int]
+getMembrosDoProjeto projeto = membros projeto
+
+imprimirListaDeIds :: [Int] -> String
+imprimirListaDeIds lista = unwords (map show lista)
 
 
 
