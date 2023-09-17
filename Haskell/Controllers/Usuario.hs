@@ -79,6 +79,21 @@ removerUsuario jsonFilePath idUsuario = do
 verificaSenhaUsuario :: Usuario -> String -> Bool
 verificaSenhaUsuario usuario senhaUsuario = ((senha usuario) == senhaUsuario)
 
--- | Função que retorna o numero de usuarios atuais do sistema (de acordo com o arquivo)
-getNumDeUsuarios :: String -> Int
-getNumDeUsuarios jsonFilePath = length (getUsuarios jsonFilePath)
+-- -- | Função que retorna o numero de usuarios atuais do sistema (de acordo com o arquivo)
+-- getNumDeUsuarios :: String -> Int
+-- getNumDeUsuarios jsonFilePath = length (getUsuarios jsonFilePath)
+
+atualizaAtivUsuario :: Int -> [Usuario] -> [Int] -> [Usuario]
+atualizaAtivUsuario _ [] _ = []
+atualizaAtivUsuario id (usuario:usuarios) novasAtiv
+  | idUsuario usuario == id = usuario { atividadesAtribuidas = atividadesAtribuidas usuario ++ novasAtiv } : atualizaAtivUsuario id usuarios novasAtiv
+  | otherwise = usuario : atualizaAtivUsuario id usuarios novasAtiv
+
+editAtivDoUsuario :: String -> Int -> [Int] -> IO ()
+editAtivDoUsuario jsonFilePath idUsuario novasAtiv = do
+  let listaUsuarios = getUsuarios jsonFilePath
+  let usuariosAtualizados = atualizaAtivUsuario idUsuario listaUsuarios novasAtiv
+
+  B.writeFile "../Temp.json" $ encode usuariosAtualizados
+  removeFile jsonFilePath
+  renameFile "../Temp.json" jsonFilePath

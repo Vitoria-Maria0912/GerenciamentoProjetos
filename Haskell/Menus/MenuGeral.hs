@@ -23,7 +23,7 @@ erroMenuPrincipal = do
 -- | Menu principal com as principais funcionalidades
 menuPrincipal :: IO ()
 menuPrincipal = do
-  
+
   putStrLn $ ".----------------------------------------------------------." ++ "\n"
           ++ "|                      Menu Principal                      |" ++ "\n"
           ++ "|                                                          |" ++ "\n"
@@ -45,10 +45,10 @@ menuPrincipal = do
       "c" -> cadastrarUsuario
       "d" -> deletarUsuario
       "p" -> cadastrarProjeto
-    --   "l" -> visualizarProjetosPendentes
+      "l" -> visualizarProjetos
     --   "m" -> chat
       "s" -> sairDoSistema
-      _   -> erroMenuPrincipal 
+      _   -> erroMenuPrincipal
 
 -- | Função que cadastra um usuário no sistema
 cadastrarUsuario :: IO ()
@@ -66,9 +66,9 @@ cadastrarUsuario = do
 
     idUsuario <- randomRIO (0000, 9999 :: Int)
 
-    let usuarioNoSistema = (getUsuario idUsuario (getUsuarios userFilePath))
+    let usuarioNoSistema = getUsuario idUsuario (getUsuarios userFilePath)
 
-    case (usuarioNoSistema) of
+    case usuarioNoSistema of
       Just _ -> do
         putStrLn $ ".----------------------------------------------------------." ++ "\n"
                 ++ "|             Falha no cadastro! Tente novamente.          |" ++ "\n"
@@ -79,27 +79,27 @@ cadastrarUsuario = do
         salvarUsuario userFilePath idUsuario nome senha []
         clearScreen
         putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                ++ "        Usuário cadastrado com sucesso! Seu ID é " ++ show(idUsuario) ++ "\n"
+                ++ "        Usuário cadastrado com sucesso! Seu ID é " ++ show idUsuario ++ "\n"
                 ++ ".----------------------------------------------------------." ++ "\n"
         menuPrincipal
-        
+
 -- | Deleta um usuário do sistema
 deletarUsuario :: IO()
 deletarUsuario = do
 
   let userFilePath = "Database/usuarios.json"
-                            
+
   putStrLn $ "Deletar perfil: \n\n"
           ++ "Digite seu ID:"
   idUsuario <- readLn :: IO Int
 
-  let usuarioNoSistema = (getUsuario idUsuario (getUsuarios userFilePath))
+  let usuarioNoSistema = getUsuario idUsuario (getUsuarios userFilePath)
 
-  case (usuarioNoSistema) of
+  case usuarioNoSistema of
     Just usuario -> do
       putStrLn "Digite sua senha: "
       senha <- getLine
-      if (verificaSenhaUsuario usuario senha) then do
+      if verificaSenhaUsuario usuario senha then do
           removerUsuario userFilePath idUsuario
           clearScreen
           putStrLn $ ".----------------------------------------------------------." ++ "\n"
@@ -137,15 +137,15 @@ cadastrarProjeto = do
     putStrLn "Digite seu ID: "
     idUsuario <- readLn :: IO Int
 
-    let usuarioNoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
+    let usuarioNoSistema = getUsuario idUsuario (getUsuarios "Database/usuarios.json")
 
-    case (usuarioNoSistema) of
+    case usuarioNoSistema of
         Just _ -> do
                 idProjeto <- randomRIO (000, 999 :: Int)
 
-                let projetoNoSistema = (getProjeto idProjeto (getTodosProjetos projectFilePath))
+                let projetoNoSistema = getProjeto idProjeto (getTodosProjetos projectFilePath)
 
-                case (projetoNoSistema) of
+                case projetoNoSistema of
                         Just _ -> do
                                 clearScreen
                                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
@@ -154,10 +154,10 @@ cadastrarProjeto = do
                                 cadastrarProjeto
 
                         Nothing -> do
-                                criaProjeto projectFilePath idProjeto nomeProjeto descricaoProjeto idUsuario Nothing Nothing
+                                criaProjeto projectFilePath idProjeto nomeProjeto descricaoProjeto idUsuario [] []
                                 clearScreen
                                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                                        ++ "  Projeto criado com sucesso! O ID do seu projeto é: " ++ show(idProjeto) ++ "\n"
+                                        ++ "  Projeto criado com sucesso! O ID do seu projeto é: " ++ show idProjeto ++ "\n"
                                         ++ ".----------------------------------------------------------." ++ "\n"
                                 menuPrincipal
 
@@ -167,12 +167,12 @@ cadastrarProjeto = do
                         ++ "|              ID inexistente! Tente novamente!            |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
                 cadastrarProjeto
-        
+
 -- | Verifica se o usuário é gerente e mostra o menu correspondente
 menuProjetos :: IO()
-menuProjetos = do 
+menuProjetos = do
 
-    let projectFilePath = "Database/projetos.json"    
+    let projectFilePath = "Database/projetos.json"
 
     putStrLn $ "Menu de projetos: \n\n"
             ++ "Digite seu ID:"
@@ -180,7 +180,7 @@ menuProjetos = do
 
     let usuarios = getUsuarios "Database/usuarios.json"
 
-    if isNothing (getUsuario idUsuario usuarios) then do 
+    if isNothing (getUsuario idUsuario usuarios) then do
         clearScreen
         putStrLn $ ".----------------------------------------------------------." ++ "\n"
                 ++ "|                ID inválido. Tente novamente!             |" ++ "\n"
@@ -191,15 +191,18 @@ menuProjetos = do
         clearScreen
         let projetos = getTodosProjetos projectFilePath
         let gerente = ehGerente idUsuario projetos
-        
+
         if gerente then menuRestritoProjeto
         else menuPublicoProjeto
 
--- -- Função para visualizar projetos pendentes
--- visualizarProjetosPendentes :: IO ()
--- visualizarProjetosPendentes = do
---     putStrLn "Implementação em andamento."
---     menuPrincipal
+-- Função para visualizar projetos (MODIFICAR DEPOIS PARA SER SÓ OS PENDENTES - COM ATIVIDADES NÃO CONCLUÍDAS)
+visualizarProjetos :: IO ()
+visualizarProjetos = do
+  putStrLn "\n Visualizar projetos: \n"
+  let projetos = getTodosProjetos "Database/projetos.json"
+  putStrLn "Esses são os projetos atuais no sistema: \n"
+  mapM_ imprimirProjetos projetos
+  menuPrincipal
 
 -- -- Entra no chat
 -- chat :: IO ()

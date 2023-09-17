@@ -18,7 +18,7 @@ data Atividade = Atividade {
     status :: String,
     idProjetoAtividade :: Int, 
     idAtividade :: Int,
-    idMembroResponsavel :: Maybe Int, 
+    idMembroResponsavel :: Maybe Int,
     feedbacks :: Maybe [String]
 } deriving (Show, Generic)
 

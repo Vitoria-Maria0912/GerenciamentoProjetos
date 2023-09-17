@@ -24,29 +24,29 @@ data Projeto = Projeto {
     descricaoProjeto :: String,
     idGerente :: Int,
     membros :: [Int],
-    atividades :: Maybe [Atividade]
+    atividades :: [Int]
 } deriving (Show, Generic) 
 
 
 -- Cria um novo projeto e o adiciona ao arquivo JSON
-criaProjeto :: String -> Int -> String -> String -> Int -> [Int] -> Maybe[Atividade] -> IO ()
+criaProjeto :: String -> Int -> String -> String -> Int -> [Int] -> [Int] -> IO ()
 criaProjeto jsonFilePath idProjeto nomeProjeto descricaoProjeto idGerente membros atividades = do
-    let projeto = Projeto idProjeto nomeProjeto descricaoProjeto idGerente membros Nothing
+    let projeto = Projeto idProjeto nomeProjeto descricaoProjeto idGerente membros atividades
     let projetosAtualizados = (getTodosProjetos jsonFilePath) ++ [projeto]
 
     B.writeFile "../Temp.json" $ encode projetosAtualizados
     removeFile jsonFilePath
     renameFile "../Temp.json" jsonFilePath
 
--- MUDEI AQUI ------------------------------------------------- INCOMPLETO
-deletarAtividadeProjeto :: String -> Int -> Int -> IO()
-deletarAtividadeProjeto filePath idProjeto idAtividade = do
-  deletarAtividade filePath idAtividade
+-- -- MUDEI AQUI ------------------------------------------------- INCOMPLETO
+-- deletarAtividadeProjeto :: String -> Int -> Int -> IO()
+-- deletarAtividadeProjeto filePath idProjeto idAtividade = do
+--   deletarAtividade filePath idAtividade
 
--- MUDEI AQUI ------------------------------------------------- INCOMPLETO
-adicionaAtividadeAoProjeto :: String -> String -> String -> Int -> Int -> Int -> Maybe [String] -> IO()
-adicionaAtividadeAoProjeto filePath titulo descricao idProjetoAtividade idAtividade idMembroResponsavel feedback = do
-  criarAtividade "Database/atividades.json" titulo descricao idProjetoAtividade idAtividade idMembroResponsavel Nothing
+-- -- MUDEI AQUI ------------------------------------------------- INCOMPLETO
+-- adicionaAtividadeAoProjeto :: String -> String -> String -> Int -> Int -> Maybe Int -> Maybe [String] -> IO()
+-- adicionaAtividadeAoProjeto filePath titulo descricao idProjetoAtividade idAtividade idMembroResponsavel feedback = do
+--   criarAtividade "Database/atividades.json" titulo descricao idProjetoAtividade idAtividade idMembroResponsavel Nothing
 
 -- Verifica se o usuário é gerente de algum projeto do sistema 
 ehGerente :: Int -> [Projeto] -> Bool
@@ -68,12 +68,31 @@ getTodosProjetos filePath = do
         Nothing -> []
         Just out -> out
 
--- Adiciona uma atividade a um projeto
-adicionaAtividade :: Atividade -> [Atividade] -> [Atividade]
-adicionaAtividade atividade atividades = 
-    case find (\u -> idAtividade u == idAtividade atividade) atividades of 
-        Just _-> atividades
-        Nothing -> atividade : atividades
+-- | Função que adiciona uma atividade de um projeto
+addAtivNoProjeto :: Int -> [Projeto] -> Int -> [Projeto]
+addAtivNoProjeto _ [] _ = []
+addAtivNoProjeto id (proj:projs) novaAtiv
+  | idProjeto proj == id = proj { atividades = atividades proj ++ [novaAtiv] } : addAtivNoProjeto id projs novaAtiv
+  | otherwise = proj : addAtivNoProjeto id projs novaAtiv
+
+-- | Função que remove uma atividade de um projeto
+removeAtivDoProjeto :: Int -> [Projeto] -> Int -> [Projeto]
+removeAtivDoProjeto _ [] _ = []
+removeAtivDoProjeto id (proj:projs) ativARemover
+  | idProjeto proj == id = proj { atividades = filter (/= ativARemover) (atividades proj) } : removeAtivDoProjeto id projs ativARemover
+  | otherwise = proj : removeAtivDoProjeto id projs ativARemover
+
+-- | Função que edita o Json ao adicionar ou remover um projeto
+editAtivDoProjeto :: String ->  Int ->  Int -> Bool -> IO()
+editAtivDoProjeto jsonFilePath idProjeto idAtividade adicionar = do
+  let listaProjetos = getTodosProjetos jsonFilePath
+  let projetosAtualizados = if adicionar
+                            then addAtivNoProjeto idProjeto listaProjetos idAtividade
+                            else removeAtivDoProjeto idProjeto listaProjetos idAtividade
+
+  B.writeFile "../Temp.json" $ encode projetosAtualizados
+  removeFile jsonFilePath
+  renameFile "../Temp.json" jsonFilePath
 
 -- | Função que retorna a atividade de um projeto
 getAtividadeDoProjeto :: Int -> [Atividade] -> Maybe Atividade
@@ -99,6 +118,31 @@ removerProjeto jsonFilePath idProjeto = do
   removeFile jsonFilePath
   renameFile "../Temp.json" jsonFilePath
 
+-- | Função que adiciona membro em um projeto
+addMembroNoProjeto :: Int -> [Projeto] -> Int -> [Projeto]
+addMembroNoProjeto _ [] _ = []
+addMembroNoProjeto id (proj:projs) novoMembro
+  | idProjeto proj == id = proj { membros = membros proj ++ [novoMembro] } : addMembroNoProjeto id projs novoMembro
+  | otherwise = proj : addMembroNoProjeto id projs novoMembro
+
+-- | Função que edita os membros do projeto no JSON (adição ou remoção de membros)
+editMembrosDoProjeto :: String -> Int -> Int -> Bool -> IO ()
+editMembrosDoProjeto jsonFilePath idProjeto idMembro adicionar = do
+  let listaProjetos = getTodosProjetos jsonFilePath
+  let projetosAtualizados = if adicionar
+                            then addMembroNoProjeto idProjeto listaProjetos idMembro
+                            else removeMembroDoProjeto idProjeto listaProjetos idMembro
+
+  B.writeFile "../Temp.json" $ encode projetosAtualizados
+  removeFile jsonFilePath
+  renameFile "../Temp.json" jsonFilePath
+
+-- | Função que remove membro em um projeto
+removeMembroDoProjeto :: Int -> [Projeto] -> Int -> [Projeto]
+removeMembroDoProjeto _ [] _ = []
+removeMembroDoProjeto id (proj:projs) membroARemover
+  | idProjeto proj == id = proj { membros = filter (/= membroARemover) (membros proj) } : removeMembroDoProjeto id projs membroARemover
+  | otherwise = proj : removeMembroDoProjeto id projs membroARemover
 
 -- Obtem os IDs das atividades cadastradas em um projetos
 -- getIdsAtividades :: Projeto -> [Atividade]
@@ -107,12 +151,29 @@ removerProjeto jsonFilePath idProjeto = do
 --         Just atividadesProjeto -> [unlines atividadesProjeto] 
 --         _ -> []
 
---  Obtem os IDs dos usuários cadastrados em um projetos
+-- | Função que obtem os IDs dos usuários cadastrados em um projetos
 getMembrosDoProjeto :: Projeto -> [Int]
 getMembrosDoProjeto projeto = membros projeto
 
+-- | Função que imprime a lista de ids (POSSIVELMENTE PODE IR PRA UTIL?)
+
 imprimirListaDeIds :: [Int] -> String
 imprimirListaDeIds lista = unwords (map show lista)
+
+-- | Função que checa se o membro está na lista de membros de um projeto
+membroEstaNoProjeto :: Int -> Projeto -> Bool
+membroEstaNoProjeto idMembro projeto = elem idMembro (getMembrosDoProjeto projeto)
+
+-- | Função que imprime os projetos para visualização
+imprimirProjetos :: Projeto -> IO()
+imprimirProjetos p = putStrLn $ "ID: " ++ show (idProjeto p) ++ ", Nome: " ++ nomeProjeto p
+
+-- | Função que verifica se uma atividade está no projeto
+atividadeEstaNoProjeto :: Int -> Projeto -> [Atividade] -> Bool
+atividadeEstaNoProjeto idAtividade projeto listaAtividades = 
+  case getAtividadeDoProjeto idAtividade listaAtividades of
+    Just _  -> idAtividade `elem` (atividades projeto)
+    Nothing -> False
 
 
 
