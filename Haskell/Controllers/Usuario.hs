@@ -1,12 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
 
+
 module Controllers.Usuario where
 import Data.Aeson
 import qualified Data.ByteString.Lazy as B
 import GHC.Generics
 import System.IO.Unsafe
 import System.Directory
+import Controllers.Atividades (Atividade(idAtividade))
 
 instance FromJSON Usuario
 instance ToJSON Usuario
@@ -16,7 +18,8 @@ instance ToJSON Usuario
 data Usuario = Usuario { 
     idUsuario :: Int,
     nome :: String,
-    senha :: String
+    senha :: String,
+    atividadesAtribuidas :: [Int]
 } deriving (Show, Generic)
 
 
@@ -36,18 +39,19 @@ getUsuarios path = do
   Nothing -> []
   Just usuarios -> usuarios
 
--- MUDEI AQUI ------------------------------------------------- INCOMPLETO
--- adicionaAtividadeAoUsuario :: Int -> Usuario -> IO()
--- adicionaAtividadeAoUsuario idAtividade usuario = do
+
+adicionaAtividadeAoUsuario :: Usuario -> Int -> [Int]
+adicionaAtividadeAoUsuario usuario idAtividade = 
+    atividadesAtribuidas usuario ++ [idAtividade]
 
 -- | Função que imprime o usuário omitindo informação sensível
 imprimirUsuario :: Usuario -> IO()
 imprimirUsuario u = putStrLn $ "ID: " ++ show (idUsuario u) ++ ", Nome: " ++ nome u
 
 -- | Função que salva e escreve o usuario no arquivo diretamente
-salvarUsuario :: String -> Int -> String -> String -> IO()
-salvarUsuario jsonFilePath idUsuario nome senha = do
-  let usuario = Usuario idUsuario nome senha
+salvarUsuario :: String -> Int -> String -> String -> [Int] -> IO()
+salvarUsuario jsonFilePath idUsuario nome senha atividadesAtribuidas = do
+  let usuario = Usuario idUsuario nome senha atividadesAtribuidas 
   let userList = (getUsuarios jsonFilePath) ++ [usuario]
 
   B.writeFile "../Temp.json" $ encode userList
@@ -75,6 +79,21 @@ removerUsuario jsonFilePath idUsuario = do
 verificaSenhaUsuario :: Usuario -> String -> Bool
 verificaSenhaUsuario usuario senhaUsuario = ((senha usuario) == senhaUsuario)
 
--- | Função que retorna o numero de usuarios atuais do sistema (de acordo com o arquivo)
-getNumDeUsuarios :: String -> Int
-getNumDeUsuarios jsonFilePath = length (getUsuarios jsonFilePath)
+-- -- | Função que retorna o numero de usuarios atuais do sistema (de acordo com o arquivo)
+-- getNumDeUsuarios :: String -> Int
+-- getNumDeUsuarios jsonFilePath = length (getUsuarios jsonFilePath)
+
+atualizaAtivUsuario :: Int -> [Usuario] -> [Int] -> [Usuario]
+atualizaAtivUsuario _ [] _ = []
+atualizaAtivUsuario id (usuario:usuarios) novasAtiv
+  | idUsuario usuario == id = usuario { atividadesAtribuidas = atividadesAtribuidas usuario ++ novasAtiv } : atualizaAtivUsuario id usuarios novasAtiv
+  | otherwise = usuario : atualizaAtivUsuario id usuarios novasAtiv
+
+editAtivDoUsuario :: String -> Int -> [Int] -> IO ()
+editAtivDoUsuario jsonFilePath idUsuario novasAtiv = do
+  let listaUsuarios = getUsuarios jsonFilePath
+  let usuariosAtualizados = atualizaAtivUsuario idUsuario listaUsuarios novasAtiv
+
+  B.writeFile "../Temp.json" $ encode usuariosAtualizados
+  removeFile jsonFilePath
+  renameFile "../Temp.json" jsonFilePath
