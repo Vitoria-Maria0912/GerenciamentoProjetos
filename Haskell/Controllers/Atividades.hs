@@ -7,6 +7,8 @@ import Data.Aeson
 import GHC.Generics
 import System.IO.Unsafe
 import System.Directory
+import Data.Maybe (fromMaybe)
+import Data.String (fromString)
 
 instance FromJSON Atividade
 instance ToJSON Atividade
@@ -21,6 +23,37 @@ data Atividade = Atividade {
     idMembroResponsavel :: Maybe Int, 
     feedbacks :: Maybe [String]
 } deriving (Show, Generic)
+
+-----------------------------------------------------BANCO DE ATIVIDADES
+
+-- Tipo de dados para representar uma atividade
+-- | Esta função tem o valor igual ao caminho para o arquivo json com o banco de atividades.
+bancoAtividadesJSON :: FilePath
+bancoAtividadesJSON = "Database/bancoDeAtividades.json"
+
+-- Função para ler o arquivo JSON e obter as atividades como uma lista de listas
+lerBancoDeAtividades :: FilePath -> IO [[String]]
+lerBancoDeAtividades bancoAtividadesJSON = do
+    conteudo <- readFile bancoAtividadesJSON
+    let atividades = decodeStrict (fromString conteudo) :: Maybe [[String]]
+    return (fromMaybe [] atividades)
+
+-- Função para adicionar uma nova atividade ao banco de atividades
+adicionarAtividade :: [[String]] -> Atividade -> [[String]]
+adicionarAtividade banco novaAtividade = banco ++ [novaAtividade] --Falta add no Json
+
+-- Função para consultar uma atividade por ID
+consultarAtividadePorID :: [[String]] -> Int -> Maybe Atividade
+consultarAtividadePorID banco id = case filter (\atividade -> read (head atividade) == id) banco of
+    [atividade] -> Just atividade
+    _ -> Nothing
+
+-- Função para filtrar atividades por status
+filtrarAtividadesPorStatus :: [[String]] -> String -> [[String]]
+filtrarAtividadesPorStatus banco status = filter (\atividade -> atividade !! 3 == status) banco
+
+
+------------------------------------Encerra tentativa de Banco de Atividades
 
 
 -- Cria uma atividade
