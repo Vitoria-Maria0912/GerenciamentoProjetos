@@ -39,14 +39,14 @@ escreverAtividade filePath atividade = do
   removeFile filePath
   renameFile "../Temp.json" filePath
 
--- Lê o arquivo projetos.json
-lerAtividades :: String -> [Atividade]
-lerAtividades filePath = do
-    let arquivo = unsafePerformIO(B.readFile filePath)
-    let decodedFile = decode arquivo :: Maybe [Atividade]
-    case decodedFile of
-        Nothing -> []
-        Just out -> out
+-- -- Lê o arquivo projetos.json(código repetido)
+-- lerAtividades :: String -> [Atividade]
+-- lerAtividades filePath = do
+--     let arquivo = unsafePerformIO(B.readFile filePath)
+--     let decodedFile = decode arquivo :: Maybe [Atividade]
+--     case decodedFile of
+--         Nothing -> []
+--         Just out -> out
 
 -- Remove uma atividade da lista de atividades
 apagarAtividade :: Int -> [Atividade] -> [Atividade]

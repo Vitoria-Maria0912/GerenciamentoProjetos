@@ -52,7 +52,7 @@ menuRestritoProjeto = do
                 menuRestritoProjeto
         "p" -> deletarProjeto
         "g" -> gerenciarMembros
-        "b" -> bancoDeAtividades
+        "b" -> menuBancoDeAtividades
         "c" -> criaAtividade
         "r" -> deletaAtividade
         "i" -> comecarAtividade
@@ -384,7 +384,6 @@ atribuirMembro = do
 
 ------------BANCO:
 
-
 -- Função para consultar uma atividade por ID
 consultarAtividadeId :: IO ()
 consultarAtividadeId = do
@@ -393,19 +392,13 @@ consultarAtividadeId = do
             ++ ".----------------------------------------------------------." ++ "\n"
     putStrLn "Digite o ID da atividade a ser consultada: "
     idAtividade <- readLn :: IO Int
-    atividades <- lerBancoDeAtividades
-    case getAtividade idAtividade (concat atividades) of
+    let atividades = getTodasAtividades "Database/bancoDeAtividades.json"
+    case (getAtividade idAtividade atividades) of
         Just atividade  -> do
             putStrLn $ "Atividade encontrada:"
             imprimirAtividade atividade
         Nothing -> putStrLn "Atividade não encontrada."
     menuBancoDeAtividades
-
-
-
-
-
-
 
 
 -- | Visualiza atividades cadastradas no sistema
@@ -423,24 +416,24 @@ bancoDeAtividades = do
 
 --BANCO DE ATIVIDADES
 -- Função para o menu de banco de atividades no menu do gerente
--- menuBancoDeAtividades :: IO ()
--- menuBancoDeAtividades = do
---     putStrLn $ ".----------------------------------------------------------." ++ "\n"
---             ++ "|              Menu Banco de Atividades (Gerente):          |" ++ "\n"
---             ++ "|                                                           |" ++ "\n"
---             ++ "|                Selecione uma opção:                       |" ++ "\n"
---             ++ "|                                                           |" ++ "\n"
---             ++ "|           L - Listar atividades cadastradas               |" ++ "\n"
---             ++ "|           C - Consultar uma atividade por ID              |" ++ "\n"
---             ++ "|           F - Filtrar atividades por status               |" ++ "\n"
---             ++ "|           V - Voltar ao menu principal                    |" ++ "\n"
---             ++ ".-----------------------------------------------------------." ++ "\n"
+menuBancoDeAtividades :: IO ()
+menuBancoDeAtividades = do
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "|              Menu Banco de Atividades (Gerente):          |" ++ "\n"
+            ++ "|                                                           |" ++ "\n"
+            ++ "|                Selecione uma opção:                       |" ++ "\n"
+            ++ "|                                                           |" ++ "\n"
+            ++ "|           L - Listar atividades cadastradas               |" ++ "\n"
+            ++ "|           C - Consultar uma atividade por ID              |" ++ "\n"
+            ++ "|           F - Filtrar atividades por status               |" ++ "\n"
+            ++ "|           V - Voltar ao menu principal                    |" ++ "\n"
+            ++ ".-----------------------------------------------------------." ++ "\n"
 
---     option <- getLine
---     let lowerOption = map toLower option
---     case lowerOption of
---         "l" -> (imprimirAtividade "Database/bancoDeAtividades.json")
---         "c" -> -- consultarAtividade
---         "f" -> -- getStatus
---         "v" -> return () -- Voltar ao menu principal do gerente
---         _   -> putStrLn "Opção inválida." >> menuBancoDeAtividades
+    option <- getLine
+    let lowerOption = map toLower option
+    case lowerOption of
+        "l" -> bancoDeAtividades
+        "c" ->  consultarAtividadeId
+       -- "f" ->  getStatus
+        "v" -> return () 
+        _   -> putStrLn "Opção inválida." >> menuBancoDeAtividades
