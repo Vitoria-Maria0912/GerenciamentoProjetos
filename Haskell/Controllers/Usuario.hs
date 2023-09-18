@@ -100,3 +100,7 @@ editAtivDoUsuario jsonFilePath idUsuario novasAtiv = do
   B.writeFile "../Temp.json" $ encode usuariosAtualizados
   removeFile jsonFilePath
   renameFile "../Temp.json" jsonFilePath
+
+--imprime formatação de usuários no sistema
+aplicarImprimirUsuario :: [Usuario] -> IO ()
+aplicarImprimirUsuario usuarios = mapM_ imprimirUsuario usuarios

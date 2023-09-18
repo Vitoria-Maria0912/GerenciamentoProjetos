@@ -5,8 +5,10 @@ import System.Exit (exitSuccess)
 import System.Random
 import Data.Char (toLower)
 import Data.Maybe
+import Control.Concurrent (threadDelay)
 import Controllers.Usuario
 import Controllers.Projeto
+import Controllers.CaixadeMensagem
 import Menus.MenuGerente (menuRestritoProjeto)
 import Menus.MenuPublico (menuPublicoProjeto, clearScreen, sairDoSistema)
 
@@ -44,7 +46,7 @@ menuPrincipal = do
       "d" -> deletarUsuario
       "p" -> cadastrarProjeto
       "g" -> menuProjetos
-    --   "m" -> chat
+      "m" -> menuChat
       "s" -> sairDoSistema
       _   -> erroMenuPrincipal
 
@@ -202,10 +204,226 @@ menuProjetos = do
         if gerente then menuRestritoProjeto
         else menuPublicoProjeto
 
--- Entra no chat
--- chat :: IO ()
--- chat = do
---   clearScreen
---   putStrLn $ ".----------------------------------------------------------." ++ "\n"
---           ++ "                     Caixa de Mensagens:                    " ++ "\n"
---           ++ ".----------------------------------------------------------." ++ "\n"
+-- -- Entra no chat
+menuChat :: IO ()
+menuChat = do
+  clearScreen
+  putStrLn $ ".-----------------------------------------------------------------------------." ++ "\n"
+          ++ "|                   Bem-vindo ao Chat !                                       |" ++ "\n"
+          ++ "|       Envie mensagens entre membros do seu projeto e usuários do sistema    |" ++ "\n"
+          ++ "|                  Selecione uma opção:                                       |" ++ "\n"
+          ++ "|                                                                             |" ++ "\n"
+          ++ "|          C - Visualizar mensagens gerais de um projeto                      |" ++ "\n"
+          ++ "|          H - Visualizar mensagens privadas                                  |" ++ "\n"
+          ++ "|          A - Enviar mensagem geral para membros do projeto                  |" ++ "\n"
+          ++ "|          T - Enviar mensagem privada                                        |" ++ "\n"
+          ++ "|          S - Sair do sistema                                                |" ++ "\n"
+          ++ ".-----------------------------------------------------------------------------." ++ "\n"
+
+  option <- getLine
+  let lowerOption = map toLower option
+  case lowerOption of
+      "c" -> visualizarMensagensGerais
+      "h" -> visualizarMensagensPrivadas
+      "a" -> enviarMGeral
+      "t" -> enviarMPrivada
+      "s" -> sairDoSistema
+      _   -> erroMenuChat
+      
+-- | Exibe erro e retorna ao menuChat
+erroMenuChat :: IO()
+erroMenuChat = do
+    
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "|            Entrada Inválida. Tente novamente!            |" ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+    threadDelay 1000000
+    menuChat
+
+visualizarMensagensGerais :: IO()
+visualizarMensagensGerais = do
+        --Identificação do Usuário
+        putStrLn "Digite seu ID:"
+        idUsuario <- readLn:: IO Int
+      
+        --Pega o usuario(idUsuario) e projetos cadastrados no sistema
+        let usuarioNoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
+        let projetos = getTodosProjetos "Database/projetos.json"
+        let mensagen = getMensagens "Database/mensagens.json"
+
+
+        case (usuarioNoSistema, projetos) of
+                (Just usuario, projetos) -> do
+                        putStrLn "Digite sua senha:"
+                        senha <- getLine
+                        if (verificaSenhaUsuario usuario senha) then do
+                                if (usuarioEstaEmAlgumProjeto idUsuario projetos || ehGerente idUsuario projetos)then do
+                                        putStrLn $ ".------------------------------------------------------------------." ++ "\n"
+                                                ++ "| Digite o id do Projeto que deseja visualizar as mensagens gerais |" ++ "\n"
+                                                ++ ".------------------------------------------------------------------." ++ "\n"
+                                      
+                                        let projetos_user = listarProjetosDoUsuario idUsuario projetos
+                                        putStrLn projetos_user
+                                        idEscolhido <- readLn :: IO Int
+
+                                        putStrLn "\nCarregando...\n  "
+                                        threadDelay 1500000
+                                        putStrLn "--------------------------------------------------------------------"
+                                        exibeMensagens mensagen idEscolhido
+                                        threadDelay 1500000
+                                        menuRetorno
+
+                                else do
+                                        clearScreen
+                                        putStrLn $ ".------------------------------------------------------------." ++ "\n"
+                                                ++ "|         Usuário não está cadastrado em nenhum projeto.     |" ++ "\n"
+                                                 ++ ".-----------------------------------------------------------." ++ "\n"
+                                        menuRetorno
+                                
+                        else do
+                                clearScreen
+                                putStrLn $ ".------------------------------------------------------------." ++ "\n"
+                                         ++ "|              Senha incorreta! Tente novamente.             |" ++ "\n"
+                                         ++ ".------------------------------------------------------------." ++ "\n"
+                                menuRetorno
+                (Nothing, _) -> do
+                        clearScreen
+                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                ++ "|              ID inexistente! Tente novamente!            |" ++ "\n"
+                                ++ ".----------------------------------------------------------." ++ "\n"
+                        menuRetorno
+
+visualizarMensagensPrivadas :: IO()
+visualizarMensagensPrivadas = do
+        --Identificação do Usuário
+        putStrLn "Digite seu ID:"
+        idUsuario <- readLn:: IO Int
+
+        let usuarioNoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
+        let projetos = getTodosProjetos "Database/projetos.json"
+
+
+        case (usuarioNoSistema, projetos) of
+                (Just usuario, projetos) -> do
+                        putStrLn "Digite sua senha:"
+                        senha <- getLine
+                        if (verificaSenhaUsuario usuario senha) then do
+                                if (usuarioEstaEmAlgumProjeto idUsuario projetos || ehGerente idUsuario projetos)then do
+                                        putStrLn "Mensagens Privadas:"
+                                        let projetos_user = listarProjetosDoUsuario idUsuario projetos
+                                        let mensagen = getMensagens "Database/mensagens.json"
+                                        putStrLn "Carregando...\n  "
+                                        threadDelay 100000
+                                        exibeMensagens mensagen idUsuario
+                                        menuRetorno
+                                 else do
+                                        clearScreen
+                                        putStrLn $ ".------------------------------------------------------------." ++ "\n"
+                                                ++ "|         Usuário não está cadastrado em nenhum projeto.     |" ++ "\n"
+                                                 ++ ".-----------------------------------------------------------." ++ "\n"
+                                        menuRetorno
+                        else do
+                                clearScreen
+                                putStrLn $ ".------------------------------------------------------------." ++ "\n"
+                                         ++ "|              Senha incorreta! Tente novamente.             |" ++ "\n"
+                                         ++ ".------------------------------------------------------------." ++ "\n"
+                                menuRetorno
+                
+                (Nothing, _) -> do
+                        clearScreen
+                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                ++ "|              ID inexistente! Tente novamente!            |" ++ "\n"
+                                ++ ".----------------------------------------------------------." ++ "\n"
+                        menuRetorno
+
+enviarMGeral :: IO()
+enviarMGeral = do
+        --Identificação do Usuário
+        putStrLn "Digite seu ID:"
+        idUsuario <- readLn:: IO Int
+
+        let usuarioNoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
+        let projetosNoSistema = getTodosProjetos "Database/projetos.json"
+
+        case (usuarioNoSistema, projetosNoSistema) of
+                (Just usuario, projetos )-> do
+                        putStrLn "Digite sua senha:"
+                        senha <- getLine
+                        if (verificaSenhaUsuario usuario senha) then do
+                                if (usuarioEstaEmAlgumProjeto idUsuario projetos || ehGerente idUsuario projetos)then do
+                                        --Deve-se listar os projetos em do usuário e pedir que indique o id para mandar a mensagem.
+                                        let projetos_user= listarProjetosDoUsuario idUsuario projetos
+                                        putStrLn projetos_user
+                                        putStrLn "Digite o id do projeto que deseja enviar a mensagem para todos os membros"
+                                        idEscolhido <- readLn :: IO Int
+                                        putStrLn "Digite a mensagem que será enviada para todos os membros do projetos"
+                                        mensagem <- getLine
+                                        salvarCaixadeMensagem "Database/mensagens.json" idEscolhido (nome usuario)mensagem
+                                        menuRetorno
+                                else do
+                                        putStrLn "Não está em projeto !"
+                                --putStrLn 
+                        else do
+                             putStrLn $ ".------------------------------------------------------------." ++ "\n"
+                                      ++ "|              Senha incorreta! Tente novamente.             |" ++ "\n"
+                                      ++ ".------------------------------------------------------------." ++ "\n"
+                (Nothing, _) -> do
+                        clearScreen
+                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                ++ "|              ID inexistente! Tente novamente!            |" ++ "\n"
+                                ++ ".----------------------------------------------------------." ++ "\n"
+
+
+enviarMPrivada:: IO()
+enviarMPrivada = do
+        --Identificação do Usuário
+        putStrLn "Digite seu ID:"
+        idUsuario <- readLn:: IO Int
+
+        let usuarios = getUsuarios "Database/usuarios.json"
+        let usuarioNoSistema = (getUsuario idUsuario usuarios)
+
+        case (usuarioNoSistema) of
+                (Just usuario)-> do
+                        putStrLn "Digite sua senha:"
+                        senha <- getLine
+                        if (verificaSenhaUsuario usuario senha) then do
+                                putStrLn "Usuários ativos:\n"
+                                aplicarImprimirUsuario (getUsuarios "Database/usuarios.json")
+                                putStrLn "Digite o id usuário que deseja enviar uma mensagem privada"
+                                id_destinatario <- readLn :: IO Int
+                                putStrLn "Digite a mensagem a ser enviada"
+                                mensagem <- getLine
+                                salvarCaixadeMensagem "Database/mensagens.json" id_destinatario (nome usuario) mensagem
+                                menuRetorno
+
+                        else do
+                                clearScreen
+                                putStrLn $ ".------------------------------------------------------------." ++ "\n"
+                                        ++ "|              Senha incorreta! Tente novamente.             |" ++ "\n"
+                                        ++ ".------------------------------------------------------------." ++ "\n"
+                                menuRetorno
+                                
+                Nothing -> do
+                        clearScreen
+                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                ++ "|              ID inexistente! Tente novamente!            |" ++ "\n"
+                                ++ ".----------------------------------------------------------." ++ "\n"
+                        menuRetorno
+
+menuRetorno :: IO()
+menuRetorno = do
+                putStrLn $ ".------------------------------------------------------------------." ++ "\n"
+                        ++ "|         Deseja voltar ao Menu Principal ou ao CHAT  ?             |" ++ "\n"
+                        ++ "|         C - MenuChat                                              |" ++ "\n"
+                        ++ "|         P - MenuPrincipal                                         |" ++ "\n"
+                        ++ "|         S - Sair do sistema                                       |" ++ "\n"
+                        ++ ".------------------------------------------------------------------." ++ "\n"
+                option <- getLine
+                let lowerOption = map toLower option
+                
+                case lowerOption of
+                        "c" -> menuChat
+                        "p" -> menuPrincipal
+                        "s" -> sairDoSistema
+                        _  -> erroMenuPrincipal 

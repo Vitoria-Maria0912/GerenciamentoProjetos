@@ -185,3 +185,26 @@ imprimeMembrosDoProjeto membroDoProjeto = imprimirUsuario membroDoProjeto
 getMembrosDoProjeto :: [Int] -> [Usuario] -> [Usuario]
 getMembrosDoProjeto listaIds usuarios =
   [membrosDoProjeto | membrosDoProjeto <- usuarios, (idUsuario membrosDoProjeto) `elem` listaIds]
+
+---------------------------------CAIXA_DE_MENSAGEM E PROJETO-----------------------------------------------------------------------------------------------------------------------------
+--Função que lista com base no ID, os projetos que está participando
+listarProjetosDoUsuario :: Int -> [Projeto] -> String
+listarProjetosDoUsuario id projetos =
+    let projetosDoUsuario = filter (\projeto -> 
+            usuarioEstaEmAlgumProjeto id [projeto] || ehGerente id [projeto]) projetos
+    in
+    "ID's dos Projetos que há participação:\n" ++ formatarIdsProjetos projetosDoUsuario
+
+--formata a saída dos ID dos projetos que o Usuário participa
+formatarIdsProjetos :: [Projeto] -> String
+formatarIdsProjetos [] = "Nenhum projeto encontrado."
+formatarIdsProjetos projetos =
+    unlines (map (\projeto -> "■ " ++ show (idProjeto projeto) ++ " - " ++ (nomeProjeto projeto)) projetos)
+
+-- Verifica se um usuário está presente em algum projeto do sistema
+usuarioEstaEmAlgumProjeto :: Int -> [Projeto] -> Bool
+usuarioEstaEmAlgumProjeto _ [] = False
+usuarioEstaEmAlgumProjeto id (projeto:projetosRestantes) =
+    if id `elem` membros projeto
+        then True
+        else usuarioEstaEmAlgumProjeto id projetosRestantes
