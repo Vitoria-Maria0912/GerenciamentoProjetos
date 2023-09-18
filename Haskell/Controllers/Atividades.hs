@@ -7,6 +7,7 @@ import Data.Aeson
 import GHC.Generics
 import System.IO.Unsafe
 import System.Directory
+import Prelude hiding (id)
 
 instance FromJSON Atividade
 instance ToJSON Atividade
@@ -16,15 +17,15 @@ data Atividade = Atividade {
     titulo :: String,
     descricao :: String,
     status :: String,
-    idProjetoAtividade :: Int, 
+    idProjetoAtividade :: Int,
     idAtividade :: Int,
     idMembroResponsavel :: Maybe Int,
-    feedbacks :: Maybe [String]
+    feedbacks :: [String]
 } deriving (Show, Generic)
 
 
 -- Cria uma atividade
-criarAtividade :: String -> String -> String -> Int -> Int -> Maybe Int -> Maybe [String] -> IO()
+criarAtividade :: String -> String -> String -> Int -> Int -> Maybe Int -> [String] -> IO()
 criarAtividade   filePath titulo descricao idProjetoAtividade idAtividade idMembroResponsavel feedback = do
   let atividade = Atividade titulo descricao "Não atribuída!" idProjetoAtividade idAtividade idMembroResponsavel feedback
   escreverAtividade filePath atividade
@@ -33,20 +34,11 @@ criarAtividade   filePath titulo descricao idProjetoAtividade idAtividade idMemb
 escreverAtividade :: String -> Atividade -> IO()
 escreverAtividade filePath atividade = do
 
-  let listaAtividades = (getTodasAtividades filePath) ++ [atividade]
+  let listaAtividades = getTodasAtividades filePath ++ [atividade]
 
   B.writeFile "../Temp.json" $ encode listaAtividades
   removeFile filePath
   renameFile "../Temp.json" filePath
-
--- Lê o arquivo projetos.json
-lerAtividades :: String -> [Atividade]
-lerAtividades filePath = do
-    let arquivo = unsafePerformIO(B.readFile filePath)
-    let decodedFile = decode arquivo :: Maybe [Atividade]
-    case decodedFile of
-        Nothing -> []
-        Just out -> out
 
 -- Remove uma atividade da lista de atividades
 apagarAtividade :: Int -> [Atividade] -> [Atividade]
@@ -66,8 +58,20 @@ deletarAtividade filePath idAtividade = do
     renameFile "../Temp.json" filePath
 
 -- Muda o status de uma atividade
-mudaStatus :: Atividade -> String -> Atividade
-mudaStatus atividade novoStatus = atividade {status = novoStatus}
+mudaStatus :: Int -> [Atividade] -> String -> [Atividade]
+mudaStatus _ [] _ = []
+mudaStatus id (ativ:ativs) novoStatus
+  | idAtividade ativ == id = ativ {status = novoStatus} : mudaStatus id ativs novoStatus
+  | otherwise = ativ : mudaStatus id ativs novoStatus
+
+editStatus :: String ->  Int ->  String -> IO()
+editStatus jsonFilePath idAtividade novoStatus = do
+  let listaAtividades = getTodasAtividades jsonFilePath
+  let atividadesAtualizadas = mudaStatus idAtividade listaAtividades novoStatus
+
+  B.writeFile "../Temp.json" $ encode atividadesAtualizadas
+  removeFile jsonFilePath
+  renameFile "../Temp.json" jsonFilePath
 
 -- Pega o ID do membro responsável pela atividade
 getMembroResponsavel :: Atividade -> String
@@ -90,38 +94,30 @@ ehMembroResponsavel membroResponsavelId atividades =
 getStatus :: Atividade -> String
 getStatus atividade = status atividade
 
--- Adiciona um Feedback a uma atividade
-adicionaFeedback :: Atividade -> String -> [String]
-adicionaFeedback atividade novoFeedback = do
-    case (feedbacks atividade) of
-        Just feedbacksAtuais -> feedbacksAtuais ++ [novoFeedback]
-        Nothing -> [novoFeedback]
+
+addFeedbackNaAtiv :: Int -> [Atividade] -> String -> [Atividade]
+addFeedbackNaAtiv _ [] _ = []
+addFeedbackNaAtiv id (ativ:ativs) novoFeedback
+  | idAtividade ativ == id = ativ { feedbacks = feedbacks ativ ++ [novoFeedback] } : addFeedbackNaAtiv id ativs novoFeedback
+  | otherwise = ativ : addFeedbackNaAtiv id ativs novoFeedback
+
+-- | Função que edita o Json ao adicionar ou remover um projeto
+editFeedbackDaAtividade :: String ->  Int ->  String -> IO()
+editFeedbackDaAtividade jsonFilePath idAtividade feedback = do
+  let listaAtividades = getTodasAtividades jsonFilePath
+  let atividadesAtualizadas = addFeedbackNaAtiv idAtividade listaAtividades feedback
+
+  B.writeFile "../Temp.json" $ encode atividadesAtualizadas
+  removeFile jsonFilePath
+  renameFile "../Temp.json" jsonFilePath
+
 
 -- Obtém os feedbacks da atividade
-getFeedbacks :: Atividade -> Maybe [String]
-getFeedbacks atividade = (feedbacks atividade)
-    
--- | Cria um feedback
-criarFeedbacks :: String -> Int -> String -> IO()
-criarFeedbacks filePath idAtividade novoFeedback = do
-    let todasAtividades = (getTodasAtividades filePath)
-    let atividade = (getAtividade idAtividade todasAtividades)
-    case atividade of
-        Just atividadeEncontrada -> do
-                let feedbacksAtualizados = (adicionaFeedback atividadeEncontrada novoFeedback)
-                (deletarAtividade filePath idAtividade)
-                let atividadesTemporarias = (getTodasAtividades filePath)
-                let atividadesAtualizadas = atividadesTemporarias ++ [atividadeEncontrada]
-                
-                B.writeFile "../Temp.json" $ encode atividadesAtualizadas
-                removeFile filePath
-                renameFile "../Temp.json" filePath
 
-                -- PRECISA RETIRAR OU MODIFICAR ESSE RETORNO
-                mapM_ putStrLn $ feedbacksAtualizados
-                
-        Nothing -> error "Atividade inexistente!"
-    
+getFeedbacks :: Atividade -> [String]
+getFeedbacks atividade = feedbacks atividade
+
+
 -- | Obtém uma atividade a partir do ID
 getAtividade :: Int -> [Atividade] -> Maybe Atividade
 getAtividade _ [] = Nothing
@@ -132,7 +128,7 @@ getAtividade atividadeId (x:xs)
 -- | Obtém as todas atividades cadastradas no sistema
 getTodasAtividades :: String -> [Atividade]
 getTodasAtividades filePath = do
-    let arquivo = unsafePerformIO(B.readFile filePath)
+    let arquivo = unsafePerformIO (B.readFile filePath)
     let decodedFile = decode arquivo :: Maybe [Atividade]
     case decodedFile of
         Nothing -> []

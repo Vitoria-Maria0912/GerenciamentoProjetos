@@ -39,11 +39,6 @@ getUsuarios path = do
   Nothing -> []
   Just usuarios -> usuarios
 
--- | Atribui uma atividade a um usuário 
-adicionaAtividadeAoUsuario :: Usuario -> Int -> [Int]
-adicionaAtividadeAoUsuario usuario idAtividade = 
-    atividadesAtribuidas usuario ++ [idAtividade]
-
 -- | Função que imprime o usuário omitindo informação sensível
 imprimirUsuario :: Usuario -> IO()
 imprimirUsuario usuario = putStrLn $ "               Nome: " ++ nome usuario 
@@ -101,6 +96,11 @@ editAtivDoUsuario jsonFilePath idUsuario novasAtiv = do
   removeFile jsonFilePath
   renameFile "../Temp.json" jsonFilePath
 
+
+atividadeEstaAtribuida :: Int -> Usuario -> Bool
+atividadeEstaAtribuida idAtividade usuario = elem idAtividade (atividadesAtribuidas usuario)
+
 --imprime formatação de usuários no sistema
 aplicarImprimirUsuario :: [Usuario] -> IO ()
 aplicarImprimirUsuario usuarios = mapM_ imprimirUsuario usuarios
+

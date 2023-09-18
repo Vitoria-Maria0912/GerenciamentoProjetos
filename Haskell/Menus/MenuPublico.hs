@@ -88,27 +88,35 @@ comecarAtividade = do
         case (atividadeDoSistema) of
                 Just atividade -> do
                         if status atividade == "Não atribuída!" then do
-                                let statusAtividade = mudaStatus atividade "Pendente..."
-                        --     adicionaAtividadeAoUsuario idAtividade usuario
-                                putStrLn $ "\n" ++ "Título: " ++ titulo atividade ++ "\n"
-                                                ++ "Descrição: " ++ descricao atividade ++ "\n"
-                                                ++ "Status: " ++ status statusAtividade
+                            if (atividadeEstaAtribuida idAtividade usuario) then do
+                                editStatus "Database/atividades.json" idAtividade "PENDENTE"
+                              
+                                putStrLn $ "\n\n" ++ "▎ Título: " ++ titulo atividade ++ "\n"
+                                                ++ "\n▎ Descrição: " ++ descricao atividade ++ "\n"
+                                                ++ "\n▎ Status: PENDENTE"  
+                            
+                            else putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
+                                                 ++ "|         Você não está atribuído a essa atividade!        |" ++ "\n"
+                                                 ++ ".----------------------------------------------------------." ++ "\n"
+
 
                         else do
-                                putStrLn "Esta atividade já está em andamento!"
+                            putStrLn "Esta atividade já está em andamento!" -- APARENTEMENTE NAO ESTÁ FUNCIONANDO
 
-                Nothing -> do
-                        clearScreen
-                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                                ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
-                                ++ ".----------------------------------------------------------." ++ "\n"
-                        comecarAtividade
-    else do
-        clearScreen
-        putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
-                ++ ".----------------------------------------------------------." ++ "\n"
-        comecarAtividade
+                    Nothing -> do
+                            clearScreen
+                            putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                    ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                                    ++ ".----------------------------------------------------------." ++ "\n"
+                            comecarAtividade
+        Nothing -> do
+                clearScreen
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                comecarAtividade
+
+                               
 
 -- | Finaliza uma atividade
 finalizarAtividade :: IO()
@@ -128,11 +136,10 @@ finalizarAtividade = do
 
                 case (atividadeDoSistema) of
                     Just atividade -> do
-                        let statusAtividade = mudaStatus atividade "Concluída"
-                        -- adicionaAtividadeAoUsuario idAtividade usuario
-                        putStrLn $ "\n" ++ "Título: " ++ titulo atividade ++ "\n"
-                                        ++ "Descrição: " ++ descricao atividade ++ "\n"
-                                        ++ "Status: " ++ status statusAtividade
+                        editStatus "Database/atividades.json" idAtividade "CONCLUÍDA"
+                        putStrLn $ "\n" ++ "▎ Título: " ++ titulo atividade ++ "\n"
+                                        ++ "\n▎ Descrição: " ++ descricao atividade ++ "\n"
+                                        ++ "\n▎ Status: CONCLUÍDA" 
 
                     Nothing -> do
                             clearScreen
@@ -205,7 +212,7 @@ criaFeedback :: IO ()
 criaFeedback = do
 
     putStrLn $ "Comente sobre uma atividade que você criou ou foi designado: \n\n"
-            ++ "Digite seu ID:"
+            ++ "Digite seu ID:\n"
     idUsuario <- readLn :: IO Int
 
     let usuariosCadastrados = (getUsuarios "Database/usuarios.json")
@@ -213,7 +220,7 @@ criaFeedback = do
 
     case (usuarioNoSistema) of
         Just usuario -> do
-                putStrLn "Digite o ID da atividade que deseja dar Feedback:"
+                putStrLn "\nDigite o ID da atividade que deseja dar Feedback:\n"
                 idAtividade <- readLn :: IO Int
 
                 let projetosCadastrados = (getTodosProjetos "Database/projetos.json")
@@ -223,9 +230,12 @@ criaFeedback = do
                 case (atividadeDoSistema) of
                     Just atividade -> do
                         if (ehGerente idUsuario projetosCadastrados) || (ehMembroResponsavel idUsuario atividadesCadastradas) then do
-                            putStrLn "Escreva um breve comentário sobre a atividade:"
+                            putStrLn "\nEscreva um breve comentário sobre a atividade:\n"
                             comentario <- getLine
-                            criarFeedbacks "Database/atividades.json" idAtividade comentario
+                            editFeedbackDaAtividade "Database/atividades.json" idAtividade comentario
+                            putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
+                                     ++ " Comentário adicionado com sucesso a atividade de ID " ++ show idAtividade ++ "\n"
+                                     ++ ".----------------------------------------------------------." ++ "\n"
                         else do
                             clearScreen
                             putStrLn $ ".----------------------------------------------------------." ++ "\n"

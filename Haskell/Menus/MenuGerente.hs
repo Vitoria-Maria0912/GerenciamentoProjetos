@@ -139,7 +139,7 @@ criaAtividade = do
             putStrLn "\nDescreva, brevemente, o que se deve realizar para concluir esta atividade."
             descricao <- getLine
 
-            idAtividade <- randomRIO (00000, 99999 :: Int)
+            idAtividade <- randomRIO (10010, 99999 :: Int)
 
             let atividadeNoSistema = getAtividade idAtividade (getTodasAtividades "Database/atividades.json")
 
@@ -153,12 +153,13 @@ criaAtividade = do
 
                 Nothing -> do
                         editAtivDoProjeto "Database/projetos.json" idProjeto idAtividade True
-                        criarAtividade "Database/atividades.json" titulo descricao idProjeto idAtividade Nothing Nothing
-                        -- chamar adicionarAtividade do banco de dados para adicionar essa atividade sem relacionar ao projeto e aumentar o banco de atividade
+                        criarAtividade "Database/atividades.json" titulo descricao idProjeto idAtividade Nothing []
+                        -- chamar adicionarAtividade do banco de dados para adicionar essa atividade sem relacionar ao projeto e aumentar o banco de atividades
                         clearScreen
                         putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                 ++ "  Atividade criada com sucesso! O ID da atividade é: " ++ show idAtividade ++ "\n"
                                 ++ ".----------------------------------------------------------." ++ "\n"
+
                         menuRestritoProjeto
 
         Nothing -> do
@@ -314,7 +315,9 @@ adicionaNovoMembro = do
            editMembrosDoProjeto "Database/projetos.json" idProjeto idUsuario True
            putStrLn $ ".---------------------------------------------------------." ++ "\n"
                     ++"|             Membro adicionado com sucesso!              |" ++ "\n"
-                    ++".---------------------------------------------------------." ++ "\n"
+                    ++".---------------------------------------------------------." ++ "\n"))
+           -- ADICIONAR CHAMADA PARA O MENU RESTRITO
+
 
 -- | Remover membro do projeto
 removeMembroProjeto :: IO ()

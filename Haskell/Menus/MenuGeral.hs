@@ -67,7 +67,7 @@ cadastrarUsuario = do
     putStrLn "Digite sua senha: "
     senha <- getLine
 
-    idUsuario <- randomRIO (0000, 9999 :: Int)
+    idUsuario <- randomRIO (1000, 9999 :: Int)
 
     let usuarioNoSistema = getUsuario idUsuario (getUsuarios userFilePath)
 
@@ -140,7 +140,10 @@ cadastrarProjeto = do
 
     let usuarioNoSistema = getUsuario idUsuario (getUsuarios "Database/usuarios.json")
 
+
+
     if isJust(usuarioNoSistema) then do
+
 
         putStrLn "Digite o título do seu projeto: "
         nomeProjeto <- getLine
@@ -148,7 +151,7 @@ cadastrarProjeto = do
         putStrLn "Digite a descrição do projeto: "
         descricaoProjeto <- getLine
 
-        idProjeto <- randomRIO (000, 999 :: Int)
+        idProjeto <- randomRIO (100, 999 :: Int)
 
         let projectFilePath = "Database/projetos.json"
         let projetoNoSistema = getProjeto idProjeto (getTodosProjetos projectFilePath)
