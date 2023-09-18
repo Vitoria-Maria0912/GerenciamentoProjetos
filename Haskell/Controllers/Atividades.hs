@@ -7,6 +7,7 @@ import Data.Aeson
 import GHC.Generics
 import System.IO.Unsafe
 import System.Directory
+import Prelude hiding (id)
 
 instance FromJSON Atividade
 instance ToJSON Atividade
@@ -16,7 +17,7 @@ data Atividade = Atividade {
     titulo :: String,
     descricao :: String,
     status :: String,
-    idProjetoAtividade :: Int, 
+    idProjetoAtividade :: Int,
     idAtividade :: Int,
     idMembroResponsavel :: Maybe Int,
     feedbacks :: [String]
@@ -33,7 +34,7 @@ criarAtividade   filePath titulo descricao idProjetoAtividade idAtividade idMemb
 escreverAtividade :: String -> Atividade -> IO()
 escreverAtividade filePath atividade = do
 
-  let listaAtividades = (getTodasAtividades filePath) ++ [atividade]
+  let listaAtividades = getTodasAtividades filePath ++ [atividade]
 
   B.writeFile "../Temp.json" $ encode listaAtividades
   removeFile filePath
@@ -57,8 +58,20 @@ deletarAtividade filePath idAtividade = do
     renameFile "../Temp.json" filePath
 
 -- Muda o status de uma atividade
-mudaStatus :: Atividade -> String -> Atividade
-mudaStatus atividade novoStatus = atividade {status = novoStatus}
+mudaStatus :: Int -> [Atividade] -> String -> [Atividade]
+mudaStatus _ [] _ = []
+mudaStatus id (ativ:ativs) novoStatus
+  | idAtividade ativ == id = ativ {status = novoStatus} : mudaStatus id ativs novoStatus
+  | otherwise = ativ : mudaStatus id ativs novoStatus
+
+editStatus :: String ->  Int ->  String -> IO()
+editStatus jsonFilePath idAtividade novoStatus = do
+  let listaAtividades = getTodasAtividades jsonFilePath
+  let atividadesAtualizadas = mudaStatus idAtividade listaAtividades novoStatus
+
+  B.writeFile "../Temp.json" $ encode atividadesAtualizadas
+  removeFile jsonFilePath
+  renameFile "../Temp.json" jsonFilePath
 
 -- Pega o ID do membro responsável pela atividade
 getMembroResponsavel :: Atividade -> String
@@ -98,11 +111,11 @@ editFeedbackDaAtividade jsonFilePath idAtividade feedback = do
   removeFile jsonFilePath
   renameFile "../Temp.json" jsonFilePath
 
-                     
+
 -- Obtém os feedbacks da atividade
 getFeedbacks :: Atividade -> [String]
-getFeedbacks atividade = (feedbacks atividade)
-    
+getFeedbacks atividade = feedbacks atividade
+
 
 -- | Obtém uma atividade a partir do ID
 getAtividade :: Int -> [Atividade] -> Maybe Atividade
@@ -114,7 +127,7 @@ getAtividade atividadeId (x:xs)
 -- | Obtém as todas atividades cadastradas no sistema
 getTodasAtividades :: String -> [Atividade]
 getTodasAtividades filePath = do
-    let arquivo = unsafePerformIO(B.readFile filePath)
+    let arquivo = unsafePerformIO (B.readFile filePath)
     let decodedFile = decode arquivo :: Maybe [Atividade]
     case decodedFile of
         Nothing -> []

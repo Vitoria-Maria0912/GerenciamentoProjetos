@@ -73,16 +73,19 @@ comecarAtividade = do
                     Just atividade -> do
                         if status atividade == "Não atribuída!" then do
                             if (atividadeEstaAtribuida idAtividade usuario) then do
-                                let statusAtividade = mudaStatus atividade "Pendente..."
-                              -- MELHORAR FORMATACAO
-                                putStrLn $ "\n" ++ "Título: " ++ titulo atividade ++ "\n"
-                                                ++ "Descrição: " ++ descricao atividade ++ "\n"
-                                                ++ "Status: " ++ status statusAtividade
+                                editStatus "Database/atividades.json" idAtividade "PENDENTE"
+                              
+                                putStrLn $ "\n\n" ++ "▎ Título: " ++ titulo atividade ++ "\n"
+                                                ++ "\n▎ Descrição: " ++ descricao atividade ++ "\n"
+                                                ++ "\n▎ Status: PENDENTE"  
                             
-                            else putStrLn "Você não está atribuído a essa atividade!"
+                            else putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
+                                                 ++ "|         Você não está atribuído a essa atividade!        |" ++ "\n"
+                                                 ++ ".----------------------------------------------------------." ++ "\n"
+
 
                         else do
-                            putStrLn "Esta atividade já está em andamento!"
+                            putStrLn "Esta atividade já está em andamento!" -- APARENTEMENTE NAO ESTÁ FUNCIONANDO
 
                     Nothing -> do
                             clearScreen
@@ -115,11 +118,10 @@ finalizarAtividade = do
 
                 case (atividadeDoSistema) of
                     Just atividade -> do
-                        let statusAtividade = mudaStatus atividade "Concluída"
-                        -- adicionaAtividadeAoUsuario idAtividade usuario
-                        putStrLn $ "\n" ++ "Título: " ++ titulo atividade ++ "\n"
-                                        ++ "Descrição: " ++ descricao atividade ++ "\n"
-                                        ++ "Status: " ++ status statusAtividade
+                        editStatus "Database/atividades.json" idAtividade "CONCLUÍDA"
+                        putStrLn $ "\n" ++ "▎ Título: " ++ titulo atividade ++ "\n"
+                                        ++ "\n▎ Descrição: " ++ descricao atividade ++ "\n"
+                                        ++ "\n▎ Status: CONCLUÍDA" 
 
                     Nothing -> do
                             clearScreen
