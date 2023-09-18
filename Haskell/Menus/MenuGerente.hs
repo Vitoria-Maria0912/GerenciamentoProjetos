@@ -176,7 +176,25 @@ deletaAtividade = do
                         ++ "|          Atividade inexistente! Tente novamente.         |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
                 deletaAtividade
-            
+
+-- | Função para visualizar atividades
+visualizarAtividades :: IO()
+visualizarAtividades = do
+    let atividadesCadastradas = (getTodasAtividades "Database/atividades.json")
+    mapM_ imprimirAtividades atividadesCadastradas
+    menuPublicoProjeto
+
+-- | Função que imprime as atividades para visualização
+imprimirAtividades :: Atividade -> IO()
+imprimirAtividades atividade = putStrLn $   "Título: " ++ (titulo atividade) ++ "\n" ++
+                                            "Descrição: " ++ (descricao atividade) ++ "\n" ++
+                                            "ID Projeto: " ++ show (idProjetoAtividade atividade) ++ "\n" ++
+                                            "ID Atividade: " ++ show (idAtividade atividade) ++ "\n" ++
+                                            "ID Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++
+                                            "Status: " ++ status atividade ++ "\n"
+
+
+
 -- Visualizar todos os membros do projeto
 -- gerenciarMembros :: IO()
 -- gerenciarMembros = do
@@ -275,3 +293,119 @@ deletaAtividade = do
 -- bancoDeAtividades :: IO ()
 -- bancoDeAtividades = do
 --   putStrLn "Implementação em andamento."
+
+
+
+----------------------------------------------------------------------------------------------------------------
+--BANCO DE ATIVIDADES
+-- Função para o menu de banco de atividades no menu do gerente
+menuBancoDeAtividades :: IO ()
+menuBancoDeAtividades = do
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "               Menu Banco de Atividades (Gerente):         " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+            ++ "|                Selecione uma opção:                      |" ++ "\n"
+            ++ "|                                                          |" ++ "\n"
+            ++ "|           L - Listar atividades cadastradas               |" ++ "\n"
+            ++ "|           A - Adicionar uma nova atividade                |" ++ "\n"
+            ++ "|           C - Consultar uma atividade por ID              |" ++ "\n"
+            ++ "|           F - Filtrar atividades por status               |" ++ "\n"
+            ++ "|           V - Voltar ao menu principal                    |" ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+
+    option <- getLine
+    let lowerOption = map toLower option
+    case lowerOption of
+        "l" -> listarAtividades
+        "a" -> adicionarAtividade
+        "c" -> consultarAtividade
+        "f" -> filtrarAtividades
+        "v" -> return ()  -- Voltar ao menu principal do gerente
+        _   -> putStrLn "Opção inválida." >> menuBancoDeAtividades
+
+-- Função para listar atividades cadastradas
+listarAtividades :: IO ()
+listarAtividades = do
+    atividades <- lerBancoDeAtividades
+    clearScreen
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "               Atividades Cadastradas:                     " ++ "\n"
+    mapM_ imprimirAtividades atividades
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+    menuBancoDeAtividades
+
+
+-- Função para criar uma nova atividade e adicioná-la ao banco
+adicionarAtividade :: IO ()
+adicionarAtividade = do
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "                   Adicionar uma nova atividade:           " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+    putStrLn "Digite o título da nova atividade: "
+    titulo <- getLine
+    putStrLn "Digite a descrição da nova atividade: "
+    descricao <- getLine
+    putStrLn "Digite o status da nova atividade: "
+    status <- getLine
+
+    -- Certificando de que todas as variáveis sejam convertidas para strings
+    let descricaoStr = show descricao
+    let feedbacksStr = show feedbacks  -- Certifique-se de que feedbacks seja uma variável válida
+    let idAtividadeStr = show idAtividade  -- Certifique-se de que idAtividade seja uma variável válida
+    let idMembroResponsavelStr = show idMembroResponsavel  -- Certifique-se de que idMembroResponsavel seja uma variável válida
+    let idProjetoAtividadeStr = show idProjetoAtividade  -- Certifique-se de que idProjetoAtividade seja uma variável válida
+    let statusStr = show status
+    let tituloStr = show titulo
+
+    -- Chame a função para adicionar a atividade diretamente com os dados inseridos
+    adicionarAtividadeAoJSON [descricaoStr, feedbacksStr, idAtividadeStr, idMembroResponsavelStr, idProjetoAtividadeStr, statusStr, tituloStr]
+    putStrLn "Atividade adicionada com sucesso!"
+    menuBancoDeAtividades
+
+-- | Função que imprime os detalhes de uma atividade
+imprimirAtividade :: Atividade -> IO ()
+imprimirAtividade atividade = do
+    putStrLn $ ".----------------------------------------------------------."
+    putStrLn "Detalhes da Atividade:"
+    putStrLn $ "Título: " ++ titulo atividade
+    putStrLn $ "Descrição: " ++ descricao atividade
+    putStrLn $ "Status: " ++ status atividade
+    putStrLn $ "ID da Atividade: " ++ show (idAtividade atividade)
+    putStrLn $ "ID do Membro Responsável: " ++ getMembroResponsavel atividade
+    putStrLn $ "ID do Projeto da Atividade: " ++ show (idProjetoAtividade atividade)
+    putStrLn $ "Feedbacks: " ++ feedbacks atividade
+    putStrLn $ ".----------------------------------------------------------."
+
+
+
+-- Função para consultar uma atividade por ID
+consultarAtividade :: IO ()
+consultarAtividade = do
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "                Consultar uma atividade por ID:            " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+    putStrLn "Digite o ID da atividade a ser consultada: "
+    idAtividade <- readLn :: IO Int
+    atividade <- consultarAtividadePorID idAtividade
+    case atividade of
+        Just a  -> do
+            putStrLn $ "Atividade encontrada:"
+            imprimirAtividade a
+        Nothing -> putStrLn "Atividade não encontrada."
+    menuBancoDeAtividades
+
+-- Função para filtrar atividades por status
+filtrarAtividades :: IO ()
+filtrarAtividades = do
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "               Filtrar atividades por status:              " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+    putStrLn "Digite o status para filtrar as atividades: "
+    status <- getLine
+    atividadesFiltradas <- filtrarAtividadesPorStatus status
+    if null atividadesFiltradas
+        then putStrLn "Nenhuma atividade encontrada com o status especificado."
+        else do
+            putStrLn $ "Atividades com o status '" ++ status ++ "':"
+            mapM_ imprimirAtividade atividadesFiltradas
+    menuBancoDeAtividades
