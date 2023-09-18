@@ -113,6 +113,7 @@ editFeedbackDaAtividade jsonFilePath idAtividade feedback = do
 
 
 -- Obtém os feedbacks da atividade
+
 getFeedbacks :: Atividade -> [String]
 getFeedbacks atividade = feedbacks atividade
 

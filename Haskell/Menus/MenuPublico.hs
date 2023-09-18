@@ -3,9 +3,22 @@ module Menus.MenuPublico where
 import System.Info (os)
 import System.Process (system)
 import Data.Char (toLower)
+import Data.Maybe
 import Controllers.Usuario
 import Controllers.Projeto
 import Controllers.Atividades
+
+-- | Limpa a tela, deixando apenas o atual comando
+clearScreen :: IO ()
+clearScreen = do
+    case os of
+        "linux" -> do
+            _ <- system "clear"
+            return ()
+        "mingw32" -> do
+            _ <- system "cls"
+            return ()
+        _ -> return ()
 
 -- | Exibe erro e retorna ao menu
 erroMenuPublico :: IO()
@@ -25,6 +38,7 @@ menuPublicoProjeto = do
             ++ "|                                                          |" ++ "\n"
             ++ "|                 Selecione uma opção:                     |" ++ "\n"
             ++ "|                                                          |" ++ "\n"
+            ++ "|            L - Listar projetos cadastrados               |" ++ "\n"
             ++ "|            I - Iniciar uma atividade                     |" ++ "\n"
             ++ "|            F - Finalizar uma atividade                   |" ++ "\n"
             ++ "|            V - Visualizar atividades do projeto          |" ++ "\n"
@@ -37,9 +51,12 @@ menuPublicoProjeto = do
     let lowerOption = map toLower option
     case lowerOption of 
 
+        "l" -> do
+                visualizarProjetos
+                menuPublicoProjeto
         "i" -> comecarAtividade
         "f" -> finalizarAtividade
-        -- "v" -> visualizarAtividades
+        "v" -> visualizarAtividades
         "a" -> statusAtividade
         "o" -> criaFeedback
         "s" -> sairDoSistema
@@ -63,14 +80,13 @@ comecarAtividade = do
     
     let usuariosDoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
 
-    case (usuariosDoSistema) of
-        Just usuario -> do
-                putStrLn "Digite o ID da atividade que deseja começar:"
-                idAtividade <- readLn :: IO Int
-                let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
+    if isJust(usuariosDoSistema) then do
+        putStrLn "Digite o ID da atividade que deseja começar:"
+        idAtividade <- readLn :: IO Int
+        let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
 
-                case (atividadeDoSistema) of
-                    Just atividade -> do
+        case (atividadeDoSistema) of
+                Just atividade -> do
                         if status atividade == "Não atribuída!" then do
                             if (atividadeEstaAtribuida idAtividade usuario) then do
                                 editStatus "Database/atividades.json" idAtividade "PENDENTE"
@@ -99,6 +115,8 @@ comecarAtividade = do
                         ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
                 comecarAtividade
+
+                               
 
 -- | Finaliza uma atividade
 finalizarAtividade :: IO()
@@ -159,20 +177,35 @@ statusAtividade = do
                         ++ ".----------------------------------------------------------." ++ "\n"
                 statusAtividade
 
+-- | Função para visualizar atividades do projeto
+visualizarAtividades :: IO()
+visualizarAtividades = do
 
--- visualizarAtividades :: IO()
--- visualizarAtividades = do 
+    putStrLn $ "Visualizar atividade: \n\n"
+            ++ "Digite o ID do projeto:"
+            
+    idProjeto <- readLn :: IO Int
 
---     putStrLn "Digite o ID do projeto que deseja visualizar as atividade:"
---     idProjeto <- readLn :: IO Int
+    let projetosDoSistema = getTodosProjetos "Database/projetos.json"
+    let projetoNoSistema = getProjeto idProjeto projetosDoSistema
 
---     -- será possível ver apenas o nome ou, por exemplo, a quantidade de membros
---     -- em cada atividade?
+    case projetoNoSistema of
+            Just projeto -> do
+                clearScreen
+                let atividadesCadastradas = (getTodasAtividades "Database/atividades.json")
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "            Estas são as atividades do projeto:             " ++ "\n"
+                mapM_ imprimeAtividadesDoProjeto (getAtividadesDoProjeto (atividades projeto) atividadesCadastradas)
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                
+                menuPublicoProjeto
 
---     -- let projeto = Projeto.getProjeto idProjeto
-   
---     putStrLn "projeto.exibeAtividades"
-
+            Nothing -> do
+                clearScreen
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "|           Projeto inexistente! Tente novamente!          |" ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                menuPublicoProjeto
 
 -- | Função para criar feedback
 criaFeedback :: IO ()
@@ -222,14 +255,13 @@ criaFeedback = do
                         ++ ".----------------------------------------------------------." ++ "\n"
                 criaFeedback
 
--- | Limpa a tela, deixando apenas o atual comando
-clearScreen :: IO ()
-clearScreen = do
-    case os of
-        "linux" -> do
-            _ <- system "clear"
-            return ()
-        "mingw32" -> do
-            _ <- system "cls"
-            return ()
-        _ -> return ()
+-- | Função para visualizar projetos
+visualizarProjetos :: IO ()
+visualizarProjetos = do
+  clearScreen
+
+  let projetos = getTodosProjetos "Database/projetos.json"
+  putStrLn $ ".----------------------------------------------------------." ++ "\n"
+          ++ "            Estes são os projetos no sistema:               " ++ "\n"
+  mapM_ imprimirProjetos projetos
+  putStrLn $ ".----------------------------------------------------------." ++ "\n"

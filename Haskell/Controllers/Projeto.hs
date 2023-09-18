@@ -144,29 +144,22 @@ removeMembroDoProjeto id (proj:projs) membroARemover
   | idProjeto proj == id = proj { membros = filter (/= membroARemover) (membros proj) } : removeMembroDoProjeto id projs membroARemover
   | otherwise = proj : removeMembroDoProjeto id projs membroARemover
 
--- Obtem os IDs das atividades cadastradas em um projetos
--- getIdsAtividades :: Projeto -> [Atividade]
--- getIdsAtividades projeto = 
---     case atividades projeto of
---         Just atividadesProjeto -> [unlines atividadesProjeto] 
---         _ -> []
-
 -- | Função que obtem os IDs dos usuários cadastrados em um projetos
-getMembrosDoProjeto :: Projeto -> [Int]
-getMembrosDoProjeto projeto = membros projeto
+getIdsMembrosDoProjeto :: Projeto -> [Int]
+getIdsMembrosDoProjeto projeto = (membros projeto)
 
 -- | Função que imprime a lista de ids (POSSIVELMENTE PODE IR PRA UTIL?)
-
-imprimirListaDeIds :: [Int] -> String
-imprimirListaDeIds lista = unwords (map show lista)
+-- imprimirListaDeIds :: [Int] -> String
+-- imprimirListaDeIds lista = unwords (map show lista)
 
 -- | Função que checa se o membro está na lista de membros de um projeto
 membroEstaNoProjeto :: Int -> Projeto -> Bool
-membroEstaNoProjeto idMembro projeto = elem idMembro (getMembrosDoProjeto projeto)
+membroEstaNoProjeto idMembro projeto = elem idMembro (getIdsMembrosDoProjeto projeto)
 
 -- | Função que imprime os projetos para visualização
 imprimirProjetos :: Projeto -> IO()
-imprimirProjetos p = putStrLn $ "ID: " ++ show (idProjeto p) ++ ", Nome: " ++ nomeProjeto p
+imprimirProjetos projeto = putStrLn $ "             Título: " ++ nomeProjeto projeto 
+                                   ++ " (ID: " ++ show (idProjeto projeto) ++ ")"
 
 -- | Função que verifica se uma atividade está no projeto
 atividadeEstaNoProjeto :: Int -> Projeto -> [Atividade] -> Bool
@@ -175,10 +168,43 @@ atividadeEstaNoProjeto idAtividade projeto listaAtividades =
     Just _  -> idAtividade `elem` (atividades projeto)
     Nothing -> False
 
+-- | Função que imprime as atividades do projeto
+imprimeAtividadesDoProjeto :: Atividade -> IO()
+imprimeAtividadesDoProjeto atividadeDoProjeto = imprimirAtividade atividadeDoProjeto
 
+-- | Função que retorna as atividades correspondentes aos IDs de um projeto
+getAtividadesDoProjeto :: [Int] -> [Atividade] -> [Atividade]
+getAtividadesDoProjeto listaIds atividades =
+  [atividadesDoProjeto | atividadesDoProjeto <- atividades, (idAtividade atividadesDoProjeto) `elem` listaIds]
 
+-- | Função que imprime as atividades do projeto
+imprimeMembrosDoProjeto :: Usuario -> IO()
+imprimeMembrosDoProjeto membroDoProjeto = imprimirUsuario membroDoProjeto
 
--- SERIA MELHOR EM PROJETO.hs?
--- Verifica se a Atividade já existe no sistema
--- verificaIdAtividade :: Projeto -> String -> Bool 
--- verificaIdAtividade projeto atividadeId = any (\idAtividade -> idAtividade == atividadeId) (getIdsAtividades projeto)
+-- | Função que retorna as atividades correspondentes aos IDs de um projeto
+getMembrosDoProjeto :: [Int] -> [Usuario] -> [Usuario]
+getMembrosDoProjeto listaIds usuarios =
+  [membrosDoProjeto | membrosDoProjeto <- usuarios, (idUsuario membrosDoProjeto) `elem` listaIds]
+
+---------------------------------CAIXA_DE_MENSAGEM E PROJETO-----------------------------------------------------------------------------------------------------------------------------
+--Função que lista com base no ID, os projetos que está participando
+listarProjetosDoUsuario :: Int -> [Projeto] -> String
+listarProjetosDoUsuario id projetos =
+    let projetosDoUsuario = filter (\projeto -> 
+            usuarioEstaEmAlgumProjeto id [projeto] || ehGerente id [projeto]) projetos
+    in
+    "ID's dos Projetos que há participação:\n" ++ formatarIdsProjetos projetosDoUsuario
+
+--formata a saída dos ID dos projetos que o Usuário participa
+formatarIdsProjetos :: [Projeto] -> String
+formatarIdsProjetos [] = "Nenhum projeto encontrado."
+formatarIdsProjetos projetos =
+    unlines (map (\projeto -> "■ " ++ show (idProjeto projeto) ++ " - " ++ (nomeProjeto projeto)) projetos)
+
+-- Verifica se um usuário está presente em algum projeto do sistema
+usuarioEstaEmAlgumProjeto :: Int -> [Projeto] -> Bool
+usuarioEstaEmAlgumProjeto _ [] = False
+usuarioEstaEmAlgumProjeto id (projeto:projetosRestantes) =
+    if id `elem` membros projeto
+        then True
+        else usuarioEstaEmAlgumProjeto id projetosRestantes
