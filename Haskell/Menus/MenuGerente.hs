@@ -419,7 +419,7 @@ bancoDeAtividades = do
 menuBancoDeAtividades :: IO ()
 menuBancoDeAtividades = do
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
-            ++ "|              Menu Banco de Atividades (Gerente):          |" ++ "\n"
+            ++ "|              Menu Banco de Atividades                     |" ++ "\n"
             ++ "|                                                           |" ++ "\n"
             ++ "|                Selecione uma opção:                       |" ++ "\n"
             ++ "|                                                           |" ++ "\n"
@@ -427,6 +427,7 @@ menuBancoDeAtividades = do
             ++ "|           C - Consultar uma atividade por ID              |" ++ "\n"
             ++ "|           F - Filtrar atividades por status               |" ++ "\n"
             ++ "|           V - Voltar ao menu principal                    |" ++ "\n"
+            ++ "|           S - Sair do sistema                             |" ++ "\n"
             ++ ".-----------------------------------------------------------." ++ "\n"
 
     option <- getLine
@@ -435,5 +436,7 @@ menuBancoDeAtividades = do
         "l" -> bancoDeAtividades
         "c" ->  consultarAtividadeId
        -- "f" ->  getStatus
-        "v" -> return () 
-        _   -> putStrLn "Opção inválida." >> menuBancoDeAtividades
+        "v" -> menuRestritoProjeto
+        "s" -> sairDoSistema
+        _   -> erroMenuGerente
+     
