@@ -39,14 +39,15 @@ getUsuarios path = do
   Nothing -> []
   Just usuarios -> usuarios
 
-
+-- | Atribui uma atividade a um usuário 
 adicionaAtividadeAoUsuario :: Usuario -> Int -> [Int]
 adicionaAtividadeAoUsuario usuario idAtividade = 
     atividadesAtribuidas usuario ++ [idAtividade]
 
 -- | Função que imprime o usuário omitindo informação sensível
 imprimirUsuario :: Usuario -> IO()
-imprimirUsuario u = putStrLn $ "ID: " ++ show (idUsuario u) ++ ", Nome: " ++ nome u
+imprimirUsuario usuario = putStrLn $ "               Nome: " ++ nome usuario 
+                                               ++ " (ID: " ++ show (idUsuario usuario) ++ ")"
 
 -- | Função que salva e escreve o usuario no arquivo diretamente
 salvarUsuario :: String -> Int -> String -> String -> [Int] -> IO()
@@ -83,16 +84,18 @@ verificaSenhaUsuario usuario senhaUsuario = ((senha usuario) == senhaUsuario)
 -- getNumDeUsuarios :: String -> Int
 -- getNumDeUsuarios jsonFilePath = length (getUsuarios jsonFilePath)
 
-atualizaAtivUsuario :: Int -> [Usuario] -> [Int] -> [Usuario]
-atualizaAtivUsuario _ [] _ = []
-atualizaAtivUsuario id (usuario:usuarios) novasAtiv
-  | idUsuario usuario == id = usuario { atividadesAtribuidas = atividadesAtribuidas usuario ++ novasAtiv } : atualizaAtivUsuario id usuarios novasAtiv
-  | otherwise = usuario : atualizaAtivUsuario id usuarios novasAtiv
+-- | 
+atualizaAtividadeUsuario :: Int -> [Usuario] -> [Int] -> [Usuario]
+atualizaAtividadeUsuario _ [] _ = []
+atualizaAtividadeUsuario id (usuario:usuarios) novasAtiv
+  | idUsuario usuario == id = usuario { atividadesAtribuidas = atividadesAtribuidas usuario ++ novasAtiv } : atualizaAtividadeUsuario id usuarios novasAtiv
+  | otherwise = usuario : atualizaAtividadeUsuario id usuarios novasAtiv
 
+-- |
 editAtivDoUsuario :: String -> Int -> [Int] -> IO ()
 editAtivDoUsuario jsonFilePath idUsuario novasAtiv = do
   let listaUsuarios = getUsuarios jsonFilePath
-  let usuariosAtualizados = atualizaAtivUsuario idUsuario listaUsuarios novasAtiv
+  let usuariosAtualizados = atualizaAtividadeUsuario idUsuario listaUsuarios novasAtiv
 
   B.writeFile "../Temp.json" $ encode usuariosAtualizados
   removeFile jsonFilePath

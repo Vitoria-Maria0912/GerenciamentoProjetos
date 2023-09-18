@@ -101,7 +101,7 @@ adicionaFeedback atividade novoFeedback = do
 getFeedbacks :: Atividade -> Maybe [String]
 getFeedbacks atividade = (feedbacks atividade)
     
--- Remove uma atividade do arquivo.JSON
+-- | Cria um feedback
 criarFeedbacks :: String -> Int -> String -> IO()
 criarFeedbacks filePath idAtividade novoFeedback = do
     let todasAtividades = (getTodasAtividades filePath)
@@ -122,15 +122,14 @@ criarFeedbacks filePath idAtividade novoFeedback = do
                 
         Nothing -> error "Atividade inexistente!"
     
-
--- Obtém uma atividade a partir do ID
+-- | Obtém uma atividade a partir do ID
 getAtividade :: Int -> [Atividade] -> Maybe Atividade
 getAtividade _ [] = Nothing
 getAtividade atividadeId (x:xs)
   | idAtividade x == atividadeId = Just x
   | otherwise = getAtividade atividadeId xs
 
--- Obtém as todas atividades cadastradas no sistema
+-- | Obtém as todas atividades cadastradas no sistema
 getTodasAtividades :: String -> [Atividade]
 getTodasAtividades filePath = do
     let arquivo = unsafePerformIO(B.readFile filePath)
@@ -139,20 +138,15 @@ getTodasAtividades filePath = do
         Nothing -> []
         Just out -> out
 
--- Exibe uma Atividade, em formato de lista com todos os seus atributos
-getAtividadesToString :: Int -> [Atividade] -> Maybe [String] 
-getAtividadesToString atividadeId atividades =
-    case filter (\u -> idAtividade u == atividadeId) atividades of
-        [atividadeEncontrada] -> Just (formataAtividade atividadeEncontrada)
-        _ -> Nothing
+-- | Função que imprime as atividades para visualização
+imprimirAtividade :: Atividade -> IO()
+imprimirAtividade atividade = putStrLn $ "             Título: " ++ (titulo atividade) ++ "\n" ++
+                                         "             Descrição: " ++ (descricao atividade) ++ "\n" ++
+                                         "             ID Projeto: " ++ show (idProjetoAtividade atividade) ++ "\n" ++
+                                         "             ID Atividade: " ++ show (idAtividade atividade) ++ "\n" ++
+                                         "             Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++
+                                         "             Status: " ++ status atividade ++ "\n"
 
--- Formata a atividade em uma lista com todos os seus atributos
-formataAtividade:: Atividade -> [String]
-formataAtividade atividade = ["Titulo: " ++ (titulo atividade) ++ "\n" ++
-                              "Descrição: " ++ (descricao atividade) ++ "\n" ++
-                              "ID Projeto: " ++ show (idProjetoAtividade atividade) ++ "\n" ++
-                              "ID Atividade: " ++ show (idAtividade atividade) ++ "\n" ++
-                              "ID Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++
-                              "Status: " ++ status atividade ++ "\n"]
+
 
 

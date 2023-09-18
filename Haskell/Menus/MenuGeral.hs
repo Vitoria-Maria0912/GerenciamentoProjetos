@@ -25,27 +25,25 @@ menuPrincipal :: IO ()
 menuPrincipal = do
 
   putStrLn $ ".----------------------------------------------------------." ++ "\n"
-          ++ "|                      Menu Principal                      |" ++ "\n"
+          ++ "|                     Menu Principal                       |" ++ "\n"
           ++ "|                                                          |" ++ "\n"
-          ++ "|                   Selecione uma opção:                   |" ++ "\n"
+          ++ "|                  Selecione uma opção:                    |" ++ "\n"
           ++ "|                                                          |" ++ "\n"
-          ++ "|             G - Menu de projetos                         |" ++ "\n"
-          ++ "|             C - Cadastrar novo usuário                   |" ++ "\n"
-          ++ "|             D - Deletar perfil                           |" ++ "\n"
-          ++ "|             P - Criar projeto                            |" ++ "\n"
-          ++ "|             L - Listar projetos em andamento             |" ++ "\n"
-          ++ "|             M - Caixa de mensagens                       |" ++ "\n"
-          ++ "|             S - Sair do sistema                          |" ++ "\n"
+          ++ "|               C - Cadastrar novo usuário                 |" ++ "\n"
+          ++ "|               D - Deletar perfil                         |" ++ "\n"
+          ++ "|               P - Criar projeto                          |" ++ "\n"
+          ++ "|               G - Menu de projetos                       |" ++ "\n"
+          ++ "|               M - Caixa de mensagens                     |" ++ "\n"
+          ++ "|               S - Sair do sistema                        |" ++ "\n"
           ++ ".----------------------------------------------------------." ++ "\n"
 
   option <- getLine
   let lowerOption = map toLower option
   case lowerOption of
-      "g" -> menuProjetos
       "c" -> cadastrarUsuario
       "d" -> deletarUsuario
       "p" -> cadastrarProjeto
-      "l" -> visualizarProjetos
+      "g" -> menuProjetos
     --   "m" -> chat
       "s" -> sairDoSistema
       _   -> erroMenuPrincipal
@@ -56,8 +54,11 @@ cadastrarUsuario = do
 
     let userFilePath = "Database/usuarios.json"
 
-    putStrLn $ "Cadastro: \n\n"
-            ++ "Digite seu nome: "
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "                        Cadastro:                           " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+
+    putStrLn "Digite seu nome: "
 
     nome <- getLine
 
@@ -89,8 +90,11 @@ deletarUsuario = do
 
   let userFilePath = "Database/usuarios.json"
 
-  putStrLn $ "Deletar perfil: \n\n"
-          ++ "Digite seu ID:"
+  putStrLn $ ".----------------------------------------------------------." ++ "\n"
+          ++ "                      Deletar perfil:                       " ++ "\n"
+          ++ ".----------------------------------------------------------." ++ "\n"
+
+  putStrLn "Digite seu ID:"
   idUsuario <- readLn :: IO Int
 
   let usuarioNoSistema = getUsuario idUsuario (getUsuarios userFilePath)
@@ -124,44 +128,44 @@ deletarUsuario = do
 cadastrarProjeto :: IO ()
 cadastrarProjeto = do
 
-    let projectFilePath = "Database/projetos.json"
-
-    putStrLn $ "Criar projeto: \n\n"
-            ++ "Digite o título do seu projeto: "
-
-    nomeProjeto <- getLine
-
-    putStrLn "Digite a descrição do projeto: "
-    descricaoProjeto <- getLine
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "                      Criar projeto:                        " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
 
     putStrLn "Digite seu ID: "
+
     idUsuario <- readLn :: IO Int
 
     let usuarioNoSistema = getUsuario idUsuario (getUsuarios "Database/usuarios.json")
 
-    case usuarioNoSistema of
-        Just _ -> do
-                idProjeto <- randomRIO (000, 999 :: Int)
+    if isJust(usuarioNoSistema) then do
 
-                let projetoNoSistema = getProjeto idProjeto (getTodosProjetos projectFilePath)
+        putStrLn "Digite o título do seu projeto: "
+        nomeProjeto <- getLine
 
-                case projetoNoSistema of
-                        Just _ -> do
-                                clearScreen
-                                putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                                        ++ "|             Falha no cadastro! Tente novamente!          |" ++ "\n"
-                                        ++ ".----------------------------------------------------------." ++ "\n"
-                                cadastrarProjeto
+        putStrLn "Digite a descrição do projeto: "
+        descricaoProjeto <- getLine
 
-                        Nothing -> do
-                                criaProjeto projectFilePath idProjeto nomeProjeto descricaoProjeto idUsuario [] []
-                                clearScreen
-                                putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                                        ++ "  Projeto criado com sucesso! O ID do seu projeto é: " ++ show idProjeto ++ "\n"
-                                        ++ ".----------------------------------------------------------." ++ "\n"
-                                menuPrincipal
+        idProjeto <- randomRIO (000, 999 :: Int)
 
-        Nothing -> do
+        let projectFilePath = "Database/projetos.json"
+        let projetoNoSistema = getProjeto idProjeto (getTodosProjetos projectFilePath)
+
+        if isJust(projetoNoSistema) then do
+                clearScreen
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "|             Falha no cadastro! Tente novamente!          |" ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                cadastrarProjeto
+        else do
+                criaProjeto projectFilePath idProjeto nomeProjeto descricaoProjeto idUsuario [] []
+                clearScreen
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "  Projeto criado com sucesso! O ID do seu projeto é: " ++ show idProjeto ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                menuPrincipal
+
+        else do
                 clearScreen
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                         ++ "|              ID inexistente! Tente novamente!            |" ++ "\n"
@@ -174,8 +178,11 @@ menuProjetos = do
 
     let projectFilePath = "Database/projetos.json"
 
-    putStrLn $ "Menu de projetos: \n\n"
-            ++ "Digite seu ID:"
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "                    Menu de projetos:                       " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+
+    putStrLn "Digite seu ID:"
     idUsuario <- readLn :: IO Int
 
     let usuarios = getUsuarios "Database/usuarios.json"
@@ -195,17 +202,10 @@ menuProjetos = do
         if gerente then menuRestritoProjeto
         else menuPublicoProjeto
 
--- Função para visualizar projetos (MODIFICAR DEPOIS PARA SER SÓ OS PENDENTES - COM ATIVIDADES NÃO CONCLUÍDAS)
-visualizarProjetos :: IO ()
-visualizarProjetos = do
-  putStrLn "\n Visualizar projetos: \n"
-  let projetos = getTodosProjetos "Database/projetos.json"
-  putStrLn "Esses são os projetos atuais no sistema: \n"
-  mapM_ imprimirProjetos projetos
-  menuPrincipal
-
--- -- Entra no chat
+-- Entra no chat
 -- chat :: IO ()
 -- chat = do
---   putStrLn "Implementação em andamento."
---   menuPrincipal
+--   clearScreen
+--   putStrLn $ ".----------------------------------------------------------." ++ "\n"
+--           ++ "                     Caixa de Mensagens:                    " ++ "\n"
+--           ++ ".----------------------------------------------------------." ++ "\n"
