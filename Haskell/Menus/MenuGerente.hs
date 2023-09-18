@@ -129,7 +129,7 @@ criaAtividade = do
             putStrLn "\nDescreva, brevemente, o que se deve realizar para concluir esta atividade."
             descricao <- getLine
 
-            idAtividade <- randomRIO (00000, 99999 :: Int)
+            idAtividade <- randomRIO (10010, 99999 :: Int)
 
             let atividadeNoSistema = getAtividade idAtividade (getTodasAtividades "Database/atividades.json")
 
@@ -142,9 +142,11 @@ criaAtividade = do
 
                 Nothing -> do
                         editAtivDoProjeto "Database/projetos.json" idProjeto idAtividade True
-                        criarAtividade "Database/atividades.json" titulo descricao idProjeto idAtividade Nothing Nothing
+                        criarAtividade "Database/atividades.json" titulo descricao idProjeto idAtividade Nothing []
                         -- chamar adicionarAtividade do banco de dados para adicionar essa atividade sem relacionar ao projeto e aumentar o banco de atividade
-                        putStrLn $ "\n Atividade criada com sucesso!  ID da atividade é: " ++ show idAtividade
+                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                 ++ "        Atividade criada com sucesso! Seu ID é " ++ show idAtividade ++ "\n"
+                                 ++ ".----------------------------------------------------------." ++ "\n"
                         menuRestritoProjeto
 
         Nothing -> do
@@ -259,6 +261,7 @@ adicionaNovoMembro = do
            putStrLn $ ".---------------------------------------------------------." ++ "\n"
                     ++"|             Membro adicionado com sucesso!              |" ++ "\n"
                     ++".---------------------------------------------------------." ++ "\n"))
+           -- ADICIONAR CHAMADA PARA O MENU RESTRITO
 
 -- Remover membro do projeto
 removeMembroProjeto :: IO ()

@@ -64,7 +64,7 @@ cadastrarUsuario = do
     putStrLn "Digite sua senha: "
     senha <- getLine
 
-    idUsuario <- randomRIO (0000, 9999 :: Int)
+    idUsuario <- randomRIO (1000, 9999 :: Int)
 
     let usuarioNoSistema = getUsuario idUsuario (getUsuarios userFilePath)
 
@@ -141,7 +141,7 @@ cadastrarProjeto = do
 
     case usuarioNoSistema of
         Just _ -> do
-                idProjeto <- randomRIO (000, 999 :: Int)
+                idProjeto <- randomRIO (100, 999 :: Int)
 
                 let projetoNoSistema = getProjeto idProjeto (getTodosProjetos projectFilePath)
 

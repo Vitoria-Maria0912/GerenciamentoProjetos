@@ -40,10 +40,6 @@ getUsuarios path = do
   Just usuarios -> usuarios
 
 
-adicionaAtividadeAoUsuario :: Usuario -> Int -> [Int]
-adicionaAtividadeAoUsuario usuario idAtividade = 
-    atividadesAtribuidas usuario ++ [idAtividade]
-
 -- | Função que imprime o usuário omitindo informação sensível
 imprimirUsuario :: Usuario -> IO()
 imprimirUsuario u = putStrLn $ "ID: " ++ show (idUsuario u) ++ ", Nome: " ++ nome u
@@ -97,3 +93,6 @@ editAtivDoUsuario jsonFilePath idUsuario novasAtiv = do
   B.writeFile "../Temp.json" $ encode usuariosAtualizados
   removeFile jsonFilePath
   renameFile "../Temp.json" jsonFilePath
+
+atividadeEstaAtribuida :: Int -> Usuario -> Bool
+atividadeEstaAtribuida idAtividade usuario = elem idAtividade (atividadesAtribuidas usuario)

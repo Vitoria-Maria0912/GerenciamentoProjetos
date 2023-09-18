@@ -72,11 +72,14 @@ comecarAtividade = do
                 case (atividadeDoSistema) of
                     Just atividade -> do
                         if status atividade == "Não atribuída!" then do
-                            let statusAtividade = mudaStatus atividade "Pendente..."
-                        --     adicionaAtividadeAoUsuario idAtividade usuario
-                            putStrLn $ "\n" ++ "Título: " ++ titulo atividade ++ "\n"
-                                            ++ "Descrição: " ++ descricao atividade ++ "\n"
-                                            ++ "Status: " ++ status statusAtividade
+                            if (atividadeEstaAtribuida idAtividade usuario) then do
+                                let statusAtividade = mudaStatus atividade "Pendente..."
+                              
+                                putStrLn $ "\n" ++ "Título: " ++ titulo atividade ++ "\n"
+                                                ++ "Descrição: " ++ descricao atividade ++ "\n"
+                                                ++ "Status: " ++ status statusAtividade
+                            
+                            else putStrLn "Você não está atribuído a essa atividade!"
 
                         else do
                             putStrLn "Esta atividade já está em andamento!"
@@ -174,7 +177,7 @@ criaFeedback :: IO ()
 criaFeedback = do
 
     putStrLn $ "Comente sobre uma atividade que você criou ou foi designado: \n\n"
-            ++ "Digite seu ID:"
+            ++ "Digite seu ID:\n"
     idUsuario <- readLn :: IO Int
 
     let usuariosCadastrados = (getUsuarios "Database/usuarios.json")
@@ -182,7 +185,7 @@ criaFeedback = do
 
     case (usuarioNoSistema) of
         Just usuario -> do
-                putStrLn "Digite o ID da atividade que deseja dar Feedback:"
+                putStrLn "\nDigite o ID da atividade que deseja dar Feedback:\n"
                 idAtividade <- readLn :: IO Int
 
                 let projetosCadastrados = (getTodosProjetos "Database/projetos.json")
@@ -192,9 +195,12 @@ criaFeedback = do
                 case (atividadeDoSistema) of
                     Just atividade -> do
                         if (ehGerente idUsuario projetosCadastrados) || (ehMembroResponsavel idUsuario atividadesCadastradas) then do
-                            putStrLn "Escreva um breve comentário sobre a atividade:"
+                            putStrLn "\nEscreva um breve comentário sobre a atividade:\n"
                             comentario <- getLine
-                            criarFeedbacks "Database/atividades.json" idAtividade comentario
+                            editFeedbackDaAtividade "Database/atividades.json" idAtividade comentario
+                            putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
+                                     ++ " Comentário adicionado com sucesso a atividade de ID " ++ show idAtividade ++ "\n"
+                                     ++ ".----------------------------------------------------------." ++ "\n"
                         else do
                             clearScreen
                             putStrLn $ ".----------------------------------------------------------." ++ "\n"
