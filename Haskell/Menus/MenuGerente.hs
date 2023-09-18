@@ -323,17 +323,17 @@ menuBancoDeAtividades = do
         "v" -> return ()  -- Voltar ao menu principal do gerente
         _   -> putStrLn "Opção inválida." >> menuBancoDeAtividades
 
+
 -- Função para listar atividades cadastradas
 listarAtividades :: IO ()
 listarAtividades = do
     atividades <- lerBancoDeAtividades
-    clearScreen
+    clearScreen  -- Limpa a tela
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
             ++ "               Atividades Cadastradas:                     " ++ "\n"
-    mapM_ imprimirAtividades atividades
+    mapM_ imprimirDetalhesAtividade atividades
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
     menuBancoDeAtividades
-
 
 -- Função para criar uma nova atividade e adicioná-la ao banco
 adicionarAtividade :: IO ()
@@ -348,34 +348,21 @@ adicionarAtividade = do
     putStrLn "Digite o status da nova atividade: "
     status <- getLine
 
-    -- Certificando de que todas as variáveis sejam convertidas para strings
-    let descricaoStr = show descricao
-    let feedbacksStr = show feedbacks  -- Certifique-se de que feedbacks seja uma variável válida
-    let idAtividadeStr = show idAtividade  -- Certifique-se de que idAtividade seja uma variável válida
-    let idMembroResponsavelStr = show idMembroResponsavel  -- Certifique-se de que idMembroResponsavel seja uma variável válida
-    let idProjetoAtividadeStr = show idProjetoAtividade  -- Certifique-se de que idProjetoAtividade seja uma variável válida
-    let statusStr = show status
-    let tituloStr = show titulo
+    -- Crie uma nova atividade
+    let novaAtividade = Atividade
+            { titulo = titulo
+            , descricao = descricao
+            , idAtividade = 0 -- Defina o ID da maneira que desejar
+            , idMembroResponsavel = "ID do Responsável" -- Defina o ID do responsável
+            , idProjetoAtividade = 0 -- Defina o ID do projeto
+            , status = status
+            , feedbacks = [] -- Inicialize com uma lista vazia de feedbacks
+            }
 
-    -- Chame a função para adicionar a atividade diretamente com os dados inseridos
-    adicionarAtividadeAoJSON [descricaoStr, feedbacksStr, idAtividadeStr, idMembroResponsavelStr, idProjetoAtividadeStr, statusStr, tituloStr]
+    -- Chame a função para adicionar a atividade ao JSON
+    adicionarAtividadeAoJSON novaAtividade
     putStrLn "Atividade adicionada com sucesso!"
     menuBancoDeAtividades
-
--- | Função que imprime os detalhes de uma atividade
-imprimirAtividade :: Atividade -> IO ()
-imprimirAtividade atividade = do
-    putStrLn $ ".----------------------------------------------------------."
-    putStrLn "Detalhes da Atividade:"
-    putStrLn $ "Título: " ++ titulo atividade
-    putStrLn $ "Descrição: " ++ descricao atividade
-    putStrLn $ "Status: " ++ status atividade
-    putStrLn $ "ID da Atividade: " ++ show (idAtividade atividade)
-    putStrLn $ "ID do Membro Responsável: " ++ getMembroResponsavel atividade
-    putStrLn $ "ID do Projeto da Atividade: " ++ show (idProjetoAtividade atividade)
-    putStrLn $ "Feedbacks: " ++ feedbacks atividade
-    putStrLn $ ".----------------------------------------------------------."
-
 
 
 -- Função para consultar uma atividade por ID

@@ -31,51 +31,47 @@ data Atividade = Atividade {
 bancoAtividadesJSON :: FilePath
 bancoAtividadesJSON = "Database/bancoDeAtividades.json"
 
--- Função para ler o arquivo JSON e obter as atividades como uma lista de listas de strings
-lerBancoDeAtividades :: IO [[String]]
+-- Função para ler o arquivo JSON e obter as atividades como uma lista de listas de atividades
+lerBancoDeAtividades :: IO [[Atividade]]
 lerBancoDeAtividades = do
     conteudo <- B.readFile bancoAtividadesJSON
     let atividades = fromMaybe [] (decode conteudo)
     return atividades
 
 -- Função para adicionar uma nova atividade ao banco de atividades
-adicionarAtividadeAoJSON :: [String] -> IO ()
+adicionarAtividadeAoJSON :: Atividade -> IO ()
 adicionarAtividadeAoJSON novaAtividade = do
     -- Lê o banco de atividades atual
     atividadesAtuais <- lerBancoDeAtividades
     -- Adiciona a nova atividade à lista de atividades atuais
-    let atividadesAtualizadas = novaAtividade : atividadesAtuais
+    let atividadesAtualizadas = [novaAtividade] : atividadesAtuais
     -- Salva as atividades atualizadas de volta no arquivo JSON
     B.writeFile bancoAtividadesJSON (encode atividadesAtualizadas)
 
 -- Função para consultar uma atividade por ID
-consultarAtividadePorID :: Int -> IO (Maybe [String])
+consultarAtividadePorID :: Int -> IO (Maybe Atividade)
 consultarAtividadePorID id = do
     atividades <- lerBancoDeAtividades
-    return $ find (\atividade -> read (head atividade) == id) atividades
+    return $ find (\atividade -> idAtividade atividade == id) (concat atividades)
 
 -- Função para filtrar atividades por status
-filtrarAtividadesPorStatus :: String -> IO [[String]]
+filtrarAtividadesPorStatus :: String -> IO [[Atividade]]
 filtrarAtividadesPorStatus status = do
     atividades <- lerBancoDeAtividades
-    return $ filter (\atividade -> atividade !! 3 == status) atividades
+    return $ filter (\atividade -> status atividade == status) (concat atividades)
 
--- | Função que retorna uma representação em formato de string dos detalhes de uma atividade
-imprimirUmaAtividade :: [String] -> String
-imprimirUmaAtividade atividade = unlines
-    [  "Detalhes da Atividade:"
-    , "Título: " ++ titulo
-    , "Descrição: " ++ descricao
-    , "Status: " ++ status
-    , "ID da Atividade: " ++ show (read idAtividade :: Int)
-    , "ID do Membro Responsável: " ++ idMembroResponsavel
-    , "ID do Projeto da Atividade: " ++ show (read idProjetoAtividade :: Int)
-    , "Feedbacks: " ++ feedbacks
+-- | Função que imprime os detalhes de uma única atividade
+imprimirDetalhesAtividade :: Atividade -> IO ()
+imprimirDetalhesAtividade atividade = putStrLn $ unlines
+    [ "Detalhes da Atividade:"
+    , "Título: " ++ titulo atividade
+    , "Descrição: " ++ descricao atividade
+    , "ID Projeto: " ++ show (idProjetoAtividade atividade)
+    , "ID Atividade: " ++ show (idAtividade atividade)
+    , "Membro Responsável: " ++ show (idMembroResponsavel atividade)
+    , "Status: " ++ status atividade
     ]
-  where
-    [descricao, feedbacks, idAtividade, idMembroResponsavel, idProjetoAtividade, status, titulo] = atividade
-
-
+ 
 ------------------------------------Encerra tentativa de Banco de Atividades
 
 
