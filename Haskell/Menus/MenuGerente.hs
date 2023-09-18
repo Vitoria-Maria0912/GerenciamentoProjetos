@@ -154,6 +154,7 @@ criaAtividade = do
                 Nothing -> do
                         editAtivDoProjeto "Database/projetos.json" idProjeto idAtividade True
                         criarAtividade "Database/atividades.json" titulo descricao idProjeto idAtividade Nothing Nothing
+                        criarAtividade "Database/bancoDeAtividades.json" titulo descricao idProjeto idAtividade Nothing Nothing
                         -- chamar adicionarAtividade do banco de dados para adicionar essa atividade sem relacionar ao projeto e aumentar o banco de atividade
                         clearScreen
                         putStrLn $ ".----------------------------------------------------------." ++ "\n"
@@ -167,6 +168,7 @@ criaAtividade = do
                         ++ "|           Projeto inexistente! Tente novamente!          |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
                 menuRestritoProjeto
+
 
 -- Remove uma atividade de um projeto
 deletaAtividade :: IO()
@@ -378,14 +380,43 @@ atribuirMembro = do
                      ++"|              Membro não está no projeto                 |" ++ "\n"
                      ++".---------------------------------------------------------." ++ "\n"
 
+
+
+------------BANCO:
+
 -- | Visualiza atividades cadastradas no sistema
 bancoDeAtividades :: IO ()
 bancoDeAtividades = do
 
-    let atividadesCadastradas = (getTodasAtividades "Database/atividades.json")
+    let atividadesCadastradas = (getTodasAtividades "Database/bancoDeAtividades.json")
     clearScreen
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
             ++ "                  Banco de Atividades:                      " ++ "\n"
     mapM_ imprimirAtividade atividadesCadastradas
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
     
+
+--BANCO DE ATIVIDADES
+-- Função para o menu de banco de atividades no menu do gerente
+-- menuBancoDeAtividades :: IO ()
+-- menuBancoDeAtividades = do
+--     putStrLn $ ".----------------------------------------------------------." ++ "\n"
+--             ++ "|              Menu Banco de Atividades (Gerente):          |" ++ "\n"
+--             ++ "|                                                           |" ++ "\n"
+--             ++ "|                Selecione uma opção:                       |" ++ "\n"
+--             ++ "|                                                           |" ++ "\n"
+--             ++ "|           L - Listar atividades cadastradas               |" ++ "\n"
+--             ++ "|           C - Consultar uma atividade por ID              |" ++ "\n"
+--             ++ "|           F - Filtrar atividades por status               |" ++ "\n"
+--             ++ "|           V - Voltar ao menu principal                    |" ++ "\n"
+--             ++ ".-----------------------------------------------------------." ++ "\n"
+
+--     option <- getLine
+--     let lowerOption = map toLower option
+--     case lowerOption of
+--         "l" -> (imprimirAtividade "Database/bancoDeAtividades.json")
+--         "a" -> criaAtividade
+--         "c" -> -- getAtividade (idAtividade) (todasAsAtividades). Falta pra o usuario escolher
+--         "f" -> -- getStatus
+--         "v" -> return () -- Voltar ao menu principal do gerente
+--         _   -> putStrLn "Opção inválida." >> menuBancoDeAtividades
