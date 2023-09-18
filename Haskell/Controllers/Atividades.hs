@@ -81,12 +81,6 @@ ehMembroResponsavel membroResponsavelId atividades =
 getStatus :: Atividade -> String
 getStatus atividade = status atividade
 
--- Adiciona um Feedback a uma atividade
--- adicionaFeedback :: Atividade -> String -> [String]
--- adicionaFeedback atividade novoFeedback = do
---     case (feedbacks atividade) of
---         Just feedbacksAtuais -> feedbacksAtuais ++ [novoFeedback]
---         Nothing -> [novoFeedback]
 
 addFeedbackNaAtiv :: Int -> [Atividade] -> String -> [Atividade]
 addFeedbackNaAtiv _ [] _ = []
@@ -109,27 +103,7 @@ editFeedbackDaAtividade jsonFilePath idAtividade feedback = do
 getFeedbacks :: Atividade -> [String]
 getFeedbacks atividade = (feedbacks atividade)
     
--- -- | Cria um feedback
--- criarFeedbacks :: String -> Int -> String -> IO()
--- criarFeedbacks filePath idAtividade novoFeedback = do
---     let todasAtividades = (getTodasAtividades filePath)
---     let atividade = (getAtividade idAtividade todasAtividades)
---     case atividade of
---         Just atividadeEncontrada -> do
---                 let feedbacksAtualizados = (adicionaFeedback atividadeEncontrada novoFeedback)
---                 (deletarAtividade filePath idAtividade)
---                 let atividadesTemporarias = (getTodasAtividades filePath)
---                 let atividadesAtualizadas = atividadesTemporarias ++ [atividadeEncontrada]
-                
---                 B.writeFile "../Temp.json" $ encode atividadesAtualizadas
---                 removeFile filePath
---                 renameFile "../Temp.json" filePath
 
---                 -- PRECISA RETIRAR OU MODIFICAR ESSE RETORNO
---                 mapM_ putStrLn $ feedbacksAtualizados
-                
---         Nothing -> error "Atividade inexistente!"
-    
 -- | Obtém uma atividade a partir do ID
 getAtividade :: Int -> [Atividade] -> Maybe Atividade
 getAtividade _ [] = Nothing

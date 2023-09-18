@@ -74,7 +74,7 @@ comecarAtividade = do
                         if status atividade == "Não atribuída!" then do
                             if (atividadeEstaAtribuida idAtividade usuario) then do
                                 let statusAtividade = mudaStatus atividade "Pendente..."
-                              
+                              -- MELHORAR FORMATACAO
                                 putStrLn $ "\n" ++ "Título: " ++ titulo atividade ++ "\n"
                                                 ++ "Descrição: " ++ descricao atividade ++ "\n"
                                                 ++ "Status: " ++ status statusAtividade
