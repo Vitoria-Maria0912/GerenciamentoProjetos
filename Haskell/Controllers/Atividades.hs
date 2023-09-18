@@ -42,7 +42,8 @@ lerBancoDeAtividades = do
 adicionarAtividadeAoJSON :: Atividade -> IO ()
 adicionarAtividadeAoJSON novaAtividade = do
     -- Lê o banco de atividades atual
-    atividadesAtuais <- lerBancoDeAtividades
+    let atividadesAtuais = lerBancoDeAtividades
+    -- atividadesAtuais <- lerBancoDeAtividades
     -- Adiciona a nova atividade à lista de atividades atuais
     let atividadesAtualizadas = [novaAtividade] : atividadesAtuais
     -- Salva as atividades atualizadas de volta no arquivo JSON
