@@ -46,7 +46,7 @@ criaProjeto jsonFilePath idProjeto nomeProjeto descricaoProjeto idGerente membro
 -- -- MUDEI AQUI ------------------------------------------------- INCOMPLETO
 -- adicionaAtividadeAoProjeto :: String -> String -> String -> Int -> Int -> Maybe Int -> Maybe [String] -> IO()
 -- adicionaAtividadeAoProjeto filePath titulo descricao idProjetoAtividade idAtividade idMembroResponsavel feedback = do
---   criarAtividade "Database/atividades.json" titulo descricao idProjetoAtividade idAtividade idMembroResponsavel Nothing
+--   criarAtividade "Database/bancoDeAtividades.json" titulo descricao idProjetoAtividade idAtividade idMembroResponsavel Nothing
 
 -- Verifica se o usuário é gerente de algum projeto do sistema 
 ehGerente :: Int -> [Projeto] -> Bool
