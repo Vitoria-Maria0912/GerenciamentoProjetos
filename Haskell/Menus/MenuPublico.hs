@@ -80,13 +80,14 @@ comecarAtividade = do
     
     let usuariosDoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
 
-    if isJust(usuariosDoSistema) then do
-        putStrLn "Digite o ID da atividade que deseja começar:"
-        idAtividade <- readLn :: IO Int
-        let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
+    case (usuariosDoSistema) of
+        Just usuario -> do
+                putStrLn "Digite o ID da atividade que deseja começar:"
+                idAtividade <- readLn :: IO Int
+                let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
 
-        case (atividadeDoSistema) of
-                Just atividade -> do
+                case (atividadeDoSistema) of
+                    Just atividade -> do
                         if status atividade == "Não atribuída!" then do
                             if (atividadeEstaAtribuida idAtividade usuario) then do
                                 editStatus "Database/atividades.json" idAtividade "PENDENTE"
@@ -99,7 +100,6 @@ comecarAtividade = do
                                                  ++ "|         Você não está atribuído a essa atividade!        |" ++ "\n"
                                                  ++ ".----------------------------------------------------------." ++ "\n"
 
-
                         else do
                             putStrLn "Esta atividade já está em andamento!" -- APARENTEMENTE NAO ESTÁ FUNCIONANDO
 
@@ -109,12 +109,6 @@ comecarAtividade = do
                                     ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
                                     ++ ".----------------------------------------------------------." ++ "\n"
                             comecarAtividade
-        Nothing -> do
-                clearScreen
-                putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                        ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
-                        ++ ".----------------------------------------------------------." ++ "\n"
-                comecarAtividade
 
                                
 

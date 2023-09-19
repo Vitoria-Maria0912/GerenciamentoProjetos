@@ -315,7 +315,7 @@ adicionaNovoMembro = do
            editMembrosDoProjeto "Database/projetos.json" idProjeto idUsuario True
            putStrLn $ ".---------------------------------------------------------." ++ "\n"
                     ++"|             Membro adicionado com sucesso!              |" ++ "\n"
-                    ++".---------------------------------------------------------." ++ "\n"))
+                    ++".---------------------------------------------------------." ++ "\n"
            -- ADICIONAR CHAMADA PARA O MENU RESTRITO
 
 
