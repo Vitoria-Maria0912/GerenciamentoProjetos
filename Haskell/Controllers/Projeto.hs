@@ -38,15 +38,6 @@ criaProjeto jsonFilePath idProjeto nomeProjeto descricaoProjeto idGerente membro
     removeFile jsonFilePath
     renameFile "../Temp.json" jsonFilePath
 
--- -- MUDEI AQUI ------------------------------------------------- INCOMPLETO
--- deletarAtividadeProjeto :: String -> Int -> Int -> IO()
--- deletarAtividadeProjeto filePath idProjeto idAtividade = do
---   deletarAtividade filePath idAtividade
-
--- -- MUDEI AQUI ------------------------------------------------- INCOMPLETO
--- adicionaAtividadeAoProjeto :: String -> String -> String -> Int -> Int -> Maybe Int -> Maybe [String] -> IO()
--- adicionaAtividadeAoProjeto filePath titulo descricao idProjetoAtividade idAtividade idMembroResponsavel feedback = do
---   criarAtividade "Database/atividades.json" titulo descricao idProjetoAtividade idAtividade idMembroResponsavel Nothing
 
 -- Verifica se o usuário é gerente de algum projeto do sistema 
 ehGerente :: Int -> [Projeto] -> Bool

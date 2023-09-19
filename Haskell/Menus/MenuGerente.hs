@@ -116,15 +116,18 @@ deletarProjeto = do
 
 -- | Cria uma atividade em um projeto
 criaAtividade :: IO()
-criaAtividade = do
+criaAtividade = do  
 
-    bancoDeAtividades
+    --bancoDeAtividades 
+    -- a visualização do banco deveria ter uma chamada propria
 
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
             ++ "                      Criar atividade:                      " ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
 
-    putStrLn "Digite o ID do projeto que deseja adicionar uma atividade: "
+    putStrLn $ "Digite o ID do projeto que deseja adicionar uma atividade: " ++ "\n"
+             ++ "Caso você só deseje adicionar ao banco de atividades, digite 0"
+
     idProjeto <- readLn :: IO Int
 
     let projetosDoSistema = getTodosProjetos  "Database/projetos.json"
@@ -141,7 +144,7 @@ criaAtividade = do
 
             idAtividade <- randomRIO (10010, 99999 :: Int)
 
-            let atividadeNoSistema = getAtividade idAtividade (getTodasAtividades "Database/atividades.json")
+            let atividadeNoSistema = getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json")
 
             case atividadeNoSistema of
                 Just _ ->  do
@@ -153,8 +156,7 @@ criaAtividade = do
 
                 Nothing -> do
                         editAtivDoProjeto "Database/projetos.json" idProjeto idAtividade True
-                        criarAtividade "Database/atividades.json" titulo descricao idProjeto idAtividade Nothing []
-                        -- chamar adicionarAtividade do banco de dados para adicionar essa atividade sem relacionar ao projeto e aumentar o banco de atividades
+                        criarAtividade "Database/bancoDeAtividades.json" titulo descricao (Just idProjeto) idAtividade Nothing []
                         clearScreen
                         putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                 ++ "  Atividade criada com sucesso! O ID da atividade é: " ++ show idAtividade ++ "\n"
@@ -163,17 +165,44 @@ criaAtividade = do
                         menuRestritoProjeto
 
         Nothing -> do
-                clearScreen
-                putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                        ++ "|           Projeto inexistente! Tente novamente!          |" ++ "\n"
-                        ++ ".----------------------------------------------------------." ++ "\n"
-                menuRestritoProjeto
+                if idProjeto == 0 then do
+                        putStrLn "\nDigite um título para sua atividade: "
+                        titulo <- getLine
+
+                        putStrLn "\nDescreva, brevemente, o que se deve realizar para concluir esta atividade."
+                        descricao <- getLine
+
+                        idAtividade <- randomRIO (10010, 99999 :: Int)
+
+                        let atividadeNoSistema = getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json")
+
+                        case atividadeNoSistema of
+                                Just _ ->  do
+                                     clearScreen
+                                     putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                                ++ "|            Falha no cadastro! Tente novamente!           |" ++ "\n"
+                                                 ++ ".----------------------------------------------------------." ++ "\n"
+                                     criaAtividade
+                                Nothing -> do
+                                        criarAtividade "Database/bancoDeAtividades.json" titulo descricao Nothing idAtividade Nothing []
+                                        clearScreen
+                                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                                ++ "  Atividade criada com sucesso! O ID da atividade é: " ++ show idAtividade ++ "\n"
+                                                ++ ".----------------------------------------------------------." ++ "\n"
+
+                                        menuRestritoProjeto
+                else do
+                        clearScreen
+                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                ++ "|           Projeto inexistente! Tente novamente!          |" ++ "\n"
+                                ++ ".----------------------------------------------------------." ++ "\n"
+                        menuRestritoProjeto
 
 -- Remove uma atividade de um projeto
 deletaAtividade :: IO()
 deletaAtividade = do
 
-    bancoDeAtividades
+    --bancoDeAtividades
 
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
             ++ "                    Deletar atividade:                      " ++ "\n"
@@ -186,12 +215,16 @@ deletaAtividade = do
     putStrLn "\nDigite o ID da atividade que deseja remover:"
     idAtividade <- readLn :: IO Int
 
-    let atividadesNoSistema = getAtividade idAtividade (getTodasAtividades "Database/atividades.json")
+    let atividadesNoSistema = getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json")
 
     case atividadesNoSistema of
         Just atividade ->  do
                 editAtivDoProjeto "Database/projetos.json" idProjeto idAtividade False
-                deletarAtividade "Database/atividades.json" idAtividade
+                editIdProj "Database/bancoDeAtividades.json" idAtividade idProjeto  False
+                editMembroResp "Database/bancoDeAtividades.json" idAtividade 0 False
+                editStatus "Database/bancoDeAtividades.json" idAtividade "Não atribuída!"
+                editFeedback "Database/bancoDeAtividades.json" idAtividade "" False
+
                 clearScreen
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                         ++ "|              Atividade removida com sucesso!             |" ++ "\n"

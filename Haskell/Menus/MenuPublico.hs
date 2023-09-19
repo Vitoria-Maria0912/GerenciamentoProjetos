@@ -84,13 +84,13 @@ comecarAtividade = do
         Just usuario -> do
                 putStrLn "Digite o ID da atividade que deseja começar:"
                 idAtividade <- readLn :: IO Int
-                let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
+                let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json"))
 
                 case (atividadeDoSistema) of
                     Just atividade -> do
                         if status atividade == "Não atribuída!" then do
                             if (atividadeEstaAtribuida idAtividade usuario) then do
-                                editStatus "Database/atividades.json" idAtividade "PENDENTE"
+                                editStatus "Database/bancoDeAtividades.json" idAtividade "PENDENTE"
                               
                                 putStrLn $ "\n\n" ++ "▎ Título: " ++ titulo atividade ++ "\n"
                                                 ++ "\n▎ Descrição: " ++ descricao atividade ++ "\n"
@@ -126,11 +126,11 @@ finalizarAtividade = do
         Just usuario -> do
                 putStrLn "Digite o ID da atividade que deseja finalizar:"
                 idAtividade <- readLn :: IO Int
-                let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
+                let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json"))
 
                 case (atividadeDoSistema) of
                     Just atividade -> do
-                        editStatus "Database/atividades.json" idAtividade "CONCLUÍDA"
+                        editStatus "Database/bancoDeAtividades.json" idAtividade "CONCLUÍDA"
                         putStrLn $ "\n" ++ "▎ Título: " ++ titulo atividade ++ "\n"
                                         ++ "\n▎ Descrição: " ++ descricao atividade ++ "\n"
                                         ++ "\n▎ Status: CONCLUÍDA" 
@@ -155,21 +155,21 @@ statusAtividade = do
     putStrLn "Digite o ID da atividade que deseja visualizar o status:"
     idAtividade <- readLn :: IO Int
 
-    let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/atividades.json"))
+    let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json"))
 
     case (atividadeDoSistema) of
         Just atividade -> do
             let statusAtividade = getStatus atividade 
-            putStrLn $ "\n" ++ "Título: " ++ titulo atividade ++ "\n"
-                            ++ "Descrição: " ++ descricao atividade ++ "\n"
-                            ++ "Status: " ++ statusAtividade
+            putStrLn $ "\n" ++ "▎ Título: " ++ titulo atividade ++ "\n"
+                            ++ "\n▎ Descrição: " ++ descricao atividade ++ "\n"
+                            ++ "\n▎ Status: " ++ statusAtividade
 
         Nothing -> do
                 clearScreen
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                         ++ "|            ID inexistente! Tente novamente!              |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
-                statusAtividade
+                sairDoSistema
 
 -- | Função para visualizar atividades do projeto
 visualizarAtividades :: IO()
@@ -186,7 +186,7 @@ visualizarAtividades = do
     case projetoNoSistema of
             Just projeto -> do
                 clearScreen
-                let atividadesCadastradas = (getTodasAtividades "Database/atividades.json")
+                let atividadesCadastradas = (getTodasAtividades "Database/bancoDeAtividades.json")
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                         ++ "            Estas são as atividades do projeto:             " ++ "\n"
                 mapM_ imprimeAtividadesDoProjeto (getAtividadesDoProjeto (atividades projeto) atividadesCadastradas)
@@ -218,7 +218,7 @@ criaFeedback = do
                 idAtividade <- readLn :: IO Int
 
                 let projetosCadastrados = (getTodosProjetos "Database/projetos.json")
-                let atividadesCadastradas = (getTodasAtividades "Database/atividades.json")
+                let atividadesCadastradas = (getTodasAtividades "Database/bancoDeAtividades.json")
                 let atividadeDoSistema = (getAtividade idAtividade atividadesCadastradas)
 
                 case (atividadeDoSistema) of
@@ -226,7 +226,7 @@ criaFeedback = do
                         if (ehGerente idUsuario projetosCadastrados) || (ehMembroResponsavel idUsuario atividadesCadastradas) then do
                             putStrLn "\nEscreva um breve comentário sobre a atividade:\n"
                             comentario <- getLine
-                            editFeedbackDaAtividade "Database/atividades.json" idAtividade comentario
+                            editFeedback "Database/bancoDeAtividades.json" idAtividade comentario True
                             putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
                                      ++ " Comentário adicionado com sucesso a atividade de ID " ++ show idAtividade ++ "\n"
                                      ++ ".----------------------------------------------------------." ++ "\n"

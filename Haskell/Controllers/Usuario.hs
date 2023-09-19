@@ -80,17 +80,17 @@ verificaSenhaUsuario usuario senhaUsuario = ((senha usuario) == senhaUsuario)
 -- getNumDeUsuarios jsonFilePath = length (getUsuarios jsonFilePath)
 
 -- | 
-atualizaAtividadeUsuario :: Int -> [Usuario] -> [Int] -> [Usuario]
-atualizaAtividadeUsuario _ [] _ = []
-atualizaAtividadeUsuario id (usuario:usuarios) novasAtiv
-  | idUsuario usuario == id = usuario { atividadesAtribuidas = atividadesAtribuidas usuario ++ novasAtiv } : atualizaAtividadeUsuario id usuarios novasAtiv
-  | otherwise = usuario : atualizaAtividadeUsuario id usuarios novasAtiv
+addAtividadeUsuario :: Int -> [Usuario] -> [Int] -> [Usuario]
+addAtividadeUsuario _ [] _ = []
+addAtividadeUsuario id (usuario:usuarios) novasAtiv
+  | idUsuario usuario == id = usuario { atividadesAtribuidas = atividadesAtribuidas usuario ++ novasAtiv } : addAtividadeUsuario id usuarios novasAtiv
+  | otherwise = usuario : addAtividadeUsuario id usuarios novasAtiv
 
 -- |
 editAtivDoUsuario :: String -> Int -> [Int] -> IO ()
 editAtivDoUsuario jsonFilePath idUsuario novasAtiv = do
   let listaUsuarios = getUsuarios jsonFilePath
-  let usuariosAtualizados = atualizaAtividadeUsuario idUsuario listaUsuarios novasAtiv
+  let usuariosAtualizados = addAtividadeUsuario idUsuario listaUsuarios novasAtiv
 
   B.writeFile "../Temp.json" $ encode usuariosAtualizados
   removeFile jsonFilePath

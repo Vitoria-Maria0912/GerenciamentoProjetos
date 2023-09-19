@@ -17,7 +17,7 @@ data Atividade = Atividade {
     titulo :: String,
     descricao :: String,
     status :: String,
-    idProjetoAtividade :: Int,
+    idProjetoAtividade :: Maybe Int,
     idAtividade :: Int,
     idMembroResponsavel :: Maybe Int,
     feedbacks :: [String]
@@ -25,7 +25,7 @@ data Atividade = Atividade {
 
 
 -- Cria uma atividade
-criarAtividade :: String -> String -> String -> Int -> Int -> Maybe Int -> [String] -> IO()
+criarAtividade :: String -> String -> String -> Maybe Int -> Int -> Maybe Int -> [String] -> IO()
 criarAtividade   filePath titulo descricao idProjetoAtividade idAtividade idMembroResponsavel feedback = do
   let atividade = Atividade titulo descricao "Não atribuída!" idProjetoAtividade idAtividade idMembroResponsavel feedback
   escreverAtividade filePath atividade
@@ -57,13 +57,16 @@ deletarAtividade filePath idAtividade = do
     removeFile filePath
     renameFile "../Temp.json" filePath
 
--- Muda o status de uma atividade
+-- | Funções que lidam com o status de uma atividade | --
+
+-- | Função que muda o status de uma atividade
 mudaStatus :: Int -> [Atividade] -> String -> [Atividade]
 mudaStatus _ [] _ = []
 mudaStatus id (ativ:ativs) novoStatus
   | idAtividade ativ == id = ativ {status = novoStatus} : mudaStatus id ativs novoStatus
   | otherwise = ativ : mudaStatus id ativs novoStatus
 
+-- | Função que edita o status sobreescrevendo o arquivo
 editStatus :: String ->  Int ->  String -> IO()
 editStatus jsonFilePath idAtividade novoStatus = do
   let listaAtividades = getTodasAtividades jsonFilePath
@@ -73,7 +76,11 @@ editStatus jsonFilePath idAtividade novoStatus = do
   removeFile jsonFilePath
   renameFile "../Temp.json" jsonFilePath
 
--- Pega o ID do membro responsável pela atividade
+-- | Função que obtém o status da atividade
+getStatus :: Atividade -> String
+getStatus atividade = status atividade
+
+-- | Função que pega o ID do membro responsável pela atividade
 getMembroResponsavel :: Atividade -> String
 getMembroResponsavel atividade = do
     let membroResponsavel = idMembroResponsavel atividade
@@ -81,7 +88,7 @@ getMembroResponsavel atividade = do
         Just _ -> show (idMembroResponsavel atividade)
         _ -> "Não atribuído!"
 
--- Verifica se um usuário (através do ID) é responsável por alguma atividade
+-- | Função que verifica se um usuário (através do ID) é responsável por alguma atividade
 ehMembroResponsavel :: Int -> [Atividade] -> Bool
 ehMembroResponsavel membroResponsavelId atividades =
     any (\atividade ->
@@ -90,42 +97,102 @@ ehMembroResponsavel membroResponsavelId atividades =
             Nothing -> False
         ) atividades
 
--- Pega o status da atividade
-getStatus :: Atividade -> String
-getStatus atividade = status atividade
+-- | Funções que lidam com os feedbacks de uma atividade | --
 
+-- | Função que adiciona um feedback a lista de feedbacks de uma atividade
+addFeedback :: Int -> [Atividade] -> String -> [Atividade]
+addFeedback _ [] _ = []
+addFeedback id (ativ:ativs) novoFeedback
+  | idAtividade ativ == id = ativ { feedbacks = feedbacks ativ ++ [novoFeedback] } : addFeedback id ativs novoFeedback
+  | otherwise = ativ : addFeedback id ativs novoFeedback
 
-addFeedbackNaAtiv :: Int -> [Atividade] -> String -> [Atividade]
-addFeedbackNaAtiv _ [] _ = []
-addFeedbackNaAtiv id (ativ:ativs) novoFeedback
-  | idAtividade ativ == id = ativ { feedbacks = feedbacks ativ ++ [novoFeedback] } : addFeedbackNaAtiv id ativs novoFeedback
-  | otherwise = ativ : addFeedbackNaAtiv id ativs novoFeedback
+-- | Função que remove todos os feedbacks da lista de feedbacks
+removeFeedback :: Int -> [Atividade] -> [Atividade]
+removeFeedback _ [] = []
+removeFeedback id (ativ:ativs)
+  | idAtividade ativ == id = ativ {feedbacks = []} : removeFeedback id ativs
+  | otherwise = ativ : removeFeedback id ativs
 
--- | Função que edita o Json ao adicionar ou remover um projeto
-editFeedbackDaAtividade :: String ->  Int ->  String -> IO()
-editFeedbackDaAtividade jsonFilePath idAtividade feedback = do
+-- | Função que edita o arquivo ao adicionar ou remover um projeto
+editFeedback :: String ->  Int ->  String -> Bool -> IO()
+editFeedback jsonFilePath idAtividade feedback adicionar = do
   let listaAtividades = getTodasAtividades jsonFilePath
-  let atividadesAtualizadas = addFeedbackNaAtiv idAtividade listaAtividades feedback
+  let atividadesAtualizadas = if adicionar
+                              then addFeedback idAtividade listaAtividades feedback
+                              else removeFeedback idAtividade listaAtividades
 
   B.writeFile "../Temp.json" $ encode atividadesAtualizadas
   removeFile jsonFilePath
   renameFile "../Temp.json" jsonFilePath
 
-
--- Obtém os feedbacks da atividade
-
+-- | Função que obtém os feedbacks da atividade
 getFeedbacks :: Atividade -> [String]
 getFeedbacks atividade = feedbacks atividade
 
+-- | Funções que lidam com o id de um projeto relacionado a uma atividade | --
 
--- | Obtém uma atividade a partir do ID
+-- | Função que adiciona o id de um projeto a uma atividade
+addIdProj :: Int -> [Atividade] -> Int -> [Atividade]
+addIdProj _ [] _ = []
+addIdProj id (ativ: ativs) novoId
+  | idAtividade ativ == id = ativ {idProjetoAtividade = Just novoId} : addIdProj id ativs novoId
+  | otherwise = ativ : addIdProj id ativs novoId
+
+-- | Função que remove o id de um projeto de uma atividade
+removeIdProj :: Int -> [Atividade] -> [Atividade]
+removeIdProj _ [] = []
+removeIdProj id (ativ:ativs)
+  | idAtividade ativ == id = ativ {idProjetoAtividade = Nothing} : removeIdProj id ativs
+  | otherwise = ativ : removeIdProj id ativs
+
+-- | Função que edita o arquivo ao adicionar ou remover o id de um projeto de uma atividade
+editIdProj :: String ->  Int ->  Int -> Bool -> IO()
+editIdProj jsonFilePath idAtividade idProjeto adicionar = do
+  let listaAtividades = getTodasAtividades jsonFilePath
+  let atividadesAtualizadas = if adicionar 
+                              then addIdProj idAtividade listaAtividades idProjeto
+                              else removeIdProj idAtividade listaAtividades 
+  B.writeFile "../Temp.json" $ encode atividadesAtualizadas
+  removeFile jsonFilePath
+  renameFile "../Temp.json" jsonFilePath
+
+-- | Funções que lidam com o membro responsável de uma atividade | --  
+
+-- | Função que adiciona um membro como responsável
+addMembroResp :: Int -> [Atividade] -> Int -> [Atividade]
+addMembroResp _ [] _ = []
+addMembroResp id (ativ:ativs) idMembro
+  | idAtividade ativ == id = ativ {idMembroResponsavel = Just idMembro} : addMembroResp id ativs idMembro
+  | otherwise = ativ : addMembroResp id ativs idMembro
+
+-- | Função que remove um membro como responsável
+removeIdMembroResp :: Int -> [Atividade] -> [Atividade]
+removeIdMembroResp _ [] = []
+removeIdMembroResp id (ativ:ativs)
+  | idAtividade ativ == id = ativ {idMembroResponsavel = Nothing} : removeIdMembroResp id ativs
+  | otherwise = ativ : removeIdMembroResp id ativs
+
+-- | Função que edita o membro no arquivo ao adicionar ou removê-lo
+editMembroResp :: String ->  Int ->  Int -> Bool -> IO()
+editMembroResp jsonFilePath idAtividade idMembroResponsavel adicionar = do
+  let listaAtividades = getTodasAtividades jsonFilePath
+  let atividadesAtualizadas = if adicionar 
+                              then addMembroResp idAtividade listaAtividades idMembroResponsavel
+                              else removeIdMembroResp idAtividade listaAtividades 
+  B.writeFile "../Temp.json" $ encode atividadesAtualizadas
+  removeFile jsonFilePath
+  renameFile "../Temp.json" jsonFilePath
+
+
+
+-- | Função que obtém uma atividade a partir do ID
 getAtividade :: Int -> [Atividade] -> Maybe Atividade
 getAtividade _ [] = Nothing
 getAtividade atividadeId (x:xs)
   | idAtividade x == atividadeId = Just x
   | otherwise = getAtividade atividadeId xs
 
--- | Obtém as todas atividades cadastradas no sistema
+-- | Função que obtém as todas atividades cadastradas no sistema
 getTodasAtividades :: String -> [Atividade]
 getTodasAtividades filePath = do
     let arquivo = unsafePerformIO (B.readFile filePath)
