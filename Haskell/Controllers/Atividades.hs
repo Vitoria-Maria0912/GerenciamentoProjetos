@@ -156,6 +156,16 @@ editIdProj jsonFilePath idAtividade idProjeto adicionar = do
   removeFile jsonFilePath
   renameFile "../Temp.json" jsonFilePath
 
+-- | Função que checa se uma atividade existe e se está relacionada a um projeto
+temIdProjeto :: Int -> [Atividade] -> Bool
+temIdProjeto id atividades =
+  case getAtividade id atividades of
+    Just atividade -> isJust (idProjetoAtividade atividade)
+    Nothing -> False
+  where
+    isJust (Just _) = True
+    isJust Nothing = False
+
 -- | Funções que lidam com o membro responsável de uma atividade | --  
 
 -- | Função que adiciona um membro como responsável
