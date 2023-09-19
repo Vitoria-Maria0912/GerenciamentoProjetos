@@ -20,6 +20,14 @@ clearScreen = do
             return ()
         _ -> return ()
 
+-- | Sai do sistema
+sairDoSistema :: IO()
+sairDoSistema = do
+    clearScreen
+    putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
+                    ++ "|            Você saiu do sistema! Até a próxima!          |" ++ "\n"
+                    ++ ".----------------------------------------------------------." ++ "\n"
+
 -- | Exibe erro e retorna ao menu
 erroMenuPublico :: IO()
 erroMenuPublico =  do
@@ -62,20 +70,15 @@ menuPublicoProjeto = do
         "s" -> sairDoSistema
         _   -> erroMenuPublico
 
--- | Sai do sistema
-sairDoSistema :: IO()
-sairDoSistema = do
-    clearScreen
-    putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
-                    ++ "|            Você saiu do sistema! Até a próxima!          |" ++ "\n"
-                    ++ ".----------------------------------------------------------." ++ "\n"
-
 -- | Iniciar uma atividade
 comecarAtividade :: IO()
 comecarAtividade = do
 
-    putStrLn $ "Começar atividade: \n\n"
-            ++ "Digite seu ID:"
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "                    Começar atividade:                        " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+
+    putStrLn "Digite seu ID: "
     idUsuario <- readLn :: IO Int
     
     let usuariosDoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
@@ -95,29 +98,33 @@ comecarAtividade = do
                                 putStrLn $ "\n\n" ++ "▎ Título: " ++ titulo atividade ++ "\n"
                                                 ++ "\n▎ Descrição: " ++ descricao atividade ++ "\n"
                                                 ++ "\n▎ Status: PENDENTE"  
+                                
                             
-                            else putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
+                            else do putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
                                                  ++ "|         Você não está atribuído a essa atividade!        |" ++ "\n"
                                                  ++ ".----------------------------------------------------------." ++ "\n"
+                                     
 
                         else do
                             putStrLn "Esta atividade já está em andamento!" -- APARENTEMENTE NAO ESTÁ FUNCIONANDO
+                            
 
                     Nothing -> do
                             clearScreen
                             putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                     ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
                                     ++ ".----------------------------------------------------------." ++ "\n"
-                            comecarAtividade
-
-                               
+    retornoMenuPublico                                                  
 
 -- | Finaliza uma atividade
 finalizarAtividade :: IO()
 finalizarAtividade = do
+
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "                    Finalizar atividade:                    " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
     
-    putStrLn $ "Finalizar atividade: \n\n"
-            ++ "Digite seu ID:"
+    putStrLn "Digite seu ID: "
     idUsuario <- readLn :: IO Int
 
     let usuarioNoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
@@ -140,19 +147,22 @@ finalizarAtividade = do
                             putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                     ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
                                     ++ ".----------------------------------------------------------." ++ "\n"
-                            finalizarAtividade
         Nothing -> do
                 clearScreen
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                         ++ "|            ID inexistente! Tente novamente!              |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
-                finalizarAtividade
+    retornoMenuPublico
 
 -- | Mostra o status de uma atividade
 statusAtividade :: IO()
 statusAtividade = do
 
-    putStrLn "Digite o ID da atividade que deseja visualizar o status:"
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "                 Mostrar status da atividade:               " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+
+    putStrLn "Digite o ID da atividade: "
     idAtividade <- readLn :: IO Int
 
     let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json"))
@@ -169,15 +179,17 @@ statusAtividade = do
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                         ++ "|            ID inexistente! Tente novamente!              |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
-                sairDoSistema
+    retornoMenuPublico
 
 -- | Função para visualizar atividades do projeto
 visualizarAtividades :: IO()
 visualizarAtividades = do
 
-    putStrLn $ "Visualizar atividade: \n\n"
-            ++ "Digite o ID do projeto:"
-            
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "              Visualizar atividades do projeto:             " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+
+    putStrLn "Digite o ID do projeto:"
     idProjeto <- readLn :: IO Int
 
     let projetosDoSistema = getTodosProjetos "Database/projetos.json"
@@ -191,22 +203,23 @@ visualizarAtividades = do
                         ++ "            Estas são as atividades do projeto:             " ++ "\n"
                 mapM_ imprimeAtividadesDoProjeto (getAtividadesDoProjeto (atividades projeto) atividadesCadastradas)
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                
-                menuPublicoProjeto
 
             Nothing -> do
                 clearScreen
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                         ++ "|           Projeto inexistente! Tente novamente!          |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
-                menuPublicoProjeto
+    retornoMenuPublico
 
 -- | Função para criar feedback
 criaFeedback :: IO ()
 criaFeedback = do
 
-    putStrLn $ "Comente sobre uma atividade que você criou ou foi designado: \n\n"
-            ++ "Digite seu ID:\n"
+    putStrLn $ ".-------------------------------------------------------------." ++ "\n"
+            ++ "  Comente sobre uma atividade que você criou ou foi designado:      " ++ "\n"
+            ++ ".-------------------------------------------------------------." ++ "\n"
+
+    putStrLn "Digite seu ID:"
     idUsuario <- readLn :: IO Int
 
     let usuariosCadastrados = (getUsuarios "Database/usuarios.json")
@@ -228,8 +241,8 @@ criaFeedback = do
                             comentario <- getLine
                             editFeedback "Database/bancoDeAtividades.json" idAtividade comentario True
                             putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
-                                     ++ " Comentário adicionado com sucesso a atividade de ID " ++ show idAtividade ++ "\n"
-                                     ++ ".----------------------------------------------------------." ++ "\n"
+                                            ++ " Comentário adicionado com sucesso a atividade de ID " ++ show idAtividade ++ "\n"
+                                            ++ ".----------------------------------------------------------." ++ "\n"
                         else do
                             clearScreen
                             putStrLn $ ".----------------------------------------------------------." ++ "\n"
@@ -241,21 +254,41 @@ criaFeedback = do
                             putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                     ++ "|            ID inexistente! Tente novamente!              |" ++ "\n"
                                     ++ ".----------------------------------------------------------." ++ "\n"
-                            criaFeedback
         Nothing -> do
                 clearScreen
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                         ++ "|            ID inexistente! Tente novamente!              |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
-                criaFeedback
+    retornoMenuPublico
 
 -- | Função para visualizar projetos
 visualizarProjetos :: IO ()
 visualizarProjetos = do
   clearScreen
-
-  let projetos = getTodosProjetos "Database/projetos.json"
   putStrLn $ ".----------------------------------------------------------." ++ "\n"
           ++ "            Estes são os projetos no sistema:               " ++ "\n"
-  mapM_ imprimirProjetos projetos
+  mapM_ imprimirProjetos (getTodosProjetos "Database/projetos.json")
   putStrLn $ ".----------------------------------------------------------." ++ "\n"
+
+-- | Retorna ao menu principal ou sai do sistema
+retornoMenuPublico :: IO()
+retornoMenuPublico = do
+        
+        putStrLn $ ".-----------------------------------------------------------." ++ "\n"
+                ++ "| Você deseja voltar ao menu do projeto ou sair do sistema? |" ++ "\n"
+                ++ "|                                                           |" ++ "\n"
+                ++ "|                 M - Menu de projetos                      |" ++ "\n"
+                ++ "|                 S - Sair do sistema                       |" ++ "\n"
+                ++ ".-----------------------------------------------------------." ++ "\n"
+        opcao <- getLine
+        let lowerOption = map toLower opcao
+        
+        case lowerOption of
+                "m" -> menuPublicoProjeto
+                "s" -> sairDoSistema
+                _   -> do
+                        clearScreen
+                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                ++ "|            Entrada Inválida. Tente novamente!            |" ++ "\n"
+                                ++ ".----------------------------------------------------------." ++ "\n" 
+                        retornoMenuPublico

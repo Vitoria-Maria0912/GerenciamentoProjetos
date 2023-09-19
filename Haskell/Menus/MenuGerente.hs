@@ -99,20 +99,18 @@ deletarProjeto = do
                                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                         ++ "|      Você não tem permissão para realizar esta ação.     |" ++ "\n"
                                         ++ ".----------------------------------------------------------." ++ "\n"
-                        menuRestritoProjeto
 
                 Nothing -> do
                         clearScreen
                         putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                 ++ "|           Projeto inexistente! Tente novamente!          |" ++ "\n"
                                 ++ ".----------------------------------------------------------." ++ "\n"
-                        deletarProjeto
   else do
         clearScreen
         putStrLn $ ".----------------------------------------------------------." ++ "\n"
                 ++ "|             ID inexistente! Tente novamente!             |" ++ "\n"
                 ++ ".----------------------------------------------------------." ++ "\n"
-        deletarProjeto
+  retornoMenuRestrito
 
 -- | Cria uma atividade em um projeto
 criaAtividade :: IO()
@@ -152,7 +150,6 @@ criaAtividade = do
                     putStrLn $ ".----------------------------------------------------------." ++ "\n"
                             ++ "|            Falha no cadastro! Tente novamente!           |" ++ "\n"
                             ++ ".----------------------------------------------------------." ++ "\n"
-                    criaAtividade
 
                 Nothing -> do
                         editAtivDoProjeto "Database/projetos.json" idProjeto idAtividade True
@@ -161,8 +158,6 @@ criaAtividade = do
                         putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                 ++ "  Atividade criada com sucesso! O ID da atividade é: " ++ show idAtividade ++ "\n"
                                 ++ ".----------------------------------------------------------." ++ "\n"
-
-                        menuRestritoProjeto
 
         Nothing -> do
                 if idProjeto == 0 then do
@@ -229,13 +224,12 @@ deletaAtividade = do
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                         ++ "|              Atividade removida com sucesso!             |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
-                menuRestritoProjeto
 
         Nothing -> do
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                         ++ "|          Atividade inexistente! Tente novamente.         |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
-                deletaAtividade
+    retornoMenuRestrito
 
 -- | Visualizar todos os membros do projeto
 gerenciarMembros :: IO ()
@@ -280,7 +274,7 @@ gerenciarMembros = do
             putStrLn $ ".----------------------------------------------------------." ++ "\n"
                     ++ "|              ID inválido, tente novamente.               |" ++ "\n"
                     ++ ".----------------------------------------------------------." ++ "\n"
-            menuRestritoProjeto 
+    retornoMenuRestrito 
 
 -- | Exibe os membros de um projeto
 visualizarMembros:: IO()
@@ -305,13 +299,12 @@ visualizarMembros = do
                 mapM_ imprimeMembrosDoProjeto usuariosDoSistema
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                 
-                menuRestritoProjeto
         Nothing -> do
                 clearScreen
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
                         ++ "|           Projeto inexistente! Tente novamente!          |" ++ "\n"
                         ++ ".----------------------------------------------------------." ++ "\n"
-                menuRestritoProjeto  
+    retornoMenuRestrito  
 
 -- | Adiciona um novo membro a um projeto
 adicionaNovoMembro :: IO ()
@@ -323,10 +316,11 @@ adicionaNovoMembro = do
 
   putStrLn "Digite o ID do projeto:"
   idProjeto <- readLn :: IO Int
+
   -- COLOCAR VERIFICACAO SE ESSE PROJETO ESTÁ NA LISTA DE PROJETOS
-  putStrLn "Segue a lista de usuários disponíveis no sistema para adição no projeto \n"
-  let usuarios = getUsuarios "Database/usuarios.json"
-  mapM_ imprimirUsuario usuarios
+  putStrLn $ ".----------------------------------------------------------." ++ "\n"
+          ++ "Segue a lista de usuários disponíveis no sistema para adição no projeto: \n"
+  mapM_ imprimirUsuario (getUsuarios "Database/usuarios.json")
 
   putStrLn $ ".---------------------------------------------------------." ++ "\n"
            ++"|          Digite o ID do membro que deseja adicionar:    |" ++ "\n"
@@ -349,8 +343,7 @@ adicionaNovoMembro = do
            putStrLn $ ".---------------------------------------------------------." ++ "\n"
                     ++"|             Membro adicionado com sucesso!              |" ++ "\n"
                     ++".---------------------------------------------------------." ++ "\n"
-           -- ADICIONAR CHAMADA PARA O MENU RESTRITO
-
+  retornoMenuRestrito
 
 -- | Remover membro do projeto
 removeMembroProjeto :: IO ()
@@ -381,6 +374,7 @@ removeMembroProjeto = do
     putStrLn $  ".---------------------------------------------------------." ++ "\n"
              ++ "|             Membro não está no projeto!                 |" ++ "\n"
              ++ ".---------------------------------------------------------." ++ "\n"
+  retornoMenuRestrito
 
 -- | Atribuir membro a uma atividade
 atribuirMembro :: IO()
@@ -398,6 +392,7 @@ atribuirMembro = do
     idProjeto <- readLn :: IO Int
     putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
     idMembroResponsavel <- readLn :: IO Int
+
 
     let ativFilePath = "Database/bancoDeAtividades.json"
 
@@ -437,6 +432,7 @@ atribuirMembro = do
                                          ++"|             Atividade atribuída com sucesso!            |" ++ "\n"
                                          ++".---------------------------------------------------------." ++ "\n"
                         else do
+                                clearScreen
                                 putStrLn $ ".---------------------------------------------------------." ++ "\n"
                                          ++"|              Membro não está no projeto                 |" ++ "\n"
                                          ++".---------------------------------------------------------." ++ "\n"
@@ -444,6 +440,7 @@ atribuirMembro = do
                 putStrLn $ ".---------------------------------------------------------." ++ "\n"
                          ++"|                 Atividade inexistente!                  |" ++ "\n"
                          ++".---------------------------------------------------------." ++ "\n"
+      
 
 
 
@@ -455,10 +452,31 @@ atribuirMembro = do
 bancoDeAtividades :: IO ()
 bancoDeAtividades = do
 
-    let atividadesCadastradas = (getTodasAtividades "Database/atividades.json")
+    let atividadesCadastradas = (getTodasAtividades "Database/bancoDeAtividades.json")
     clearScreen
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
             ++ "                  Banco de Atividades:                      " ++ "\n"
     mapM_ imprimirAtividade atividadesCadastradas
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
     
+-- | Retorna ao menu principal ou sai do sistema
+retornoMenuRestrito :: IO()
+retornoMenuRestrito = do
+        putStrLn $ ".-----------------------------------------------------------." ++ "\n"
+                ++ "| Você deseja voltar ao menu do projeto ou sair do sistema? |" ++ "\n"
+                ++ "|                                                           |" ++ "\n"
+                ++ "|                   M - Menu de projetos                    |" ++ "\n"
+                ++ "|                   S - Sair do sistema                     |" ++ "\n"
+                ++ ".-----------------------------------------------------------." ++ "\n"
+        opcao <- getLine
+        let lowerOption = map toLower opcao
+        
+        case lowerOption of
+                "m" -> menuRestritoProjeto
+                "s" -> sairDoSistema
+                _   -> do
+                        clearScreen
+                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                ++ "|            Entrada Inválida. Tente novamente!            |" ++ "\n"
+                                ++ ".----------------------------------------------------------." ++ "\n" 
+                        retornoMenuRestrito

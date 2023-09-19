@@ -30,7 +30,7 @@ criarAtividade   filePath titulo descricao idProjetoAtividade idAtividade idMemb
   let atividade = Atividade titulo descricao "Não atribuída!" idProjetoAtividade idAtividade idMembroResponsavel feedback
   escreverAtividade filePath atividade
 
--- Adiciona atividades à atividades.json
+-- Adiciona atividades à bancoDeAtividades.json
 escreverAtividade :: String -> Atividade -> IO()
 escreverAtividade filePath atividade = do
 
