@@ -170,9 +170,9 @@ statusAtividade = do
     case (atividadeDoSistema) of
         Just atividade -> do
             let statusAtividade = getStatus atividade 
-            putStrLn $ "\n" ++ "Título: " ++ titulo atividade ++ "\n"
-                            ++ "Descrição: " ++ descricao atividade ++ "\n"
-                            ++ "Status: " ++ statusAtividade
+            putStrLn $ "\n" ++ "▎ Título: " ++ titulo atividade ++ "\n"
+                            ++ "\n▎ Descrição: " ++ descricao atividade ++ "\n"
+                            ++ "\n▎ Status: " ++ statusAtividade
 
         Nothing -> do
                 clearScreen
@@ -239,7 +239,7 @@ criaFeedback = do
                         if (ehGerente idUsuario projetosCadastrados) || (ehMembroResponsavel idUsuario atividadesCadastradas) then do
                             putStrLn "\nEscreva um breve comentário sobre a atividade:\n"
                             comentario <- getLine
-                            editFeedbackDaAtividade "Database/bancoDeAtividades.json" idAtividade comentario
+                            editFeedback "Database/bancoDeAtividades.json" idAtividade comentario True
                             putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
                                             ++ " Comentário adicionado com sucesso a atividade de ID " ++ show idAtividade ++ "\n"
                                             ++ ".----------------------------------------------------------." ++ "\n"
