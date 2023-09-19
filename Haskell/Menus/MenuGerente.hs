@@ -388,28 +388,65 @@ atribuirMembro = do
 
     putStrLn "Digite o ID da atividade:"
     idAtividade <- readLn :: IO Int
-    putStrLn "Digite o ID do projeto que a atividade pertence:"
+    putStrLn "Digite o ID do projeto que a atividade pertence/pertencerá:"
     idProjeto <- readLn :: IO Int
     putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
     idMembroResponsavel <- readLn :: IO Int
 
-    let listaProjetos = getTodosProjetos "Database/projetos.json"
-    let projeto = getProjeto idProjeto listaProjetos
-    let membroNoProjeto = case projeto of
-                            Just p -> membroEstaNoProjeto idMembroResponsavel p
-                            Nothing -> False
-    if membroNoProjeto then do
-            clearScreen
-            editAtivDoUsuario "Database/usuarios.json" idMembroResponsavel [idAtividade]
-            putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                     ++"|             Atividade atribuída com sucesso!            |" ++ "\n"
-                     ++".---------------------------------------------------------." ++ "\n"
-     else do
-            clearScreen
-            putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                     ++"|              Membro não está no projeto                 |" ++ "\n"
-                     ++".---------------------------------------------------------." ++ "\n"
-    retornoMenuRestrito
+
+    let ativFilePath = "Database/bancoDeAtividades.json"
+
+
+    let atividadeNoSistema = getAtividade idAtividade (getTodasAtividades ativFilePath)
+
+    case atividadeNoSistema of
+        Just _ -> do
+                if temIdProjeto idAtividade (getTodasAtividades ativFilePath) == True then do 
+                         let listaProjetos = getTodosProjetos "Database/projetos.json"
+                         let projeto = getProjeto idProjeto listaProjetos
+                         let membroNoProjeto = case projeto of
+                                        Just p -> membroEstaNoProjeto idMembroResponsavel p
+                                        Nothing -> False
+                         if membroNoProjeto then do
+                                editAtivDoUsuario "Database/usuarios.json" idMembroResponsavel [idAtividade]
+                                putStrLn $ ".---------------------------------------------------------." ++ "\n"
+                                         ++"|             Atividade atribuída com sucesso!            |" ++ "\n"
+                                         ++".---------------------------------------------------------." ++ "\n"
+                         else do
+                                putStrLn $ ".---------------------------------------------------------." ++ "\n"
+                                         ++"|              Membro não está no projeto                 |" ++ "\n"
+                                         ++".---------------------------------------------------------." ++ "\n"
+                else do
+                        let listaProjetos = getTodosProjetos "Database/projetos.json"
+                        let projeto = getProjeto idProjeto listaProjetos
+                        editIdProj ativFilePath idAtividade idProjeto True
+                        putStrLn $ ".---------------------------------------------------------." ++ "\n"
+                                 ++"|           Projeto atrelado a atividade!                 |" ++ "\n"
+                                 ++".---------------------------------------------------------." ++ "\n"
+                        let membroNoProjeto = case projeto of
+                                        Just p -> membroEstaNoProjeto idMembroResponsavel p
+                                        Nothing -> False
+                        if membroNoProjeto then do
+                                editAtivDoUsuario "Database/usuarios.json" idMembroResponsavel [idAtividade]
+                                putStrLn $ ".---------------------------------------------------------." ++ "\n"
+                                         ++"|             Atividade atribuída com sucesso!            |" ++ "\n"
+                                         ++".---------------------------------------------------------." ++ "\n"
+                        else do
+                                clearScreen
+                                putStrLn $ ".---------------------------------------------------------." ++ "\n"
+                                         ++"|              Membro não está no projeto                 |" ++ "\n"
+                                         ++".---------------------------------------------------------." ++ "\n"
+        Nothing -> do
+                putStrLn $ ".---------------------------------------------------------." ++ "\n"
+                         ++"|                 Atividade inexistente!                  |" ++ "\n"
+                         ++".---------------------------------------------------------." ++ "\n"
+      
+
+
+
+
+
+
 
 -- | Visualiza atividades cadastradas no sistema
 bancoDeAtividades :: IO ()
