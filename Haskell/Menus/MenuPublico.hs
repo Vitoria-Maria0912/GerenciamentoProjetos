@@ -91,29 +91,47 @@ comecarAtividade = do
 
                 case (atividadeDoSistema) of
                     Just atividade -> do
-                        if status atividade == "Não atribuída!" then do
-                            if (atividadeEstaAtribuida idAtividade usuario) then do
-                                editStatus "Database/bancoDeAtividades.json" idAtividade "PENDENTE"
-                              
-                                putStrLn $ "\n\n" ++ "▎ Título: " ++ titulo atividade ++ "\n"
-                                                ++ "\n▎ Descrição: " ++ descricao atividade ++ "\n"
-                                                ++ "\n▎ Status: PENDENTE"  
+                        
+                        if (atividadeEstaAtribuida idAtividade usuario) then do
+                        
+                                if (status atividade) == "Não atribuída!" then do
+                                        clearScreen
+                                        editStatus "Database/bancoDeAtividades.json" idAtividade "Pendente..."
+                                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                                ++ "                Você começou a atividade (ID: " ++ show(idAtividade) ++ ")\n"
+                                                ++ "                                                            " ++ "\n"
+                                                ++ "    Título: " ++ titulo atividade ++ "\n"
+                                                ++ " Descrição: " ++ descricao atividade ++ "\n"
+                                                ++ "    Status: Pendente..." ++ "\n"
                                 
-                            
-                            else do putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
-                                                 ++ "|         Você não está atribuído a essa atividade!        |" ++ "\n"
-                                                 ++ ".----------------------------------------------------------." ++ "\n"
-                                     
-
-                        else do
-                            putStrLn "Esta atividade já está em andamento!" -- APARENTEMENTE NAO ESTÁ FUNCIONANDO
-                            
-
+                                else if (status atividade) == "Concluída!" then do
+                                        clearScreen
+                                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                                ++ "|             Esta atividade já foi concluída!             |" ++ "\n"
+                                                ++ ".----------------------------------------------------------." ++ "\n"
+                                else do
+                                        clearScreen
+                                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                                ++ "|           Esta atividade já está em andamento!           |" ++ "\n"
+                                                ++ ".----------------------------------------------------------." ++ "\n"
+                        
+                        else do 
+                                clearScreen
+                                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                        ++ "|         Você não está atribuído a essa atividade!        |" ++ "\n"
+                                        ++ ".----------------------------------------------------------." ++ "\n"
+                                
                     Nothing -> do
-                            clearScreen
-                            putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                                    ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
-                                    ++ ".----------------------------------------------------------." ++ "\n"
+                        clearScreen
+                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                                ++ ".----------------------------------------------------------." ++ "\n"
+
+        Nothing -> do
+                clearScreen
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "|              ID incorreto! Tente novamente.              |" ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
     retornoMenuPublico                                                  
 
 -- | Finaliza uma atividade
@@ -137,10 +155,29 @@ finalizarAtividade = do
 
                 case (atividadeDoSistema) of
                     Just atividade -> do
-                        editStatus "Database/bancoDeAtividades.json" idAtividade "CONCLUÍDA"
-                        putStrLn $ "\n" ++ "▎ Título: " ++ titulo atividade ++ "\n"
-                                        ++ "\n▎ Descrição: " ++ descricao atividade ++ "\n"
-                                        ++ "\n▎ Status: CONCLUÍDA" 
+
+                        if (atividadeEstaAtribuida idAtividade usuario) then do
+                        
+                                if (status atividade) == "Concluída!" then do
+                                        clearScreen
+                                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                                ++ "|             Esta atividade já foi concluída!             |" ++ "\n"
+                                                ++ ".----------------------------------------------------------." ++ "\n"
+                                else do
+                                        clearScreen
+                                        editStatus "Database/bancoDeAtividades.json" idAtividade "Concluída!"
+                                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                                ++ "               Você finalizou a atividade (ID: " ++ show(idAtividade) ++ ")\n"
+                                                ++ "                                                            " ++ "\n"
+                                                ++ "    Título: " ++ titulo atividade ++ "\n"
+                                                ++ " Descrição: " ++ descricao atividade ++ "\n"
+                                                ++ "    Status: Concluída!" ++ "\n"
+                        
+                        else do 
+                                clearScreen
+                                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                        ++ "|         Você não está atribuído a essa atividade!        |" ++ "\n"
+                                        ++ ".----------------------------------------------------------." ++ "\n"
 
                     Nothing -> do
                             clearScreen
@@ -170,9 +207,13 @@ statusAtividade = do
     case (atividadeDoSistema) of
         Just atividade -> do
             let statusAtividade = getStatus atividade 
-            putStrLn $ "\n" ++ "▎ Título: " ++ titulo atividade ++ "\n"
-                            ++ "\n▎ Descrição: " ++ descricao atividade ++ "\n"
-                            ++ "\n▎ Status: " ++ statusAtividade
+            clearScreen
+            putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                    ++ "           Visualizar status da atividade (ID: " ++ show(idAtividade) ++ ")\n"
+                    ++ "                                                            " ++ "\n"
+                    ++ "    Título: " ++ titulo atividade ++ "\n"
+                    ++ " Descrição: " ++ descricao atividade ++ "\n"
+                    ++ "    Status: " ++ statusAtividade ++ "\n"
 
         Nothing -> do
                 clearScreen
@@ -189,6 +230,8 @@ visualizarAtividades = do
             ++ "              Visualizar atividades do projeto:             " ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
 
+    visualizarProjetos
+
     putStrLn "Digite o ID do projeto:"
     idProjeto <- readLn :: IO Int
 
@@ -200,7 +243,7 @@ visualizarAtividades = do
                 clearScreen
                 let atividadesCadastradas = (getTodasAtividades "Database/bancoDeAtividades.json")
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                        ++ "            Estas são as atividades do projeto:             " ++ "\n"
+                        ++ "       Estas são as atividades do projeto (ID: " ++ show(idProjeto) ++ ")\n"
                 mapM_ imprimeAtividadesDoProjeto (getAtividadesDoProjeto (atividades projeto) atividadesCadastradas)
                 putStrLn $ ".----------------------------------------------------------." ++ "\n"
 
@@ -265,10 +308,10 @@ criaFeedback = do
 visualizarProjetos :: IO ()
 visualizarProjetos = do
   clearScreen
-  putStrLn $ ".----------------------------------------------------------." ++ "\n"
+  putStrLn $ ".-----------------------------------------------------------." ++ "\n"
           ++ "            Estes são os projetos no sistema:               " ++ "\n"
   mapM_ imprimirProjetos (getTodosProjetos "Database/projetos.json")
-  putStrLn $ ".----------------------------------------------------------." ++ "\n"
+  putStrLn $ ".-----------------------------------------------------------." ++ "\n"
 
 -- | Retorna ao menu principal ou sai do sistema
 retornoMenuPublico :: IO()
