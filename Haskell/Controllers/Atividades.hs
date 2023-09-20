@@ -4,8 +4,8 @@ module Controllers.Atividades where
 
 import qualified Data.ByteString.Lazy as B
 import Data.Aeson
-import Data.Text (replace, pack, unpack)
 import GHC.Generics
+import Data.Text (replace, pack, unpack)
 import System.IO.Unsafe
 import System.Directory
 import Prelude hiding (id)
@@ -225,7 +225,15 @@ imprimirAtividade atividade = if (idProjetoAtividade atividade == Nothing)then d
    "             Status: " ++ status atividade ++ "\n"
    else do
     let getIdProjeto = removerTodasAsPalavras "Just" (show (idProjetoAtividade atividade))
-    putStrLn $ "             Título: " ++ (titulo atividade) ++ "\n" ++"             Descrição: " ++ (descricao atividade) ++ "\n" ++"             ID Projeto: " ++ getIdProjeto ++ "\n" ++"             ID Atividade: " ++ show (idAtividade atividade) ++ "\n" ++"             Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++"             Status: " ++ status atividade ++ "\n"
+    putStrLn $ "             Título: " ++ (titulo atividade) ++ "\n" ++
+               "             Descrição: " ++ (descricao atividade) ++ "\n" ++
+               "             ID Projeto: " ++ getIdProjeto ++ "\n" ++"             ID Atividade: " ++ 
+               show (idAtividade atividade) ++ "\n" ++
+               "             Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++
+               "             Status: " ++ status atividade ++ "\n"
+
+
+
 
 
 
