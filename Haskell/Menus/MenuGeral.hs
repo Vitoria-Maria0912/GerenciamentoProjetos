@@ -365,13 +365,13 @@ enviarMGeral = do
                              putStrLn $ ".------------------------------------------------------------." ++ "\n"
                                       ++ "|              Senha incorreta! Tente novamente.             |" ++ "\n"
                                       ++ ".------------------------------------------------------------." ++ "\n"
-                             retornoMenuPrincipal
+
                 (Nothing, _) -> do
                         clearScreen
                         putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                 ++ "|              ID inexistente! Tente novamente!            |" ++ "\n"
                                 ++ ".----------------------------------------------------------." ++ "\n"
-                        retornoMenuPrincipal
+        retornoMenuPrincipal
 
 -- | Envia mensagem para um usuário do sistema
 enviarMPrivada:: IO()
@@ -415,7 +415,6 @@ enviarMPrivada = do
 retornoMenuPrincipal :: IO()
 retornoMenuPrincipal = do
 
-        clearScreen
         putStrLn $ ".----------------------------------------------------------." ++ "\n"
                 ++ "| Você deseja voltar ao menu principal ou sair do sistema? |" ++ "\n"
                 ++ "|                                                          |" ++ "\n"
