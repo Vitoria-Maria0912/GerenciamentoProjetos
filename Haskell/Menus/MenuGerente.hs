@@ -452,7 +452,7 @@ bancoDeAtividades = do
             ++ "                  Banco de Atividades:                      " ++ "\n"
     mapM_ imprimirAtividade atividadesCadastradas
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
-    
+    menuBancoDeAtividades
 
 -- Função para o menu de banco de atividades no menu do gerente
 menuBancoDeAtividades :: IO ()
