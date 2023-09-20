@@ -184,10 +184,10 @@ removeIdMembroResp id (ativ:ativs)
 
 -- | Função que edita o membro no arquivo ao adicionar ou removê-lo
 editMembroResp :: String ->  Int ->  Int -> Bool -> IO()
-editMembroResp jsonFilePath idAtividade idMembroResponsavel adicionar = do
+editMembroResp jsonFilePath idAtividade idMembro adicionar = do
   let listaAtividades = getTodasAtividades jsonFilePath
   let atividadesAtualizadas = if adicionar 
-                              then addMembroResp idAtividade listaAtividades idMembroResponsavel
+                              then addMembroResp idAtividade listaAtividades idMembro
                               else removeIdMembroResp idAtividade listaAtividades 
   B.writeFile "../Temp.json" $ encode atividadesAtualizadas
   removeFile jsonFilePath
