@@ -303,10 +303,8 @@ visualizarMensagensPrivadas = do
 
         putStrLn "Digite seu ID:"
         idUsuario <- readLn:: IO Int
-
         let usuarioNoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
         let projetos = getTodosProjetos "Database/projetos.json"
-
         case (usuarioNoSistema, projetos) of
                 (Just usuario, projetos) -> do
                         putStrLn "Digite sua senha:"
@@ -314,7 +312,7 @@ visualizarMensagensPrivadas = do
                         if (verificaSenhaUsuario usuario senha) then do
                                 putStrLn "Mensagens Privadas:"
                                 let mensagen = getMensagens "Database/mensagens.json"
-                                putStrLn "Carregando...\n  "
+                                putStrLn "\nCarregando...\n  "
                                 threadDelay 100000
                                 exibeMensagens mensagen idUsuario
                                 threadDelay 100000
@@ -329,6 +327,7 @@ visualizarMensagensPrivadas = do
                                 ++ "|              ID inexistente! Tente novamente!            |" ++ "\n"
                                 ++ ".----------------------------------------------------------." ++ "\n"
         retornoMenuPrincipal
+
 
 -- | Envia uma mensagem para os membros de um projeto
 enviarMGeral :: IO()
@@ -357,9 +356,14 @@ enviarMGeral = do
                                         putStrLn "Digite a mensagem que será enviada para todos os membros do projetos"
                                         mensagem <- getLine
                                         salvarCaixadeMensagem "Database/mensagens.json" idEscolhido (nome usuario)mensagem
-                                        retornoMenuPrincipal
+                                        putStrLn $ ".------------------------------------------------------------." ++ "\n"
+                                                ++ "|                Mensagem enviada com sucesso !              |" ++ "\n"
+                                                ++ ".------------------------------------------------------------." ++ "\n"
+                                        
                                 else do
-                                        putStrLn "Não está em projeto !"
+                                        putStrLn $ ".---------------------------------------------------------------." ++ "\n"
+                                                ++ "|           Este Usuário não é membro de nenhum projeto!        |" ++ "\n"
+                                                ++ ".---------------------------------------------------------------." ++ "\n"
                         else do
                              clearScreen
                              putStrLn $ ".------------------------------------------------------------." ++ "\n"
@@ -399,6 +403,9 @@ enviarMPrivada = do
                                 putStrLn "Digite a mensagem a ser enviada"
                                 mensagem <- getLine
                                 salvarCaixadeMensagem "Database/mensagens.json" id_destinatario (nome usuario) mensagem
+                                putStrLn $ ".------------------------------------------------------------." ++ "\n"
+                                        ++ "|                Mensagem enviada com sucesso !              |" ++ "\n"
+                                        ++ ".------------------------------------------------------------." ++ "\n"
                         else do
                                 clearScreen
                                 putStrLn $ ".------------------------------------------------------------." ++ "\n"
