@@ -5,6 +5,7 @@ module Controllers.Atividades where
 import qualified Data.ByteString.Lazy as B
 import Data.Aeson
 import GHC.Generics
+import Data.Text (replace, pack, unpack)
 import System.IO.Unsafe
 import System.Directory
 import Prelude hiding (id)
@@ -179,10 +180,10 @@ removeIdMembroResp id (ativ:ativs)
 
 -- | Função que edita o membro no arquivo ao adicionar ou removê-lo
 editMembroResp :: String ->  Int ->  Int -> Bool -> IO()
-editMembroResp jsonFilePath idAtividade idMembroResponsavel adicionar = do
+editMembroResp jsonFilePath idAtividade idMembro adicionar = do
   let listaAtividades = getTodasAtividades jsonFilePath
   let atividadesAtualizadas = if adicionar 
-                              then addMembroResp idAtividade listaAtividades idMembroResponsavel
+                              then addMembroResp idAtividade listaAtividades idMembro
                               else removeIdMembroResp idAtividade listaAtividades 
   B.writeFile "../Temp.json" $ encode atividadesAtualizadas
   removeFile jsonFilePath
@@ -210,13 +211,34 @@ getTodasAtividades filePath = do
 
 -- | Função que imprime as atividades para visualização
 imprimirAtividade :: Atividade -> IO()
-imprimirAtividade atividade = putStrLn $ "             Título: " ++ (titulo atividade) ++ "\n" ++
-                                         "             Descrição: " ++ (descricao atividade) ++ "\n" ++
-                                         "             ID Projeto: " ++ show (idProjetoAtividade atividade) ++ "\n" ++
-                                         "             ID Atividade: " ++ show (idAtividade atividade) ++ "\n" ++
-                                         "             Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++
-                                         "             Status: " ++ status atividade ++ "\n"
+imprimirAtividade atividade = if (idProjetoAtividade atividade == Nothing)then do
+  putStrLn $ "             Título: " ++ (titulo atividade) ++ "\n" ++
+   "             Descrição: " ++ (descricao atividade) ++ "\n" ++
+   "             ID Projeto: " ++ " - " ++ "\n" ++
+   "             ID Atividade: " ++ show (idAtividade atividade) ++ "\n" ++
+   "             Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++
+   "             Status: " ++ status atividade ++ "\n"
+   else do
+    let getIdProjeto = removerTodasAsPalavras "Just" (show (idProjetoAtividade atividade))
+    putStrLn $ "             Título: " ++ (titulo atividade) ++ "\n" ++
+               "             Descrição: " ++ (descricao atividade) ++ "\n" ++
+               "             ID Projeto: " ++ getIdProjeto ++ "\n" ++             
+               "             ID Atividade: " ++ show (idAtividade atividade) ++ "\n" ++
+               "             Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++
+               "             Status: " ++ status atividade ++ "\n"
 
 
+
+
+
+
+-- Função para remover todas as ocorrências de uma palavra de uma string
+removerTodasAsPalavras :: String -> String -> String
+removerTodasAsPalavras palavra string =
+    let palavraText = pack palavra
+        stringText = pack string
+        resultadoText = replace palavraText "" stringText
+    in
+    unpack resultadoText
 
 
