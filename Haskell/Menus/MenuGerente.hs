@@ -405,6 +405,7 @@ atribuirMembro = do
                                         Nothing -> False
                          if membroNoProjeto then do
                                 editAtivDoUsuario "Database/usuarios.json" idMembroResponsavel [idAtividade]
+                                editMembroResp ativFilePath idAtividade idMembroResponsavel True
                                 putStrLn $ ".---------------------------------------------------------." ++ "\n"
                                          ++"|             Atividade atribuída com sucesso!            |" ++ "\n"
                                          ++".---------------------------------------------------------." ++ "\n"
@@ -455,9 +456,7 @@ bancoDeAtividades = do
     mapM_ imprimirAtividade atividadesCadastradas
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
     
-----------------Começa Banco
 
---BANCO DE ATIVIDADES
 -- Função para o menu de banco de atividades no menu do gerente
 menuBancoDeAtividades :: IO ()
 menuBancoDeAtividades = do
@@ -500,8 +499,6 @@ menuBancoDeAtividades = do
                     ++ "|              Atividade inválida, tente novamente.              |" ++ "\n"
                     ++ ".----------------------------------------------------------." ++ "\n"
     retornoMenuRestrito
-
-------------------Encerra Banco
 
 
     
