@@ -89,14 +89,9 @@ getMembroResponsavel atividade = do
         _ -> "Não atribuído!"
 
 -- | Função que verifica se um usuário (através do ID) é responsável por alguma atividade
-ehMembroResponsavel :: Int -> [Atividade] -> Bool
-ehMembroResponsavel membroResponsavelId atividades =
-    any (\atividade ->
-        case idMembroResponsavel atividade of
-            Just responsavelId -> responsavelId == membroResponsavelId
-            Nothing -> False
-        ) atividades
-
+ehMembroResponsavel :: Maybe Int -> Atividade -> Bool
+ehMembroResponsavel membroResponsavelId atividade = membroResponsavelId == (idMembroResponsavel atividade)
+    
 -- | Funções que lidam com os feedbacks de uma atividade | --
 
 -- | Função que adiciona um feedback a lista de feedbacks de uma atividade

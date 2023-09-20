@@ -270,7 +270,7 @@ criaFeedback = do
 
     case (usuarioNoSistema) of
         Just usuario -> do
-                putStrLn "\nDigite o ID da atividade que deseja dar Feedback:\n"
+                putStrLn "\nDigite o ID da atividade que deseja dar Feedback:"
                 idAtividade <- readLn :: IO Int
 
                 let projetosCadastrados = (getTodosProjetos "Database/projetos.json")
@@ -279,8 +279,9 @@ criaFeedback = do
 
                 case (atividadeDoSistema) of
                     Just atividade -> do
-                        if (ehGerente idUsuario projetosCadastrados) || (ehMembroResponsavel idUsuario atividadesCadastradas) then do
-                            putStrLn "\nEscreva um breve comentário sobre a atividade:\n"
+                        clearScreen
+                        if (ehGerente idUsuario projetosCadastrados) || (ehMembroResponsavel (Just(idUsuario)) atividade) then do
+                            putStrLn "\nEscreva um breve comentário sobre a atividade:"
                             comentario <- getLine
                             editFeedback "Database/bancoDeAtividades.json" idAtividade comentario True
                             putStrLn $ "\n" ++ ".----------------------------------------------------------." ++ "\n"
