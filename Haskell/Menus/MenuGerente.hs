@@ -47,10 +47,10 @@ menuRestritoProjeto = do
 
         "l" -> do
                 visualizarProjetos
-                menuRestritoProjeto
+                retornoMenuRestrito
         "p" -> deletarProjeto
         "g" -> gerenciarMembros
-        "b" -> menuBancoDeAtividades --bancoDeAtividades 
+        "b" -> menuBancoDeAtividades 
         "i" -> comecarAtividade
         "f" -> finalizarAtividade
         "v" -> visualizarAtividades
@@ -111,9 +111,6 @@ deletarProjeto = do
 -- | Cria uma atividade em um projeto
 criaAtividade :: IO()
 criaAtividade = do  
-
-    --bancoDeAtividades 
-    -- a visualização do banco deveria ter uma chamada propria
 
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
             ++ "                      Criar atividade:                      " ++ "\n"
@@ -180,20 +177,16 @@ criaAtividade = do
                                         putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                                 ++ "  Atividade criada com sucesso! O ID da atividade é: " ++ show idAtividade ++ "\n"
                                                 ++ ".----------------------------------------------------------." ++ "\n"
-
-                                        menuRestritoProjeto
                 else do
                         clearScreen
                         putStrLn $ ".----------------------------------------------------------." ++ "\n"
                                 ++ "|           Projeto inexistente! Tente novamente!          |" ++ "\n"
                                 ++ ".----------------------------------------------------------." ++ "\n"
-                        menuRestritoProjeto
+    retornoMenuRestrito
 
 -- Remove uma atividade de um projeto
 deletaAtividade :: IO()
 deletaAtividade = do
-
-    --bancoDeAtividades
 
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
             ++ "                    Deletar atividade:                      " ++ "\n"
@@ -202,29 +195,39 @@ deletaAtividade = do
     putStrLn "Digite o ID do projeto que deseja remover uma atividade: "
     idProjeto <- readLn :: IO Int
 
-    -- CHECAR SE O PROJETO EXISTE
-    putStrLn "\nDigite o ID da atividade que deseja remover:"
-    idAtividade <- readLn :: IO Int
+    let projetoNoSistema = getProjeto idProjeto (getTodosProjetos "Database/projetos.json")
 
-    let atividadesNoSistema = getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json")
+    if isJust(projetoNoSistema) then do
+        putStrLn "\nDigite o ID da atividade que deseja remover:"
+        idAtividade <- readLn :: IO Int
 
-    case atividadesNoSistema of
-        Just atividade ->  do
-                editAtivDoProjeto "Database/projetos.json" idProjeto idAtividade False
-                editIdProj "Database/bancoDeAtividades.json" idAtividade idProjeto  False
-                editMembroResp "Database/bancoDeAtividades.json" idAtividade 0 False
-                editStatus "Database/bancoDeAtividades.json" idAtividade "Não atribuída!"
-                editFeedback "Database/bancoDeAtividades.json" idAtividade "" False
+        let atividadesNoSistema = getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json")
 
-                clearScreen
-                putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                        ++ "|              Atividade removida com sucesso!             |" ++ "\n"
-                        ++ ".----------------------------------------------------------." ++ "\n"
+        case atividadesNoSistema of
+                Just atividade ->  do
+                        editAtivDoProjeto "Database/projetos.json" idProjeto idAtividade False
+                        editIdProj "Database/bancoDeAtividades.json" idAtividade idProjeto  False
+                        editMembroResp "Database/bancoDeAtividades.json" idAtividade 0 False
+                        editStatus "Database/bancoDeAtividades.json" idAtividade "Não atribuída!"
+                        editFeedback "Database/bancoDeAtividades.json" idAtividade "" False
 
-        Nothing -> do
-                putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                        ++ "|          Atividade inexistente! Tente novamente.         |" ++ "\n"
-                        ++ ".----------------------------------------------------------." ++ "\n"
+                        clearScreen
+                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                ++ "|              Atividade removida com sucesso!             |" ++ "\n"
+                                ++ ".----------------------------------------------------------." ++ "\n"
+
+                Nothing -> do
+                        clearScreen
+                        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                                ++ "|          Atividade inexistente! Tente novamente.         |" ++ "\n"
+                                ++ ".----------------------------------------------------------." ++ "\n"
+
+    else do
+        clearScreen
+        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                ++ "|             Falha no cadastro! Tente novamente!          |" ++ "\n"
+                ++ ".----------------------------------------------------------." ++ "\n"
+        
     retornoMenuRestrito
 
 -- | Visualizar todos os membros do projeto
@@ -259,10 +262,10 @@ gerenciarMembros = do
             option <- getLine
             let lowerOption = map toLower option
             case lowerOption of
-                "m" -> visualizarMembros
-                "a" -> atribuirMembro
-                "n" -> adicionaNovoMembro
-                "r" -> removeMembroProjeto
+                "m" -> visualizarMembros projeto
+                -- "a" -> atribuirMembro projeto
+                "n" -> adicionaNovoMembro projeto
+                "r" -> removeMembroProjeto projeto
                 "v" -> menuRestritoProjeto
                 _   -> erroMenuGerente
         Nothing -> do
@@ -270,177 +273,137 @@ gerenciarMembros = do
             putStrLn $ ".----------------------------------------------------------." ++ "\n"
                     ++ "|              ID inválido, tente novamente.               |" ++ "\n"
                     ++ ".----------------------------------------------------------." ++ "\n"
-    retornoMenuRestrito 
+            retornoMenuRestrito
 
 -- | Exibe os membros de um projeto
-visualizarMembros:: IO()
-visualizarMembros = do
+visualizarMembros:: Projeto -> IO()
+visualizarMembros projeto = do
+
+        clearScreen
+        let membrosDoProjeto = getMembrosDoProjeto (getIdsMembrosDoProjeto projeto) (getUsuarios "Database/usuarios.json")
         
-    putStrLn $ ".----------------------------------------------------------." ++ "\n"
-            ++ "                Visualizar membros do projeto:              " ++ "\n"
-            ++ ".----------------------------------------------------------." ++ "\n"
-
-    putStrLn "Digite o ID do projeto:"
-    idProjeto <- readLn :: IO Int
-
-    let projetosDoSistema = getTodosProjetos "Database/projetos.json"
-    let projetoNoSistema = getProjeto idProjeto projetosDoSistema
-
-    case projetoNoSistema of
-        Just projeto -> do
-                clearScreen
-                let usuariosDoSistema = getUsuarios "Database/usuarios.json"
-                putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                        ++ "              Estes são os membros do projeto:              " ++ "\n"
-                mapM_ imprimeMembrosDoProjeto usuariosDoSistema
-                putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                
-        Nothing -> do
-                clearScreen
-                putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                        ++ "|           Projeto inexistente! Tente novamente!          |" ++ "\n"
-                        ++ ".----------------------------------------------------------." ++ "\n"
-    retornoMenuRestrito  
+        putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                ++ "         Estes são os membros do projeto: (ID " ++ show(idProjeto projeto) ++ ")\n"
+        mapM_ imprimeMembrosDoProjeto membrosDoProjeto
+        putStrLn $ ".-----------------------------------------------------------." ++ "\n"
+        retornoMenuRestrito  
 
 -- | Adiciona um novo membro a um projeto
-adicionaNovoMembro :: IO ()
-adicionaNovoMembro = do
+adicionaNovoMembro :: Projeto -> IO()
+adicionaNovoMembro projeto = do
 
-  putStrLn $ ".----------------------------------------------------------." ++ "\n"
-          ++ "                   Adicionar novo membro:                   " ++ "\n"
-          ++ ".----------------------------------------------------------." ++ "\n"
-
-  putStrLn "Digite o ID do projeto:"
-  idProjeto <- readLn :: IO Int
-
-  -- COLOCAR VERIFICACAO SE ESSE PROJETO ESTÁ NA LISTA DE PROJETOS
-  putStrLn $ ".----------------------------------------------------------." ++ "\n"
-          ++ "Segue a lista de usuários disponíveis no sistema para adição no projeto: \n"
+  clearScreen
+  putStrLn $ ".---------------------------------------------------------." ++ "\n"
+          ++ "                  Adicionar novo membro:                   " ++ "\n"
+          ++ "                                                           " ++ "\n"
+          ++ " Usuários disponíveis no sistema para adição no projeto: \n"
   mapM_ imprimirUsuario (getUsuarios "Database/usuarios.json")
 
-  putStrLn $ ".---------------------------------------------------------." ++ "\n"
-           ++"|          Digite o ID do membro que deseja adicionar:    |" ++ "\n"
-           ++".---------------------------------------------------------." ++ "\n"
+  putStrLn $ "\n        Digite o ID do membro que deseja adicionar:        " ++ "\n"
+           ++  ".---------------------------------------------------------." ++ "\n"
   idUsuario <- readLn :: IO Int
 
-  let listaProjetos = getTodosProjetos "Database/projetos.json"
-  let projeto = getProjeto idProjeto listaProjetos
-
-  let membroNoProjeto = case projeto of
-                            Just p -> membroEstaNoProjeto idUsuario p && idUsuario /= idGerente p
-                            Nothing -> False
-
-  if membroNoProjeto then do
-          putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                  ++ "|             Membro já está no projeto!                  |" ++ "\n"
-                  ++ ".---------------------------------------------------------." ++ "\n"
+  if (membroEstaNoProjeto idUsuario projeto) then do
+        clearScreen
+        putStrLn $ ".---------------------------------------------------------." ++ "\n"
+                ++ "|             Membro já está no projeto!                  |" ++ "\n"
+                ++ ".---------------------------------------------------------." ++ "\n"
+  else if (idUsuario == (idGerente projeto)) then do
+        clearScreen
+        putStrLn $ ".---------------------------------------------------------." ++ "\n"
+                ++ "|           O ID pertence ao gerente do projeto!          |" ++ "\n"
+                ++ ".---------------------------------------------------------." ++ "\n"
   else do
-           editMembrosDoProjeto "Database/projetos.json" idProjeto idUsuario True
-           putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                    ++"|             Membro adicionado com sucesso!              |" ++ "\n"
-                    ++".---------------------------------------------------------." ++ "\n"
+        clearScreen
+        editMembrosDoProjeto "Database/projetos.json" (idProjeto projeto) idUsuario True
+        putStrLn $ ".---------------------------------------------------------." ++ "\n"
+                ++"|             Membro adicionado com sucesso!              |" ++ "\n"
+                ++".---------------------------------------------------------." ++ "\n"
   retornoMenuRestrito
 
 -- | Remover membro do projeto
-removeMembroProjeto :: IO ()
-removeMembroProjeto = do
+removeMembroProjeto :: Projeto -> IO()
+removeMembroProjeto projeto = do
   
   putStrLn $ ".----------------------------------------------------------." ++ "\n"
           ++ "                  Remover membro do projeto:                " ++ "\n"
           ++ ".----------------------------------------------------------." ++ "\n"
 
-  putStrLn "Digite o ID do projeto:"
-  idProjeto <- readLn :: IO Int
   putStrLn "Digite o ID do membro que deseja remover:"
   idUsuario <- readLn :: IO Int
 
-  let listaProjetos = getTodosProjetos "Database/projetos.json"
-  let projeto = getProjeto idProjeto listaProjetos
-
-  let membroNoProjeto = case projeto of
-                          Just p -> membroEstaNoProjeto idUsuario p && idUsuario /= idGerente p
-                          Nothing -> False
-
-  if membroNoProjeto then do
-    editMembrosDoProjeto "Database/projetos.json" idProjeto idUsuario False
-    putStrLn $  ".---------------------------------------------------------." ++ "\n"
-             ++ "|             Membro removido do projeto!                 |" ++ "\n"
-             ++ ".---------------------------------------------------------." ++ "\n"
+  if (membroEstaNoProjeto idUsuario projeto) then do
+        clearScreen
+        editMembrosDoProjeto "Database/projetos.json" (idProjeto projeto) idUsuario False
+        putStrLn $ ".---------------------------------------------------------." ++ "\n"
+                ++ "|             Membro removido do projeto!                 |" ++ "\n"
+                ++ ".---------------------------------------------------------." ++ "\n"
+  else if (idUsuario == (idGerente projeto)) then do
+        clearScreen
+        putStrLn $ ".---------------------------------------------------------." ++ "\n"
+                ++ "|           O ID pertence ao gerente do projeto!          |" ++ "\n"
+                ++ ".---------------------------------------------------------." ++ "\n"
   else do
-    putStrLn $  ".---------------------------------------------------------." ++ "\n"
-             ++ "|             Membro não está no projeto!                 |" ++ "\n"
-             ++ ".---------------------------------------------------------." ++ "\n"
+        putStrLn $  ".---------------------------------------------------------." ++ "\n"
+                ++ "|             Usuário não está no projeto!                 |" ++ "\n"
+                ++ ".----------------------------------------------------------." ++ "\n"
   retornoMenuRestrito
 
 -- | Atribuir membro a uma atividade
-atribuirMembro :: IO()
-atribuirMembro = do
+-- atribuirMembro :: Projeto -> IO()
+-- atribuirMembro projeto = do
 
-        -- FALTAM CHECAGENS
-  
-    putStrLn $ ".----------------------------------------------------------." ++ "\n"
-            ++ "             Atribuir uma atividade a um membro:            " ++ "\n"
-            ++ ".----------------------------------------------------------." ++ "\n"
+--     putStrLn $ ".----------------------------------------------------------." ++ "\n"
+--             ++ "             Atribuir uma atividade a um membro:            " ++ "\n"
+--             ++ ".----------------------------------------------------------." ++ "\n"
 
-    putStrLn "Digite o ID da atividade:"
-    idAtividade <- readLn :: IO Int
-    putStrLn "Digite o ID do projeto que a atividade pertence/pertencerá:"
-    idProjeto <- readLn :: IO Int
-    putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
-    idMembroResponsavel <- readLn :: IO Int
+--     putStrLn "Digite o ID da atividade:"
+--     idAtividade <- readLn :: IO Int
 
+--     let ativFilePath = "Database/bancoDeAtividades.json"
 
-    let ativFilePath = "Database/bancoDeAtividades.json"
+--     let atividadeNoSistema = getAtividade idAtividade (getTodasAtividades ativFilePath)
 
-
-    let atividadeNoSistema = getAtividade idAtividade (getTodasAtividades ativFilePath)
-
-    case atividadeNoSistema of
-        Just _ -> do
-                if temIdProjeto idAtividade (getTodasAtividades ativFilePath) == True then do 
-                         let listaProjetos = getTodosProjetos "Database/projetos.json"
-                         let projeto = getProjeto idProjeto listaProjetos
-                         let membroNoProjeto = case projeto of
-                                        Just p -> membroEstaNoProjeto idMembroResponsavel p
-                                        Nothing -> False
-                         if membroNoProjeto then do
-                                editAtivDoUsuario "Database/usuarios.json" idMembroResponsavel [idAtividade]
-                                editMembroResp ativFilePath idAtividade idMembroResponsavel True
-                                putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                                         ++"|             Atividade atribuída com sucesso!            |" ++ "\n"
-                                         ++".---------------------------------------------------------." ++ "\n"
-                         else do
-                                putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                                         ++"|              Membro não está no projeto                 |" ++ "\n"
-                                         ++".---------------------------------------------------------." ++ "\n"
-                else do
-                        let listaProjetos = getTodosProjetos "Database/projetos.json"
-                        let projeto = getProjeto idProjeto listaProjetos
-                        editIdProj ativFilePath idAtividade idProjeto True
-                        putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                                 ++"|           Projeto atrelado a atividade!                 |" ++ "\n"
-                                 ++".---------------------------------------------------------." ++ "\n"
-                        let membroNoProjeto = case projeto of
-                                        Just p -> membroEstaNoProjeto idMembroResponsavel p
-                                        Nothing -> False
-                        if membroNoProjeto then do
-                                editAtivDoUsuario "Database/usuarios.json" idMembroResponsavel [idAtividade]
-                                putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                                         ++"|             Atividade atribuída com sucesso!            |" ++ "\n"
-                                         ++".---------------------------------------------------------." ++ "\n"
-                        else do
-                                clearScreen
-                                putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                                         ++"|              Membro não está no projeto                 |" ++ "\n"
-                                         ++".---------------------------------------------------------." ++ "\n"
-        Nothing -> do
-                putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                         ++"|                 Atividade inexistente!                  |" ++ "\n"
-                         ++".---------------------------------------------------------." ++ "\n"
-      
-
-
-
+--     case atividadeNoSistema of
+--         Just _ -> do
+--                 putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
+--                 idMembroResponsavel <- readLn :: IO Int
+--                 if temIdProjeto idAtividade (getTodasAtividades ativFilePath) == True then do 
+                         
+--                          if (membroEstaNoProjeto idMembroResponsavel projeto) then do
+--                                 clearScreen
+--                                 editAtivDoUsuario "Database/usuarios.json" idMembroResponsavel [idAtividade]
+--                                 editMembroResp ativFilePath idAtividade idMembroResponsavel True
+--                                 putStrLn $ ".---------------------------------------------------------." ++ "\n"
+--                                          ++"|             Atividade atribuída com sucesso!            |" ++ "\n"
+--                                          ++".---------------------------------------------------------." ++ "\n"
+--                          else do
+--                                 clearScreen
+--                                 putStrLn $ ".---------------------------------------------------------." ++ "\n"
+--                                          ++"|              Membro não está no projeto                 |" ++ "\n"
+--                                          ++".---------------------------------------------------------." ++ "\n"
+--                 else do
+                        
+--                         editIdProj ativFilePath idAtividade (idProjeto projeto) True
+--                         putStrLn $ ".---------------------------------------------------------." ++ "\n"
+--                                  ++"|           Projeto atrelado a atividade!                 |" ++ "\n"
+--                                  ++".---------------------------------------------------------." ++ "\n"
+--                         if (membroEstaNoProjeto idMembroResponsavel projeto) then do
+--                                 clearScreen
+--                                 editAtivDoUsuario "Database/usuarios.json" idMembroResponsavel [idAtividade]
+--                                 putStrLn $ ".---------------------------------------------------------." ++ "\n"
+--                                          ++"|             Atividade atribuída com sucesso!            |" ++ "\n"
+--                                          ++".---------------------------------------------------------." ++ "\n"
+--                         else do
+--                                 clearScreen
+--                                 putStrLn $ ".---------------------------------------------------------." ++ "\n"
+--                                          ++"|              Membro não está no projeto                 |" ++ "\n"
+--                                          ++".---------------------------------------------------------." ++ "\n"
+--         Nothing -> do
+--                 clearScreen
+--                 putStrLn $ ".---------------------------------------------------------." ++ "\n"
+--                          ++"|                 Atividade inexistente!                  |" ++ "\n"
+--                          ++".---------------------------------------------------------." ++ "\n"
 
 -- | Visualiza atividades cadastradas no sistema
 bancoDeAtividades :: IO ()
@@ -453,7 +416,7 @@ bancoDeAtividades = do
     mapM_ imprimirAtividade atividadesCadastradas
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
     menuBancoDeAtividades
-
+            
 -- Função para o menu de banco de atividades no menu do gerente
 menuBancoDeAtividades :: IO ()
 menuBancoDeAtividades = do
@@ -483,7 +446,6 @@ menuBancoDeAtividades = do
         "s" -> sairDoSistema
         _   -> erroMenuGerente
 
-    
 -- | Retorna ao menu principal ou sai do sistema
 retornoMenuRestrito :: IO()
 retornoMenuRestrito = do

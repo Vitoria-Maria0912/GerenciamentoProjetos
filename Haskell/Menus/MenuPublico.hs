@@ -61,7 +61,7 @@ menuPublicoProjeto = do
 
         "l" -> do
                 visualizarProjetos
-                menuPublicoProjeto
+                retornoMenuPublico
         "i" -> comecarAtividade
         "f" -> finalizarAtividade
         "v" -> visualizarAtividades
