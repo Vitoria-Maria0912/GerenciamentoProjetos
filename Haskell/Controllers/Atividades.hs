@@ -227,8 +227,8 @@ imprimirAtividade atividade = if (idProjetoAtividade atividade == Nothing)then d
     let getIdProjeto = removerTodasAsPalavras "Just" (show (idProjetoAtividade atividade))
     putStrLn $ "             Título: " ++ (titulo atividade) ++ "\n" ++
                "             Descrição: " ++ (descricao atividade) ++ "\n" ++
-               "             ID Projeto: " ++ getIdProjeto ++ "\n" ++"             ID Atividade: " ++ 
-               show (idAtividade atividade) ++ "\n" ++
+               "             ID Projeto: " ++ getIdProjeto ++ "\n" ++             
+               "             ID Atividade: " ++ show (idAtividade atividade) ++ "\n" ++
                "             Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++
                "             Status: " ++ status atividade ++ "\n"
 
