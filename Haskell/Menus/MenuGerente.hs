@@ -33,8 +33,6 @@ menuRestritoProjeto = do
             ++ "|           P - Remover projeto                            |" ++ "\n"
             ++ "|           G - Gerenciar membros do projeto               |" ++ "\n"
             ++ "|           B - Visualizar banco de atividades             |" ++ "\n"
-            ++ "|           C - Criar uma atividade                        |" ++ "\n"
-            ++ "|           R - Remover uma atividade                      |" ++ "\n"
             ++ "|           I - Iniciar uma atividade                      |" ++ "\n"
             ++ "|           F - Finalizar uma atividade                    |" ++ "\n"
             ++ "|           V - Visualizar atividades do projeto           |" ++ "\n"
@@ -52,9 +50,7 @@ menuRestritoProjeto = do
                 menuRestritoProjeto
         "p" -> deletarProjeto
         "g" -> gerenciarMembros
-        "b" -> bancoDeAtividades
-        "c" -> criaAtividade
-        "r" -> deletaAtividade
+        "b" -> menuBancoDeAtividades --bancoDeAtividades 
         "i" -> comecarAtividade
         "f" -> finalizarAtividade
         "v" -> visualizarAtividades
@@ -409,6 +405,7 @@ atribuirMembro = do
                                         Nothing -> False
                          if membroNoProjeto then do
                                 editAtivDoUsuario "Database/usuarios.json" idMembroResponsavel [idAtividade]
+                                editMembroResp ativFilePath idAtividade idMembroResponsavel True
                                 putStrLn $ ".---------------------------------------------------------." ++ "\n"
                                          ++"|             Atividade atribuída com sucesso!            |" ++ "\n"
                                          ++".---------------------------------------------------------." ++ "\n"
@@ -458,6 +455,52 @@ bancoDeAtividades = do
             ++ "                  Banco de Atividades:                      " ++ "\n"
     mapM_ imprimirAtividade atividadesCadastradas
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
+    
+
+-- Função para o menu de banco de atividades no menu do gerente
+menuBancoDeAtividades :: IO ()
+menuBancoDeAtividades = do
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "                Menu Banco de Atividades                    " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+
+    putStrLn "Digite o ID da atividade:"
+    idAtividade <- readLn :: IO Int
+
+    let atividadesDoSistema = getTodasAtividades "Database/bancoDeAtividades.json"
+    let  atividadeNoSistema =   getAtividade idAtividade atividadesDoSistema
+
+    case atividadeNoSistema of
+        Just atividade -> do
+            clearScreen
+            putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                    ++ "|                                                           |" ++ "\n"
+                    ++ "|                Selecione uma opção:                       |" ++ "\n"
+                    ++ "|                                                           |" ++ "\n"
+                    ++ "|           C - Criar uma atividade                         |" ++ "\n"
+                    ++ "|           R - Remover uma atividade                       |" ++ "\n"
+                    ++ "|           L - Listar atividades cadastradas               |" ++ "\n"
+                    ++ "|           A - Consultar uma atividade por ID              |" ++ "\n"
+                    ++ "|           V - Voltar ao menu principal                    |" ++ "\n"
+                    ++ "|           S - Sair do sistema                             |" ++ "\n"
+                    ++ ".-----------------------------------------------------------." ++ "\n"
+            option <- getLine
+            let lowerOption = map toLower option
+            case lowerOption of
+                "l" -> bancoDeAtividades
+                "c" -> criaAtividade
+                "r" -> deletaAtividade
+                "v" -> menuRestritoProjeto
+                "s" -> sairDoSistema
+                _   -> erroMenuGerente
+        Nothing -> do
+            clearScreen
+            putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                    ++ "|              Atividade inválida, tente novamente.              |" ++ "\n"
+                    ++ ".----------------------------------------------------------." ++ "\n"
+    retornoMenuRestrito
+
+
     
 -- | Retorna ao menu principal ou sai do sistema
 retornoMenuRestrito :: IO()

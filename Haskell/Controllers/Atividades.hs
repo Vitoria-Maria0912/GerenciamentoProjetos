@@ -202,6 +202,8 @@ getAtividade atividadeId (x:xs)
   | idAtividade x == atividadeId = Just x
   | otherwise = getAtividade atividadeId xs
 
+
+
 -- | Função que obtém as todas atividades cadastradas no sistema
 getTodasAtividades :: String -> [Atividade]
 getTodasAtividades filePath = do
