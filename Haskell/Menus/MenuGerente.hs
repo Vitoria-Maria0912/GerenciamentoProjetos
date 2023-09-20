@@ -32,7 +32,7 @@ menuRestritoProjeto = do
             ++ "|           L - Listar projetos cadastrados                |" ++ "\n"
             ++ "|           P - Remover projeto                            |" ++ "\n"
             ++ "|           G - Gerenciar membros do projeto               |" ++ "\n"
-            ++ "|           B - Visualizar banco de atividades             |" ++ "\n"
+            ++ "|           B - Menu do banco de atividades                |" ++ "\n"
             ++ "|           I - Iniciar uma atividade                      |" ++ "\n"
             ++ "|           F - Finalizar uma atividade                    |" ++ "\n"
             ++ "|           V - Visualizar atividades do projeto           |" ++ "\n"
