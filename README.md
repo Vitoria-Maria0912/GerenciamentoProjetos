@@ -27,7 +27,7 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
     
   **- Status da atividade:**
   Cada atividade pode ter três status distintos que mudam com base no inicio e fim da realização da atividade.
-  Os status são: Não atribuída | Pendente | Concluída
+  Os status são: Não atribuída | Pendente... | Concluída!
       
   **- Remoção de atividades:**
   Para remoção de uma atividade, o usuário informará o ID da atividade. 
