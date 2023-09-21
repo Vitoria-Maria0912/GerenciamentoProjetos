@@ -211,14 +211,15 @@ getTodasAtividades filePath = do
 
 -- | Função que imprime as atividades para visualização
 imprimirAtividade :: Atividade -> IO()
-imprimirAtividade atividade = if (idProjetoAtividade atividade == Nothing)then do
-  putStrLn $ "             Título: " ++ (titulo atividade) ++ "\n" ++
-   "             Descrição: " ++ (descricao atividade) ++ "\n" ++
-   "             ID Projeto: " ++ " - " ++ "\n" ++
-   "             ID Atividade: " ++ show (idAtividade atividade) ++ "\n" ++
-   "             Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++
-   "             Status: " ++ status atividade ++ "\n"
-   else do
+imprimirAtividade atividade = 
+  if (idProjetoAtividade atividade == Nothing)then do
+  putStrLn $  "             Título: " ++ (titulo atividade) ++ "\n" ++
+              "             Descrição: " ++ (descricao atividade) ++ "\n" ++
+              "             ID Projeto: " ++ " - " ++ "\n" ++
+              "             ID Atividade: " ++ show (idAtividade atividade) ++ "\n" ++
+              "             Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++
+              "             Status: " ++ status atividade ++ "\n"
+  else do
     let getIdProjeto = removerTodasAsPalavras "Just" (show (idProjetoAtividade atividade))
     putStrLn $ "             Título: " ++ (titulo atividade) ++ "\n" ++
                "             Descrição: " ++ (descricao atividade) ++ "\n" ++
@@ -226,11 +227,6 @@ imprimirAtividade atividade = if (idProjetoAtividade atividade == Nothing)then d
                "             ID Atividade: " ++ show (idAtividade atividade) ++ "\n" ++
                "             Membro Responsável: " ++ (getMembroResponsavel atividade) ++ "\n" ++
                "             Status: " ++ status atividade ++ "\n"
-
-
-
-
-
 
 -- Função para remover todas as ocorrências de uma palavra de uma string
 removerTodasAsPalavras :: String -> String -> String

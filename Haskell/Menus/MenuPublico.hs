@@ -78,7 +78,7 @@ comecarAtividade = do
             ++ "                    Começar atividade:                        " ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
 
-    putStrLn "Digite seu ID: "
+    putStrLn "Digite seu ID:\n"
     idUsuario <- readLn :: IO Int
     
     let usuariosDoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
@@ -142,7 +142,7 @@ finalizarAtividade = do
             ++ "                    Finalizar atividade:                    " ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
     
-    putStrLn "Digite seu ID: "
+    putStrLn "Digite seu ID:\n"
     idUsuario <- readLn :: IO Int
 
     let usuarioNoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
@@ -199,7 +199,7 @@ statusAtividade = do
             ++ "                 Mostrar status da atividade:               " ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
 
-    putStrLn "Digite o ID da atividade: "
+    putStrLn "\nDigite o ID da atividade:\n"
     idAtividade <- readLn :: IO Int
 
     let atividadeDoSistema = (getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json"))
@@ -262,7 +262,7 @@ criaFeedback = do
             ++ "  Comente sobre uma atividade que você criou ou foi designado:      " ++ "\n"
             ++ ".-------------------------------------------------------------." ++ "\n"
 
-    putStrLn "Digite seu ID:"
+    putStrLn "Digite seu ID:\n"
     idUsuario <- readLn :: IO Int
 
     let usuariosCadastrados = (getUsuarios "Database/usuarios.json")

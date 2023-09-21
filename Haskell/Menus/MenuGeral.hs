@@ -70,11 +70,10 @@ cadastrarUsuario = do
             ++ "                        Cadastro:                           " ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
 
-    putStrLn "Digite seu nome: "
-
+    putStrLn "Digite seu nome:\n"
     nome <- getLine
 
-    putStrLn "Digite sua senha: "
+    putStrLn "\nDigite sua senha:\n"
     senha <- getLine
 
     idUsuario <- randomRIO (1000, 9999 :: Int)
@@ -105,14 +104,14 @@ deletarUsuario = do
           ++ "                      Deletar perfil:                       " ++ "\n"
           ++ ".----------------------------------------------------------." ++ "\n"
 
-  putStrLn "Digite seu ID:"
+  putStrLn "Digite seu ID:\n"
   idUsuario <- readLn :: IO Int
 
   let usuarioNoSistema = getUsuario idUsuario (getUsuarios userFilePath)
 
   case usuarioNoSistema of
     Just usuario -> do
-      putStrLn "Digite sua senha: "
+      putStrLn "\nDigite sua senha:\n"
       senha <- getLine
       if verificaSenhaUsuario usuario senha then do
           removerUsuario userFilePath idUsuario
@@ -142,18 +141,17 @@ cadastrarProjeto = do
             ++ "                      Criar projeto:                        " ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
 
-    putStrLn "Digite seu ID: "
-
+    putStrLn "Digite seu ID:\n"
     idUsuario <- readLn :: IO Int
 
     let usuarioNoSistema = getUsuario idUsuario (getUsuarios "Database/usuarios.json")
 
     if isJust(usuarioNoSistema) then do
 
-        putStrLn "Digite o título do seu projeto: "
+        putStrLn "\nDigite o título do seu projeto:\n"
         nomeProjeto <- getLine
 
-        putStrLn "Digite a descrição do projeto: "
+        putStrLn "\nDigite a descrição do projeto:\n"
         descricaoProjeto <- getLine
 
         idProjeto <- randomRIO (100, 999 :: Int)
@@ -190,7 +188,7 @@ menuProjetos = do
             ++ "                    Menu de projetos:                       " ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
 
-    putStrLn "Digite seu ID:"
+    putStrLn "Digite seu ID:\n"
     idUsuario <- readLn :: IO Int
 
     let usuarios = getUsuarios "Database/usuarios.json"
@@ -247,7 +245,7 @@ visualizarMensagensGerais = do
                 ++ "              Mensagens gerais de um projeto:               " ++ "\n"
                 ++ ".----------------------------------------------------------." ++ "\n"
 
-        putStrLn "Digite seu ID:"
+        putStrLn "Digite seu ID:\n"
         idUsuario <- readLn:: IO Int
       
         let usuarioNoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
@@ -256,7 +254,7 @@ visualizarMensagensGerais = do
 
         case (usuarioNoSistema, projetos) of
                 (Just usuario, projetos) -> do
-                        putStrLn "Digite sua senha:"
+                        putStrLn "\nDigite sua senha:\n"
                         senha <- getLine
                         if (verificaSenhaUsuario usuario senha) then do
                                 if (usuarioEstaEmAlgumProjeto idUsuario projetos || ehGerente idUsuario projetos)then do
@@ -301,16 +299,16 @@ visualizarMensagensPrivadas = do
                 ++ "              Mensagens privadas de um usuário:             " ++ "\n"
                 ++ ".----------------------------------------------------------." ++ "\n"
 
-        putStrLn "Digite seu ID:"
+        putStrLn "Digite seu ID:\n"
         idUsuario <- readLn:: IO Int
         let usuarioNoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
         let projetos = getTodosProjetos "Database/projetos.json"
         case (usuarioNoSistema, projetos) of
                 (Just usuario, projetos) -> do
-                        putStrLn "Digite sua senha:"
+                        putStrLn "\nDigite sua senha:\n"
                         senha <- getLine
                         if (verificaSenhaUsuario usuario senha) then do
-                                putStrLn "Mensagens Privadas:"
+                                putStrLn "\nMensagens Privadas:\n"
                                 let mensagen = getMensagens "Database/mensagens.json"
                                 putStrLn "\nCarregando...\n  "
                                 threadDelay 100000
@@ -337,7 +335,7 @@ enviarMGeral = do
                 ++ "      Enviar mensagem para todos os membros do projeto:     " ++ "\n"
                 ++ ".----------------------------------------------------------." ++ "\n"
 
-        putStrLn "Digite seu ID:"
+        putStrLn "Digite seu ID:\n"
         idUsuario <- readLn:: IO Int
 
         let usuarioNoSistema = (getUsuario idUsuario (getUsuarios "Database/usuarios.json"))
@@ -345,13 +343,13 @@ enviarMGeral = do
 
         case (usuarioNoSistema, projetosNoSistema) of
                 (Just usuario, projetos )-> do
-                        putStrLn "Digite sua senha:"
+                        putStrLn "\nDigite sua senha:\n"
                         senha <- getLine
                         if (verificaSenhaUsuario usuario senha) then do
                                 if (usuarioEstaEmAlgumProjeto idUsuario projetos || ehGerente idUsuario projetos)then do
                                         let projetos_user= listarProjetosDoUsuario idUsuario projetos
                                         putStrLn projetos_user
-                                        putStrLn "Digite o id do projeto que deseja enviar a mensagem para todos os membros"
+                                        putStrLn "Digite o ID do projeto que deseja enviar a mensagem para todos os membros"
                                         idEscolhido <- readLn :: IO Int
                                         putStrLn "Digite a mensagem que será enviada para todos os membros do projetos"
                                         mensagem <- getLine
@@ -385,7 +383,7 @@ enviarMPrivada = do
                 ++ "                Enviar mensagem para um usuário:            " ++ "\n"
                 ++ ".----------------------------------------------------------." ++ "\n"
 
-        putStrLn "Digite seu ID:"
+        putStrLn "Digite seu ID:\n"
         idUsuario <- readLn:: IO Int
 
         let usuarios = getUsuarios "Database/usuarios.json"
