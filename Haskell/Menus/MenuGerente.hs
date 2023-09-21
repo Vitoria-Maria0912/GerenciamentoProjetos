@@ -69,7 +69,7 @@ deletarProjeto = do
           ++ "                    Remover Projeto:                        " ++ "\n"
           ++ ".----------------------------------------------------------." ++ "\n"
 
-  putStrLn "Digite seu ID: "
+  putStrLn "Digite seu ID:\n"
   idUsuario <- readLn :: IO Int
 
   let usuarios = getUsuarios "Database/usuarios.json"
@@ -117,7 +117,7 @@ criaAtividade = do
             ++ ".----------------------------------------------------------." ++ "\n"
 
     putStrLn $ "Digite o ID do projeto que deseja adicionar uma atividade: " ++ "\n"
-             ++ "Caso você só deseje adicionar ao banco de atividades, digite 0"
+             ++ "Caso você só deseje adicionar ao banco de atividades, digite 0\n"
 
     idProjeto <- readLn :: IO Int
 
@@ -127,10 +127,10 @@ criaAtividade = do
 
     case projetos of
         Just projeto -> do
-            putStrLn "\nDigite um título para sua atividade: "
+            putStrLn "\nDigite um título para sua atividade:\n"
             titulo <- getLine
 
-            putStrLn "\nDescreva, brevemente, o que se deve realizar para concluir esta atividade."
+            putStrLn "\nDescreva, brevemente, o que se deve realizar para concluir esta atividade.\n"
             descricao <- getLine
 
             idAtividade <- randomRIO (10010, 99999 :: Int)
@@ -154,10 +154,10 @@ criaAtividade = do
 
         Nothing -> do
                 if idProjeto == 0 then do
-                        putStrLn "\nDigite um título para sua atividade: "
+                        putStrLn "\nDigite um título para sua atividade:\n"
                         titulo <- getLine
 
-                        putStrLn "\nDescreva, brevemente, o que se deve realizar para concluir esta atividade."
+                        putStrLn "\nDescreva, brevemente, o que se deve realizar para concluir esta atividade.\n"
                         descricao <- getLine
 
                         idAtividade <- randomRIO (10010, 99999 :: Int)
@@ -168,9 +168,8 @@ criaAtividade = do
                                 Just _ ->  do
                                      clearScreen
                                      putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                                                ++ "|            Falha no cadastro! Tente novamente!           |" ++ "\n"
-                                                 ++ ".----------------------------------------------------------." ++ "\n"
-                                     criaAtividade
+                                             ++ "|            Falha no cadastro! Tente novamente!           |" ++ "\n"
+                                             ++ ".----------------------------------------------------------." ++ "\n"
                                 Nothing -> do
                                         criarAtividade "Database/bancoDeAtividades.json" titulo descricao Nothing idAtividade Nothing []
                                         clearScreen
@@ -189,16 +188,16 @@ deletaAtividade :: IO()
 deletaAtividade = do
 
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
-            ++ "                    Deletar atividade:                      " ++ "\n"
+            ++ "              Remover atividade de um projeto               " ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
 
-    putStrLn "Digite o ID do projeto que deseja remover uma atividade: "
+    putStrLn "\nDigite o ID do projeto que deseja remover uma atividade:\n"
     idProjeto <- readLn :: IO Int
 
     let projetoNoSistema = getProjeto idProjeto (getTodosProjetos "Database/projetos.json")
 
     if isJust(projetoNoSistema) then do
-        putStrLn "\nDigite o ID da atividade que deseja remover:"
+        putStrLn "\nDigite o ID da atividade que deseja remover:\n"
         idAtividade <- readLn :: IO Int
 
         let atividadesNoSistema = getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json")
@@ -225,7 +224,7 @@ deletaAtividade = do
     else do
         clearScreen
         putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                ++ "|             Falha no cadastro! Tente novamente!          |" ++ "\n"
+                ++ "|              ID inexistente! Tente novamente!            |" ++ "\n"
                 ++ ".----------------------------------------------------------." ++ "\n"
         
     retornoMenuRestrito
@@ -238,7 +237,7 @@ gerenciarMembros = do
             ++ "                 Gerenciamento de membros:                  " ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
 
-    putStrLn "Digite o ID do projeto:"
+    putStrLn "\nDigite o ID do projeto:\n"
     idProjeto <- readLn :: IO Int
 
     let projetosDoSistema = getTodosProjetos "Database/projetos.json"
@@ -268,10 +267,11 @@ gerenciarMembros = do
                 "r" -> removeMembroProjeto projeto
                 "v" -> menuRestritoProjeto
                 _   -> erroMenuGerente
+
         Nothing -> do
             clearScreen
             putStrLn $ ".----------------------------------------------------------." ++ "\n"
-                    ++ "|              ID inválido, tente novamente.               |" ++ "\n"
+                    ++ "|              ID inválido! Tente novamente.               |" ++ "\n"
                     ++ ".----------------------------------------------------------." ++ "\n"
             retornoMenuRestrito
 
@@ -329,7 +329,7 @@ removeMembroProjeto projeto = do
           ++ "                  Remover membro do projeto:                " ++ "\n"
           ++ ".----------------------------------------------------------." ++ "\n"
 
-  putStrLn "Digite o ID do membro que deseja remover:"
+  putStrLn "\nDigite o ID do membro que deseja remover:\n"
   idUsuario <- readLn :: IO Int
 
   if (membroEstaNoProjeto idUsuario projeto) then do
@@ -357,7 +357,7 @@ atribuirMembro projeto = do
             ++ "             Atribuir uma atividade a um membro:            " ++ "\n"
             ++ ".----------------------------------------------------------." ++ "\n"
 
-    putStrLn "Digite o ID da atividade:"
+    putStrLn "\nDigite o ID da atividade:\n"
     idAtividade <- readLn :: IO Int
 
     let ativFilePath = "Database/bancoDeAtividades.json"
@@ -366,19 +366,19 @@ atribuirMembro projeto = do
 
     case atividadeNoSistema of
         Just _ -> do
-                putStrLn "Digite o ID do membro que deseja atribuir à atividade:"
+                putStrLn "\nDigite o ID do membro que deseja atribuir à atividade:\n"
                 idMembroResponsavel <- readLn :: IO Int
                 
                 let usuarioNoSistema = (getUsuario idMembroResponsavel (getUsuarios "Database/usuarios.json"))
                 case (usuarioNoSistema) of
                         Just usuario -> 
                                 if atividadeEstaAtribuida idAtividade usuario then do
+                                        clearScreen
                                         putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                                                 ++"|             Atividade já está atribuída                 |" ++ "\n"
+                                                 ++"|             Atividade já está atribuída!                |" ++ "\n"
                                                  ++".---------------------------------------------------------." ++ "\n"
                                         retornoMenuRestrito
                                 else do
-
                                         if temIdProjeto idAtividade (getTodasAtividades ativFilePath) == True then do 
                                                 if (membroEstaNoProjeto idMembroResponsavel projeto) then do
                                                         clearScreen
@@ -391,7 +391,7 @@ atribuirMembro projeto = do
                                                 else do
                                                         clearScreen
                                                         putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                                                                 ++"|              Membro não está no projeto                 |" ++ "\n"
+                                                                 ++"|              Membro não está no projeto!                |" ++ "\n"
                                                                  ++".---------------------------------------------------------." ++ "\n"
                                                         retornoMenuRestrito
                                         else do
@@ -417,7 +417,7 @@ atribuirMembro projeto = do
                         Nothing -> do
                                 clearScreen
                                 putStrLn $ ".---------------------------------------------------------." ++ "\n"
-                                         ++"|             Id de usuário inexistente!                  |" ++ "\n"
+                                         ++"|             ID de usuário inexistente!                  |" ++ "\n"
                                          ++".---------------------------------------------------------." ++ "\n"
                                 retornoMenuRestrito
                                                                  
@@ -436,18 +436,44 @@ bancoDeAtividades = do
     clearScreen
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
             ++ "                  Banco de Atividades:                      " ++ "\n"
+            ++ "                                                            " ++ "\n"
     mapM_ imprimirAtividade atividadesCadastradas
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
+    menuBancoDeAtividades
+
+-- | Visualiza uma atividade pelo ID
+consultarAtividade :: IO ()
+consultarAtividade = do
+
+    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "                   Consultar atividade:                     " ++ "\n"
+            ++ ".----------------------------------------------------------." ++ "\n"
+
+    putStrLn "\nDigite o ID da atividade:\n"
+    idAtividade <- readLn :: IO Int
+
+    let atividadeNoSistema = (getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json"))
+
+    case atividadeNoSistema of
+        Just atividade -> do 
+                clearScreen
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "                   Consultar atividade:                     " ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                mapM_ imprimirAtividade [atividade]
+        Nothing -> do 
+                clearScreen
+                putStrLn $ ".----------------------------------------------------------." ++ "\n"
+                        ++ "|          Atividade inexistente! Tente novamente!         |" ++ "\n"
+                        ++ ".----------------------------------------------------------." ++ "\n"
+                
     menuBancoDeAtividades
             
 -- Função para o menu de banco de atividades no menu do gerente
 menuBancoDeAtividades :: IO ()
 menuBancoDeAtividades = do
     putStrLn $ ".----------------------------------------------------------." ++ "\n"
-            ++ "                Menu Banco de Atividades                    " ++ "\n"
-            ++ ".----------------------------------------------------------." ++ "\n"
-
-    putStrLn $ ".----------------------------------------------------------." ++ "\n"
+            ++ "|               Menu Banco de Atividades                    |" ++ "\n"
             ++ "|                                                           |" ++ "\n"
             ++ "|                Selecione uma opção:                       |" ++ "\n"
             ++ "|                                                           |" ++ "\n"
@@ -462,9 +488,10 @@ menuBancoDeAtividades = do
     option <- getLine
     let lowerOption = map toLower option
     case lowerOption of
-        "l" -> bancoDeAtividades
         "c" -> criaAtividade
         "r" -> deletaAtividade
+        "l" -> bancoDeAtividades
+        "a" -> consultarAtividade
         "v" -> menuRestritoProjeto
         "s" -> sairDoSistema
         _   -> erroMenuGerente
