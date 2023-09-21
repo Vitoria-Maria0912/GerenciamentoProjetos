@@ -133,7 +133,7 @@ criaAtividade = do
             putStrLn "\nDescreva, brevemente, o que se deve realizar para concluir esta atividade.\n"
             descricao <- getLine
 
-            idAtividade <- randomRIO (10010, 99999 :: Int)
+            idAtividade <- randomRIO (10000, 99999 :: Int)
 
             let atividadeNoSistema = getAtividade idAtividade (getTodasAtividades "Database/bancoDeAtividades.json")
 
