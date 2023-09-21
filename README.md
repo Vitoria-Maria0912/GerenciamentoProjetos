@@ -102,7 +102,7 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
     runhaskell Main.hs 
 
  ### Desenvolvedoras:
-   - Íris Almeida - [Github] (https://github.com/irisalmeida)
-   - Jamilly Venâncio - [Github] (https://github.com/venanciojamilly)
-   - Vitória Maria do Nascimento - [Github] (https://github.com/Vitoria-Maria0912)
-   - Yalle Carvalho - [Github] (https://github.com/yallecarvalho)
+   - Íris Almeida - [Github](https://github.com/irisalmeida)
+   - Jamilly Venâncio - [Github](https://github.com/venanciojamilly)
+   - Vitória Maria do Nascimento - [Github](https://github.com/Vitoria-Maria0912)
+   - Yalle Carvalho - [Github](https://github.com/yallecarvalho)
