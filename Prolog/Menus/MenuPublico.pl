@@ -23,12 +23,12 @@ menuPublicoProjeto :-
         % nl. % dá uma quebra de linha
         halt. % encerra o programa
 
-processaEntrada('l') :-
-        writeln('                                                          '),
-        writeln('         |  Estes são os projetos no sistema:  |          '),
-        writeln('                                                          '),
-        %       visualizarProjetos.
-        retornoMenuPublico.
+% processaEntrada('l') :-
+%         writeln('                                                          '),
+%         writeln('         |  Estes são os projetos no sistema:  |          '),
+%         writeln('                                                          '),
+%         visualizarProjetos.
+%         retornoMenuPublico.
 
 % processaEntrada('i') :-
 %         comecarAtividade 
@@ -56,7 +56,6 @@ processaEntrada(_) :-
         writeln('         |  Entrada Inválida. Tente novamente!  |         '),
         writeln('                                                          '),
         menuPublicoProjeto.
-
 
 % | Retorna ao menu principal ou sai do sistema
 retornoMenuPublico :- 
