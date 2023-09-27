@@ -3,7 +3,7 @@
 % | Menu dos projetos, todos os usuários tem acesso
 menuPublicoProjeto :-
 
-        writeln(''),
+        writeln('                                                          '),
         writeln('               |     Menu Projeto    |                    '),
         writeln('                                                          '),
         writeln('                 Selecione uma opção:                     '),
@@ -20,7 +20,6 @@ menuPublicoProjeto :-
         char_code(Input, CodigoASCII), % Converter o código ASCII em um caractere
         downcase_atom(Input, LowerOption),
         processaEntrada(LowerOption),
-        % nl. % dá uma quebra de linha
         halt. % encerra o programa
 
 % processaEntrada('l') :-
@@ -64,6 +63,7 @@ retornoMenuPublico :-
         writeln('                                                          '),
         writeln('                 M - Menu de projetos                     '),
         writeln('                 S - Sair do sistema                      '),
+        writeln('                                                          '),
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII), % Converter o código ASCII em um caractere
         downcase_atom(Input, LowerOption),

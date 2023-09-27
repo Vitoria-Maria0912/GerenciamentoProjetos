@@ -89,6 +89,7 @@ retornoMenuRestrito :-
         writeln('                                                          '),
         writeln('                 M - Menu de projetos                     '),
         writeln('                 S - Sair do sistema                      '),
+        writeln('                                                          '),
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII), % Converter o código ASCII em um caractere
         downcase_atom(Input, LowerOption),
