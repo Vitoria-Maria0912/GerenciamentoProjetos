@@ -80,3 +80,35 @@ retornoMenuPublico :-
                 writeln('                                                          '),
                 retornoMenuPublico
         ).
+
+% Menu do banco
+menuBancoDeAtividades :-
+        writeln('                                                         '),
+        writeln('           |  Menu Banco de Atividades  |                '),
+        writeln('                                                         '),
+        writeln('                 Selecione uma opção:                    '),
+        writeln('                                                         '),
+        writeln('            C - Criar uma atividade                      '),
+        writeln('            L - Listar atividades cadastradas            '),
+        writeln('            V - Voltar ao menu principal                 '),
+        writeln('            S - Sair do sistema                          '),
+        writeln('                                                         '),
+
+        get_single_char(CodigoASCII),
+        char_code(Input, CodigoASCII), % Converter o código ASCII em um caractere
+        downcase_atom(Input, LowerOption),
+        processaEntradaBancoDeAtividades(LowerOption),
+        retornoMenuRestrito. 
+        
+            
+%     option <- getLine
+%     let lowerOption = map toLower option
+%     case lowerOption of
+%         "c" -> criaAtividade
+%         "r" -> deletaAtividade
+%         "l" -> bancoDeAtividades
+%         "a" -> consultarAtividade
+%         "v" -> menuRestritoProjeto
+%         "s" -> sairDoSistema
+%         _   -> erroMenuGerente
+

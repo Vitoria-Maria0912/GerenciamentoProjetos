@@ -4,7 +4,7 @@
 menuPrincipal :-
 
         writeln('                                                          '),
-        writeln('               |     Menu Principal    |                  '),
+        writeln('             |     Menu Principal    |                    '),
         writeln('                                                          '),
         writeln('                 Selecione uma opção:                     '),
         writeln('                                                          '),
@@ -18,23 +18,23 @@ menuPrincipal :-
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII), % Converter o código ASCII em um caractere
         downcase_atom(Input, LowerOption),
-        processaEntrada(LowerOption),
+        processaEntradaMenuGeral(LowerOption),
         halt. % encerra o programa
 
-% processaEntrada('c') :-
+% processaEntradaMenuGeral('c') :-
 %          writeln('                                                          '),
 %          writeln('                  |     Cadastro:    |                    '),
 %          writeln('                                                          '),
 %          cadastrarUsuario
 %          retornoMenuPrincipal
 
-% processaEntrada('d') :-
+% processaEntradaMenuGeral('d') :-
 %         writeln('                                                          '),
 %         writeln('               |     Deletar perfil:    |                 '),
 %         writeln('                                                          '),
 %         deletarUsuario
 
-% processaEntrada('d') :-
+% processaEntradaMenuGeral('d') :-
 %         writeln('                                                          '),
 %         writeln('               |     Criar projeto:    |                  '),
 %         writeln('                                                          '),
@@ -64,21 +64,21 @@ menuChat :-
         writeln('                                                                        '),
         halt.
 
-% processaEntrada('c') :-
+% processaEntradaMenuGeral('c') :-
 %         writeln('                                                          '),
 %         writeln('      |     Enviar mensagem para um usuário:    |         '),
 %         writeln('                                                          '),
 %         enviarMPrivada.
 %         retornoMenuPrincipal.
 
-% processaEntrada('c') :-
+% processaEntradaMenuGeral('c') :-
 %         writeln('                                                                 '),
 %         writeln('   |     Enviar mensagem para todos os membros do projeto:    |  '),
 %         writeln('                                                                 '),
 %         enviarMGeral.
 %         retornoMenuPrincipal.
 
-% processaEntrada('c') :-
+% processaEntradaMenuGeral('c') :-
 %         writeln('                                                            '),
 %         writeln('        |     Mensagens privadas de um usuário:    |        '),
 %         writeln('                                                            '),
@@ -86,7 +86,7 @@ menuChat :-
 %         retornoMenuPrincipal.
 
 
-% processaEntrada('c') :-
+% processaEntradaMenuGeral('c') :-
 %         writeln('                                                            '),
 %         writeln('         |     Mensagens gerais de um projeto:    |         '),
 %         writeln('                                                            '),
@@ -94,13 +94,13 @@ menuChat :-
 %         retornoMenuPrincipal.
         
 
-processaEntrada('s') :-
+processaEntradaMenuGeral('s') :-
         writeln('                                                          '),
         writeln('        |  Você saiu do sistema! Até a próxima!  |        '),
         writeln('                                                          '),
         halt. % encerra o programa
 
-processaEntrada(_) :-
+processaEntradaMenuGeral(_) :-
         writeln('                                                          '),
         writeln('         |  Entrada Inválida. Tente novamente!  |         '),
         writeln('                                                          '),
@@ -130,3 +130,21 @@ retornoMenuPrincipal :-
                 writeln('                                                          '),
                 retornoMenuPrincipal
         ).
+
+/**
+ * waitInput is det.
+ * 
+ * Espera o usuário digitar algum caractere.
+ */ 
+waitInput:-waitInput("").
+
+/**
+ * waitInput(+S:string) is det. 
+ * 
+ * Imprime a mensagem fornecida, esperando o usuário digitar algum caractere.
+ * @param S Mensagem a ser impressa antes de esperar a entrada
+ */
+waitInput(S):-
+    ansi_format([bold,fg(yellow)], "~w", [S]),
+    ansi_format([bold,fg(yellow)], "~w", ["Aperte qualquer tecla para continuar."]),
+    get_single_char(_),nl.

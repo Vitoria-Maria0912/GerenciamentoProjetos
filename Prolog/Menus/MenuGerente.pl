@@ -1,4 +1,7 @@
+
+
 :- initialization(menuRestritoProjeto).
+
 
 % | Menu dos projetos, apenas os gerentes têm acesso
 menuRestritoProjeto :-
@@ -39,7 +42,7 @@ menuRestritoProjeto :-
 %         deletarProjeto.
 
 % processaEntrada('g') :-
-%         writeln(''),
+%         writeln('                                                          '),
 %         writeln('                                                          '),
 %         writeln('             |  Gerenciamento de membros:  |              '),
 %         writeln('                                                          '),
@@ -55,39 +58,66 @@ menuRestritoProjeto :-
 %         writeln('                                                          '),
 %         gerenciarMembros.
 
-% processaEntrada('b') :-
-%         writeln(''),
-%         writeln('           |     Menu Banco de Atividades    |            '),
-%         writeln('                                                          '),
-%         writeln('                 Selecione uma opção:                     '),
-%         writeln('                                                          '),
-%         writeln('             C - Criar uma atividade                      '),
-%         writeln('             R - Remover uma atividade                    '),
-%         writeln('             L - Listar atividades cadastradas            '),
-%         writeln('             A - Consultar uma atividade por ID           '),
-%         writeln('             V - Voltar ao menu principal                 '),
-%         writeln('             S - Sair do sistema                          '),
-%         writeln('                                                          '),
-%         menuBancoDeAtividades.
+processaEntrada('p') :-
+        writeln('                                                          '),
+        writeln('                 |  Remover Projeto:  |                   '),
+        writeln('                                                          '),
+        deletarProjeto.
+
+processaEntrada('b') :-
+        writeln('                                                          '),
+        writeln('           |     Menu Banco de Atividades    |            '),
+        writeln('                                                          '),
+        writeln('                 Selecione uma opção:                     '),
+        writeln('                                                          '),
+        writeln('             C - Criar uma atividade                      '),
+        writeln('             R - Remover uma atividade                    '),
+        writeln('             L - Listar atividades cadastradas            '),
+        writeln('             A - Consultar uma atividade por ID           '),
+        writeln('             V - Voltar ao menu principal                 '),
+        writeln('             S - Sair do sistema                          '),
+        writeln('                                                          '),
+
+        get_single_char(CodigoASCII),
+        char_code(Input, CodigoASCII), % Converter o código ASCII em um caractere
+        downcase_atom(Input, LowerOption),
+        ( LowerOption == 'c' -> criaAtividade.
+        ; LowerOption == 'r' -> deletaAtividade.
+        ; LowerOption == 'l' -> bancoDeAtividades.
+        ; LowerOption == 'a' -> consultarAtividade.
+        ; LowerOption == 'v' -> menuRestritoProjeto.
+        ; LowerOption == 's' -> sairDoSistema.
+        ; 
+                writeln('                                                          '),
+                writeln('         |  Entrada Inválida. Tente novamente!  |         '),
+                writeln('                                                          '),
+                retornoMenuRestrito, !
+        )
+        
+        % menuBancoDeAtividades.
 
 processaEntrada('s') :-
+        clearScreen,
         writeln('                                                          '),
         writeln('        |  Você saiu do sistema! Até a próxima!  |        '),
         writeln('                                                          '),
         halt. % encerra o programa
 
 processaEntrada(_) :-
+        clearScreen,
         writeln('                                                          '),
         writeln('         |  Entrada Inválida. Tente novamente!  |         '),
         writeln('                                                          '),
-        menuRestritoProjeto.
+        retornoMenuRestrito.
 
 % | Retorna ao menu principal ou sai do sistema
 retornoMenuRestrito :- 
+        clearScreen,
         writeln('                                                          '),
         writeln(' | Deseja voltar ao menu do projeto ou sair do sistema?  |'),
         writeln('                                                          '),
         writeln('                 M - Menu de projetos                     '),
+        writeln('                 P - Menu Principal                       '),
         writeln('                 S - Sair do sistema                      '),
         writeln('                                                          '),
         get_single_char(CodigoASCII),
@@ -97,12 +127,17 @@ retornoMenuRestrito :-
                 writeln('                                                          '),
                 writeln('        |  Você saiu do sistema! Até a próxima!  |        '),
                 writeln('                                                          '),
-                halt % encerra o programa
+                ! % encerra o programa
         ; LowerOption == 'm' ->
-                menuRestritoProjeto
+                menuRestritoProjeto, !
+
+        ; LowerOption == 'p' ->
+                consult('MenuGeral.pl'), !
         ;
                 writeln('                                                          '),
                 writeln('         |  Entrada Inválida. Tente novamente!  |         '),
                 writeln('                                                          '),
-                retornoMenuRestrito
+                retornoMenuRestrito, !
         ).
+
+clearScreen :- write("\e[H\e[2J").
