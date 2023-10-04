@@ -1,28 +1,60 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
-module Controllers.Atividades where
+:- use_module(library(http/json)).
 
-import qualified Data.ByteString.Lazy as B
-import Data.Aeson
-import GHC.Generics
-import Data.Text (replace, pack, unpack)
-import System.IO.Unsafe
-import System.Directory
-import Prelude hiding (id)
+% Cria uma atividade
+atividadeToJSON(Titulo, Descricao, Status, Dificuldade, Id_Projeto_Atividade, Id_Atividade, Id_Membro_Responsavel, Feedbacks, Atividade) :-
+		swritef(Out, '{"titulo":"%w", "descricao":"%w", "status":%w, "dificuldade":%w, "idProjetoAtividade":%w, "idAtividade":%w, "idMembroResponsavel":%w, "feedbacks":%w}',
+        [Titulo, Descricao, Status, Dificuldade, Id_Projeto_Atividade, Id_Atividade, Id_Membro_Responsavel, Feedbacks]).
 
-instance FromJSON Atividade
-instance ToJSON Atividade
+% Convertendo uma lista de objetos em JSON para 
+atividadesToJSON([], []).
+atividadesToJSON([H|T], [A|Atividade]) :- 
+		atividadeToJSON(H.titulo, H.descricao, H.status, H.dificuldade, H.idProjetoAtividade, H.idAtividade, H.idAtividade, H.idMembroResponsavel, H.feedbacks, A), 
+		atividadeToJSON(T, Atividade).
+
+% Salvar em arquivo JSON
+salvarAtividade(FilePath, Titulo, Descricao, Status, Dificuldade, Id_Projeto_Atividade, Id_Atividade, Id_Membro_Responsavel, Feedbacks) :- 
+    id(ID), incrementa_id,
+		lerJSON(FilePath, File),
+		atividadesToJSON(File, ListaAgentesJSON),
+		atividadesToJSON(Nome, Funcao, ID, AgenteJSON),
+		append(ListaAgentesJSON, [AgenteJSON], Saida),
+		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
+% Exibe as atividade cadastradas 
+exibirAtividades(FilePath) :-
+		lerJSON(FilePath, Atividades),
+		exibirAtividadesAux(Atividades).
+
+% Mudando o nome de uma atividade <<<<<<<<<<<<<<< precisa alterar para que altere só o idProjeto
+editarIdProjetoAtividadeJSON([], _, _, []).
+editarIdProjetoAtividadeJSON([H|T], H.idAtividade, [_{id_Projeto_Atividade:H.id}|T]).
+editarIdProjetoAtividadeJSON([H|T], Id, Nome, [H|Out]) :- 
+		editarNomeAgenteJSON(T, Id, Nome, Out).
+
+editarIdProjetoAtividade(FilePath, IdAgente, NovoNome) :-
+		lerJSON(FilePath, File),
+		editarIdProjetoAtividadeJSON(File, IdAgente, NovoNome, SaidaParcial),
+		atividadesToJSON(SaidaParcial, Saida),
+		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
+% Removendo agente
+removerAtividade([], _, []).
+removerAtividadeJSON([H|T], H.id, T).
+removerAtividadeJSON([H|T], Id, [A|Atividade]) :- removerAtividadeJSON(T, Id, Atividade).
+
+removerAtividade(FilePath, Id) :-
+   lerJSON(FilePath, File),
+   removerAtividadeJSON(File, Id, SaidaParcial),
+   atividadesToJSON(SaidaParcial, Saida),
+   open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+   
+% Lendo arquivo JSON puro
+lerJSON(FilePath, File) :-
+		open(FilePath, read, F),
+		json_read_dict(F, File).
 
 
-data Atividade = Atividade {
-    titulo :: String,
-    descricao :: String,
-    status :: String,
-    idProjetoAtividade :: Maybe Int,
-    idAtividade :: Int,
-    idMembroResponsavel :: Maybe Int,
-    feedbacks :: [String]
-} deriving (Show, Generic)
+% ---------------------------------- Haskell ------------------------------------------------------------
 
 
 -- Cria uma atividade
