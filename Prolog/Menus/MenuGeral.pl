@@ -1,6 +1,8 @@
 :- initialization(menuPrincipal).
 
-% | Menu principal com as principais funcionalidades
+clearScreen :- write("\e[H\e[2J").
+
+% Menu principal com as principais funcionalidades
 menuPrincipal :-
 
         writeln('                                                          '),
@@ -16,38 +18,50 @@ menuPrincipal :-
         writeln('            S - Sair do sistema                           '),
         writeln('                                                          '),
         get_single_char(CodigoASCII),
-        char_code(Input, CodigoASCII), % Converter o código ASCII em um caractere
+        char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption),
-        processaEntradaMenuGeral(LowerOption),
-        halt. % encerra o programa
+        processaEntradaMenuPrincipal(LowerOption),
+        halt. 
 
-% processaEntradaMenuGeral('c') :-
-%          writeln('                                                          '),
-%          writeln('                  |     Cadastro:    |                    '),
-%          writeln('                                                          '),
-%          cadastrarUsuario
-%          retornoMenuPrincipal
+processaEntradaMenuPrincipal(Entrada) :- 
 
-% processaEntradaMenuGeral('d') :-
-%         writeln('                                                          '),
-%         writeln('               |     Deletar perfil:    |                 '),
-%         writeln('                                                          '),
-%         deletarUsuario
+        clearScreen,
 
-% processaEntradaMenuGeral('d') :-
-%         writeln('                                                          '),
-%         writeln('               |     Criar projeto:    |                  '),
-%         writeln('                                                          '),
-%         cadastrarProjeto.
-%         retornoMenuPrincipal.
+        ( Entrada == 'c' -> cadastrarUsuario
+        ; Entrada == 'd' -> deletarUsuario
+        ; Entrada == 'p' -> cadastrarProjeto
+        ; Entrada == 'g' -> menuProjetos
+        ; Entrada == 'm' -> clearScreen, menuChat
+        ; Entrada == 's' -> sairDoSistema
+        ; erroMenuPrincipal ).
 
-% menuProjetos :-
-%         writeln('                                                          '),
-%         writeln('               |     Menu de projetos:    |               '),
-%         writeln('                                                          '),
-%         halt. % encerra o programa
+cadastrarUsuario :-
+        writeln('                                                          '),
+        writeln('                  |     Cadastro:    |                    '),
+        writeln('                                                          '),
+        retornoMenuPrincipal.
 
-% ----------------- Chat ------------------------------
+deletarUsuario :-
+        writeln('                                                          '),
+        writeln('               |     Deletar perfil:    |                 '),
+        writeln('                                                          '), !.
+
+cadastrarProjeto :-
+        writeln('                                                          '),
+        writeln('               |     Criar projeto:    |                  '),
+        writeln('                                                          '),
+        retornoMenuPrincipal.
+
+menuProjetos :-
+        % writeln('                                                          '),
+        % writeln('               |     Menu de projetos:    |               '),
+        % writeln('                                                          '),
+        % consult('Menus/MenuPublico.pl').
+        consult('Menus/MenuGerente.pl').
+        % colocar a verificação
+        % halt. 
+
+
 menuChat :- 
         writeln('                                                                        '),
         writeln('                    |      Bem-vindo ao Chat!    |                      '),
@@ -60,51 +74,67 @@ menuChat :-
         writeln('            H - Visualizar mensagens privadas                           '),
         writeln('            A - Enviar mensagem geral para membros do projeto           '),
         writeln('            T - Enviar mensagem privada                                 '),
+        writeln('            M - Voltar ao menu principal                                '),
         writeln('            S - Sair do sistema                                         '),
         writeln('                                                                        '),
-        halt.
+        get_single_char(CodigoASCII),
+        char_code(Input, CodigoASCII), 
+        downcase_atom(Input, LowerOption),
+        processaEntradaChat(LowerOption),
+        halt. 
 
-% processaEntradaMenuGeral('c') :-
-%         writeln('                                                          '),
-%         writeln('      |     Enviar mensagem para um usuário:    |         '),
-%         writeln('                                                          '),
-%         enviarMPrivada.
-%         retornoMenuPrincipal.
+processaEntradaChat(Entrada) :- 
 
-% processaEntradaMenuGeral('c') :-
-%         writeln('                                                                 '),
-%         writeln('   |     Enviar mensagem para todos os membros do projeto:    |  '),
-%         writeln('                                                                 '),
-%         enviarMGeral.
-%         retornoMenuPrincipal.
+        clearScreen,
 
-% processaEntradaMenuGeral('c') :-
-%         writeln('                                                            '),
-%         writeln('        |     Mensagens privadas de um usuário:    |        '),
-%         writeln('                                                            '),
-%         visualizarMensagensPrivadas.
-%         retornoMenuPrincipal.
+        ( Entrada == 'c' -> enviarMPrivada
+        ; Entrada == 'h' -> enviarMGeral
+        ; Entrada == 'a' -> visualizarMensagensPrivadas
+        ; Entrada == 't' -> visualizarMensagensGerais
+        ; Entrada == 'm' -> menuPrincipal
+        ; Entrada == 's' -> sairDoSistema
+        ; erroMenuPrincipal ).
 
+enviarMPrivada :-
+        clearScreen, 
+        writeln('                                                                    '),
+        writeln('                |     Enviar mensagem para um usuário:    |         '),
+        writeln('                                                                    '),
+        menuChat.
 
-% processaEntradaMenuGeral('c') :-
-%         writeln('                                                            '),
-%         writeln('         |     Mensagens gerais de um projeto:    |         '),
-%         writeln('                                                            '),
-%         visualizarMensagensGerais.
-%         retornoMenuPrincipal.
-        
+enviarMGeral :-
+        clearScreen,
+        writeln('                                                                    '),
+        writeln('      |     Enviar mensagem para todos os membros do projeto:    |  '),
+        writeln('                                                                    '),
+        menuChat.   
 
-processaEntradaMenuGeral('s') :-
+visualizarMensagensPrivadas :-
+        clearScreen,
+        writeln('                                                                    '),
+        writeln('                |     Mensagens privadas de um usuário:    |        '),
+        writeln('                                                                    '),
+        menuChat.
+
+visualizarMensagensGerais :-
+        clearScreen,
+        writeln('                                                                 '),
+        writeln('              |     Mensagens gerais de um projeto:    |         '),
+        writeln('                                                                 '),
+        menuChat.
+
+sairDoSistema :-
+        clearScreen,
         writeln('                                                          '),
         writeln('        |  Você saiu do sistema! Até a próxima!  |        '),
-        writeln('                                                          '),
-        halt. % encerra o programa
+        writeln('                                                          '), !.
 
-processaEntradaMenuGeral(_) :-
+erroMenuPrincipal :-
+        clearScreen,
         writeln('                                                          '),
         writeln('         |  Entrada Inválida. Tente novamente!  |         '),
         writeln('                                                          '),
-        menuPublicoProjeto.
+        retornoMenuPrincipal.
 
 % | Retorna ao menu principal ou sai do sistema
 retornoMenuPrincipal :- 
@@ -115,28 +145,32 @@ retornoMenuPrincipal :-
         writeln('                 S - Sair do sistema                      '),
         writeln('                                                          '),
         get_single_char(CodigoASCII),
-        char_code(Input, CodigoASCII), % Converter o código ASCII em um caractere
+        char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption),
+
         (LowerOption == 's' ->
-                writeln('                                                          '),
-                writeln('        |  Você saiu do sistema! Até a próxima!  |        '),
-                writeln('                                                          '),
-                halt % encerra o programa
+                sairDoSistema, !
+                
         ; LowerOption == 'm' ->
+                clearScreen,
                 menuPrincipal
         ;
+                clearScreen,
                 writeln('                                                          '),
                 writeln('         |  Entrada Inválida. Tente novamente!  |         '),
                 writeln('                                                          '),
                 retornoMenuPrincipal
         ).
 
+
+% Jamilly precisará para o Chat
+
 /**
  * waitInput is det.
  * 
  * Espera o usuário digitar algum caractere.
  */ 
-waitInput:-waitInput("").
+% waitInput:-waitInput("").
 
 /**
  * waitInput(+S:string) is det. 
@@ -144,7 +178,7 @@ waitInput:-waitInput("").
  * Imprime a mensagem fornecida, esperando o usuário digitar algum caractere.
  * @param S Mensagem a ser impressa antes de esperar a entrada
  */
-waitInput(S):-
-    ansi_format([bold,fg(yellow)], "~w", [S]),
-    ansi_format([bold,fg(yellow)], "~w", ["Aperte qualquer tecla para continuar."]),
-    get_single_char(_),nl.
+% waitInput(S):-
+%     ansi_format([bold,fg(yellow)], "~w", [S]),
+%     ansi_format([bold,fg(yellow)], "~w", ["Aperte qualquer tecla para continuar."]),
+%     get_single_char(_),nl.

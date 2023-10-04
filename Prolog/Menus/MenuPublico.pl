@@ -1,5 +1,7 @@
 :- initialization(menuPublicoProjeto).
 
+clearScreen :- write("\e[H\e[2J").
+
 % | Menu dos projetos, todos os usuários tem acesso
 menuPublicoProjeto :-
 
@@ -14,43 +16,48 @@ menuPublicoProjeto :-
         writeln('            V - Visualizar atividades do projeto          '),
         writeln('            A - Visualizar status de uma atividade        '),
         writeln('            O - Dar feedback em uma atividade             '),
+        writeln('            M - Voltar ao menu principal                  '),
         writeln('            S - Sair do sistema                           '),
         writeln('                                                          '),
+
         get_single_char(CodigoASCII),
-        char_code(Input, CodigoASCII), % Converter o código ASCII em um caractere
+        char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption),
         processaEntrada(LowerOption),
-        halt. % encerra o programa
+        halt. 
 
-% processaEntrada('l') :-
-%         writeln('                                                          '),
-%         writeln('         |  Estes são os projetos no sistema:  |          '),
-%         writeln('                                                          '),
-%         visualizarProjetos.
-%         retornoMenuPublico.
+processaEntrada(Entrada) :- 
 
-% processaEntrada('i') :-
-%         comecarAtividade 
+        clearScreen,
 
-% processaEntrada('f') :-
-%         finalizarAtividade 
+        ( Entrada == 'l' -> visualizarProjetos
+        ; Entrada == 'i' -> comecarAtividade
+        ; Entrada == 'f' -> finalizarAtividade
+        ; Entrada == 'v' -> visualizarAtividades
+        ; Entrada == 'a' -> statusAtividade
+        ; Entrada == 'o' -> criaFeedback
+        ; Entrada == 'm' -> consult('Menus/MenuGeral.pl')
+        ; Entrada == 's' -> sairDoSistema
+        ; erroMenuPublico ).
 
-% processaEntrada('v') :-
-%          visualizarAtividades
 
-% processaEntrada('a') :-
-%          statusAtividade
+visualizarProjetos :-
+        clearScreen,
+        writeln('                                                          '),
+        writeln('         |  Estes são os projetos no sistema:  |          '),
+        writeln('                                                          '),
+        % visualizarProjetos.
+        retornoMenuPublico.
 
-% processaEntrada('o') :-
-%          criaFeedback
 
-processaEntrada('s') :-
+sairDoSistema :-
+        clearScreen,
         writeln('                                                          '),
         writeln('        |  Você saiu do sistema! Até a próxima!  |        '),
-        writeln('                                                          '),
-        halt. % encerra o programa
+        writeln('                                                          '), !. 
 
-processaEntrada(_) :-
+erroMenuPublico :-
+        clearScreen,
         writeln('                                                          '),
         writeln('         |  Entrada Inválida. Tente novamente!  |         '),
         writeln('                                                          '),
@@ -61,24 +68,27 @@ retornoMenuPublico :-
         writeln('                                                          '),
         writeln(' | Deseja voltar ao menu do projeto ou sair do sistema?  |'),
         writeln('                                                          '),
-        writeln('                 M - Menu de projetos                     '),
+        writeln('                 M - Menu Principal                       '),
+        writeln('                 P - Menu de Projetos                     '),
         writeln('                 S - Sair do sistema                      '),
         writeln('                                                          '),
+        
         get_single_char(CodigoASCII),
-        char_code(Input, CodigoASCII), % Converter o código ASCII em um caractere
+        char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption),
+
         (LowerOption == 's' ->
-                writeln('                                                          '),
-                writeln('        |  Você saiu do sistema! Até a próxima!  |        '),
-                writeln('                                                          '),
-                halt % encerra o programa
-        ; LowerOption == 'm' ->
-                menuPublicoProjeto
-        ;
+                sairDoSistema
+
+        ; LowerOption == 'p' -> menuPublicoProjeto, !
+
+        ; LowerOption == 'm' -> clearScreen, consult('Menus/MenuGeral.pl'), !
+        
+        ;       clearScreen,
                 writeln('                                                          '),
                 writeln('         |  Entrada Inválida. Tente novamente!  |         '),
                 writeln('                                                          '),
-                retornoMenuPublico
+                retornoMenuPublico, !
         ).
 
 % Menu do banco
@@ -90,25 +100,27 @@ menuBancoDeAtividades :-
         writeln('                                                         '),
         writeln('            C - Criar uma atividade                      '),
         writeln('            L - Listar atividades cadastradas            '),
+        writeln('            M - Voltar ao menu de projetos               '),
         writeln('            V - Voltar ao menu principal                 '),
         writeln('            S - Sair do sistema                          '),
         writeln('                                                         '),
 
         get_single_char(CodigoASCII),
-        char_code(Input, CodigoASCII), % Converter o código ASCII em um caractere
+        char_code(Input, CodigoASCII),
         downcase_atom(Input, LowerOption),
         processaEntradaBancoDeAtividades(LowerOption),
         retornoMenuRestrito. 
         
-            
-%     option <- getLine
-%     let lowerOption = map toLower option
-%     case lowerOption of
-%         "c" -> criaAtividade
-%         "r" -> deletaAtividade
-%         "l" -> bancoDeAtividades
-%         "a" -> consultarAtividade
-%         "v" -> menuRestritoProjeto
-%         "s" -> sairDoSistema
-%         _   -> erroMenuGerente
 
+processaEntradaBancoDeAtividades(Entrada) :- 
+
+        clearScreen,
+
+        ( Entrada == 'c' -> criaAtividade
+        ; Entrada == 'r' -> deletaAtividade
+        ; Entrada == 'l' -> bancoDeAtividades
+        ; Entrada == 'a' -> consultarAtividade
+        ; Entrada == 'm' -> menuPublicoProjeto
+        ; Entrada == 'v' -> consult('Menus/MenuGeral.pl')
+        ; Entrada == 's' -> sairDoSistema
+        ; erroMenuPublico ).
