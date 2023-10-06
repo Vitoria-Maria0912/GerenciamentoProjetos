@@ -1,9 +1,9 @@
 
 
 :- initialization(menuRestritoProjeto).
+:- use_module("Controllers/Atividades.pl").
 
-
-clearScreen :- write("\e[H\e[2J").
+clearScreen :- write("\e[H\e[2J"). % só serve no unix
 
 % | Menu dos projetos, apenas os gerentes têm acesso
 menuRestritoProjeto :-
@@ -118,15 +118,27 @@ menuBancoDeAtividades :-
         char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption),
         
-        ( LowerOption == 'c' -> criaAtividade
-        ; LowerOption == 'r' -> deletaAtividade
-        ; LowerOption == 'l' -> bancoDeAtividades
-        ; LowerOption == 'a' -> consultarAtividade
-        ; LowerOption == 'v' -> consult('Menus/MenuGeral.l')
+        ( LowerOption == 'c' -> criaAtividade;
+        % ; LowerOption == 'r' -> deletaAtividade
+        % ; LowerOption == 'l' -> bancoDeAtividades
+        % ; LowerOption == 'a' -> consultarAtividade
+         LowerOption == 'v' -> consult('Menus/MenuGeral.pl')
         ; LowerOption == 'p' -> menuRestritoProjeto
         ; LowerOption == 's' -> sairDoSistema
         ; erroMenuGerente ).
         
+criaAtividade :- 
+        write('O título: '),
+        read(Titulo),
+        write('A descrição: '),
+        read(Descricao),
+        write('A dificuldade: '),
+        read(Dificuldade),
+        write('O ID: '),
+        read(IdAtividade),
+        salvarAtividade('Database/bancoDeAtividades.json', Titulo, Descricao, Dificuldade, IdAtividade), writeln('Atividade criada!'), 
+        retornoMenuRestrito. % está ido para cá: erroMenuGerente, por quê?
+
 sairDoSistema :-
         clearScreen,
         writeln('                                                          '),
