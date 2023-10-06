@@ -1,5 +1,7 @@
 
 
+:- module(menuGerente, [menuRestritoProjeto/0, processaEntradaMenuRestrito/1, visualizarProjetos/0, deletarProjeto/0, gerenciarMembros/0, processaEntradaMembros/0]).
+
 :- initialization(menuRestritoProjeto).
 :- use_module("Controllers/Atividades.pl").
 
@@ -89,11 +91,12 @@ processaEntradaMembros(Entrada) :-
 
         clearScreen,
 
-        ( Entrada == 'm' -> vizualizarMembros
-        ; Entrada == 'a' -> atribuirAtividade
-        ; Entrada == 'n' -> adicionarMembro
-        ; Entrada == 'r' -> removerMembro
-        ; Entrada == 'p' -> menuRestritoProjeto
+        ( 
+        % Entrada == 'm' -> vizualizarMembros
+        % ; Entrada == 'a' -> atribuirAtividade
+        % ; Entrada == 'n' -> adicionarMembro
+        % ; Entrada == 'r' -> removerMembro
+          Entrada == 'p' -> menuRestritoProjeto
         ; Entrada == 'v' -> consult('Menus/MenuGeral.pl')
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuGerente ).
@@ -118,26 +121,57 @@ menuBancoDeAtividades :-
         char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption),
         
-        ( LowerOption == 'c' -> criaAtividade;
-        % ; LowerOption == 'r' -> deletaAtividade
+        ( LowerOption == 'c' -> criaAtividade
+        ; LowerOption == 'r' -> deletaAtividade
         % ; LowerOption == 'l' -> bancoDeAtividades
         % ; LowerOption == 'a' -> consultarAtividade
-         LowerOption == 'v' -> consult('Menus/MenuGeral.pl')
+        : LowerOption == 'v' -> consult('Menus/MenuGeral.pl')
         ; LowerOption == 'p' -> menuRestritoProjeto
         ; LowerOption == 's' -> sairDoSistema
         ; erroMenuGerente ).
         
 criaAtividade :- 
-        write('O título: '),
-        read(Titulo),
-        write('A descrição: '),
-        read(Descricao),
-        write('A dificuldade: '),
-        read(Dificuldade),
-        write('O ID: '),
-        read(IdAtividade),
-        salvarAtividade('Database/bancoDeAtividades.json', Titulo, Descricao, Dificuldade, IdAtividade), writeln('Atividade criada!'), 
-        retornoMenuRestrito. % está ido para cá: erroMenuGerente, por quê?
+        writeln('                                                       '),
+        writeln('               |  Criar atividade:  |                  '),
+        writeln('                                                       '),
+        
+        write('Digite um título para sua atividade: '),
+        read_string(user_input, "\n", "\r", _, Titulo), nl,
+        write('Descreva, brevemente, o que se deve realizar para concluir esta atividade. '),
+        read_string(user_input, "\n", "\r", _, Descricao), nl,
+        write('Digite qual a complexidade para realizá-la (Fácil/Média/Difícil): '),
+        read_string(user_input, "\n", "\r", _, Dificuldade), nl,
+        random(10000, 99999, IdAtividade),
+        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
+
+        (\+ atividadeJaExiste(IdAtividade, AtividadesDoSistema) -> 
+                salvarAtividade('Database/bancoDeAtividades.json', Titulo, Descricao, Dificuldade, IdAtividade), 
+                write('Atividade criada! E o ID dela é: '), writeln(IdAtividade), nl
+        ; erroMenuGerente),
+
+        writeln('Deseja adicionar a atividade a um projeto? (S/N)'),
+        get_single_char(CodigoASCII),
+        char_code(Input, CodigoASCII), 
+        downcase_atom(Input, LowerOption), nl,
+
+        ( LowerOption == 's' -> write('Digite o ID do projeto que deseja adicionar a atividade: '),
+                                read_string(user_input, "\n", "\r", _, IdProjetoAtividade), nl,
+
+                                % É NECESSÁRIA A VERIFICAÇÃO DO PROJETO!!!         <<<<< Não está alterando >>>>>>>>
+
+                                editarIdProjetoAtividadeJSON(AtividadesDoSistema, IdAtividade, IdProjetoAtividade, Out),
+                                writeln('Atividade alterada com sucesso!'),
+                                retornoMenuRestrito
+        ; LowerOption == 'n' -> retornoMenuRestrito
+        ; erroMenuGerente).
+
+% Deleta uma atividade do projeto                       <<<< Ainda não funciona >>>>>>>>>>>>>>>>>>>
+deletaAtividade :-
+        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
+        read_string(user_input, "\n", "\r", _, IdProjetoAtividade), nl,
+        editarIdProjetoAtividadeJSON(AtividadesDoSistema, IdAtividade, ' ----- ', Out),
+        writeln('Atividade deletada, do projeto, com sucesso!'),
+        retornoMenuRestrito.
 
 sairDoSistema :-
         clearScreen,
@@ -153,13 +187,13 @@ erroMenuGerente :-
         writeln('                                                          '),
         retornoMenuRestrito.
 
-% | Retorna ao menu principal ou sai do sistema
+% Retorna ao menu principal ou sai do sistema
 retornoMenuRestrito :- 
         writeln('                                                          '),
         writeln(' | Deseja voltar ao menu do projeto ou sair do sistema?  |'),
         writeln('                                                          '),
-        writeln('                 M - Menu de projetos                     '),
-        writeln('                 P - Menu Principal                       '),
+        writeln('                 M - Menu Principal                       '),
+        writeln('                 P - Menu de projetos                     '),
         writeln('                 S - Sair do sistema                      '),
         writeln('                                                          '),
         get_single_char(CodigoASCII),
@@ -168,8 +202,8 @@ retornoMenuRestrito :-
 
         (LowerOption == 's' -> sairDoSistema, !
                 
-        ; LowerOption == 'm' -> menuRestritoProjeto, !
+        ; LowerOption == 'p' -> menuRestritoProjeto, !
 
-        ; LowerOption == 'p' -> consult('Menus/MenuGeral.pl'), !
+        ; LowerOption == 'm' -> consult('Menus/MenuGeral.pl'), !
         
         ; erroMenuGerente ).
