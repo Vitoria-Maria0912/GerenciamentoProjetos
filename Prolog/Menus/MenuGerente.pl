@@ -123,9 +123,9 @@ menuBancoDeAtividades :-
         
         ( LowerOption == 'c' -> criaAtividade
         ; LowerOption == 'r' -> deletaAtividade
-        % ; LowerOption == 'l' -> bancoDeAtividades
+        ; LowerOption == 'l' -> listarAtividades
         % ; LowerOption == 'a' -> consultarAtividade
-        : LowerOption == 'v' -> consult('Menus/MenuGeral.pl')
+        ; LowerOption == 'v' -> consult('Menus/MenuGeral.pl')
         ; LowerOption == 'p' -> menuRestritoProjeto
         ; LowerOption == 's' -> sairDoSistema
         ; erroMenuGerente ).
@@ -141,7 +141,9 @@ criaAtividade :-
         read_string(user_input, "\n", "\r", _, Descricao), nl,
         write('Digite qual a complexidade para realizá-la (Fácil/Média/Difícil): '),
         read_string(user_input, "\n", "\r", _, Dificuldade), nl,
-        random(10000, 99999, IdAtividade),
+        random(10000, 99999, Idatom),
+        atom_string(Idatom,IdAtividade),
+        % Falta colocar verificação de entrada
         lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
 
         (\+ atividadeJaExiste(IdAtividade, AtividadesDoSistema) -> 
@@ -165,14 +167,31 @@ criaAtividade :-
         ; LowerOption == 'n' -> retornoMenuRestrito
         ; erroMenuGerente).
 
-% Deleta uma atividade do projeto                       <<<< Ainda não funciona >>>>>>>>>>>>>>>>>>>
+% Deleta uma atividade do projeto(Inicialmente remove pelo o ID da atividade)    <<<< Falta fazer verificação se é vazio as entradas>>>>>>>>>>>>>>>>>>>
 deletaAtividade :-
-        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
-        read_string(user_input, "\n", "\r", _, IdProjetoAtividade), nl,
-        editarIdProjetoAtividadeJSON(AtividadesDoSistema, IdAtividade, ' ----- ', Out),
-        writeln('Atividade deletada, do projeto, com sucesso!'),
+        writeln('                                                       '),
+        writeln('               |  Deletar  atividade:  |               '),
+        writeln('                                                       '),
+        
+        write('Digite o ID da Atividade a ser deletada: '),
+        % Sem a leitura abaixo não consigo remover
+        read_line_to_codes(user_input, X3),
+        string_to_atom(X3,X2),
+        atom_number(X2,X),
+        
+
+
+       lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
+       removerAtividade('Database/bancoDeAtividades.json', X).
+  
         retornoMenuRestrito.
 
+listarAtividades :-
+        writeln('                                                       '),
+        writeln('          |  Listar Atividades cadastradas      :  |   '),
+        writeln('                                                       '),
+
+        exibirAtividades('Database/bancoDeAtividades.json').
 sairDoSistema :-
         clearScreen,
         writeln('                                                          '),
@@ -207,3 +226,7 @@ retornoMenuRestrito :-
         ; LowerOption == 'm' -> consult('Menus/MenuGeral.pl'), !
         
         ; erroMenuGerente ).
+
+ler_string(X) :-
+ read_line_to_codes(user_input, R),
+    atom_string(R, X).
