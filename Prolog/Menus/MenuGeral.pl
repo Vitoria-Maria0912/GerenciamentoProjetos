@@ -46,11 +46,38 @@ deletarUsuario :-
         writeln('               |     Deletar perfil:    |                 '),
         writeln('                                                          '), !.
 
+
 cadastrarProjeto :-
         writeln('                                                          '),
         writeln('               |     Criar projeto:    |                  '),
         writeln('                                                          '),
+        write('Digite seu ID: '),
+        read(IdUsuario),
+        getUsuario(IdUsuario, Usuario), 
+    
+        (Usuario \= [] ->
+            write('Digite o título do seu projeto: '),
+            read_string(user_input, "\n", "\r", _, TituloProjeto), nl,
+    
+            write('Digite a descrição do projeto: '),
+            read_string(user_input, "\n", "\r", _, DescricaoProjeto), nl,
+    
+            random(100, 999, IdProjeto), 
+    
+            Projeto = projeto(IdProjeto, TituloProjeto, DescricaoProjeto, IdUsuario, [], []),
+    
+        (projetoJaExiste(IdProjeto) ->
+                writeln('Projeto já existe! Tente novamente.')
+                ;
+                salvarProjeto('Database/projetos.json', Projeto), 
+                writeln('Projeto criado com sucesso! O ID do seu projeto é: '), writeln(IdProjeto), nl
+        )
+
+        );
+        writeln('ID inexistente! Tente novamente.'),
         retornoMenuPrincipal.
+            
+
 
 menuProjetos :-
         % writeln('                                                          '),
