@@ -1,8 +1,1 @@
-[
-  {
-    "atividadesAtribuidas": [],
-    "idUsuario": 7146,
-    "nome": "admin",
-    "senha": "123"
-  }
-]
+[{"nome":"Yalle", "senha":"12345", "idUsuario":"4814", "atividadesAtribuidas":"[]"},{"nome":"Joao", "senha":"arthur", "idUsuario":"3192", "atividadesAtribuidas":"[]"}]

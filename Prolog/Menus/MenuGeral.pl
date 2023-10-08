@@ -1,4 +1,5 @@
 :- initialization(menuPrincipal).
+:- use_module("Controllers/Usuario.pl").
 
 clearScreen :- write("\e[H\e[2J").
 
@@ -39,12 +40,33 @@ cadastrarUsuario :-
         writeln('                                                          '),
         writeln('                  |     Cadastro:    |                    '),
         writeln('                                                          '),
-        retornoMenuPrincipal.
+        
+        write('Digite seu nome: '),
+        read_string(user_input, "\n", "\r", _, Nome), nl,
+        write('Digite sua senha: '),
+        read_string(user_input, "\n", "\r", _, Senha), nl,
+        random(1000, 9999, IdUsuario),
+        lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
 
+        (\+ usuarioJaExiste(IdUsuario, UsuariosDoSistema) ->
+                salvarUsuario('Database/usuarios.json', Nome, Senha, IdUsuario),
+                write('Usuário cadastrado com sucesso! O seu ID é: '), writeln(IdUsuario), nl, retornoMenuPrincipal
+        ; erroMenuGeral).
+
+% ainda não funciona
 deletarUsuario :-
         writeln('                                                          '),
         writeln('               |     Deletar perfil:    |                 '),
-        writeln('                                                          '), !.
+        writeln('                                                          '),
+        write('Digite seu Id: '),
+        read_string(user_input, "\n", "\r", _, IdUsuario), nl,
+        lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
+
+        (usuarioJaExiste(IdUsuario, UsuariosDoSistema) ->
+                removerUsuario('Database/usuarios.json', IdUsuario),
+                writeln('Seu perfil foi deletado. Até a próxima!'), nl
+        ;   erroMenuGeral).
+        
 
 cadastrarProjeto :-
         writeln('                                                          '),
@@ -182,3 +204,10 @@ retornoMenuPrincipal :-
 %     ansi_format([bold,fg(yellow)], "~w", [S]),
 %     ansi_format([bold,fg(yellow)], "~w", ["Aperte qualquer tecla para continuar."]),
 %     get_single_char(_),nl.
+
+erroMenuGeral :-
+        clearScreen,
+        writeln('                                                          '),
+        writeln('         |  Entrada Inválida. Tente novamente!  |         '),
+        writeln('                                                          '),
+        retornoMenuPrincipal.
