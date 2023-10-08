@@ -1,6 +1,6 @@
 :- module(atividade, [lerBancoDeAtividadesJson/2, atividadeToJSON/8, atividadesToJSON/2, salvarAtividade/5,
                       exibirAtividadesAux/1, exibirAtividades/1, editarIdProjetoAtividadeJSON/4, 
-                      editarMembroResponsavelAtividadeJSON/4, getAtividadeJSON/3, atividadeJaExiste/2]).
+                      editarMembroResponsavelAtividadeJSON/4, getAtividadeJSON/3, atividadeJaExiste/2, removerAtividade/2]).
 :- use_module(library(http/json)).
 
 % Lendo arquivo JSON puro
