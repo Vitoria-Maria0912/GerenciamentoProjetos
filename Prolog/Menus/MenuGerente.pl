@@ -226,7 +226,3 @@ retornoMenuRestrito :-
         ; LowerOption == 'm' -> consult('Menus/MenuGeral.pl'), !
         
         ; erroMenuGerente ).
-
-ler_string(X) :-
- read_line_to_codes(user_input, R),
-    atom_string(R, X).
