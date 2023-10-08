@@ -57,6 +57,7 @@ removerUsuario(FilePath, Id):-
 % Predicado para verificar se um usuario com o mesmo IdUsuario já existe no sistema
 usuarioJaExiste(IdUsuario, UsuariosDoSistema) :-
     member(usuario(IdUsuario, _, _, _), UsuariosDoSistema).
-  
+
+
 
 % falta adicionar atividades a um usuario

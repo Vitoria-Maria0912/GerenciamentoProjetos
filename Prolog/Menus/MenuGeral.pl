@@ -1,5 +1,6 @@
 :- initialization(menuPrincipal).
 :- use_module("Controllers/Usuario.pl").
+:- use_module("Controllers/Utils.pl").
 
 clearScreen :- write("\e[H\e[2J").
 
@@ -36,22 +37,29 @@ processaEntradaMenuPrincipal(Entrada) :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
 
+
 cadastrarUsuario :-
         writeln('                                                          '),
         writeln('                  |     Cadastro:    |                    '),
         writeln('                                                          '),
         
         write('Digite seu nome: '),
-        read_string(user_input, "\n", "\r", _, Nome), nl,
+        ler_string(Nome), nl,
         write('Digite sua senha: '),
-        read_string(user_input, "\n", "\r", _, Senha), nl,
+        ler_string(Senha), nl,
         random(1000, 9999, IdUsuario),
         lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
 
+        (nao_vazia(Nome), nao_vazia(Senha) ->
         (\+ usuarioJaExiste(IdUsuario, UsuariosDoSistema) ->
-                salvarUsuario('Database/usuarios.json', Nome, Senha, IdUsuario),
-                write('Usuário cadastrado com sucesso! O seu ID é: '), writeln(IdUsuario), nl, retornoMenuPrincipal
-        ; erroMenuGeral).
+            salvarUsuario('Database/usuarios.json', Nome, Senha, IdUsuario),
+            write('Usuário cadastrado com sucesso! O seu ID é: '), writeln(IdUsuario), nl, retornoMenuPrincipal
+        ;
+            erroMenuGeral
+        )
+    ;
+        writeln('Nome e senha não podem ser vazios. Tente novamente.'), nl, retornoMenuPrincipal
+    ).
 
 % ainda não funciona
 deletarUsuario :-
