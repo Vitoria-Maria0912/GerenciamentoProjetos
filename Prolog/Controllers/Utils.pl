@@ -6,4 +6,3 @@ nao_vazia(Input) :-
 ler_string(X) :-
     read_line_to_codes(user_input, R),
     atom_string(R, X).
-    

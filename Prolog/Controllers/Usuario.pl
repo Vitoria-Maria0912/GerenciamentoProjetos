@@ -1,5 +1,5 @@
 :- module(usuario, [lerUsuariosJson/2, usuarioToJSON/4, usuariosToJSON/2, salvarUsuario/4, exibirUsuariosAux/1, 
-                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, usuarioJaExiste/2]).
+                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3]).
 :- use_module(library(http/json)).
 
 % Lendo arquivo JSON puro
@@ -38,7 +38,7 @@ exibirUsuarios(FilePath) :-
 		exibirUsuariosAux(Usuarios).
 
 % Pega uma usuario por ID
-getUsuarioJSON(IdUsuario, [Usuario|_], Usuario):- IdUsuario =:= Usuario.idUsuario.
+getUsuarioJSON(IdUsuario, [Usuario|_], Usuario):- IdUsuario == Usuario.idUsuario.
 getUsuarioJSON(IdUsuario, [_|T], Usuario):- getUsuarioJSON(IdUsuario, T, Usuario).    
 
 % Removendo um usuário - ainda nao funciona
@@ -51,13 +51,14 @@ removerUsuario(FilePath, Id):-
     removerUsuarioJSON(File, Id, SaidaParcial),
     usuariosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream),
-    writeln('Usuário removido com sucesso. Arquivo atualizado.').
+    writeln('Usuário removido com sucesso. Até a próxima!').
 
-
-% Predicado para verificar se um usuario com o mesmo IdUsuario já existe no sistema
-usuarioJaExiste(IdUsuario, UsuariosDoSistema) :-
-    member(usuario(IdUsuario, _, _, _), UsuariosDoSistema).
-
+% verifica se um id existe dentro da lista de usuarios
+verifica_id(_, [], false).
+verifica_id(Busca, [Usuario|_], true) :- 
+    get_dict(idUsuario, Usuario, Id),
+    Busca == Id.
+verifica_id(Busca, [_|T], R) :- verifica_id(Busca, T, R).
 
 
 % falta adicionar atividades a um usuario

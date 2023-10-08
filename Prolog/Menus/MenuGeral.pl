@@ -47,33 +47,38 @@ cadastrarUsuario :-
         ler_string(Nome), nl,
         write('Digite sua senha: '),
         ler_string(Senha), nl,
-        random(1000, 9999, IdUsuario),
+        random(1000, 9999, IdAtom),
+        atom_string(IdAtom, IdUsuario),
         lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
 
         (nao_vazia(Nome), nao_vazia(Senha) ->
-        (\+ usuarioJaExiste(IdUsuario, UsuariosDoSistema) ->
-            salvarUsuario('Database/usuarios.json', Nome, Senha, IdUsuario),
-            write('Usuário cadastrado com sucesso! O seu ID é: '), writeln(IdUsuario), nl, retornoMenuPrincipal
+        verifica_id(IdUsuario, UsuariosDoSistema, Existe),
+        (Existe ->
+                writeln('O usuário já existe. Tente novamente.'), nl, retornoMenuPrincipal
         ;
-            erroMenuGeral
+                salvarUsuario('Database/usuarios.json', Nome, Senha, IdUsuario),
+                write('Usuário cadastrado com sucesso! O seu ID é: '), writeln(IdUsuario), nl, retornoMenuPrincipal
         )
-    ;
-        writeln('Nome e senha não podem ser vazios. Tente novamente.'), nl, retornoMenuPrincipal
-    ).
+        ;
+         writeln('Nome e senha não podem ser vazios. Tente novamente.'), nl, retornoMenuPrincipal
+        ).
 
-% ainda não funciona
+
 deletarUsuario :-
         writeln('                                                          '),
         writeln('               |     Deletar perfil:    |                 '),
         writeln('                                                          '),
         write('Digite seu Id: '),
-        read_string(user_input, "\n", "\r", _, IdUsuario), nl,
+        ler_string(IdUsuario), nl,
         lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
-
-        (usuarioJaExiste(IdUsuario, UsuariosDoSistema) ->
-                removerUsuario('Database/usuarios.json', IdUsuario),
-                writeln('Seu perfil foi deletado. Até a próxima!'), nl
-        ;   erroMenuGeral).
+        write('Verificando usuário com ID: '), writeln(IdUsuario), nl,
+        (verifica_id(IdUsuario, UsuariosDoSistema, Existe) ->
+    (Existe == true ->
+        removerUsuario('Database/usuarios.json', IdUsuario)
+    ;
+        writeln('O usuário não existe. Tente novamente.'), nl, retornoMenuPrincipal
+    )
+).
         
 
 cadastrarProjeto :-
