@@ -70,15 +70,20 @@ deletarUsuario :-
         writeln('                                                          '),
         write('Digite seu Id: '),
         ler_string(IdUsuario), nl,
-        lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
-        write('Verificando usuário com ID: '), writeln(IdUsuario), nl,
-        (verifica_id(IdUsuario, UsuariosDoSistema, Existe) ->
-    (Existe == true ->
-        removerUsuario('Database/usuarios.json', IdUsuario)
-    ;
-        writeln('O usuário não existe. Tente novamente.'), nl, retornoMenuPrincipal
-    )
-).
+            
+        (nao_vazia(IdUsuario) ->
+                lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
+                write('Verificando usuário com ID: '), writeln(IdUsuario), nl,
+                verifica_id(IdUsuario, UsuariosDoSistema, Existe),
+                        (Existe == true ->
+                        removerUsuario('Database/usuarios.json', IdUsuario)
+                        ;
+                        writeln('O usuário não existe. Tente novamente.'), nl, retornoMenuPrincipal
+                        )
+                ;
+                    erroMenuGeral
+                ).
+            
         
 
 cadastrarProjeto :-
