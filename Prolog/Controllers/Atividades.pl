@@ -89,3 +89,19 @@ getAtividadeJSON(IdAtividade, [_|T], Atividade):- getAtividadeJSON(IdAtividade, 
 % Predicado para verificar se uma atividade com o mesmo IdAtividade já existe no sistema
 atividadeJaExiste(IdAtividade, AtividadesDoSistema) :-
   member(atividade(IdAtividade, _, _, _, _, _, _, _), AtividadesDoSistema).
+
+% Removendo a atividade pelo ID
+removerAtividadeJSON([], _, []).
+removerAtividadeJSON([H|T], Id, Out) :-
+    H.idAtividade =\= Id,
+    removerAtividadeJSON(T, Id, Resto),
+    Out = [H | Resto].
+removerAtividadeJSON([H|T], Id, Out) :-
+    H.idAtividade =:= Id, % Verifica se o ID corresponde
+    removerAtividadeJSON(T, Id, Out).
+
+removerAtividade(FilePath, Id) :-
+    lerBancoDeAtividadesJson(FilePath, File),
+    removerAtividadeJSON(File, Id, SaidaParcial),
+    atividadesToJSON(SaidaParcial, Saida),
+    open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
