@@ -7,16 +7,20 @@ lerProjetosJson(FilePath, File) :-
     open(FilePath, read, F),
     json_read_dict(F, File).
 
-% Cria um usuário
+
+%Por enquanto sem o Id de Gerente
+% Cria um projeto
 projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Projeto) :-
-    swritef(Projeto, '{"nomeProjeto":"%w", "descricaoProjeto":"%w", "idProjeto":"%w", "atividadesAtribuidas":"%w"}',
-[NomeProjeto, DescricaoProjeto, IdProjeto, []]).
+    swritef(Projeto, '{"nomeProjeto":"%w", "descricaoProjeto":"%w", "idProjeto":"%w", "atividadesAtribuidas":"%w","membros":"%w"}', 
+    [ NomeProjeto, DescricaoProjeto,IdProjeto, [], []]).
 
 % Convertendo uma lista de objetos em JSON para
 projetosToJSON([], []).
 projetosToJSON([H|T], [U|Projeto]) :-
-    projetoToJSON(H.nomeProjeto, H.descricaoProjeto, H.idProjeto, U),
+    projetoToJSON(H.nomeProjeto, H.descricaoProjeto, H.idProjeto , U),
     projetosToJSON(T, Projeto).
+
+
 
 % Salvar em arquivo JSON
 salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto) :-
