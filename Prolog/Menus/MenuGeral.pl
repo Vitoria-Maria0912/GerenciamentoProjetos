@@ -1,4 +1,7 @@
+
 :- initialization(menuPrincipal).
+:- use_module("Controllers/Projeto.pl").
+
 
 clearScreen :- write("\e[H\e[2J").
 
@@ -51,11 +54,11 @@ cadastrarProjeto :-
         writeln('                                                          '),
         writeln('               |     Criar projeto:    |                  '),
         writeln('                                                          '),
-        write('Digite seu ID: '),
-        read(IdUsuario),
-        getUsuario(IdUsuario, Usuario), 
+        % write('Digite seu ID: '),
+        % read(IdUsuario),
+        % getUsuario(IdUsuario, Usuario), 
     
-        (Usuario \= [] ->
+        % (Usuario \= [] ->
             write('Digite o título do seu projeto: '),
             read_string(user_input, "\n", "\r", _, TituloProjeto), nl,
     
@@ -73,8 +76,8 @@ cadastrarProjeto :-
                 writeln('Projeto criado com sucesso! O ID do seu projeto é: '), writeln(IdProjeto), nl
         )
 
-        );
-        writeln('ID inexistente! Tente novamente.'),
+        % );
+        ;writeln('ID inexistente! Tente novamente.'),
         retornoMenuPrincipal.
             
 
