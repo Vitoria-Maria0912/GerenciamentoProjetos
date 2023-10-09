@@ -1,7 +1,7 @@
-
 :- initialization(menuPrincipal).
+ :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Projeto.pl").
-
+ :- use_module("Controllers/Utils.pl").
 
 clearScreen :- write("\e[H\e[2J").
 
@@ -21,12 +21,12 @@ menuPrincipal :-
         writeln('            S - Sair do sistema                           '),
         writeln('                                                          '),
         get_single_char(CodigoASCII),
-        char_code(Input, CodigoASCII), 
+        char_code(Input, CodigoASCII),
         downcase_atom(Input, LowerOption),
         processaEntradaMenuPrincipal(LowerOption),
-        halt. 
+        halt.
 
-processaEntradaMenuPrincipal(Entrada) :- 
+processaEntradaMenuPrincipal(Entrada) :-
 
         clearScreen,
 
@@ -38,49 +38,81 @@ processaEntradaMenuPrincipal(Entrada) :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
 
+
 cadastrarUsuario :-
         writeln('                                                          '),
         writeln('                  |     Cadastro:    |                    '),
         writeln('                                                          '),
-        retornoMenuPrincipal.
+
+        write('Digite seu nome: '),
+        ler_string(Nome), nl,
+        write('Digite sua senha: '),
+        ler_string(Senha), nl,
+        random(1000, 9999, IdAtom),
+        atom_string(IdAtom, IdUsuario),
+        lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
+
+        (nao_vazia(Nome), nao_vazia(Senha) ->
+        verifica_id(IdUsuario, UsuariosDoSistema, Existe),
+        (Existe ->
+                writeln('O usuário já existe. Tente novamente.'), nl, retornoMenuPrincipal
+        ;
+                salvarUsuario('Database/usuarios.json', Nome, Senha, IdUsuario),
+                write('Usuário cadastrado com sucesso! O seu ID é: '), writeln(IdUsuario), nl, retornoMenuPrincipal
+        )
+        ;
+         writeln('Nome e senha não podem ser vazios. Tente novamente.'), nl, retornoMenuPrincipal
+        ).
+
 
 deletarUsuario :-
         writeln('                                                          '),
         writeln('               |     Deletar perfil:    |                 '),
-        writeln('                                                          '), !.
+        writeln('                                                          '),
+        write('Digite seu Id: '),
+        ler_string(IdUsuario), nl,
+
+        (nao_vazia(IdUsuario) ->
+                lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
+                write('Verificando usuário com ID: '), writeln(IdUsuario), nl,
+                verifica_id(IdUsuario, UsuariosDoSistema, Existe),
+                        (Existe == true ->
+                        removerUsuario('Database/usuarios.json', IdUsuario)
+                        ;
+                        writeln('O usuário não existe. Tente novamente.'), nl, retornoMenuPrincipal
+                        )
+                ;
+                    erroMenuGeral
+                ).
+
 
 
 cadastrarProjeto :-
         writeln('                                                          '),
         writeln('               |     Criar projeto:    |                  '),
         writeln('                                                          '),
-        % write('Digite seu ID: '),
-        % read(IdUsuario),
-        % getUsuario(IdUsuario, Usuario), 
-    
-        % (Usuario \= [] ->
-            write('Digite o título do seu projeto: '),
-            read_string(user_input, "\n", "\r", _, TituloProjeto), nl,
-    
-            write('Digite a descrição do projeto: '),
-            read_string(user_input, "\n", "\r", _, DescricaoProjeto), nl,
-    
-            random(100, 999, IdProjeto), 
-    
-            Projeto = projeto(IdProjeto, TituloProjeto, DescricaoProjeto, IdUsuario, [], []),
-    
-        (projetoJaExiste(IdProjeto) ->
-                writeln('Projeto já existe! Tente novamente.')
-                ;
-                salvarProjeto('Database/projetos.json', Projeto), 
-                writeln('Projeto criado com sucesso! O ID do seu projeto é: '), writeln(IdProjeto), nl
+
+        %Falta adicionar o id de usuário
+        write('Digite o nome do projeto: '),
+        ler_string(NomeProjeto), nl,
+        write('Digite a descrição do projeto: '),
+        ler_string(DescricaoProjeto), nl,
+        random(1000, 9999, IdAtom),
+        atom_string(IdAtom, IdProjeto),
+        lerProjetosJson('Database/projetos.json', ProjetosDoSistema),
+
+        (nao_vazia(NomeProjeto), nao_vazia(DescricaoProjeto) ->
+        verifica_id_projeto(IdProjeto, ProjetosDoSistema, Existe),
+        (Existe ->
+                writeln('O projeto já existe. Tente novamente.'), nl, retornoMenuPrincipal
+        ;
+                salvarProjeto('Database/projetos.json', NomeProjeto, DescricaoProjeto, IdProjeto),
+                write('Projeto cadastrado com sucesso! O ID do projeto é: '), writeln(IdProjeto), nl, retornoMenuPrincipal
         )
-
-        % );
-        ;writeln('ID inexistente! Tente novamente.'),
+        ;
+         writeln('Nome e descrição do projeto não podem ser vazios. Tente novamente.'), nl, retornoMenuPrincipal
+        ),
         retornoMenuPrincipal.
-            
-
 
 menuProjetos :-
         % writeln('                                                          '),
@@ -89,10 +121,10 @@ menuProjetos :-
         % consult('Menus/MenuPublico.pl').
         consult('Menus/MenuGerente.pl').
         % colocar a verificação
-        % halt. 
+        % halt.
 
 
-menuChat :- 
+menuChat :-
         writeln('                                                                        '),
         writeln('                    |      Bem-vindo ao Chat!    |                      '),
         writeln('                                                                        '),
@@ -108,12 +140,12 @@ menuChat :-
         writeln('            S - Sair do sistema                                         '),
         writeln('                                                                        '),
         get_single_char(CodigoASCII),
-        char_code(Input, CodigoASCII), 
+        char_code(Input, CodigoASCII),
         downcase_atom(Input, LowerOption),
         processaEntradaChat(LowerOption),
-        halt. 
+        halt.
 
-processaEntradaChat(Entrada) :- 
+processaEntradaChat(Entrada) :-
 
         clearScreen,
 
@@ -126,7 +158,7 @@ processaEntradaChat(Entrada) :-
         ; erroMenuPrincipal ).
 
 enviarMPrivada :-
-        clearScreen, 
+        clearScreen,
         writeln('                                                                    '),
         writeln('                |     Enviar mensagem para um usuário:    |         '),
         writeln('                                                                    '),
@@ -137,7 +169,7 @@ enviarMGeral :-
         writeln('                                                                    '),
         writeln('      |     Enviar mensagem para todos os membros do projeto:    |  '),
         writeln('                                                                    '),
-        menuChat.   
+        menuChat.
 
 visualizarMensagensPrivadas :-
         clearScreen,
@@ -167,7 +199,7 @@ erroMenuPrincipal :-
         retornoMenuPrincipal.
 
 % | Retorna ao menu principal ou sai do sistema
-retornoMenuPrincipal :- 
+retornoMenuPrincipal :-
         writeln('                                                          '),
         writeln('  | Deseja voltar ao menu principal ou sair do sistema?  |'),
         writeln('                                                          '),
@@ -175,12 +207,12 @@ retornoMenuPrincipal :-
         writeln('                 S - Sair do sistema                      '),
         writeln('                                                          '),
         get_single_char(CodigoASCII),
-        char_code(Input, CodigoASCII), 
+        char_code(Input, CodigoASCII),
         downcase_atom(Input, LowerOption),
 
         (LowerOption == 's' ->
                 sairDoSistema, !
-                
+
         ; LowerOption == 'm' ->
                 clearScreen,
                 menuPrincipal
@@ -197,14 +229,14 @@ retornoMenuPrincipal :-
 
 /**
  * waitInput is det.
- * 
+ *
  * Espera o usuário digitar algum caractere.
- */ 
+ */
 % waitInput:-waitInput("").
 
 /**
- * waitInput(+S:string) is det. 
- * 
+ * waitInput(+S:string) is det.
+ *
  * Imprime a mensagem fornecida, esperando o usuário digitar algum caractere.
  * @param S Mensagem a ser impressa antes de esperar a entrada
  */
@@ -212,3 +244,10 @@ retornoMenuPrincipal :-
 %     ansi_format([bold,fg(yellow)], "~w", [S]),
 %     ansi_format([bold,fg(yellow)], "~w", ["Aperte qualquer tecla para continuar."]),
 %     get_single_char(_),nl.
+
+erroMenuGeral :-
+        clearScreen,
+        writeln('                                                          '),
+        writeln('         |  Entrada Inválida. Tente novamente!  |         '),
+        writeln('                                                          '),
+        retornoMenuPrincipal.

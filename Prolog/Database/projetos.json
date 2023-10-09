@@ -1,10 +1,1 @@
-[
-  {
-    "atividades": [],
-    "descricaoProjeto": "implemente x",
-    "idGerente": 7146,
-    "idProjeto": 318,
-    "membros": [],
-    "nomeProjeto": "fisica quantica"
-  }
-]
+[{"nomeProjeto":"fisica quantica", "descricaoProjeto":"implemente x", "idProjeto":"318", "atividadesAtribuidas":"[]"},{"nomeProjeto":"hhh", "descricaoProjeto":"aaaa", "idProjeto":"1795", "atividadesAtribuidas":"[]"},{"nomeProjeto":"musica", "descricaoProjeto":"música MPB", "idProjeto":"7871", "atividadesAtribuidas":"[]"}]
