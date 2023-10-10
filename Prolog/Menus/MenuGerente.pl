@@ -57,11 +57,37 @@ visualizarProjetos :-
         retornoMenuRestrito. 
 %         visualizarProjetos.
 
+
+
 deletarProjeto :-
         writeln('                                                          '),
         writeln('                 |  Remover Projeto:  |                   '),
         writeln('                                                          '), 
-        retornoMenuRestrito.
+        write('Digite seu Id: '),
+        ler_string(IdUsuario), nl,
+    
+        (nao_vazia(IdUsuario) ->
+            lerProjetosJson('Database/projetos.json', ProjetosDoSistema),
+            write('Digite o ID do projeto que deseja excluir: '),
+            ler_string(IdProjeto), nl,
+            
+            (nao_vazia(IdProjeto) ->
+                verifica_id_projeto(IdProjeto, ProjetosDoSistema, Existe),
+                (Existe ->
+                    removerProjeto('Database/projetos.json', IdProjeto),
+                    writeln(''), nl, retornoMenuRestrito
+                ;
+                    writeln('O projeto não existe. Tente novamente.'), nl, retornoMenuRestrito
+                )
+            ;
+                writeln('ID do projeto não pode ser vazio. Tente novamente.'), nl, retornoMenuRestrito
+            )
+        ;
+            erroMenuGeral
+        ).
+         retornoMenuRestrito.
+
+
 
 gerenciarMembros :-
         writeln('                                                          '),

@@ -92,7 +92,7 @@ cadastrarProjeto :-
         writeln('               |     Criar projeto:    |                  '),
         writeln('                                                          '),
 
-        %Falta adicionar o id de usuário
+        %Falta adicionar o id de usuário para que só gerentes criem
         write('Digite o nome do projeto: '),
         ler_string(NomeProjeto), nl,
         write('Digite a descrição do projeto: '),
