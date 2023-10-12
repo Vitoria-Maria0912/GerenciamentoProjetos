@@ -1,4 +1,7 @@
 :- initialization(menuPrincipal).
+:- use_module("Controllers/Usuario.pl").
+:- use_module("Controllers/Projeto.pl").
+:- use_module("Controllers/Utils.pl").
 
 clearScreen :- write("\e[H\e[2J").
 
@@ -35,22 +38,80 @@ processaEntradaMenuPrincipal(Entrada) :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
 
-cadastrarUsuario :-
-        writeln('                                                          '),
-        writeln('                  |     Cadastro:    |                    '),
-        writeln('                                                          '),
-        retornoMenuPrincipal.
+        cadastrarUsuario :-
+                writeln('                                                          '),
+                writeln('                  |     Cadastro:    |                    '),
+                writeln('                                                          '),
+                
+                write('Digite seu nome: '),
+                ler_string(Nome), nl,
+                write('Digite sua senha: '),
+                ler_string(Senha), nl,
+                random(1000, 9999, IdAtom),
+                atom_string(IdAtom, IdUsuario),
+                lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
+        
+                (nao_vazia(Nome), nao_vazia(Senha) ->
+                verifica_id(IdUsuario, UsuariosDoSistema, Existe),
+                (Existe ->
+                        writeln('O usuário já existe. Tente novamente.'), nl, retornoMenuPrincipal
+                ;
+                        salvarUsuario('Database/usuarios.json', Nome, Senha, IdUsuario),
+                        write('Usuário cadastrado com sucesso! O seu ID é: '), writeln(IdUsuario), nl, retornoMenuPrincipal
+                )
+                ;
+                 writeln('Nome e senha não podem ser vazios. Tente novamente.'), nl, retornoMenuPrincipal
+                ).
+        
+        
+        deletarUsuario :-
+                writeln('                                                          '),
+                writeln('               |     Deletar perfil:    |                 '),
+                writeln('                                                          '),
+                write('Digite seu Id: '),
+                ler_string(IdUsuario), nl,
+                    
+                (nao_vazia(IdUsuario) ->
+                        lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
+                        write('Verificando usuário com ID: '), writeln(IdUsuario), nl,
+                        verifica_id(IdUsuario, UsuariosDoSistema, Existe),
+                                (Existe == true ->
+                                removerUsuario('Database/usuarios.json', IdUsuario)
+                                ;
+                                writeln('O usuário não existe. Tente novamente.'), nl, retornoMenuPrincipal
+                                )
+                        ;
+                            erroMenuGeral
+                        ).
+                    
+                                                                      
 
-deletarUsuario :-
-        writeln('                                                          '),
-        writeln('               |     Deletar perfil:    |                 '),
-        writeln('                                                          '), !.
-
-cadastrarProjeto :-
-        writeln('                                                          '),
-        writeln('               |     Criar projeto:    |                  '),
-        writeln('                                                          '),
-        retornoMenuPrincipal.
+        cadastrarProjeto :-
+                writeln('                                                          '),
+                writeln('               |     Criar projeto:    |                  '),
+                writeln('                                                          '),
+                        
+                %Falta adicionar o id de usuário para que só gerentes criem
+                write('Digite o nome do projeto: '),
+                ler_string(NomeProjeto), nl,
+                write('Digite a descrição do projeto: '),
+                ler_string(DescricaoProjeto), nl,
+                random(1000, 9999, IdAtom),
+                atom_string(IdAtom, IdProjeto),
+                lerProjetosJson('Database/projetos.json', ProjetosDoSistema),
+                        
+                (nao_vazia(NomeProjeto), nao_vazia(DescricaoProjeto) ->
+                verifica_id_projeto(IdProjeto, ProjetosDoSistema, Existe),
+                (Existe ->
+                         writeln('O projeto já existe. Tente novamente.'), nl, retornoMenuPrincipal
+                                ;
+                                salvarProjeto('Database/projetos.json', NomeProjeto, DescricaoProjeto, IdProjeto),
+                                write('Projeto cadastrado com sucesso! O ID do projeto é: '), writeln(IdProjeto), nl, retornoMenuPrincipal
+                                )
+                                ;
+                                 writeln('Nome e descrição do projeto não podem ser vazios. Tente novamente.'), nl, retornoMenuPrincipal
+                                ),
+                                retornoMenuPrincipal.
 
 menuProjetos :-
         % writeln('                                                          '),

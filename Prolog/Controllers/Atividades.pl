@@ -1,6 +1,6 @@
 :- module(atividade, [lerBancoDeAtividadesJson/2, atividadeToJSON/8, atividadesToJSON/2, salvarAtividade/5,
                       exibirAtividadesAux/1, exibirAtividades/1, editarIdProjetoAtividadeJSON/4, 
-                      editarMembroResponsavelAtividadeJSON/4, getAtividadeJSON/3, atividadeJaExiste/2, removerAtividade/2]).
+                      editarMembroResponsavelAtividadeJSON/4, getAtividadeJSON/3, atividadeJaExiste/2, removerAtividade/2,verifica_id_atividade/3]).
 :- use_module(library(http/json)).
 
 % Lendo arquivo JSON puro
@@ -43,6 +43,38 @@ exibirAtividadesAux([H|T]) :-
 exibirAtividades(FilePath) :-
 		lerBancoDeAtividadesJson(FilePath, Atividades),
 		exibirAtividadesAux(Atividades).
+
+% Verifica se um ID existe dentro da lista de atividades
+verifica_id_atividade(_, [], false).
+verifica_id_atividade(Busca, [Atividade|_], true) :-
+    get_dict(idAtividade, Atividade, Id),
+    Busca == Id.
+verifica_id_atividade(Busca, [_|T], R) :- verifica_id_atividade(Busca, T, R).
+
+% Predicado para verificar se um ID existe em um banco de dados JSON
+verifica_id(IdProcurado, ArquivoJson, Existe) :-
+  % Lê o conteúdo do arquivo JSON em uma estrutura de dados
+  lerBancoDeAtividadesJson('Database/bancoDeAtividades.json',Atividades),
+  % Verifica se o ID existe na estrutura de dados
+  (verifica_id_json(IdProcurado, Atividades) -> Existe = true ; Existe = false).
+
+% Predicado para verificar se um ID existe na estrutura de dados JSON
+verifica_id_json(_, []):- false.
+verifica_id_json(IdProcurado, [Registro | Resto]) :-
+  % Suponhamos que o ID esteja associado à chave "id" no JSON
+  % Você pode adaptar isso de acordo com a estrutura do seu JSON
+  get_dict(id, Registro, Id),
+  (Id = IdProcurado ; verifica_id_json(IdProcurado, Resto)).
+
+
+% Pega atividades por ID de Projeto
+getAtividadesJSON(IdProjeto, [], []).
+getAtividadesJSON(IdProjeto, [Atividade|Resto], AtividadesEncontradas) :-
+    Atividade.idProjetoAtividade == IdProjeto,
+getAtividadesJSON(IdProjeto, Resto, RestoAtividades),
+    AtividadesEncontradas = [Atividade|RestoAtividades].
+getAtividadesJSON(IdProjeto, [_|Resto], AtividadesEncontradas) :-
+getAtividadesJSON(IdProjeto, Resto, AtividadesEncontradas).
 
 % Muda o idProjeto de uma atividade
 editarIdProjetoAtividadeJSON([], _, _, []).

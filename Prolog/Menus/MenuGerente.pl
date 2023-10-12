@@ -61,7 +61,29 @@ deletarProjeto :-
         writeln('                                                          '),
         writeln('                 |  Remover Projeto:  |                   '),
         writeln('                                                          '), 
-        retornoMenuRestrito.
+        write('Digite seu Id: '),
+        ler_string(IdUsuario), nl,
+    
+        (nao_vazia(IdUsuario) ->
+            lerProjetosJson('Database/projetos.json', ProjetosDoSistema),
+            write('Digite o ID do projeto que deseja excluir: '),
+            ler_string(IdProjeto), nl,
+            
+            (nao_vazia(IdProjeto) ->
+                verifica_id_projeto(IdProjeto, ProjetosDoSistema, Existe),
+                (Existe ->
+                    removerProjeto('Database/projetos.json', IdProjeto),
+                    writeln(''), nl, retornoMenuRestrito
+                ;
+                    writeln('O projeto não existe. Tente novamente.'), nl, retornoMenuRestrito
+                )
+            ;
+                writeln('ID do projeto não pode ser vazio. Tente novamente.'), nl, retornoMenuRestrito
+            )
+        ;
+            erroMenuGeral
+        ).
+         retornoMenuRestrito.
 
 gerenciarMembros :-
         writeln('                                                          '),
@@ -136,11 +158,11 @@ criaAtividade :-
         writeln('                                                       '),
         
         write('Digite um título para sua atividade: '),
-        read_string(user_input, "\n", "\r", _, Titulo), nl,
+        ler_string(Titulo), nl,
         write('Descreva, brevemente, o que se deve realizar para concluir esta atividade. '),
-        read_string(user_input, "\n", "\r", _, Descricao), nl,
+        ler_string(Descricao), nl,
         write('Digite qual a complexidade para realizá-la (Fácil/Média/Difícil): '),
-        read_string(user_input, "\n", "\r", _, Dificuldade), nl,
+        ler_string(Dificuldade), nl,
         random(10000, 99999, Idatom),
         atom_string(Idatom,IdAtividade),
         % Falta colocar verificação de entrada
@@ -173,11 +195,37 @@ deletaAtividade :-
         writeln('               |  Deletar  atividade:  |               '),
         writeln('                                                       '),
         
-        write('Digite o ID da Atividade a ser deletada: '),
+        %write('Digite o ID da Atividade a ser deletada: '),
+        %%ler_string(Id_Atividade), nl,
+        %---- DEVERIA SER ESSA CONFIGURAÇÃO , COM BASE NO ID DO PROJETO PASSADO
+        write('Digite o ID do projeto que terá a atividade a ser deletada: '),
+        ler_string(IdProjeto), nl,
         % Sem a leitura abaixo não consigo remover
-        read_line_to_codes(user_input, X3),
-        string_to_atom(X3,X2),
-        atom_number(X2,X),
+        (nao_vazia(IdProjeto) ->
+        write('urunu'),
+                        lerProjetosJson('Database/projetos.json', ProjetosDoSistema),
+                        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
+                        write('Verificando ID Projeto : '), writeln(IdProjeto), nl,
+                        verifica_id(IdProjeto, ProjetosDoSistema, Existe),
+                        verifica_id(IdAtividade, AtividadesEncontradas, Presente),
+                                (Existe == true , Presente == true ->
+                                        
+                                        write('Digite o ID da atividade a ser removida'),
+                                        getAtividadeJSON(IdProjeto,AtividadesDoSistema,AtividadesEncontradas),
+                                        exibirAtividadesAux(AtividadesEncontradas),
+                                        ler_string(IdAtividade), nl,
+                                        removerAtividade('Database/bancoDeAtividades.json', IdAtividade), 
+                                    
+                                        %% listar atividades do projeto e depois escolhe e remove 
+                                
+                                writeln('O usuário não existe. Tente novamente.'), 
+                                retornoMenuRestrito
+                                
+                                )   
+                                ;                     
+                                erroMenuGerente
+                        ).
+        
         
 
 
