@@ -1,4 +1,4 @@
-:- module(atividade, [lerBancoDeAtividadesJson/2, atividadeToJSON/8, atividadesToJSON/2, salvarAtividade/5,
+:- module(atividade, [lerBancoDeAtividadesJson/2, atividadeToJSON/5, atividadesToJSON/2, salvarAtividade/5,
                       exibirAtividadesAux/1, exibirAtividades/1, editarIdProjetoAtividadeJSON/4, 
                       editarMembroResponsavelAtividadeJSON/4, getAtividadeJSON/3, atividadeJaExiste/2, removerAtividade/2,verifica_id_atividade/3]).
 :- use_module(library(http/json)).
@@ -9,22 +9,22 @@ lerBancoDeAtividadesJson(FilePath, File) :-
   json_read_dict(F, File).
 
 % Cria uma atividade
-atividadeToJSON(Titulo, Descricao, _ , Dificuldade, _ , Id_Atividade, _ , Atividade) :-
-		swritef(Atividade, '{"titulo":"%w", "descricao":"%w", "status":"%w", "dificuldade":"%w", "idProjetoAtividade":"%w", "idAtividade":%w, "idMembroResponsavel":"%w", "feedbacks":%w}',
-    [Titulo, Descricao, 'Não atribuída!', Dificuldade, ' ------- ', Id_Atividade, ' ------- ', []]).
+atividadeToJSON(Titulo, Descricao, Dificuldade, Id_Atividade, Atividade) :-
+		swritef(Atividade, '{"titulo":"%w", "descricao":"%w", "dificuldade":"%w", "idAtividade":%w, "status":"%w", "idProjetoAtividade":"%w", "idMembroResponsavel":"%w", "feedbacks":%w}',
+    [Titulo, Descricao, Dificuldade, Id_Atividade, 'Não atribuída!', 'Não atribuído!', 'Não atribuído!', []]).
 
 % Convertendo uma lista de objetos em JSON para 
 atividadesToJSON([], []).
 atividadesToJSON([H|T], [A|Atividade]) :- 
-    atividadeToJSON(H.titulo, H.descricao, H.status, H.dificuldade, H.idProjetoAtividade, H.idAtividade, H.idMembroResponsavel, A),
+    atividadeToJSON(H.titulo, H.descricao, H.dificuldade, H.idAtividade, A),
     atividadesToJSON(T, Atividade).
 
 % Salvar em arquivo JSON
 salvarAtividade(FilePath, Titulo, Descricao, Dificuldade, Id_Atividade) :- 
 		lerBancoDeAtividadesJson(FilePath, File),
 		atividadesToJSON(File, ListaAtividades),
-		atividadeToJSON(Titulo, Descricao, _ , Dificuldade, _ , Id_Atividade, _ , Atividades),
-		append(ListaAtividades, [Atividades], Saida),
+		atividadeToJSON(Titulo, Descricao, Dificuldade, Id_Atividade, Atividade),
+		append(ListaAtividades, [Atividade], Saida),
 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 % Exibe as atividade cadastradas 
@@ -52,7 +52,7 @@ verifica_id_atividade(Busca, [Atividade|_], true) :-
 verifica_id_atividade(Busca, [_|T], R) :- verifica_id_atividade(Busca, T, R).
 
 % Predicado para verificar se um ID existe em um banco de dados JSON
-verifica_id(IdProcurado, ArquivoJson, Existe) :-
+verifica_id(IdProcurado, Existe) :-
   % Lê o conteúdo do arquivo JSON em uma estrutura de dados
   lerBancoDeAtividadesJson('Database/bancoDeAtividades.json',Atividades),
   % Verifica se o ID existe na estrutura de dados
@@ -68,7 +68,7 @@ verifica_id_json(IdProcurado, [Registro | Resto]) :-
 
 
 % Pega atividades por ID de Projeto
-getAtividadesJSON(IdProjeto, [], []).
+getAtividadesJSON(_, [], []).
 getAtividadesJSON(IdProjeto, [Atividade|Resto], AtividadesEncontradas) :-
     Atividade.idProjetoAtividade == IdProjeto,
 getAtividadesJSON(IdProjeto, Resto, RestoAtividades),

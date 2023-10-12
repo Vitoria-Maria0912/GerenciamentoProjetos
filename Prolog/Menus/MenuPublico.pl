@@ -1,6 +1,11 @@
-:- initialization(menuPublicoProjeto).
+:- module(menuPublico, [menuPublicoProjeto/0, processaEntradaMenuPublico/1, visualizarProjetos/0 , sairDoSistema/0 , 
+                        erroMenuPublico/0 , retornoMenuPublico/0 , menuPublicoBancoDeAtividades/0 , processaEntradaBancoDeAtividades/1]).
 
-clearScreen :- write("\e[H\e[2J").
+% :- initialization(menuPublicoProjeto).
+
+:- use_module("Controllers/Atividades.pl").
+:- use_module("Controllers/Utils.pl").
+
 
 % | Menu dos projetos, todos os usuários tem acesso
 menuPublicoProjeto :-
@@ -23,19 +28,19 @@ menuPublicoProjeto :-
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption),
-        processaEntrada(LowerOption),
+        processaEntradaMenuPublico(LowerOption),
         halt. 
 
-processaEntrada(Entrada) :- 
+processaEntradaMenuPublico(Entrada) :- 
 
         clearScreen,
 
         ( Entrada == 'l' -> visualizarProjetos
-        ; Entrada == 'i' -> comecarAtividade
-        ; Entrada == 'f' -> finalizarAtividade
-        ; Entrada == 'v' -> visualizarAtividades
-        ; Entrada == 'a' -> statusAtividade
-        ; Entrada == 'o' -> criaFeedback
+        % ; Entrada == 'i' -> comecarAtividade
+        % ; Entrada == 'f' -> finalizarAtividade
+        % ; Entrada == 'v' -> visualizarAtividades
+        % ; Entrada == 'a' -> statusAtividade
+        % ; Entrada == 'o' -> criaFeedback
         ; Entrada == 'm' -> consult('Menus/MenuGeral.pl')
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPublico ).
@@ -51,17 +56,18 @@ visualizarProjetos :-
 
 
 sairDoSistema :-
-        clearScreen,
+        % clearScreen,
         writeln('                                                          '),
         writeln('        |  Você saiu do sistema! Até a próxima!  |        '),
-        writeln('                                                          '), !. 
+        writeln('                                                          '), 
+        halt.
 
 erroMenuPublico :-
         clearScreen,
         writeln('                                                          '),
         writeln('         |  Entrada Inválida. Tente novamente!  |         '),
         writeln('                                                          '),
-        menuPublicoProjeto.
+        retornoMenuPublico.
 
 % | Retorna ao menu principal ou sai do sistema
 retornoMenuPublico :- 
@@ -92,7 +98,7 @@ retornoMenuPublico :-
         ).
 
 % Menu do banco
-menuBancoDeAtividades :-
+menuPublicoBancoDeAtividades :-
         writeln('                                                         '),
         writeln('           |  Menu Banco de Atividades  |                '),
         writeln('                                                         '),
@@ -109,18 +115,18 @@ menuBancoDeAtividades :-
         char_code(Input, CodigoASCII),
         downcase_atom(Input, LowerOption),
         processaEntradaBancoDeAtividades(LowerOption),
-        retornoMenuRestrito. 
+        retornoMenuPublico. 
         
 
 processaEntradaBancoDeAtividades(Entrada) :- 
 
-        clearScreen,
+        % clearScreen,
 
-        ( Entrada == 'c' -> criaAtividade
-        ; Entrada == 'r' -> deletaAtividade
-        ; Entrada == 'l' -> bancoDeAtividades
-        ; Entrada == 'a' -> consultarAtividade
-        ; Entrada == 'm' -> menuPublicoProjeto
+        % ( Entrada == 'c' -> criaAtividade % pode isso?
+        % ; Entrada == 'l' -> bancoDeAtividades
+        % ; Entrada == 'a' -> consultarAtividade
+        ( Entrada == 'm' -> menuPublicoProjeto % tem que modificar para que volte para o MenuGerente também
         ; Entrada == 'v' -> consult('Menus/MenuGeral.pl')
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPublico ).
+
