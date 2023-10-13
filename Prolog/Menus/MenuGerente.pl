@@ -204,40 +204,46 @@ alterarIdProjeto(IdAtividade):-
 % Deleta uma atividade do projeto(Inicialmente remove pelo o ID da atividade)    <<<< Falta fazer verificação se é vazio as entradas>>>>>>>>>>>>>>>>>>>
 deletaAtividade :-
         writeln('                                                       '),
-        writeln('               |  Deletar  atividade:  |               '),
+        writeln('               |  Deletar atividade:  |                '),
         writeln('                                                       '),
-        
-        %write('Digite o ID da Atividade a ser deletada: '),
-        %%ler_string(Id_Atividade), nl,
-        %---- DEVERIA SER ESSA CONFIGURAÇÃO , COM BASE NO ID DO PROJETO PASSADO
-        write('Digite o ID do projeto que terá a atividade a ser deletada: '),
-        ler_string(IdProjeto), nl,
-        % Sem a leitura abaixo não consigo remover
-        (nao_vazia(IdProjeto) ->
-                        lerProjetosJson('Database/projetos.json', ProjetosDoSistema),
-                        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
-                        write('Verificando ID Projeto : '), writeln(IdProjeto), nl,
-                        verifica_id(IdProjeto, ProjetosDoSistema, Existe),
+        lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
+        writeln('Digite o Id Usuário:'),
+        ler_string(IdUsuario), nl,
+        writeln('Digite a senha:'),
+        ler_string(Senha), nl,
+        (nao_vazia(IdUsuario), nao_vazia(Senha) ->
+            (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
+                write('Digite o ID do projeto que terá a atividade a ser deletada: '),
+                ler_string(IdProjeto), nl,
+                lerProjetosJson('Database/projetos.json', ProjetosDoSistema),
+                (nao_vazia(IdProjeto) ->
+                    (verifica_id(IdProjeto, ProjetosDoSistema, Existe) ->
+                        write('Digite o ID da Atividade a ser removida: '),
+                        % Aqui você pode adicionar a listagem das atividades no projeto
+                        % dependendo da função editarIdProjetoAtividade
+                        ler_string(IdAtividade), nl,
+                        removerAtividade('Database/bancoDeAtividades.json', IdAtividade),
+                        writeln('Atividade removida com sucesso.'),
+                        retornoMenuRestrito
+                    ;
+                        writeln('ID do projeto não existe. Tente novamente.'), nl,
+                        retornoMenuRestrito
+                    )
+                ;
+                    writeln('ID do projeto não pode ser vazio. Tente novamente.'), nl,
+                    retornoMenuPrincipal
+                )
+            ;
+                writeln('Senha incorreta. Tente novamente.'), nl,
+                retornoMenuPrincipal
+            )
+        ;
+            writeln('Campos vazios. Tente novamente.'), nl,
+            retornoMenuPrincipal
+        ).
 
-                        verifica_id(IdAtividade, AtividadesEncontradas, Presente),
-                                (Existe == true , Presente == true ->
-                                        
-                                        write('Digite o ID da atividade a ser removida'),
-                                        getAtividadeJSON(IdProjeto,AtividadesDoSistema,AtividadesEncontradas),
-                                        exibirAtividadesAux(AtividadesEncontradas),
-                                        ler_string(IdAtividade), nl,
-                                        removerAtividade('Database/bancoDeAtividades.json', IdAtividade), 
-                                    
-                                        %% listar atividades do projeto e depois escolhe e remove 
-                                
-                                writeln('O usuário não existe. Tente novamente.'), 
-                                retornoMenuRestrito
-                                
-                                )   
-        ; erroMenuGerente),
-
-       retornoMenuRestrito.
-
+    
+        %removerAtividade('Database/bancoDeAtividades.json', IdAtividade),                          
 listarAtividades :-
         writeln('                                                       '),
         writeln('          |  Listar Atividades cadastradas:  |   '),

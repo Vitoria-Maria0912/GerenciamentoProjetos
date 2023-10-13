@@ -1,5 +1,5 @@
 :- module(usuario, [lerUsuariosJson/2, usuarioToJSON/4, usuariosToJSON/2, salvarUsuario/4, exibirUsuariosAux/1, 
-                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3]).
+                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, verificaSenhaIdUsuario/3]).
 :- use_module(library(http/json)).
 
 % Lendo arquivo JSON puro
@@ -52,6 +52,12 @@ removerUsuario(FilePath, Id):-
     usuariosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream),
     writeln('Usuário removido com sucesso. Até a próxima!').
+
+% Verifica se a senha e o ID de um usuário conferem
+verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) :-
+    getUsuarioJSON(IdUsuario, Usuarios, Usuario),
+    Usuario.senha == Senha.
+
 
 % verifica se um id existe dentro da lista de usuarios
 verifica_id(_, [], false).
