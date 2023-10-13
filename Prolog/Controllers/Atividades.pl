@@ -1,5 +1,5 @@
 :- module(atividade, [lerBancoDeAtividadesJson/2, atividadeToJSON/5, atividadesToJSON/2, salvarAtividade/5,
-                      exibirAtividadesAux/1, exibirAtividades/1, editarIdProjetoAtividadeJSON/4, 
+                      exibirAtividadesAux/1, exibirAtividades/1, editarIdProjetoAtividadeJSON/4, editarIdProjetoAtividade/3, 
                       editarMembroResponsavelAtividadeJSON/4, getAtividadeJSON/3, atividadeJaExiste/2, removerAtividade/2,verifica_id_atividade/3]).
 :- use_module(library(http/json)).
 
@@ -113,6 +113,24 @@ editarMembroResponsavelAtividadeJSON(FilePath, IdAtividade, IdMembroResponsavel)
 		editarMembroResponsavelAtividadeJSON(File, IdAtividade, IdMembroResponsavel, SaidaParcial),
 		atividadesToJSON(SaidaParcial, Saida),
 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream), !.
+
+% Muda o status da Atividade
+editarStatusAtividadeJSON([], _, _, []).
+editarStatusAtividadeJSON([H|T], H.idAtividade, NovoStatus, [_{ titulo:H.titulo, 
+                                                            descricao:H.descricao,
+                                                            status:NovoStatus, 
+                                                            dificuldade:H.dificuldade, 
+                                                            idProjetoAtividade:H.idProjetoAtividade, 
+                                                            idAtividade:H.idAtividade, 
+                                                            idMembroResponsavel:H.idMembroResponsavel, 
+                                                            feedbacks:H.feedbacks}|T]).
+
+editarStatusAtividadeJSON([H|T], IdAtividade, Status, [H|Out]) :- editarStatusAtividadeJSON(T, IdAtividade, Status, Out).
+editarStatusAtividade(FilePath, IdAtividade, Status) :-
+  lerBancoDeAtividadesJson(FilePath, File),
+  editarStatusAtividadeJSON(File, IdAtividade, Status, SaidaParcial),
+  atividadesToJSON(SaidaParcial, Saida),
+  open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 % Pega uma atividade por ID
 getAtividadeJSON(IdAtividade, [Atividade|_], Atividade):- IdAtividade =:= Atividade.idAtividade.

@@ -1,7 +1,7 @@
 
 
 :- module(menuGerente, [menuRestritoProjeto/0, processaEntradaMenuRestrito/1, visualizarProjetos/0, deletarProjeto/0, 
-          gerenciarMembros/0, menuBancoDeAtividades/0, criaAtividade/0, deletaAtividade/0, alterarIdProjeto/1,
+          gerenciarMembros/0, menuBancoDeAtividades/0, criarAtividade/0, deletaAtividade/0, alterarIdProjeto/0,
           listarAtividades/0, visualizarStatusAtividade/0, retornoMenuRestrito/0, erroMenuGerente/0]).
 
 % :- discontiguous menuGerente:retornoMenuRestrito/0.
@@ -15,7 +15,7 @@
 menuRestritoProjeto :-
 
         writeln('                                                          '),
-        writeln('               |     Menu Projeto    |                    '),
+        writeln('             |     Menu de projetos:    |                 '),
         writeln('                                                          '),
         writeln('                 Selecione uma opção:                     '),
         writeln('                                                          '),
@@ -23,11 +23,6 @@ menuRestritoProjeto :-
         writeln('           P - Remover projeto                            '),  
         writeln('           G - Gerenciar membros do projeto               '),  
         writeln('           B - Menu do banco de atividades                '),  
-        writeln('           I - Iniciar uma atividade                      '),  
-        writeln('           F - Finalizar uma atividade                    '),  
-        writeln('           V - Visualizar atividades do projeto           '),  
-        writeln('           A - Visualizar status de uma atividade         '),  
-        writeln('           O - Dar feedback em uma atividade              '),  
         writeln('           M - Voltar ao menu principal                   '),
         writeln('           S - Sair do sistema                            '),  
         writeln('                                                          '),
@@ -41,14 +36,10 @@ processaEntradaMenuRestrito(Entrada) :-
 
         % clearScreen,
 
-        ( Entrada == 'l' -> visualizarProjetos
+        ( Entrada == 'l' -> visualizarProjetos, retornoMenuRestrito
         ; Entrada == 'p' -> deletarProjeto
         ; Entrada == 'g' -> gerenciarMembros
         ; Entrada == 'b' -> menuBancoDeAtividades
-        % ; Entrada == 'i' -> comecarAtividade
-        % ; Entrada == 'v' -> visualizarAtividades
-        ; Entrada == 'a' -> visualizarStatusAtividade
-        % ; Entrada == 'o' -> criaFeedback
         ; Entrada == 'm' -> consult('Menus/MenuGeral.pl')
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuGerente ).
@@ -77,7 +68,7 @@ deletarProjeto :-
                 writeln('ID do projeto não pode ser vazio. Tente novamente.'), nl, retornoMenuRestrito
             )
         ;
-            erroMenuGeral
+            erroMenuGerente
         ),
         retornoMenuRestrito.
 
@@ -85,6 +76,13 @@ gerenciarMembros :-
         writeln('                                                          '),
         writeln('                                                          '),
         writeln('             |  Gerenciamento de membros:  |              '),
+        writeln('                                                          '),
+
+        write('Digite o ID do projeto: '),
+        ler_string(IdProjeto), nl,
+
+        % ANTES DE MOSTRAR TEM QUE VERIFICAR SE O PROJETO EXISTE, olhar Haskell
+
         writeln('                                                          '),
         writeln('                O que deseja fazer agora?                 '),
         writeln('                                                          '),
@@ -102,23 +100,151 @@ gerenciarMembros :-
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII),
         downcase_atom(Input, LowerOption),
-        processaEntradaMembros(LowerOption),
+        processaEntradaMembros(LowerOption, IdProjeto),
         halt. 
 
-processaEntradaMembros(Entrada) :- 
+processaEntradaMembros(Entrada, IdProjeto) :- 
 
-        clearScreen,
+        clearScreen,       
 
-        ( 
-        % Entrada == 'm' -> vizualizarMembros
+        ( Entrada == 'm' -> visualizarMembros(IdProjeto)
         % ; Entrada == 'a' -> atribuirAtividade
         % ; Entrada == 'n' -> adicionarMembro
         % ; Entrada == 'r' -> removerMembro
-          Entrada == 'p' -> menuRestritoProjeto
-        ; Entrada == 'v' -> consult('Menus/MenuGeral.pl')
+        ; Entrada == 'p' -> menuRestritoProjeto
+        ; Entrada == 'v' -> menuPrincipal
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuGerente ).
-        
+
+visualizarMembros(IdProjeto) :-
+
+        % precisa ser melhorado depois
+        writeln('                                                                                     '),
+        writeln('   |     Estes são os membros do projeto: (ID '), IdProjeto, write('    |            '),
+        writeln('                                                                                     '),
+
+        % imprimeMembrosDoProjeto >>>>>>>> AINDA PRECISA SER FEITO
+        retornoMenuRestrito.
+
+adicionaNovoMembro(IdProjeto) :-
+        writeln('                                                                    '),
+        writeln('                 |     Adicionar novo membro:    |                  '),
+        writeln('                                                                   '),
+        writeln(' |     Usuários disponíveis no sistema para adição no projeto:    | '),
+        writeln('                                                                   '),
+
+        % imprimirUsuario  >>>>>>>> AINDA PRECISA SER FEITO
+
+        write('Digite o ID do membro que deseja adicionar: '),
+        ler_string(IdNovoMembro), nl,
+
+        % SE JÁ ESTÁ NO PROJETO
+        writeln('                                                                    '),
+        writeln('              |     Membro já está no projeto    |                  '),
+        writeln('                                                                    '),
+
+        % SE É O GERENTE
+        writeln('                                                                    '),
+        writeln('          |     O ID pertence ao gerente do projeto!    |           '),
+        writeln('                                                                    '),
+
+        % SE DEU CERTO
+        writeln('                                                                    '),
+        writeln('              |     Membro adicionado com sucesso!    |             '),
+        writeln('                                                                    '),
+
+        writeln('                                                                    '),
+        writeln('              |     Atuais membros do projeto:    |                 '),
+        writeln('                                                                    '),
+        % imprimirMembrosDoProjeto  >>>>>>>> AINDA PRECISA SER FEITO
+
+        % SE NÃO EXISTE usuário/ atividade /projeto
+        writeln('                                                                    '),
+        writeln('              |     ID inexistente, tente novamente!    |            '),
+        writeln('                                                                    '),
+
+        retornoMenuRestrito.
+
+removeMembroProjeto(IdProjeto) :-
+        writeln('                                                                    '),
+        writeln('              |     Remover membro do projeto:    |                 '),
+        writeln('                                                                    '),
+        writeln('              |     Atuais membros do projeto:    |                  '),
+        writeln('                                                                    '),
+        % imprimirMembrosDoProjeto  >>>>>>>> AINDA PRECISA SER FEITO
+
+        write('Digite o ID do membro que deseja remover: '),
+        ler_string(IdNovoMembro), nl,
+
+        % SE NÃO ESTÁ NO PROJETO
+        writeln('                                                                    '),
+        writeln('              |     Usuário não é membro do projeto    |            '),
+        writeln('                                                                    '),
+
+        % SE É O GERENTE
+        writeln('                                                                    '),
+        writeln('          |     O ID pertence ao gerente do projeto!    |           '),
+        writeln('                                                                    '),
+
+        % SE DEU CERTO
+        writeln('                                                                    '),
+        writeln('              |     Membro removido com sucesso!    |               '),
+        writeln('                                                                    '),
+
+        writeln('              |     Atuais membros do projeto:    |                  '),
+        writeln('                                                                    '),
+        % imprimirMembrosDoProjeto  >>>>>>>> AINDA PRECISA SER FEITO
+
+        % SE NÃO EXISTE usuário/ atividade /projeto
+        writeln('                                                                    '),
+        writeln('              |     ID inexistente, tente novamente!    |            '),
+        writeln('                                                                    '),
+
+        retornoMenuRestrito.
+
+atribuirMembro(IdProjeto) :-
+        writeln('                                                                    '),
+        writeln('         |     Atribuir uma atividade a um membro:    |             '),
+        writeln('                                                                    '),
+        writeln('              |     Atuais membros do projeto:    |                  '),
+        writeln('                                                                    '),
+        % imprimirMembrosDoProjeto  >>>>>>>> AINDA PRECISA SER FEITO
+
+        % SÓ O GERENTE PODE ATRIBUIR?
+
+        write('Digite o ID da atividade: '),
+        ler_string(IdAtividade), nl,
+
+        write('Digite o ID do membro que deseja atribuir à atividade: '),
+        ler_string(IdMembro), nl,
+
+        % SE JÁ ESTÁ ATRIBUÍDA
+        writeln('                                                                      '),
+        writeln('              |     Atividade já está atribuída!    |                 '),
+        writeln('                                                                      '),
+
+        % SE NÃO É MEMBRO
+        writeln('                                                                      '),
+        writeln('               |     Membro não está no projeto!    |                 '),
+        writeln('                                                                      '),
+
+        % SE A ATIVIDADE NÃO TEM ID
+        writeln('                                                                      '),
+        writeln('           |     A atividade não pertence ao projeto    |             '),
+        writeln('                                                                      '),
+
+        % SE DEU CERTO
+        writeln('                                                                      '),
+        writeln('              |     Atividade atribuída com sucesso!    |             '),
+        writeln('                                                                      '),
+
+        % SE NÃO EXISTE usuário/ atividade /projeto
+        writeln('                                                                    '),
+        writeln('              |     ID inexistente, tente novamente!    |           '),
+        writeln('                                                                    '),
+
+        retornoMenuRestrito.
+
 
 menuBancoDeAtividades :-
         writeln('                                                          '),
@@ -126,12 +252,17 @@ menuBancoDeAtividades :-
         writeln('                                                          '),
         writeln('                 Selecione uma opção:                     '),
         writeln('                                                          '),
+        writeln('             L - Listar atividades cadastradas            '),
         writeln('             C - Criar uma atividade                      '),
         writeln('             R - Remover uma atividade                    '),
-        writeln('             L - Listar atividades cadastradas            '),
-        writeln('             A - Consultar uma atividade por ID           '),
-        writeln('             V - Voltar ao menu principal                 '),
+        writeln('             I - Iniciar uma atividade                    '), 
+        writeln('             F - Finalizar uma atividade                  '),
+        writeln('             V - Visualizar atividades do projeto         '),
+        writeln('             A - Visualizar status de uma atividade       '),
+        writeln('             D - Consultar uma atividade por ID           '),
+        writeln('             O - Dar feedback em uma atividade            '),
         writeln('             P - Voltar ao menu de projetos               '),
+        writeln('             M - Voltar ao menu principal                 '),
         writeln('             S - Sair do sistema                          '),
         writeln('                                                          '),
 
@@ -139,76 +270,52 @@ menuBancoDeAtividades :-
         char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption),
         
-        ( LowerOption == 'c' -> criaAtividade
+        ( LowerOption == 'l' -> listarAtividades, retornoMenuRestrito
+        ; LowerOption == 'c' -> criaAtividade, alterarIdProjeto
         ; LowerOption == 'r' -> deletaAtividade
-        ; LowerOption == 'l' -> listarAtividades
-        % ; LowerOption == 'a' -> consultarAtividade
-        ; LowerOption == 'v' -> menuPrincipal
+        ; LowerOption == 'i' -> comecarAtividade, retornoMenuRestrito
+        % ; LowerOption == 'f' -> finalizarAtividade
+        % ; LowerOption == 'v' -> visualizarAtividades
+        ; LowerOption == 'a' -> visualizarStatusAtividade, retornoMenuRestrito
+        % ; LowerOption == 'd' -> consultarAtividade
+        % ; LowerOption == 'o' -> criaFeedback
+        ; LowerOption == 'm' -> menuPrincipal
         ; LowerOption == 'p' -> menuRestritoProjeto
         ; LowerOption == 's' -> sairDoSistema
         ; erroMenuGerente ).
         
-criaAtividade :- 
-        writeln('                                                       '),
-        writeln('               |  Criar atividade:  |                  '),
-        writeln('                                                       '),
+alterarIdProjeto:-
+        % lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
         
-        write('Digite um título para sua atividade: '),
-        ler_string(Titulo), nl,
-        write('Descreva, brevemente, o que se deve realizar para concluir esta atividade. '),
-        ler_string(Descricao), nl,
-        write('Digite qual a complexidade para realizá-la (Fácil/Média/Difícil): '),
-        ler_string(Dificuldade), nl,
-
-        (nao_vazia(Titulo), nao_vazia(Descricao), nao_vazia(Dificuldade) -> 
-
-                random(10000, 99999, Idatom),
-                atom_string(Idatom,IdAtividade),
-                lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
-
-                (\+ atividadeJaExiste(IdAtividade, AtividadesDoSistema) -> 
-                        salvarAtividade('Database/bancoDeAtividades.json', Titulo, Descricao, Dificuldade, IdAtividade), 
-                        write('Atividade criada! E o ID dela é: '), writeln(IdAtividade), nl
-                        
-                ; erroMenuGerente)
-
-        ; clearScreen,
-          writeln('                                                                                                             '),
-          writeln(' |  Você deixou um campo obrigatório vazio, não foi possível criar a atividade, tente novamente!  |          '),
-          retornoMenuRestrito
-        ), alterarIdProjeto(IdAtividade).
-
-alterarIdProjeto(IdAtividade):-
-        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
-
         writeln('Deseja adicionar a atividade a um projeto? (S/N)'),
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption), nl,
 
-        ( LowerOption == 's' -> write('Digite o ID do projeto que deseja adicionar a atividade: '),
-                                read_string(user_input, "\n", "\r", _, IdProjetoAtividade), nl,
+        ( LowerOption == 's' -> write('Digite, novamente, o ID da atividade: '),
+                                ler_string(IdAtividade), nl,
+
+                                write('Digite o ID do projeto que deseja adicionar a atividade: '),
+                                ler_string(IdProjetoAtividade), nl,
 
                                 % É NECESSÁRIA A VERIFICAÇÃO DO PROJETO!!!         <<<<< Não está alterando >>>>>>>>
 
                                 % poderia tirar o retorno, não?
-                                editarIdProjetoAtividadeJSON(AtividadesDoSistema, IdAtividade, IdProjetoAtividade, _),
+                                editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjetoAtividade),
                                 writeln('Atividade alterada com sucesso!'),
                                 retornoMenuRestrito
         ; LowerOption == 'n' -> menuBancoDeAtividades
         ; erroMenuGerente).
 
 
-                
-
 % Deleta uma atividade do projeto(Inicialmente remove pelo o ID da atividade)    <<<< Falta fazer verificação se é vazio as entradas>>>>>>>>>>>>>>>>>>>
 deletaAtividade :-
-        writeln('                                                       '),
-        writeln('               |  Deletar  atividade:  |               '),
-        writeln('                                                       '),
+        writeln('                                                                    '),
+        writeln('               |  Deletar atividade de um projeto:  |               '),
+        writeln('                                                                    '),
         
         %write('Digite o ID da Atividade a ser deletada: '),
-        %%ler_string(Id_Atividade), nl,
+        %%ler_string(IdAtividade), nl,
         %---- DEVERIA SER ESSA CONFIGURAÇÃO , COM BASE NO ID DO PROJETO PASSADO
         write('Digite o ID do projeto que terá a atividade a ser deletada: '),
         ler_string(IdProjeto), nl,
@@ -238,32 +345,11 @@ deletaAtividade :-
 
        retornoMenuRestrito.
 
-listarAtividades :-
-        writeln('                                                       '),
-        writeln('          |  Listar Atividades cadastradas:  |   '),
-        writeln('                                                       '),
-        exibirAtividades('Database/bancoDeAtividades.json').
-
-visualizarStatusAtividade:-
-        writeln('                                                       '),
-        writeln('          |  Visualizar status da atividade  |         '),
-        writeln('                                                       '),
-        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),  
-        write('Digite o ID da atividade: '),
-        ler_string(IdAtividade), nl,
-        (atividadeJaExiste(IdAtividade, AtividadesDoSistema) -> 
-                getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
-                write(Atividade)
-        ; erroMenuGerente),
-        retornoMenuRestrito.     
-
- 
-
 erroMenuGerente :-
-        % clearScreen,
-        % writeln('                                                          '),
-        % writeln('         |  Entrada Inválida. Tente novamente!  |         '),
-        % writeln('                                                          '),
+        clearScreen,
+        writeln('                                                          '),
+        writeln('         |  Entrada Inválida. Tente novamente!  |         '),
+        writeln('                                                          '),
         retornoMenuRestrito. % não está chamando???
 
 % Retorna ao menu principal ou sai do sistema
