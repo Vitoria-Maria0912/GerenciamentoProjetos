@@ -60,10 +60,8 @@ verifica_id(Busca, [Usuario|_], true) :-
     Busca == Id.
 verifica_id(Busca, [_|T], R) :- verifica_id(Busca, T, R).
 
-<<<<<<< HEAD
-
 % falta adicionar atividades a um usuario
-=======
+
 % falta testar - Adicionando atividades a lista de atividades atribuidas de um usuário
 editarAtivUsuarioJSON([], _, _, []).
 editarAtivUsuarioJSON([H|T], H.id, IdAtividade, [NovoUsuario|T]:-
@@ -76,4 +74,3 @@ addAtividadeUsuario(FilePath, IdUsuario, IdAtividade) :-
 		editarAtivUsuarioJSON(File, IdUsuario, IdAtividade, SaidaParcial),
 		usuariosToJSON(SaidaParcial, Saida),
 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
->>>>>>> usuario-prolog
