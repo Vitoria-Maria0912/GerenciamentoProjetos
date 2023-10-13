@@ -218,8 +218,8 @@ deletaAtividade :-
                 lerProjetosJson('Database/projetos.json', ProjetosDoSistema),
                 (nao_vazia(IdProjeto) ->
                     (verifica_id(IdProjeto, ProjetosDoSistema, Existe) ->
+                        % fazer a listagem de atividades do projeto e verificar se tem atividades no projeto.
                         write('Digite o ID da Atividade a ser removida: '),
-                        % Aqui você pode adicionar a listagem das atividades no projeto
                         % dependendo da função editarIdProjetoAtividade
                         ler_string(IdAtividade), nl,
                         removerAtividade('Database/bancoDeAtividades.json', IdAtividade),
