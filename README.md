@@ -54,10 +54,39 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
  ### Pré-requesitos
  - Possuir a linguagens Haskell, o compilador ghc e o interpretador ghci instalados em seu computador.
 
- ### Construído em
- - Haskell
+ ### Construído em 
+ - Haskell e Prolog
 
- ### Instalação:
+ ### Instalação - Prolog:
+ **Linux**
+ 
+     sudo apt-get install swi-prolog
+     sudo apt install gprolog
+
+ **MacOs**
+ 
+     brew install swi-prolog
+
+**Windows**
+
+    https://www.swi-prolog.org/Download.html
+
+### Bibliotecas necessárias:
+
+### Pode ser executado de duas maneiras:
+             
+**Compila**
+
+    ghc -o projeto Main.hs
+**Executa** 
+
+    ./projeto
+    
+**Compila e executa** 
+
+    runhaskell Main.hs 
+
+### Instalação:
  **Linux**
  
      sudo apt-get update
@@ -100,6 +129,7 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
 **Compila e executa** 
 
     runhaskell Main.hs 
+
 
  ### Desenvolvedoras:
    - Íris Almeida - [Github](https://github.com/irisalmeida)
