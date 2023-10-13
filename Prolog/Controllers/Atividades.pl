@@ -33,11 +33,11 @@ exibirAtividadesAux([H|T]) :-
     write('Titulo:'), writeln(H.titulo),
 		write('Descricao:'), writeln(H.descricao), 
     write('Status:'), writeln(H.status), 
-    write('Dificuldade:'), writeln(H.descricao), 
-    write('ID Projeto:'), writeln(H.descricao), 
-    write('ID Atividade:'), writeln(H.descricao), 
-    write('ID Membro Responsavel:'), writeln(H.descricao), 
-    write('Feedbacks:'), writeln(H.descricao), 
+    write('Dificuldade:'), writeln(H.dificuldade), 
+    write('ID Projeto:'), writeln(H.status), 
+    write('ID Atividade:'), writeln(H.idAtividade), 
+    write('ID Membro Responsavel:'), writeln(H.status), 
+    write('Feedbacks:'), writeln(H.status), 
 		nl, exibirAtividadesAux(T).
 
 exibirAtividades(FilePath) :-
