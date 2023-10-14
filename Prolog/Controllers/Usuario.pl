@@ -1,5 +1,5 @@
 :- module(usuario, [lerUsuariosJson/2, usuarioToJSON/4, usuariosToJSON/2, salvarUsuario/4, exibirUsuariosAux/1, 
-                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, verificaSenhaIdUsuario/3]).
+                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3]).
 :- use_module(library(http/json)).
 
 % Lendo arquivo JSON puro
@@ -53,12 +53,6 @@ removerUsuario(FilePath, Id):-
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream),
     writeln('Usuário removido com sucesso. Até a próxima!').
 
-% Verifica se a senha e o ID de um usuário conferem
-verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) :-
-    getUsuarioJSON(IdUsuario, Usuarios, Usuario),
-    Usuario.senha == Senha.
-
-
 % verifica se um id existe dentro da lista de usuarios
 verifica_id(_, [], false).
 verifica_id(Busca, [Usuario|_], true) :- 
@@ -66,20 +60,5 @@ verifica_id(Busca, [Usuario|_], true) :-
     Busca == Id.
 verifica_id(Busca, [_|T], R) :- verifica_id(Busca, T, R).
 
-<<<<<<< HEAD
 
 % falta adicionar atividades a um usuario
-=======
-% falta testar - Adicionando atividades a lista de atividades atribuidas de um usuário
-editarAtivUsuarioJSON([], _, _, []).
-editarAtivUsuarioJSON([H|T], H.id, IdAtividade, [NovoUsuario|T]:-
-    NovoUsuario = _{id:H.id, atividadesAtribuidas:[IdAtividade|H.atividadesAtribuidas], nome:H.nome, senha:H.senha}.
-editarAtivUsuarioJSON([H|T], Id, IdAtividade, [H|Out]) :- 
-		editarAtivUsuarioJSON(T, Id, IdAtividade, Out).
-
-addAtividadeUsuario(FilePath, IdUsuario, IdAtividade) :-
-		lerUsuariosJSON(FilePath, File),
-		editarAtivUsuarioJSON(File, IdUsuario, IdAtividade, SaidaParcial),
-		usuariosToJSON(SaidaParcial, Saida),
-		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
->>>>>>> usuario-prolog
