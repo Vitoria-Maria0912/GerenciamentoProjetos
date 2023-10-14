@@ -1,6 +1,9 @@
 :- initialization(menuPrincipal).
-
-clearScreen :- write("\e[H\e[2J").
+:- use_module("Controllers/Usuario.pl").
+:- use_module("Controllers/Projeto.pl").
+:- use_module("Menus/MenuGerente.pl").
+:- use_module("Menus/MenuPublico.pl").
+:- use_module("Controllers/Utils.pl").
 
 % Menu principal com as principais funcionalidades
 menuPrincipal :-
@@ -35,17 +38,53 @@ processaEntradaMenuPrincipal(Entrada) :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
 
-
 cadastrarUsuario :-
         writeln('                                                          '),
         writeln('                  |     Cadastro:    |                    '),
         writeln('                                                          '),
-        retornoMenuPrincipal.
+        
+        write('Digite seu nome: '),
+        ler_string(Nome), nl,
+        write('Digite sua senha: '),
+        ler_string(Senha), nl,
+        random(1000, 9999, IdAtom),
+        atom_string(IdAtom, IdUsuario),
+        lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
+
+        (nao_vazia(Nome), nao_vazia(Senha) ->
+        verifica_id(IdUsuario, UsuariosDoSistema, Existe),
+        (Existe ->
+                writeln('O usuário já existe. Tente novamente.'), nl, retornoMenuPrincipal
+        ;
+                salvarUsuario('Database/usuarios.json', Nome, Senha, IdUsuario),
+                write('Usuário cadastrado com sucesso! O seu ID é: '), writeln(IdUsuario), nl, retornoMenuPrincipal
+        )
+        ;
+                writeln('Nome e senha não podem ser vazios. Tente novamente.'), nl, retornoMenuPrincipal
+        ).
+
 
 deletarUsuario :-
         writeln('                                                          '),
         writeln('               |     Deletar perfil:    |                 '),
-        writeln('                                                          '), !.
+        writeln('                                                          '),
+        write('Digite seu Id: '),
+        ler_string(IdUsuario), nl,
+                
+        (nao_vazia(IdUsuario) ->
+                lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
+                write('Verificando usuário com ID: '), writeln(IdUsuario), nl,
+                verifica_id(IdUsuario, UsuariosDoSistema, Existe),
+                        (Existe == true ->
+                        removerUsuario('Database/usuarios.json', IdUsuario)
+                        ;
+                        writeln('O usuário não existe. Tente novamente.'), nl, retornoMenuPrincipal
+                        )
+                ;
+                        erroMenuGeral
+                ).
+                
+                                                                
 
 cadastrarProjeto :-
         writeln('                                                          '),
@@ -361,10 +400,3 @@ retornoMenuPrincipal :-
 %     ansi_format([bold,fg(yellow)], "~w", [S]),
 %     ansi_format([bold,fg(yellow)], "~w", ["Aperte qualquer tecla para continuar."]),
 %     get_single_char(_),nl.
-
-erroMenuGeral :-
-        clearScreen,
-        writeln('                                                          '),
-        writeln('         |  Entrada Inválida. Tente novamente!  |         '),
-        writeln('                                                          '),
-        retornoMenuPrincipal.

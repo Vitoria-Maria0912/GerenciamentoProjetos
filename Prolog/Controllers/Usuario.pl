@@ -74,3 +74,4 @@ addAtividadeUsuario(FilePath, IdUsuario, IdAtividade) :-
 		editarAtivUsuarioJSON(File, IdUsuario, IdAtividade, SaidaParcial),
 		usuariosToJSON(SaidaParcial, Saida),
 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
