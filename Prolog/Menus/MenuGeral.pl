@@ -1,3 +1,8 @@
+:- module(menuGeral, [menuPrincipal/0, processaEntradaMenuPrincipal/1, cadastrarUsuario/0, deletarUsuario/0, cadastrarProjeto/0,
+                      menuProjetos/0, menuChat/0, enviarMPrivada/0, enviarMGeral/0, visualizarMensagensPrivadas/0,
+                      visualizarMensagensGerais/0, erroMenuPrincipal/0, erroMenuChat/0, menuChat/0, processaEntradaMenuChat/1,
+                      retornoMenuPrincipal/0]).
+
 :- initialization(menuPrincipal).
 :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Projeto.pl").
@@ -123,68 +128,6 @@ menuProjetos :-
         
         % halt. 
 
-
-menuChat :- 
-        writeln('                                                                        '),
-        writeln('                    |      Bem-vindo ao Chat!    |                      '),
-        writeln('                                                                        '),
-        writeln('  Envie mensagens entre membros do seu projeto e usuários do sistema!   '),
-        writeln('                                                                        '),
-        writeln('                          Selecione uma opção:                          '),
-        writeln('                                                                        '),
-        writeln('            C - Visualizar mensagens gerais de um projeto               '),
-        writeln('            H - Visualizar mensagens privadas                           '),
-        writeln('            A - Enviar mensagem geral para membros do projeto           '),
-        writeln('            T - Enviar mensagem privada                                 '),
-        writeln('            M - Voltar ao menu principal                                '),
-        writeln('            S - Sair do sistema                                         '),
-        writeln('                                                                        '),
-        get_single_char(CodigoASCII),
-        char_code(Input, CodigoASCII), 
-        downcase_atom(Input, LowerOption),
-        processaEntradaChat(LowerOption),
-        halt. 
-
-processaEntradaChat(Entrada) :- 
-
-        clearScreen,
-
-        ( Entrada == 'c' -> enviarMPrivada
-        ; Entrada == 'h' -> enviarMGeral
-        ; Entrada == 'a' -> visualizarMensagensPrivadas
-        ; Entrada == 't' -> visualizarMensagensGerais
-        ; Entrada == 'm' -> menuPrincipal
-        ; Entrada == 's' -> sairDoSistema
-        ; erroMenuPrincipal ).
-
-enviarMPrivada :-
-        clearScreen, 
-        writeln('                                                                    '),
-        writeln('                |     Enviar mensagem para um usuário:    |         '),
-        writeln('                                                                    '),
-        menuChat.
-
-enviarMGeral :-
-        clearScreen,
-        writeln('                                                                    '),
-        writeln('      |     Enviar mensagem para todos os membros do projeto:    |  '),
-        writeln('                                                                    '),
-        menuChat.   
-
-visualizarMensagensPrivadas :-
-        clearScreen,
-        writeln('                                                                    '),
-        writeln('                |     Mensagens privadas de um usuário:    |        '),
-        writeln('                                                                    '),
-        menuChat.
-
-visualizarMensagensGerais :-
-        clearScreen,
-        writeln('                                                                 '),
-        writeln('              |     Mensagens gerais de um projeto:    |         '),
-        writeln('                                                                 '),
-        menuChat.
-
 erroMenuPrincipal :-
         clearScreen,
         writeln('                                                          '),
@@ -233,69 +176,6 @@ processaEntradaMenuChat(Entrada) :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
 
-visualizarMensagensGerais :-
-        writeln('                                                          '),
-        writeln('           |  Mensagens gerais de um projeto:  |          '),
-        writeln('                                                          '),
-
-        write('Digite seu ID: '),
-        ler_string(IdUsuario),
-
-        % SE O USUÁRIO NÃO EXISTE
-        writeln('                                                            '),
-        writeln('           |  ID inexistente! Tente novamente!  |           '),
-        writeln('                                                            '),
-
-        write('Digite sua senha: '),
-        ler_string(Senha),
-
-        % SE A SENHA INCORRETA: 
-        writeln('                                                            '),
-        writeln('           |  Senha incorreta! Tente novamente!  |          '),
-        writeln('                                                            '),
-
-        % FALTA MUITA COISA, olhar no de haskell
-
-        writeln('                                                                '),
-        write('Digite o ID do Projeto que deseja visualizar as mensagens gerais: '),
-        ler_string(IdProjeto),
-
-        writeln('                                                                   '),
-        writeln('   Carregando.........                                             '),
-
-        % VAI COLOCAR O DELAY????
-
-        % \+ usuarioEstaEmAlgumProjeto , AINDA TEM QUE FAZER
-        writeln('                                                                  '),
-        writeln('           |  Usuário não é membro de nenhum projeto.  |          '),
-        writeln('                                                                  '),
-
-        retornoMenuPrincipal.
-
-visualizarMensagensPrivadas :- 
-        writeln('                                                            '),
-        writeln('           |  Mensagens privadas de um usuário:  |          '),
-        writeln('                                                            '),
-
-        write('Digite seu ID: '),
-        ler_string(IdUsuario),
-
-        write('Digite sua senha: '),
-        ler_string(Senha),
-
-        % SE A SENHA INCORRETA: 
-        writeln('                                                            '),
-        writeln('           |  Senha incorreta! Tente novamente!  |          '),
-        writeln('                                                            '),
-
-        % FALTA MUITA COISA, olhar no de haskell
-
-        writeln('                             '),
-        writeln('   Carregando.........       '),
-
-        % VAI COLOCAR O DELAY????
-        
-        retornoMenuPrincipal.
 
 enviarMGeral :- 
         writeln('                                                            '),
@@ -359,6 +239,69 @@ enviarMPrivada :-
 
         retornoMenuPrincipal.
 
+visualizarMensagensPrivadas :- 
+        writeln('                                                            '),
+        writeln('           |  Mensagens privadas de um usuário:  |          '),
+        writeln('                                                            '),
+
+        write('Digite seu ID: '),
+        ler_string(IdUsuario),
+
+        write('Digite sua senha: '),
+        ler_string(Senha),
+
+        % SE A SENHA INCORRETA: 
+        writeln('                                                            '),
+        writeln('           |  Senha incorreta! Tente novamente!  |          '),
+        writeln('                                                            '),
+
+        % FALTA MUITA COISA, olhar no de haskell
+
+        writeln('                             '),
+        writeln('   Carregando.........       '),
+
+        % VAI COLOCAR O DELAY????
+        
+        retornoMenuPrincipal.
+
+visualizarMensagensGerais :-
+        writeln('                                                          '),
+        writeln('           |  Mensagens gerais de um projeto:  |          '),
+        writeln('                                                          '),
+
+        write('Digite seu ID: '),
+        ler_string(IdUsuario),
+
+        % SE O USUÁRIO NÃO EXISTE
+        writeln('                                                            '),
+        writeln('           |  ID inexistente! Tente novamente!  |           '),
+        writeln('                                                            '),
+
+        write('Digite sua senha: '),
+        ler_string(Senha),
+
+        % SE A SENHA INCORRETA: 
+        writeln('                                                            '),
+        writeln('           |  Senha incorreta! Tente novamente!  |          '),
+        writeln('                                                            '),
+
+        % FALTA MUITA COISA, olhar no de haskell
+
+        writeln('                                                                '),
+        write('Digite o ID do Projeto que deseja visualizar as mensagens gerais: '),
+        ler_string(IdProjeto),
+
+        writeln('                                                                   '),
+        writeln('   Carregando.........                                             '),
+
+        % VAI COLOCAR O DELAY????
+
+        % \+ usuarioEstaEmAlgumProjeto , AINDA TEM QUE FAZER
+        writeln('                                                                  '),
+        writeln('           |  Usuário não é membro de nenhum projeto.  |          '),
+        writeln('                                                                  '),
+
+        retornoMenuPrincipal.
 % | Retorna ao menu principal ou sai do sistema
 retornoMenuPrincipal :- 
         writeln('                                                          '),

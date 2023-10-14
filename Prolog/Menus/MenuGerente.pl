@@ -1,12 +1,8 @@
+:- module(menuGerente, [menuRestritoProjeto/0, processaEntradaMenuRestrito/1, deletarProjeto/0, 
+          gerenciarMembros/0, processaEntradaMembros/2, visualizarMembros/1, adicionaNovoMembro/1,
+          removeMembroProjeto/1, atribuirMembro/1, menuBancoDeAtividades/0, deletaAtividade/0, 
+          alterarIdProjeto/0, retornoMenuRestrito/0, erroMenuGerente/0]).
 
-
-:- module(menuGerente, [menuRestritoProjeto/0, processaEntradaMenuRestrito/1, visualizarProjetos/0, deletarProjeto/0, 
-          gerenciarMembros/0, menuBancoDeAtividades/0, criarAtividade/0, deletaAtividade/0, alterarIdProjeto/0,
-          listarAtividades/0, visualizarStatusAtividade/0, retornoMenuRestrito/0, erroMenuGerente/0]).
-
-% :- discontiguous menuGerente:retornoMenuRestrito/0.
-
-% :- use_module("Menus/MenuGeral.pl").
 :- use_module("Controllers/Atividades.pl").
 :- use_module("Menus/MenuPublico.pl").
 :- use_module("Controllers/Utils.pl").
