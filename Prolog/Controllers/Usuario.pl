@@ -64,7 +64,7 @@ verifica_id(Busca, [_|T], R) :- verifica_id(Busca, T, R).
 
 % falta testar - Adicionando atividades a lista de atividades atribuidas de um usuário
 editarAtivUsuarioJSON([], _, _, []).
-editarAtivUsuarioJSON([H|T], H.id, IdAtividade, [NovoUsuario|T]:-
+editarAtivUsuarioJSON([H|T], H.id, IdAtividade, [NovoUsuario|T]):-
     NovoUsuario = _{id:H.id, atividadesAtribuidas:[IdAtividade|H.atividadesAtribuidas], nome:H.nome, senha:H.senha}.
 editarAtivUsuarioJSON([H|T], Id, IdAtividade, [H|Out]) :- 
 		editarAtivUsuarioJSON(T, Id, IdAtividade, Out).
