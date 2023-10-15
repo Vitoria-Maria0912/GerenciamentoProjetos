@@ -1,8 +1,13 @@
 :- initialization(menuPrincipal).
 :- use_module("Controllers/Usuario.pl").
-:- use_module("Controllers/Utils.pl").
 
 clearScreen :- write("\e[H\e[2J").
+
+:- use_module("Controllers/Projeto.pl").
+:- use_module("Menus/MenuGerente.pl").
+:- use_module("Menus/MenuPublico.pl").
+:- use_module("Controllers/Utils.pl").
+
 
 % Menu principal com as principais funcionalidades
 menuPrincipal :-
@@ -39,7 +44,6 @@ processaEntradaMenuPrincipal(Entrada) :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
 
-
 cadastrarUsuario :-
         writeln('                                                          '),
         writeln('                  |     Cadastro:    |                    '),
@@ -51,8 +55,8 @@ cadastrarUsuario :-
         ler_string(Senha), nl,
         random(1000, 9999, IdAtom),
         atom_string(IdAtom, IdUsuario),
-        lerJSON('Database/usuarios.json', UsuariosDoSistema),
 
+        lerJSON('Database/usuarios.json', UsuariosDoSistema),
         (nao_vazia(Nome), nao_vazia(Senha) ->
         verifica_id(IdUsuario, UsuariosDoSistema, Existe),
         (Existe ->
@@ -65,15 +69,17 @@ cadastrarUsuario :-
          writeln('Nome e senha não podem ser vazios. Tente novamente.'), nl, retornoMenuPrincipal
         ).
 
+
 deletarUsuario :-
         writeln('                                                          '),
         writeln('               |     Deletar perfil:    |                 '),
         writeln('                                                          '),
         write('Digite seu Id: '),
-        ler_string(IdUsuario), nl,
-            
+        ler_string(IdUsuario), nl,           
         (nao_vazia(IdUsuario) ->
                 lerJSON('Database/usuarios.json', UsuariosDoSistema),
+
+
                 write('Verificando usuário com ID: '), writeln(IdUsuario), nl,
                 verifica_id(IdUsuario, UsuariosDoSistema, Existe),
                         (Existe == true ->
@@ -118,7 +124,6 @@ adicionaAtividade :-
 %                 getUsuarioJSON(IdUsuario, UsuariosDoSistema, Usuario),
 %                 write(Usuario);
 %                 erroMenuGeral).
-
 
 
 cadastrarProjeto :-
@@ -441,10 +446,3 @@ retornoMenuPrincipal :-
 %     ansi_format([bold,fg(yellow)], "~w", [S]),
 %     ansi_format([bold,fg(yellow)], "~w", ["Aperte qualquer tecla para continuar."]),
 %     get_single_char(_),nl.
-
-erroMenuGeral :-
-        clearScreen,
-        writeln('                                                          '),
-        writeln('         |  Entrada Inválida. Tente novamente!  |         '),
-        writeln('                                                          '),
-        retornoMenuPrincipal.

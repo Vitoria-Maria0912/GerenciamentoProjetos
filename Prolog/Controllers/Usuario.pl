@@ -85,3 +85,4 @@ editarAtividades(FilePath, IdU, NovaAtividade) :-
 % 		editarNomeJSON(File, IdU, NovoNome, SaidaParcial),
 % 		usuariosToJSON(SaidaParcial, Saida),
 % 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
