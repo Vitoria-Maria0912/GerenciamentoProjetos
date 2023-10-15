@@ -74,28 +74,14 @@ editarAtividades(FilePath, IdU, NovaAtividade) :-
     usuariosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
+% POSSIVELMENTE DESNECESSÁRIO - FOI UM TESTE, MAS, FUNCIONA!
+% editarNomeJSON([], _, _, []).
+% editarNomeJSON([H|T], H.idUsuario, Nome, [_{idUsuario:H.idUsuario, nome:Nome, senha:H.senha, atividadesAtribuidas:H.atividadesAtribuidas}|T]).
+% editarNomeJSON([H|T], Id, Nome, [H|Out]) :- 
+% 		editarNomeJSON(T, Id, Nome, Out).
 
-
-editarNomeJSON([], _, _, []).
-editarNomeJSON([H|T], H.idUsuario, Nome, [_{idUsuario:H.idUsuario, nome:Nome, senha:H.senha, atividadesAtribuidas:H.atividadesAtribuidas}|T]).
-editarNomeJSON([H|T], Id, Nome, [H|Out]) :- 
-		editarNomeJSON(T, Id, Nome, Out).
-
-editarNome(FilePath, IdU, NovoNome) :-
-		lerJSON(FilePath, File),
-		editarNomeJSON(File, IdU, NovoNome, SaidaParcial),
-		usuariosToJSON(SaidaParcial, Saida),
-		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-
-% falta testar - Adicionando atividades a lista de atividades atribuidas de um usuário
-% editarAtivUsuarioJSON([], _, _, []).
-% editarAtivUsuarioJSON([H|T], H.idUsuario, IdAtividade, [NovoUsuario|T]:-
-%     NovoUsuario = _{idUsuario:H.idUsuario, atividadesAtribuidas:[IdAtividade|H.atividadesAtribuidas], nome:H.nome, senha:H.senha}.
-% editarAtivUsuarioJSON([H|T], Id, IdAtividade, [H|Out]) :- 
-% 		editarAtivUsuarioJSON(T, Id, IdAtividade, Out).
-
-% addAtividadeUsuario(FilePath, IdUsuario, IdAtividade) :-
+% editarNome(FilePath, IdU, NovoNome) :-
 % 		lerJSON(FilePath, File),
-% 		editarAtivUsuarioJSON(File, IdUsuario, IdAtividade, SaidaParcial),
+% 		editarNomeJSON(File, IdU, NovoNome, SaidaParcial),
 % 		usuariosToJSON(SaidaParcial, Saida),
 % 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
