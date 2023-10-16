@@ -159,8 +159,8 @@ menuProjetos :-
         
         % FAZER A VERIFICAÇÃO DO EHGERENTE
 
-        menuRestritoProjeto.
-        % menuPublicoProjeto.
+        % menuRestritoProjeto.
+        menuPublicoProjeto.
         
         % halt. 
 
