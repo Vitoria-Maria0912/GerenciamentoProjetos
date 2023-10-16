@@ -166,11 +166,11 @@ criaAtividade :-
 % teste pra ver se getUsuario está funcionando
 imprimeAtividade :-
         write('Digite o Id: '),
-        ler_string(IdAtividade), nl,
-        (nao_vazia(IdAtividade) ->
+        ler_string(IdProjeto), nl,
+        (nao_vazia(IdProjeto) ->
                 lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
-                getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
-                write(Atividade);
+                getAtividadesJSON(IdProjeto, AtividadesDoSistema, AtividadesDoProjeto),
+                write(AtividadesDoProjeto);
                 erroMenuGerente).
 
 
