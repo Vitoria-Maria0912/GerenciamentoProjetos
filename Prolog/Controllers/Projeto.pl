@@ -10,9 +10,9 @@ lerProjetosJson(FilePath, File) :-
 
 %Por enquanto sem o Id de Gerente
 % Cria um projeto
-projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, Projeto) :-
-    swritef(Projeto, '{"nomeProjeto":"%w", "descricaoProjeto":"%w", "idProjeto":"%w", "atividadesAtribuidas":%w,"membros":%w}', 
-    [ NomeProjeto, DescricaoProjeto,IdProjeto, Atividades, Membros]).
+projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, IdGerente, Atividades, Membros, Projeto) :-
+    swritef(Projeto, '{"nomeProjeto":"%w", "descricaoProjeto":"%w", "idProjeto":"%w", "atividadesAtribuidas":%w,"membros":%w, "idGerente" ":%w"}', 
+    [ NomeProjeto, DescricaoProjeto,IdProjeto, Atividades, Membros, IdGerente]).
 
 % Convertendo uma lista de objetos em JSON para
 projetosToJSON([], []).
@@ -63,6 +63,13 @@ verifica_id_projeto(Busca, [Projeto|_], true) :-
     get_dict(idProjeto, Projeto, Id),
     Busca == Id.
 verifica_id_projeto(Busca, [_|T], R) :- verifica_id_projeto(Busca, T, R).
+
+% verifica se um id de usuario é de um gerente de projeto
+ehGerente(_, [], false).
+ehGerente(Busca, [Projeto|_], true) :-
+    get_dict(idGerente, Projeto, Id),
+    Busca == Id.
+ehGerente(Busca, [_|T], R) :- ehGerente(Busca, T, R).
 
 % adiciona atividades a um projeto (ver se funciona na pratica)
 editarAtividadesJSON([], _, _, []).
