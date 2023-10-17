@@ -6,6 +6,7 @@
 :- use_module("Controllers/Atividades.pl").
 :- use_module("Menus/MenuPublico.pl").
 :- use_module("Controllers/Utils.pl").
+:- use_module("Controllers/Usuario.pl").
 
 % | Menu dos projetos, apenas os gerentes têm acesso
 menuRestritoProjeto :-
@@ -105,7 +106,7 @@ processaEntradaMembros(Entrada, IdProjeto) :-
 
         ( Entrada == 'm' -> visualizarMembros(IdProjeto)
         % ; Entrada == 'a' -> atribuirAtividade
-        % ; Entrada == 'n' -> adicionarMembro
+        ; Entrada == 'n' -> adicionaNovoMembro(IdProjeto)
         % ; Entrada == 'r' -> removerMembro
         ; Entrada == 'p' -> menuRestritoProjeto
         ; Entrada == 'v' -> menuPrincipal
@@ -118,7 +119,6 @@ visualizarMembros(IdProjeto) :-
         writeln('                                                                                     '),
         writeln('   |     Estes são os membros do projeto: (ID '), IdProjeto, write('    |            '),
         writeln('                                                                                     '),
-
         % imprimeMembrosDoProjeto >>>>>>>> AINDA PRECISA SER FEITO
         retornoMenuRestrito.
 
@@ -129,37 +129,41 @@ adicionaNovoMembro(IdProjeto) :-
         writeln(' |     Usuários disponíveis no sistema para adição no projeto:    | '),
         writeln('                                                                    '),
 
-        % imprimirUsuario  >>>>>>>> AINDA PRECISA SER FEITO
+        exibirUsuarios('Database/usuarios.json'),
 
         write('Digite o ID do membro que deseja adicionar: '),
         ler_string(IdNovoMembro), nl,
-
-        % SE JÁ ESTÁ NO PROJETO
-        writeln('                                                                    '),
-        writeln('              |     Membro já está no projeto    |                  '),
-        writeln('                                                                    '),
-
-        % SE É O GERENTE
-        writeln('                                                                    '),
-        writeln('          |     O ID pertence ao gerente do projeto!    |           '),
-        writeln('                                                                    '),
-
-        % SE DEU CERTO
+        editarMembros('Database/projetos.json', IdProjeto, IdNovoMembro),
         writeln('                                                                    '),
         writeln('              |     Membro adicionado com sucesso!    |             '),
         writeln('                                                                    '),
 
-        writeln('                                                                    '),
-        writeln('              |     Atuais membros do projeto:    |                 '),
-        writeln('                                                                    '),
-        % imprimirMembrosDoProjeto  >>>>>>>> AINDA PRECISA SER FEITO
-
-        % SE NÃO EXISTE usuário/ atividade /projeto
-        writeln('                                                                    '),
-        writeln('              |     ID inexistente, tente novamente!    |            '),
-        writeln('                                                                    '),
-
         retornoMenuRestrito.
+
+
+        % SE JÁ ESTÁ NO PROJETO
+        % writeln('                                                                    '),
+        % writeln('              |     Membro já está no projeto    |                  '),
+        % writeln('                                                                    '),
+
+        % % SE É O GERENTE
+        % writeln('                                                                    '),
+        % writeln('          |     O ID pertence ao gerente do projeto!    |           '),
+        % writeln('                                                                    '),
+
+        % % SE DEU CERTO
+       
+
+        % writeln('                                                                    '),
+        % writeln('              |     Atuais membros do projeto:    |                 '),
+        % writeln('                                                                    '),
+        % % imprimirMembrosDoProjeto  >>>>>>>> AINDA PRECISA SER FEITO
+
+        % % SE NÃO EXISTE usuário/ atividade /projeto
+        % writeln('                                                                    '),
+        % writeln('              |     ID inexistente, tente novamente!    |            '),
+        % writeln('                                                                    '),
+
 
 removeMembroProjeto(IdProjeto) :-
         writeln('                                                                    '),

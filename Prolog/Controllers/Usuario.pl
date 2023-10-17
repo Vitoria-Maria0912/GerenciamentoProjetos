@@ -26,8 +26,8 @@ salvarUsuario(FilePath, Nome, Senha, IdUsuario, Atividades) :-
 % Exibe os usuarios cadastrados omitindo a senha 
 exibirUsuariosAux([]).
 exibirUsuariosAux([H|T]) :- 
-    write('Nome:'), writeln(H.nome),
-    write('ID Usuário:'), writeln(H.idUsuario), 
+    write('Nome: '), writeln(H.nome),
+    write('ID Usuário: '), writeln(H.idUsuario), 
 		nl, exibirUsuariosAux(T).
 
 exibirUsuarios(FilePath) :-
@@ -83,7 +83,6 @@ adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
 editarAtividades(FilePath, IdU, NovaAtividade) :-
     lerJSON(FilePath, File),
     editarAtividadesJSON(File, IdU, NovaAtividade, SaidaParcial),
-    write(SaidaParcial),
     usuariosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 

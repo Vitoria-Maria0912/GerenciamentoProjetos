@@ -34,6 +34,7 @@ processaEntradaMenuPublico(Entrada) :-
         ( Entrada == 'l' -> visualizarProjetos
         ; Entrada == 'b' -> menuPublicoBancoDeAtividades
         ; Entrada == 'm' -> consult('Menus/MenuGeral.pl')
+        ; Entrada == 'i' -> imprimeAtividade
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPublico ).
 
@@ -104,7 +105,6 @@ menuPublicoBancoDeAtividades :-
         writeln('            A - Visualizar status de uma atividade       '),
         writeln('            D - Consultar uma atividade por ID           '),
         writeln('            O - Dar feedback em uma atividade            '),
-        writeln('            P - Voltar ao menu de projetos               '),
         writeln('            M - Voltar ao menu principal                 '),
         writeln('            S - Sair do sistema                          '),
         writeln('                                                         '),
@@ -126,9 +126,8 @@ processaEntradaBancoDeAtividades(Entrada) :-
         ; Entrada == 'a' -> clearScreen, visualizarStatusAtividade, retornoMenuPublico
         ; Entrada == 'd' -> clearScreen, consultarAtividade, retornoMenuPublico
         ; Entrada == 'o' -> clearScreen, criaFeedback, retornoMenuPublico
-        % ; Entrada == 'p' -> % tem que modificar para que volte para o MenuGerente também/
-        ; Entrada == 'm' -> clearScreen, menuPrincipal 
-        ; Entrada == 's' -> clearScreen, sairDoSistema
+        ; Entrada == 'm' -> menuPrincipal 
+        ; Entrada == 's' -> sairDoSistema
         ; erroMenuPublico ).
 
 criaAtividade :- 
@@ -150,7 +149,7 @@ criaAtividade :-
                 lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
 
                 (\+ atividadeJaExiste(IdAtividade, AtividadesDoSistema) -> 
-                        salvarAtividade('Database/bancoDeAtividades.json', Titulo, Descricao, Dificuldade, IdAtividade), 
+                        salvarAtividade('Database/bancoDeAtividades.json', Titulo, Descricao, Dificuldade, IdAtividade, 'Não atribuída!', 'Não atribuído!', 'Não atribuído!', []), 
                         write('Atividade criada! E o ID dela é: '), writeln(IdAtividade), nl
                         
                 ; erroMenuGerente)
@@ -160,6 +159,16 @@ criaAtividade :-
           writeln(' |  Você deixou um campo obrigatório vazio, não foi possível criar a atividade, tente novamente!  |          '),
           criaAtividade
         ).
+
+% teste pra ver se getUsuario está funcionando
+imprimeAtividade :-
+        write('Digite o Id: '),
+        ler_string(IdProjeto), nl,
+        (nao_vazia(IdProjeto) ->
+                lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
+                getAtividadesJSON(IdProjeto, AtividadesDoSistema, AtividadesDoProjeto),
+                write(AtividadesDoProjeto);
+                erroMenuGerente).
 
 
 listarAtividades :-

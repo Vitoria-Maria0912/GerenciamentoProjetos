@@ -5,13 +5,14 @@
 
 :- initialization(menuPrincipal).
 :- use_module("Controllers/Usuario.pl").
-
-clearScreen :- write("\e[H\e[2J").
-
 :- use_module("Controllers/Projeto.pl").
 :- use_module("Menus/MenuGerente.pl").
 :- use_module("Menus/MenuPublico.pl").
 :- use_module("Controllers/Utils.pl").
+
+clearScreen :- write("\e[H\e[2J").
+
+
 
 
 % Menu principal com as principais funcionalidades
@@ -150,7 +151,7 @@ cadastrarProjeto :-
         (Existe ->
                         writeln('O projeto já existe. Tente novamente.'), nl, retornoMenuPrincipal
                         ;
-                        salvarProjeto('Database/projetos.json', NomeProjeto, DescricaoProjeto, IdProjeto),
+                        salvarProjeto('Database/projetos.json', NomeProjeto, DescricaoProjeto, IdProjeto, [], []),
                         write('Projeto cadastrado com sucesso! O ID do projeto é: '), writeln(IdProjeto), nl, retornoMenuPrincipal
                         )
                         ;
@@ -163,8 +164,8 @@ menuProjetos :-
         
         % FAZER A VERIFICAÇÃO DO EHGERENTE
 
-        menuRestritoProjeto.
-        % menuPublicoProjeto.
+        % menuRestritoProjeto.
+        menuPublicoProjeto.
         
         % halt. 
 
