@@ -1,6 +1,6 @@
 :- module(atividade, [lerBancoDeAtividadesJson/2, atividadeToJSON/5, atividadesToJSON/2, salvarAtividade/5,
                       exibirAtividadesAux/1, exibirAtividades/1, editarIdProjetoAtividadeJSON/4, editarIdProjetoAtividade/3, 
-                      editarMembroResponsavelAtividadeJSON/4, getAtividadeJSON/3, atividadeJaExiste/2, removerAtividade/2,verifica_id_atividade/3]).
+                      editarMembroResponsavelAtividadeJSON/4, getAtividadeJSON/3, atividadeJaExiste/3, removerAtividade/2,verifica_id_atividade/3]).
 :- use_module(library(http/json)).
 
 % Lendo arquivo JSON puro
@@ -10,7 +10,7 @@ lerBancoDeAtividadesJson(FilePath, File) :-
 
 % Cria uma atividade
 atividadeToJSON(Titulo, Descricao, Dificuldade, Id_Atividade, Atividade) :-
-		swritef(Atividade, '{"titulo":"%w", "descricao":"%w", "dificuldade":"%w", "idAtividade":%w, "status":"%w", "idProjetoAtividade":"%w", "idMembroResponsavel":"%w", "feedbacks":%w}',
+		swritef(Atividade, '{"titulo":"%w", "descricao":"%w", "dificuldade":"%w", "idAtividade":"%w", "status":"%w", "idProjetoAtividade":"%w", "idMembroResponsavel":"%w", "feedbacks":%w}',
     [Titulo, Descricao, Dificuldade, Id_Atividade, 'Não atribuída!', 'Não atribuído!', 'Não atribuído!', []]).
 
 % Convertendo uma lista de objetos em JSON para 
@@ -137,8 +137,11 @@ getAtividadeJSON(IdAtividade, [Atividade|_], Atividade):- IdAtividade =:= Ativid
 getAtividadeJSON(IdAtividade, [_|T], Atividade):- getAtividadeJSON(IdAtividade, T, Atividade).
 
 % Predicado para verificar se uma atividade com o mesmo IdAtividade já existe no sistema
-atividadeJaExiste(IdAtividade, AtividadesDoSistema) :-
-  member(atividade(IdAtividade, _, _, _, _, _, _, _), AtividadesDoSistema).
+atividadeJaExiste(_, [], false). 
+atividadeJaExiste(Busca, [Atividade|_], true) :- 
+    get_dict(IdAtividade, Atividade, Id),
+    Busca == Id.
+atividadeJaExiste(Busca, [_|T], R) :- atividadeJaExiste(Busca, T, R).
 
 % Removendo a atividade pelo ID
 removerAtividadeJSON([], _, []).

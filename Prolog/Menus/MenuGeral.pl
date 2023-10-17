@@ -183,7 +183,7 @@ enviarMGeral :-
         writeln('                                                            '),
 
         write('Digite seu ID: '),
-        ler_string(IdUsuario),
+        % ler_string(IdUsuario),
 
         % SE O USUÁRIO NÃO EXISTE
         writeln('                                                            '),
@@ -191,7 +191,7 @@ enviarMGeral :-
         writeln('                                                            '),
 
         write('Digite sua senha: '),
-        ler_string(Senha),
+        % ler_string(Senha),
 
         % SE A SENHA INCORRETA: 
         writeln('                                                            '),
@@ -216,7 +216,7 @@ enviarMPrivada :-
         writeln('                                                            '),
 
         write('Digite seu ID: '),
-        ler_string(IdUsuario),
+        % ler_string(IdUsuario),
 
         % SE O USUÁRIO NÃO EXISTE
         writeln('                                                            '),
@@ -224,7 +224,7 @@ enviarMPrivada :-
         writeln('                                                            '),
 
         write('Digite sua senha: '),
-        ler_string(Senha),
+        % ler_string(Senha),
 
         % SE A SENHA INCORRETA: 
         writeln('                                                            '),
@@ -245,10 +245,10 @@ visualizarMensagensPrivadas :-
         writeln('                                                            '),
 
         write('Digite seu ID: '),
-        ler_string(IdUsuario),
+        % ler_string(IdUsuario),
 
         write('Digite sua senha: '),
-        ler_string(Senha),
+        % ler_string(Senha),
 
         % SE A SENHA INCORRETA: 
         writeln('                                                            '),
@@ -270,7 +270,7 @@ visualizarMensagensGerais :-
         writeln('                                                          '),
 
         write('Digite seu ID: '),
-        ler_string(IdUsuario),
+        % ler_string(IdUsuario),
 
         % SE O USUÁRIO NÃO EXISTE
         writeln('                                                            '),
@@ -278,7 +278,7 @@ visualizarMensagensGerais :-
         writeln('                                                            '),
 
         write('Digite sua senha: '),
-        ler_string(Senha),
+        % ler_string(Senha),
 
         % SE A SENHA INCORRETA: 
         writeln('                                                            '),
@@ -289,7 +289,7 @@ visualizarMensagensGerais :-
 
         writeln('                                                                '),
         write('Digite o ID do Projeto que deseja visualizar as mensagens gerais: '),
-        ler_string(IdProjeto),
+        % ler_string(IdProjeto),
 
         writeln('                                                                   '),
         writeln('   Carregando.........                                             '),
