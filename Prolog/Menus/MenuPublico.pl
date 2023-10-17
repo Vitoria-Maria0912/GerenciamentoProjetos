@@ -1,12 +1,11 @@
-:- module(menuPublico, [menuPublicoProjeto/0, processaEntradaMenuPublico/1, visualizarProjetos/0 , sairDoSistema/0 , 
+:- module(menuPublico, [menuPublicoProjeto/0, processaEntradaMenuPublico/1, visualizarProjetos/0, sairDoSistema/0 , 
                         erroMenuPublico/0 , retornoMenuPublico/0 , menuPublicoBancoDeAtividades/0 , processaEntradaBancoDeAtividades/1,
-                        criaAtividade/0, listarAtividades/0]).
+                        criaAtividade/0, listarAtividades/0, comecarAtividade/0, finalizarAtividade/0, visualizarStatusAtividade/0,
+                        consultarAtividade/0, criaFeedback/0]).
 
-% :- initialization(menuPublicoProjeto).
-
+:- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Atividades.pl").
 :- use_module("Controllers/Utils.pl").
-
 
 % | Menu dos projetos, todos os usuários tem acesso
 menuPublicoProjeto :-
@@ -119,8 +118,6 @@ menuPublicoBancoDeAtividades :-
 
 processaEntradaBancoDeAtividades(Entrada) :- 
 
-        clearScreen,
-
         ( Entrada == 'l' -> clearScreen, listarAtividades, retornoMenuPublico
         ; Entrada == 'c' -> clearScreen, criaAtividade, retornoMenuPublico
         ; Entrada == 'i' -> clearScreen, comecarAtividade, retornoMenuPublico
@@ -130,8 +127,8 @@ processaEntradaBancoDeAtividades(Entrada) :-
         ; Entrada == 'd' -> clearScreen, consultarAtividade, retornoMenuPublico
         ; Entrada == 'o' -> clearScreen, criaFeedback, retornoMenuPublico
         % ; Entrada == 'p' -> % tem que modificar para que volte para o MenuGerente também/
-        ; Entrada == 'm' -> menuPrincipal 
-        ; Entrada == 's' -> sairDoSistema
+        ; Entrada == 'm' -> clearScreen, menuPrincipal 
+        ; Entrada == 's' -> clearScreen, sairDoSistema
         ; erroMenuPublico ).
 
 criaAtividade :- 
@@ -176,36 +173,59 @@ comecarAtividade :-
         writeln('                |  Começar atividade:  |                  '),
         writeln('                                                          '),
 
-        % writeln('Digite seu ID:'),
-        % ler_string(IdUsuario),
+        write('Digite seu ID: '),
+        ler_string(IdUsuario), nl,
 
-        % PEGAR TODOS OS USUÁRIOS
+        lerUsuariosJson('Database/usuarios.json', UsuariosDoSistema),
+        verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
 
-        writeln('Digite o ID da atividade que deseja começar: '),
-        ler_string(IdAtividade),
+        (ExisteUsuario ->
 
-        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
+                write('Digite o ID da atividade que deseja começar: '),
+                ler_string(IdAtividade), nl,
 
-        (atividadeJaExiste(IdAtividade, AtividadesDoSistema) ->
-                        % PRECISA FAZER A CHECAGEM QUE NEM EM HASKELL? SE É DIFERENTE DE PENDENTE???
-                        editarStatusAtividade('Database/bancoDeAtividade.json', IdAtividade, 'Pendente...')
-        ; erroMenuPublico).
+                lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
+                atividadeJaExiste(IdAtividade, AtividadesDoSistema, ExisteAtividade),
 
-        writeln('                                                          '),
-        writeln('          |  Esta atividade já foi concluída!  |                  '),
-        writeln('                                                          '),
+                (ExisteAtividade ->
 
-        writeln('                                                          '),
-        writeln('      |  Você não está atribuído a essa atividade!  |                  '),
-        writeln('                                                          '),
+                        % getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
 
-        writeln('                                                          '),
-        writeln('         |  Esta atividade já está em andamento!  |                  '),
-        writeln('                                                          '),
-       
-        writeln('                                                          '),
-        writeln('           |  ID incorreto! Tente novamente.  |                  '),
-        writeln('                                                          ').
+                        % IdMembroResponsavel = Atividade.idMembroResponsavel,
+
+                        % (IdMembroResponsavel \= IdUsuario ->
+                        %         editarStatusAtividade('Database/bancoDeAtividade.json', IdAtividade, 'Pendente...'),
+                        %         getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
+                                writeln('Atividade')
+                        
+                        % ; clearScreen,
+                        %   writeln('                                                              '),
+                        %   writeln('          |  Você não está atribuído a essa atividade!  |     '),
+                        %   writeln('                                                              ')
+                        % )
+
+                ; clearScreen,
+                  writeln('                                                          '),
+                  writeln('           |  Atividade inexistente! Tente novamente.  |  '),
+                  writeln('                                                          ')
+                )
+
+                % writeln('                                                          '),
+                % writeln('          |  Esta atividade já foi concluída!  |          '),
+                % writeln('                                                          '),
+
+                
+
+                % writeln('                                                          '),
+                % writeln('         |  Esta atividade já está em andamento!  |       '),
+                % writeln('                                                          ')
+        
+                
+        ; clearScreen,
+          writeln('                                                              '),
+          writeln('               |  ID incorreto! Tente novamente.  |           '),
+          writeln('                                                              ')
+        ).
 
 finalizarAtividade:-
 
@@ -219,9 +239,8 @@ finalizarAtividade:-
         lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
 
         (atividadeJaExiste(IdAtividade, AtividadesDoSistema) ->
-                        % PRECISA FAZER A CHECAGEM QUE NEM EM HASKELL? SE É DIFERENTE DE CONCLUÍDA???
                         editarStatusAtividade('Database/bancoDeAtividade.json', IdAtividade, 'Concluída!')
-        ; erroMenuPublico).
+        ; erroMenuPublico),
 
         writeln('                                                          '),
         writeln('          |  Esta atividade já foi concluída!  |                  '),
@@ -274,7 +293,7 @@ criaFeedback:-
         
         (atividadeJaExiste(IdAtividade, AtividadesDoSistema) -> 
                 write('Escreva um breve comentário sobre a atividade: '),
-                ler_string(Feedback), nl,
+                % ler_string(Feedback), nl,
 
                 % so quem cria ou é designado pode
                 writeln('                                                                 '),

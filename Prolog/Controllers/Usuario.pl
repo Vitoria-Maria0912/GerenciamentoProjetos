@@ -59,6 +59,19 @@ verifica_id(Busca, [_|T], R) :- verifica_id(Busca, T, R).
 
 % falta adicionar atividades a um usuario
 
+% falta testar - Adicionando atividades a lista de atividades atribuidas de um usuário
+editarAtivUsuarioJSON([], _, _, []).
+editarAtivUsuarioJSON([H|T], H.id, IdAtividade, [NovoUsuario|T]):-
+    NovoUsuario = _{id:H.id, atividadesAtribuidas:[IdAtividade|H.atividadesAtribuidas], nome:H.nome, senha:H.senha}.
+editarAtivUsuarioJSON([H|T], Id, IdAtividade, [H|Out]) :- 
+		editarAtivUsuarioJSON(T, Id, IdAtividade, Out).
+
+addAtividadeUsuario(FilePath, IdUsuario, IdAtividade) :-
+		lerUsuariosJSON(FilePath, File),
+		editarAtivUsuarioJSON(File, IdUsuario, IdAtividade, SaidaParcial),
+		usuariosToJSON(SaidaParcial, Saida),
+		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
 editarAtividadesJSON([], _, _, []).
 editarAtividadesJSON([H|T], H.idUsuario, NovaAtividade, [_{idUsuario:H.idUsuario, nome:H.nome, senha:H.senha, atividadesAtribuidas:NovaListaAtividades}|T]) :-
     adicionarAtividade(H.atividadesAtribuidas, NovaAtividade, NovaListaAtividades).
@@ -85,4 +98,5 @@ editarAtividades(FilePath, IdU, NovaAtividade) :-
 % 		editarNomeJSON(File, IdU, NovoNome, SaidaParcial),
 % 		usuariosToJSON(SaidaParcial, Saida),
 % 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
 
