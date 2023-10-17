@@ -1,6 +1,7 @@
 :- module(atividade, [lerBancoDeAtividadesJson/2, atividadeToJSON/9, atividadesToJSON/2, salvarAtividade/9,
                       exibirAtividadesAux/1, exibirAtividades/1, editarIdProjetoAtividadeJSON/4, editarIdProjetoAtividade/3, 
-                      editarMembroResponsavelAtividadeJSON/4, getAtividadesJSON/3, atividadeJaExiste/2, removerAtividade/2,verifica_id_atividade/3, getAtividadeJSON/3]).
+                      editarMembroResponsavelAtividadeJSON/4, getAtividadesJSON/3, atividadeJaExiste/3, removerAtividade/2,verifica_id_atividade/3, getAtividadeJSON/3]).
+
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
@@ -134,8 +135,11 @@ getAtividadeJSON(IdAtividade, [Atividade|_], Atividade):- IdAtividade =:= Ativid
 getAtividadeJSON(IdAtividade, [_|T], Atividade):- getAtividadeJSON(IdAtividade, T, Atividade).
 
 % Predicado para verificar se uma atividade com o mesmo IdAtividade já existe no sistema
-atividadeJaExiste(IdAtividade, AtividadesDoSistema) :-
-  member(atividade(IdAtividade, _, _, _, _, _, _, _), AtividadesDoSistema).
+atividadeJaExiste(_, [], false). 
+atividadeJaExiste(Busca, [Atividade|_], true) :- 
+    get_dict(IdAtividade, Atividade, Id),
+    Busca == Id.
+atividadeJaExiste(Busca, [_|T], R) :- atividadeJaExiste(Busca, T, R).
 
 % Removendo a atividade pelo ID
 removerAtividadeJSON([], _, []).
