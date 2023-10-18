@@ -84,20 +84,3 @@ editarAtividades(FilePath, IdU, NovaAtividade) :-
     editarAtividadesJSON(File, IdU, NovaAtividade, SaidaParcial),
     usuariosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-
-% Verifica se a senha e o ID de um usuário conferem
-
-
-% POSSIVELMENTE DESNECESSÁRIO - FOI UM TESTE, MAS, FUNCIONA!
-% editarNomeJSON([], _, _, []).
-% editarNomeJSON([H|T], H.idUsuario, Nome, [_{idUsuario:H.idUsuario, nome:Nome, senha:H.senha, atividadesAtribuidas:H.atividadesAtribuidas}|T]).
-% editarNomeJSON([H|T], Id, Nome, [H|Out]) :- 
-% 		editarNomeJSON(T, Id, Nome, Out).
-
-% editarNome(FilePath, IdU, NovoNome) :-
-% 		lerJSON(FilePath, File),
-% 		editarNomeJSON(File, IdU, NovoNome, SaidaParcial),
-% 		usuariosToJSON(SaidaParcial, Saida),
-% 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-
-

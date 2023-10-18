@@ -31,8 +31,6 @@ menuRestritoProjeto :-
 
 processaEntradaMenuRestrito(Entrada) :- 
 
-        % clearScreen,
-
         ( Entrada == 'l' -> clearScreen, visualizarProjetos, retornoMenuRestrito
         ; Entrada == 'p' -> clearScreen, deletarProjeto
         ; Entrada == 'g' -> clearScreen, gerenciarMembros
@@ -78,34 +76,39 @@ gerenciarMembros :-
         write('Digite o ID do projeto: '),
         ler_string(IdProjeto), nl,
 
-        % ANTES DE MOSTRAR TEM QUE VERIFICAR SE O PROJETO EXISTE, olhar Haskell
+        verifica_id_projeto(IdProjeto, ProjetosDoSistema, Existe),
 
-        writeln('                                                          '),
-        writeln('                O que deseja fazer agora?                 '),
-        writeln('                                                          '),
-        writeln('                  Selecione uma opção:                    '),
-        writeln('                                                          '),
-        writeln('            M - Visualizar membros do projeto             '),
-        writeln('            A - Atribuir atividade a um membro            '),
-        writeln('            N - Adicionar membro ao projeto               '),
-        writeln('            R - Remover membro do projeto                 '),
-        writeln('            V - Voltar ao menu principal                  '),
-        writeln('            P - Voltar ao menu de projetos                '),
-        writeln('            S - Sair do sistema                           '),
-        writeln('                                                          '), 
+        (Existe -> 
+                writeln('                                                          '),
+                writeln('                O que deseja fazer agora?                 '),
+                writeln('                                                          '),
+                writeln('                  Selecione uma opção:                    '),
+                writeln('                                                          '),
+                writeln('            M - Visualizar membros do projeto             '),
+                writeln('            A - Atribuir atividade a um membro            '),
+                writeln('            N - Adicionar membro ao projeto               '),
+                writeln('            R - Remover membro do projeto                 '),
+                writeln('            V - Voltar ao menu principal                  '),
+                writeln('            P - Voltar ao menu de projetos                '),
+                writeln('            S - Sair do sistema                           '),
+                writeln('                                                          '), 
 
-        get_single_char(CodigoASCII),
-        char_code(Input, CodigoASCII),
-        downcase_atom(Input, LowerOption),
-        processaEntradaMembros(LowerOption, IdProjeto),
-        halt. 
+                get_single_char(CodigoASCII),
+                char_code(Input, CodigoASCII),
+                downcase_atom(Input, LowerOption),
+                processaEntradaMembros(LowerOption, IdProjeto)
+        
+        ;
+        erroMenuGerente
+        ),
+        retornoMenuRestrito.
 
 processaEntradaMembros(Entrada, IdProjeto) :- 
 
         clearScreen,       
 
         ( Entrada == 'm' -> visualizarMembros(IdProjeto)
-        % ; Entrada == 'a' -> atribuirAtividade
+        ; Entrada == 'a' -> atribuirAtividade(IdProjeto)
         ; Entrada == 'n' -> adicionaNovoMembro(IdProjeto)
         % ; Entrada == 'r' -> removerMembro
         ; Entrada == 'p' -> menuRestritoProjeto
@@ -226,7 +229,7 @@ removeMembroProjeto(IdProjeto) :-
 %                     erroMenuPrincipal
 %                 ).
 
-atribuirMembro(IdProjeto) :-
+atribuirAtividade(IdProjeto) :-
         writeln('                                                                    '),
         writeln('         |     Atribuir uma atividade a um membro:    |             '),
         writeln('                                                                    '),

@@ -2,9 +2,10 @@
                       exibirAtividadesAux/1, exibirAtividades/1, editarIdProjetoAtividadeJSON/4, editarIdProjetoAtividade/3, 
                       editarMembroResponsavelAtividadeJSON/4, getAtividadesJSON/3, atividadeJaExiste/3, removerAtividade/2,
                       verifica_id_atividade/3, getAtividadeJSON/3, editarStatusAtividade/3, editarStatusAtividadeJSON/4,
-                      exibirAtividade/1, exibirAtividades/1, getMembroResponsavel/2]).
+                      exibirAtividade/1, exibirAtividades/1, getMembroResponsavel/2, editarFeedbacks/4, criarFeedback/3]).
 
 :- use_module(library(http/json)).
+:- use_module(library(http/json_convert)).
 :- use_module("Controllers/Utils.pl").
 
 % Cria uma atividade
@@ -50,6 +51,7 @@ exibirAtividade(Atividade) :-
     write('|- Descricao: '), writeln(Atividade.descricao), 
     write('|- Dificuldade: '), writeln(Atividade.dificuldade), 
     write('|- Status: '), writeln(Atividade.status), 
+    write('|- Feedbacks: '), writeln(Atividade.feedbacks),
 		nl.
 
 % Verifica se um ID existe dentro da lista de atividades
@@ -138,29 +140,19 @@ editarStatusAtividade(FilePath, IdAtividade, Status) :-
   atividadesToJSON(SaidaParcial, Saida),
   open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
-% Pega uma atividade por ID
-getAtividadeJSON(IdAtividade, [Atividade|_], Atividade):- IdAtividade =:= Atividade.idAtividade.
-getAtividadeJSON(IdAtividade, [_|T], Atividade):- getAtividadeJSON(IdAtividade, T, Atividade).
-
 % Predicado para verificar se uma atividade com o mesmo IdAtividade já existe no sistema
 atividadeJaExiste(_, [], false). 
 atividadeJaExiste(Busca, [Atividade|_], true) :- 
-    get_dict(IdAtividade, Atividade, Id),
+    get_dict(idAtividade, Atividade, Id),
     Busca == Id.
 atividadeJaExiste(Busca, [_|T], R) :- atividadeJaExiste(Busca, T, R).
 
-% Removendo a atividade pelo ID
-removerAtividadeJSON([], _, []).
-removerAtividadeJSON([H|T], Id, Out) :-
-    H.idAtividade =\= Id,
-    removerAtividadeJSON(T, Id, Resto),
-    Out = [H | Resto].
-removerAtividadeJSON([H|T], Id, Out) :-
-    H.idAtividade =:= Id, % Verifica se o ID corresponde
-    removerAtividadeJSON(T, Id, Out).
+% Adiciona um feedback a uma atividade
+criarFeedback(FilePath, Atividade, NovoFeedback) :-
 
-removerAtividade(FilePath, Id) :-
-    lerJSON(FilePath, File),
-    removerAtividadeJSON(File, Id, SaidaParcial),
-    atividadesToJSON(SaidaParcial, Saida),
-    open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+  lerJSON(FilePath, Atividades),  
+  AtividadeAtualizada = Atividade.put(feedbacks, [NovoFeedback|Atividade.feedbacks]),
+  selectchk(Atividade, Atividades, AtividadeAtualizada, AtividadesAtualizadas),
+  open(FilePath, write, Stream),
+  json_write(Stream, AtividadesAtualizadas, [width(1)]),  % voltar para 0 depois
+  close(Stream).
