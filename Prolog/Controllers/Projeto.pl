@@ -101,10 +101,6 @@ editarMembros(FilePath, IdP, NovoMembro) :-
 
 
 % Verifica se o usuário é membro ou gerente de algum projeto
-usuarioFazParteDeProjeto(IdUsuario, Projetos) :-
-    membroDeProjeto(IdUsuario, Projetos).
-
-
 membroDeProjeto(_, []):- false. % Caso base: usuário não é membro de nenhum projeto.
 membroDeProjeto(IdUsuario, [Projeto|OutrosProjetos]) :-
     % Verifica se o usuário é membro ou gerente do projeto atual.
