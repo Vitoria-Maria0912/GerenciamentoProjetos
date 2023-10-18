@@ -1,32 +1,27 @@
-:- module(projeto, [lerProjetosJson/2, projetoToJSON/6, projetosToJSON/2, salvarProjeto/6, exibirProjetosAux/1,
-                    exibirProjetos/1,getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, verifica_id_projeto/3, editarMembros/3]).
+:- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
+                    exibirProjetos/1,getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3]).
 :- use_module(library(http/json)).
 
-% Lendo arquivo JSON puro
-lerProjetosJson(FilePath, File) :-
-    open(FilePath, read, F),
-    json_read_dict(F, File).
+:- use_module(library(http/json)).
+:- use_module("Controllers/Utils.pl").
 
-
-%Por enquanto sem o Id de Gerente
 % Cria um projeto
-projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, IdGerente, Atividades, Membros, Projeto) :-
-    swritef(Projeto, '{"nomeProjeto":"%w", "descricaoProjeto":"%w", "idProjeto":"%w", "atividadesAtribuidas":%w,"membros":%w, "idGerente" ":%w"}', 
-    [ NomeProjeto, DescricaoProjeto,IdProjeto, Atividades, Membros, IdGerente]).
+projetoToJSON(IdGerente, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, Projeto) :-
+    swritef(Projeto, '{"idGerente" :"%w", "nomeProjeto":"%w", "descricaoProjeto":"%w", "idProjeto":"%w", "atividadesAtribuidas":%w,"membros":%w}', 
+    [IdGerente, NomeProjeto, DescricaoProjeto,IdProjeto, Atividades, Membros]).
 
 % Convertendo uma lista de objetos em JSON para
 projetosToJSON([], []).
 projetosToJSON([H|T], [U|Projeto]) :-
-    projetoToJSON(H.nomeProjeto, H.descricaoProjeto, H.idProjeto, H.atividadesAtribuidas, H.membros, U),
+    projetoToJSON(H.idGerente, H.nomeProjeto, H.descricaoProjeto, H.idProjeto, H.atividadesAtribuidas, H.membros, P),
     projetosToJSON(T, Projeto).
 
-
-
 % Salvar em arquivo JSON
-salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros) :-
-    lerProjetosJson(FilePath, File),
+salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto, IdGerente, Atividades, Membros) :-
+    lerJSON(FilePath, File),
     projetosToJSON(File, ListaProjetos),
-    projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, Projetos),
+    projetoToJSON(IdGerente, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, Projetos),
     append(ListaProjetos, [Projetos], Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
@@ -38,7 +33,7 @@ exibirProjetosAux([H|T]) :-
 		nl, exibirProjetosAux(T).
 
 exibirProjetos(FilePath) :-
-		lerProjetosJson(FilePath, Projetos),
+		lerJSON(FilePath, Projetos),
 		exibirProjetosAux(Projetos).
 
 % Pega uma projeto por ID
@@ -51,7 +46,7 @@ removerProjetoJSON([H|T], H.idProjeto, T).
 removerProjetoJSON([H|T], Id, [H|Out]):- removerProjetoJSON(T, Id, Out).
 
 removerProjeto(FilePath, Id):-
-    lerProjetosJson(FilePath, File),
+    lerJSON(FilePath, File),
     removerProjetoJSON(File, Id, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream),
@@ -81,7 +76,7 @@ adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
     NovaListaAtividades = [NovaAtividade|ListaAtividades].
 
 editarAtividades(FilePath, IdP, NovaAtividade) :-
-    lerProjetosJson(FilePath, File),
+    lerJSON(FilePath, File),
     editarAtividadesJSON(File, IdP, NovaAtividade, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
@@ -96,7 +91,7 @@ adicionarMembro(ListaMembros, NovoMembro, NovaListaDeMembros) :-
 NovaListaDeMembros = [NovoMembro|ListaMembros].
 
 editarMembros(FilePath, IdP, NovoMembro) :-
-    lerProjetosJson(FilePath, File),
+    lerJSON(FilePath, File),
     editarMembrosJSON(File, IdP, NovoMembro, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
