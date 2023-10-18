@@ -1,5 +1,5 @@
 :- module(usuario, [usuarioToJSON/5, usuariosToJSON/2, salvarUsuario/5, exibirUsuariosAux/1, 
-                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarNome/3, editarAtividades/3]).
+                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
@@ -58,6 +58,19 @@ verifica_id(Busca, [Usuario|_], true) :-
 verifica_id(Busca, [_|T], R) :- verifica_id(Busca, T, R).
 
 
+% falta testar - Adicionando atividades a lista de atividades atribuidas de um usuário
+editarAtivUsuarioJSON([], _, _, []).
+editarAtivUsuarioJSON([H|T], H.id, IdAtividade, [NovoUsuario|T]):-
+    NovoUsuario = _{id:H.id, atividadesAtribuidas:[IdAtividade|H.atividadesAtribuidas], nome:H.nome, senha:H.senha}.
+editarAtivUsuarioJSON([H|T], Id, IdAtividade, [H|Out]) :- 
+		editarAtivUsuarioJSON(T, Id, IdAtividade, Out).
+
+addAtividadeUsuario(FilePath, IdUsuario, IdAtividade) :-
+		lerUsuariosJSON(FilePath, File),
+		editarAtivUsuarioJSON(File, IdUsuario, IdAtividade, SaidaParcial),
+		usuariosToJSON(SaidaParcial, Saida),
+		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
 editarAtividadesJSON([], _, _, []).
 editarAtividadesJSON([H|T], H.idUsuario, NovaAtividade, [_{idUsuario:H.idUsuario, nome:H.nome, senha:H.senha, atividadesAtribuidas:NovaListaAtividades}|T]) :-
     adicionarAtividade(H.atividadesAtribuidas, NovaAtividade, NovaListaAtividades).
@@ -86,4 +99,5 @@ editarAtividades(FilePath, IdU, NovaAtividade) :-
 % 		editarNomeJSON(File, IdU, NovoNome, SaidaParcial),
 % 		usuariosToJSON(SaidaParcial, Saida),
 % 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
 

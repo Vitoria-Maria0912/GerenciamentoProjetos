@@ -1,12 +1,8 @@
+:- module(menuGerente, [menuRestritoProjeto/0, processaEntradaMenuRestrito/1, deletarProjeto/0, 
+          gerenciarMembros/0, processaEntradaMembros/2, visualizarMembros/1, adicionaNovoMembro/1,
+          removeMembroProjeto/1, atribuirMembro/1, menuBancoDeAtividades/0, deletaAtividade/0, 
+          alterarIdProjeto/0, retornoMenuRestrito/0, erroMenuGerente/0]).
 
-
-:- module(menuGerente, [menuRestritoProjeto/0, processaEntradaMenuRestrito/1, visualizarProjetos/0, deletarProjeto/0, 
-          gerenciarMembros/0, menuBancoDeAtividades/0, criarAtividade/0, deletaAtividade/0, alterarIdProjeto/0,
-          listarAtividades/0, visualizarStatusAtividade/0, retornoMenuRestrito/0, erroMenuGerente/0]).
-
-% :- discontiguous menuGerente:retornoMenuRestrito/0.
-
-% :- use_module("Menus/MenuGeral.pl").
 :- use_module("Controllers/Atividades.pl").
 :- use_module("Menus/MenuPublico.pl").
 :- use_module("Controllers/Utils.pl").
@@ -37,11 +33,11 @@ processaEntradaMenuRestrito(Entrada) :-
 
         % clearScreen,
 
-        ( Entrada == 'l' -> visualizarProjetos, retornoMenuRestrito
-        ; Entrada == 'p' -> deletarProjeto
-        ; Entrada == 'g' -> gerenciarMembros
-        ; Entrada == 'b' -> menuBancoDeAtividades
-        ; Entrada == 'm' -> consult('Menus/MenuGeral.pl')
+        ( Entrada == 'l' -> clearScreen, visualizarProjetos, retornoMenuRestrito
+        ; Entrada == 'p' -> clearScreen, deletarProjeto
+        ; Entrada == 'g' -> clearScreen, gerenciarMembros
+        ; Entrada == 'b' -> clearScreen, menuBancoDeAtividades
+        ; Entrada == 'm' -> clearScreen, menuPrincipal
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuGerente ).
 
@@ -129,9 +125,9 @@ visualizarMembros(IdProjeto) :-
 adicionaNovoMembro(IdProjeto) :-
         writeln('                                                                    '),
         writeln('                 |     Adicionar novo membro:    |                  '),
-        writeln('                                                                   '),
+        writeln('                                                                    '),
         writeln(' |     Usuários disponíveis no sistema para adição no projeto:    | '),
-        writeln('                                                                   '),
+        writeln('                                                                    '),
 
         exibirUsuarios('Database/usuarios.json'),
 
@@ -298,22 +294,22 @@ menuBancoDeAtividades :-
         char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption),
         
-        ( LowerOption == 'l' -> listarAtividades, retornoMenuRestrito
-        ; LowerOption == 'c' -> criaAtividade, alterarIdProjeto
-        ; LowerOption == 'r' -> deletaAtividade
-        ; LowerOption == 'i' -> comecarAtividade, retornoMenuRestrito
-        % ; LowerOption == 'f' -> finalizarAtividade
-        % ; LowerOption == 'v' -> visualizarAtividades
-        ; LowerOption == 'a' -> visualizarStatusAtividade, retornoMenuRestrito
-        % ; LowerOption == 'd' -> consultarAtividade
-        % ; LowerOption == 'o' -> criaFeedback
-        ; LowerOption == 'm' -> menuPrincipal
-        ; LowerOption == 'p' -> menuRestritoProjeto
+        ( LowerOption == 'l' -> clearScreen, listarAtividades, retornoMenuRestrito
+        ; LowerOption == 'c' -> clearScreen, criaAtividade, alterarIdProjeto
+        ; LowerOption == 'r' -> clearScreen, deletaAtividade
+        ; LowerOption == 'i' -> clearScreen, comecarAtividade, retornoMenuRestrito
+        ; LowerOption == 'f' -> clearScreen, finalizarAtividade, retornoMenuRestrito
+        ; LowerOption == 'v' -> clearScreen, visualizarAtividades, retornoMenuRestrito
+        ; LowerOption == 'a' -> clearScreen, visualizarStatusAtividade, retornoMenuRestrito
+        ; LowerOption == 'd' -> clearScreen, consultarAtividade, retornoMenuRestrito
+        ; LowerOption == 'o' -> clearScreen, criaFeedback, retornoMenuRestrito
+        ; LowerOption == 'm' -> clearScreen, menuPrincipal
+        ; LowerOption == 'p' -> clearScreen, menuRestritoProjeto
         ; LowerOption == 's' -> sairDoSistema
         ; erroMenuGerente ).
         
 alterarIdProjeto:-
-        % lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
+        % lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
         
         writeln('Deseja adicionar a atividade a um projeto? (S/N)'),
         get_single_char(CodigoASCII),
@@ -350,7 +346,7 @@ deletaAtividade :-
         % Sem a leitura abaixo não consigo remover
         (nao_vazia(IdProjeto) ->
                         lerJSON('Database/projetos.json', ProjetosDoSistema),
-                        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
+                        lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
                         write('Verificando ID Projeto : '), writeln(IdProjeto), nl,
                         verifica_id(IdProjeto, ProjetosDoSistema, Existe),
 
@@ -382,13 +378,13 @@ erroMenuGerente :-
 
 % Retorna ao menu principal ou sai do sistema
 retornoMenuRestrito :- 
-        writeln('                                                          '),
-        writeln(' | Deseja voltar ao menu do projeto ou sair do sistema?  |'),
-        writeln('                                                          '),
-        writeln('                 M - Menu Principal                       '),
-        writeln('                 P - Menu de projetos                     '),
-        writeln('                 S - Sair do sistema                      '),
-        writeln('                                                          '),
+        writeln('                                                               '),
+        writeln('      | Deseja voltar ao menu do projeto ou sair do sistema?  |'),
+        writeln('                                                               '),
+        writeln('                      M - Menu Principal                       '),
+        writeln('                      P - Menu de projetos                     '),
+        writeln('                      S - Sair do sistema                      '),
+        writeln('                                                               '),
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption),

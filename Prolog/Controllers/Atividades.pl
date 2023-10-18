@@ -1,13 +1,11 @@
-:- module(atividade, [lerBancoDeAtividadesJson/2, atividadeToJSON/9, atividadesToJSON/2, salvarAtividade/9,
+:- module(atividade, [lerJSON/2, atividadeToJSON/9, atividadesToJSON/2, salvarAtividade/9,
                       exibirAtividadesAux/1, exibirAtividades/1, editarIdProjetoAtividadeJSON/4, editarIdProjetoAtividade/3, 
-                      editarMembroResponsavelAtividadeJSON/4, getAtividadesJSON/3, atividadeJaExiste/2, removerAtividade/2,verifica_id_atividade/3, getAtividadeJSON/3]).
+                      editarMembroResponsavelAtividadeJSON/4, getAtividadesJSON/3, atividadeJaExiste/3, removerAtividade/2,
+                      verifica_id_atividade/3, getAtividadeJSON/3, editarStatusAtividade/3, editarStatusAtividadeJSON/4,
+                      exibirAtividade/1, exibirAtividades/1, getMembroResponsavel/2]).
+
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
-
-% Lendo arquivo JSON puro
-lerBancoDeAtividadesJson(FilePath, File) :-
-  open(FilePath, read, F),
-  json_read_dict(F, File).
 
 % Cria uma atividade
 atividadeToJSON(Titulo, Descricao, Dificuldade, Id_Atividade, Status, IdProjetoAtividade, IdMembroResponsavel, Feedbacks, Atividade) :-
@@ -31,19 +29,28 @@ salvarAtividade(FilePath, Titulo, Descricao, Dificuldade, Id_Atividade, Status, 
 % Exibe as atividade cadastradas 
 exibirAtividadesAux([]).
 exibirAtividadesAux([H|T]) :- 
-    write('Titulo:'), writeln(H.titulo),
-		write('Descricao:'), writeln(H.descricao), 
-    write('Status:'), writeln(H.status), 
-    write('Dificuldade:'), writeln(H.dificuldade), 
-    write('ID Projeto:'), writeln(H.idProjetoAtividade), 
-    write('ID Atividade:'), writeln(H.idAtividade), 
-    write('ID Membro Responsavel:'), writeln(H.idMembroResponsavel), 
-    write('Feedbacks:'), writeln(H.feedbacks), 
+    write('|- ID Atividade: '), writeln(H.idAtividade), 
+    write('|- Titulo: '), writeln(H.titulo),
+		write('|- Descricao: '), writeln(H.descricao), 
+    write('|- Status: '), writeln(H.status), 
+    write('|- Dificuldade: '), writeln(H.dificuldade), 
+    write('|- ID Projeto: '), writeln(H.idProjetoAtividade), 
+    write('|- ID Membro Responsavel: '), writeln(H.idMembroResponsavel), 
+    write('|- Feedbacks: '), writeln(H.feedbacks), 
 		nl, exibirAtividadesAux(T).
 
 exibirAtividades(FilePath) :-
-		lerBancoDeAtividadesJson(FilePath, Atividades),
+		lerJSON(FilePath, Atividades),
 		exibirAtividadesAux(Atividades).
+
+% Exibe as atividade cadastradas 
+exibirAtividade(Atividade) :- 
+    write('|- ID Atividade: '), writeln(Atividade.idAtividade), 
+    write('|- Titulo: '), writeln(Atividade.titulo),
+    write('|- Descricao: '), writeln(Atividade.descricao), 
+    write('|- Dificuldade: '), writeln(Atividade.dificuldade), 
+    write('|- Status: '), writeln(Atividade.status), 
+		nl.
 
 % Verifica se um ID existe dentro da lista de atividades
 verifica_id_atividade(_, [], false).
@@ -86,7 +93,7 @@ editarIdProjetoAtividadeJSON([H|T], H.idAtividade, IdProjetoAtividade, [_{titulo
 editarIdProjetoAtividadeJSON([H|T], IdAtividade, IdProjetoAtividade, [H|Out]) :- editarIdProjetoAtividadeJSON(T, IdAtividade, IdProjetoAtividade, Out).
 
 editarIdProjetoAtividade(FilePath, IdAtividade, IdProjetoAtividade) :-
-		lerBancoDeAtividadesJson(FilePath, File),
+    lerJSON(FilePath, File),
 		editarIdProjetoAtividadeJSON(File, IdAtividade, IdProjetoAtividade, SaidaParcial),
 		atividadesToJSON(SaidaParcial, Saida),
 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream), !.
@@ -105,10 +112,12 @@ editarMembroResponsavelAtividadeJSON([H|T], H.idAtividade, IdMembroResponsavel, 
 editarMembroResponsavelAtividadeJSON([H|T], IdAtividade, IdMembroResponsavel, [H|Out]) :- editarMembroResponsavelAtividadeJSON(T, IdAtividade, IdMembroResponsavel, Out).
 
 editarMembroResponsavelAtividadeJSON(FilePath, IdAtividade, IdMembroResponsavel) :-
-		lerBancoDeAtividadesJson(FilePath, File),
+    lerJSON(FilePath, File),
 		editarMembroResponsavelAtividadeJSON(File, IdAtividade, IdMembroResponsavel, SaidaParcial),
 		atividadesToJSON(SaidaParcial, Saida),
 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream), !.
+
+getMembroResponsavel(Atividade, MembroResponsavel) :- MembroResponsavel = Atividade.idMembroResponsavel.
 
 % Muda o status da Atividade
 editarStatusAtividadeJSON([], _, _, []).
@@ -124,7 +133,7 @@ editarStatusAtividadeJSON([H|T], H.idAtividade, NovoStatus, [_{ titulo:H.titulo,
 editarStatusAtividadeJSON([H|T], IdAtividade, Status, [H|Out]) :- editarStatusAtividadeJSON(T, IdAtividade, Status, Out).
 
 editarStatusAtividade(FilePath, IdAtividade, Status) :-
-  lerBancoDeAtividadesJson(FilePath, File),
+  lerJSON(FilePath, File),
   editarStatusAtividadeJSON(File, IdAtividade, Status, SaidaParcial),
   atividadesToJSON(SaidaParcial, Saida),
   open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
@@ -134,8 +143,11 @@ getAtividadeJSON(IdAtividade, [Atividade|_], Atividade):- IdAtividade =:= Ativid
 getAtividadeJSON(IdAtividade, [_|T], Atividade):- getAtividadeJSON(IdAtividade, T, Atividade).
 
 % Predicado para verificar se uma atividade com o mesmo IdAtividade já existe no sistema
-atividadeJaExiste(IdAtividade, AtividadesDoSistema) :-
-  member(atividade(IdAtividade, _, _, _, _, _, _, _), AtividadesDoSistema).
+atividadeJaExiste(_, [], false). 
+atividadeJaExiste(Busca, [Atividade|_], true) :- 
+    get_dict(IdAtividade, Atividade, Id),
+    Busca == Id.
+atividadeJaExiste(Busca, [_|T], R) :- atividadeJaExiste(Busca, T, R).
 
 % Removendo a atividade pelo ID
 removerAtividadeJSON([], _, []).
@@ -148,7 +160,7 @@ removerAtividadeJSON([H|T], Id, Out) :-
     removerAtividadeJSON(T, Id, Out).
 
 removerAtividade(FilePath, Id) :-
-    lerBancoDeAtividadesJson(FilePath, File),
+    lerJSON(FilePath, File),
     removerAtividadeJSON(File, Id, SaidaParcial),
     atividadesToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).

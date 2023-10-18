@@ -1,12 +1,11 @@
-:- module(menuPublico, [menuPublicoProjeto/0, processaEntradaMenuPublico/1, visualizarProjetos/0 , sairDoSistema/0 , 
-                        erroMenuPublico/0 , retornoMenuPublico/0 , menuPublicoBancoDeAtividades/0 , processaEntradaBancoDeAtividades/1,
-                        criaAtividade/0, listarAtividades/0]).
+:- module(menuPublico, [menuPublicoProjeto/0, processaEntradaMenuPublico/1, visualizarProjetos/0, erroMenuPublico/0, 
+                        retornoMenuPublico/0 , menuPublicoBancoDeAtividades/0 , processaEntradaBancoDeAtividades/1,
+                        criaAtividade/0, listarAtividades/0, comecarAtividade/0, finalizarAtividade/0, visualizarStatusAtividade/0,
+                        consultarAtividade/0, criaFeedback/0]).
 
-% :- initialization(menuPublicoProjeto).
-
+:- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Atividades.pl").
 :- use_module("Controllers/Utils.pl").
-
 
 % | Menu dos projetos, todos os usuários tem acesso
 menuPublicoProjeto :-
@@ -47,14 +46,6 @@ visualizarProjetos :-
         writeln('                                                          '),
         % visualizarProjetos.
         retornoMenuPublico.
-
-
-sairDoSistema :-
-        clearScreen,
-        writeln('                                                          '),
-        writeln('        |  Você saiu do sistema! Até a próxima!  |        '),
-        writeln('                                                          '), 
-        halt.
 
 erroMenuPublico :-
         clearScreen,
@@ -119,8 +110,6 @@ menuPublicoBancoDeAtividades :-
 
 processaEntradaBancoDeAtividades(Entrada) :- 
 
-        clearScreen,
-
         ( Entrada == 'l' -> clearScreen, listarAtividades, retornoMenuPublico
         ; Entrada == 'c' -> clearScreen, criaAtividade, retornoMenuPublico
         ; Entrada == 'i' -> clearScreen, comecarAtividade, retornoMenuPublico
@@ -149,9 +138,9 @@ criaAtividade :-
 
                 random(10000, 99999, Idatom),
                 atom_string(Idatom,IdAtividade),
-                lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
-
-                (\+ atividadeJaExiste(IdAtividade, AtividadesDoSistema) -> 
+                lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
+                atividadeJaExiste(IdAtividade, AtividadesDoSistema, Existe),
+                (\+ Existe -> 
                         salvarAtividade('Database/bancoDeAtividades.json', Titulo, Descricao, Dificuldade, IdAtividade, 'Não atribuída!', 'Não atribuído!', 'Não atribuído!', []), 
                         write('Atividade criada! E o ID dela é: '), writeln(IdAtividade), nl
                         
@@ -162,17 +151,6 @@ criaAtividade :-
           writeln(' |  Você deixou um campo obrigatório vazio, não foi possível criar a atividade, tente novamente!  |          '),
           criaAtividade
         ).
-
-% teste pra ver se getUsuario está funcionando
-imprimeAtividade :-
-        write('Digite o Id: '),
-        ler_string(IdProjeto), nl,
-        (nao_vazia(IdProjeto) ->
-                lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
-                getAtividadesJSON(IdProjeto, AtividadesDoSistema, AtividadesDoProjeto),
-                write(AtividadesDoProjeto);
-                erroMenuGerente).
-
 
 listarAtividades :-
         writeln('                                                       '),
@@ -185,36 +163,45 @@ comecarAtividade :-
         writeln('                |  Começar atividade:  |                  '),
         writeln('                                                          '),
 
-        % writeln('Digite seu ID:'),
-        % ler_string(IdUsuario),
+        write('Digite seu ID: '),
+        ler_string(IdUsuario), nl,
 
-        % PEGAR TODOS OS USUÁRIOS
+        lerJSON('Database/usuarios.json', UsuariosDoSistema),
+        verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
 
-        writeln('Digite o ID da atividade que deseja começar: '),
-        ler_string(IdAtividade),
+        (ExisteUsuario ->
 
-        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
+                write('Digite o ID da atividade que deseja começar: '),
+                ler_string(IdAtividade), nl,
 
-        (atividadeJaExiste(IdAtividade, AtividadesDoSistema) ->
-                        % PRECISA FAZER A CHECAGEM QUE NEM EM HASKELL? SE É DIFERENTE DE PENDENTE???
-                        editarStatusAtividade('Database/bancoDeAtividade.json', IdAtividade, 'Pendente...')
-        ; erroMenuPublico).
+                lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
+                atividadeJaExiste(IdAtividade, AtividadesDoSistema, ExisteAtividade),
 
-        writeln('                                                          '),
-        writeln('          |  Esta atividade já foi concluída!  |                  '),
-        writeln('                                                          '),
+                (ExisteAtividade ->
 
-        writeln('                                                          '),
-        writeln('      |  Você não está atribuído a essa atividade!  |                  '),
-        writeln('                                                          '),
+                        getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
 
-        writeln('                                                          '),
-        writeln('         |  Esta atividade já está em andamento!  |                  '),
-        writeln('                                                          '),
-       
-        writeln('                                                          '),
-        writeln('           |  ID incorreto! Tente novamente.  |                  '),
-        writeln('                                                          ').
+                        (Atividade.idMembroResponsavel == IdUsuario ->
+                                editarStatusAtividade('Database/bancoDeAtividade.json', IdAtividade, 'Pendente...'),
+                                exibirAtividade(Atividade)
+                        
+                        ; clearScreen,
+                          writeln('                                                           '),
+                          writeln('       |  Você não está atribuído a essa atividade!  |     '),
+                          writeln('                                                           ')
+                        )
+
+                ; clearScreen,
+                  writeln('                                                          '),
+                  writeln('           |  Atividade inexistente! Tente novamente.  |  '),
+                  writeln('                                                          ')
+                )
+
+        ; clearScreen,
+          writeln('                                                          '),
+          writeln('           |  ID incorreto! Tente novamente.  |           '),
+          writeln('                                                          ')
+        ).
 
 finalizarAtividade:-
 
@@ -222,68 +209,101 @@ finalizarAtividade:-
         writeln('              |  Finalizar atividade:  |                  '),
         writeln('                                                          '),
 
-        writeln('Digite o ID da atividade que deseja começar: '),
-        ler_string(IdAtividade),
+        write('Digite seu ID: '),
+        ler_string(IdUsuario), nl,
 
-        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
+        lerJSON('Database/usuarios.json', UsuariosDoSistema),
+        verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
 
-        (atividadeJaExiste(IdAtividade, AtividadesDoSistema) ->
-                        % PRECISA FAZER A CHECAGEM QUE NEM EM HASKELL? SE É DIFERENTE DE CONCLUÍDA???
-                        editarStatusAtividade('Database/bancoDeAtividade.json', IdAtividade, 'Concluída!')
-        ; erroMenuPublico).
+        (ExisteUsuario ->
 
-        writeln('                                                          '),
-        writeln('          |  Esta atividade já foi concluída!  |                  '),
-        writeln('                                                          '),
+                write('Digite o ID da atividade que deseja começar: '),
+                ler_string(IdAtividade), nl,
 
-        writeln('                                                          '),
-        writeln('      |  Você não está atribuído a essa atividade!  |                  '),
-        writeln('                                                          '),
+                lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
+                atividadeJaExiste(IdAtividade, AtividadesDoSistema, ExisteAtividade),
 
-        writeln('                                                          '),
-        writeln('           |  ID incorreto! Tente novamente.  |                  '),
-        writeln('                                                          ').
+                (ExisteAtividade ->
+
+                        getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
+
+                        (Atividade.idMembroResponsavel == IdUsuario ->
+                                editarStatusAtividade('Database/bancoDeAtividade.json', IdAtividade, 'Concluída!'),
+                                exibirAtividade(Atividade)
+                        
+                        ; clearScreen,
+                          writeln('                                                           '),
+                          writeln('       |  Você não está atribuído a essa atividade!  |     '),
+                          writeln('                                                           ')
+                        )
+                ; clearScreen,
+                  writeln('                                                      '),
+                  writeln('       |  Atividade inexistente! Tente novamente.  |  '),
+                  writeln('                                                      ')
+                )
+
+        ; clearScreen,
+          writeln('                                                           '),
+          writeln('            |  ID incorreto! Tente novamente.  |           '),
+          writeln('                                                           ')
+        ).
 
 visualizarStatusAtividade:-
         writeln('                                                          '),
         writeln('           |  Mostrar status da atividade:  |             '),
         writeln('                                                          '),
-        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),  
+        
         write('Digite o ID da atividade: '),
         ler_string(IdAtividade), nl,
 
-        (atividadeJaExiste(IdAtividade, AtividadesDoSistema) -> 
+        lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),  
+        atividadeJaExiste(IdAtividade, AtividadesDoSistema, ExisteAtividade),
+
+        (ExisteAtividade -> 
                 getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
-                write(Atividade)
-        ; erroMenuGerente).
+                exibirAtividade(Atividade)
+
+        ; clearScreen,
+          writeln('                                                      '),
+          writeln('       |  Atividade inexistente! Tente novamente.  |  '),
+          writeln('                                                      ')
+        ).
 
 consultarAtividade:-
 
         writeln('                                                          '),
         writeln('                |  Mostrar Atividade:  |                  '),
         writeln('                                                          '),
-        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),  
 
         write('Digite o ID da atividade: '),
         ler_string(IdAtividade), nl,
 
-        (atividadeJaExiste(IdAtividade, AtividadesDoSistema) -> 
+        lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),  
+        atividadeJaExiste(IdAtividade, AtividadesDoSistema, ExisteAtividade),
+
+        (ExisteAtividade -> 
                 getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
-                write(Atividade)
-        ; erroMenuGerente).
+                exibirAtividade(Atividade)
+
+        ; clearScreen,
+          writeln('                                                      '),
+          writeln('       |  Atividade inexistente! Tente novamente.  |  '),
+          writeln('                                                      ')
+        ).
+
 
 criaFeedback:-
         writeln('                                                                       '),
         writeln('   |  Comente sobre uma atividade que você criou ou foi designado:  |  '),
         writeln('                                                                       '),
-        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),  
+        lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),  
 
         write('Digite o ID da atividade: '),
         ler_string(IdAtividade), nl,
         
         (atividadeJaExiste(IdAtividade, AtividadesDoSistema) -> 
                 write('Escreva um breve comentário sobre a atividade: '),
-                ler_string(Feedback), nl,
+                % ler_string(Feedback), nl,
 
                 % so quem cria ou é designado pode
                 writeln('                                                                 '),

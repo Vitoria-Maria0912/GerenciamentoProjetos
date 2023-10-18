@@ -1,7 +1,9 @@
-:- module(projeto, [lerProjetosJson/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
-                    exibirProjetos/1,getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, verifica_id_projeto/3, editarMembros/3]).
+:- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
+                    exibirProjetos/1,getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
+
 
 
 % Cria um projeto
@@ -15,13 +17,11 @@ projetosToJSON([H|T], [P|Projeto]) :-
     projetoToJSON(H.nomeProjeto, H.descricaoProjeto, H.idProjeto, H.atividadesAtribuidas, H.membros, H.idGerente, P),
     projetosToJSON(T, Projeto).
 
-
-
 % Salvar em arquivo JSON
-salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente) :-
+salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto, IdGerente, Atividades, Membros) :-
     lerJSON(FilePath, File),
     projetosToJSON(File, ListaProjetos),
-    projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente, Projetos),
+    projetoToJSON(IdGerente, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, Projetos),
     append(ListaProjetos, [Projetos], Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
