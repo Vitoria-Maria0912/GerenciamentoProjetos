@@ -49,7 +49,7 @@ deletarProjeto :-
         ler_string(IdUsuario), nl,
     
         (nao_vazia(IdUsuario) ->
-            lerProjetosJson('Database/projetos.json', ProjetosDoSistema),
+            lerJSON('Database/projetos.json', ProjetosDoSistema),
             write('Digite o ID do projeto que deseja excluir: '),
             ler_string(IdProjeto), nl,
             
@@ -274,18 +274,18 @@ menuBancoDeAtividades :-
         ; LowerOption == 'c' -> clearScreen, criaAtividade, alterarIdProjeto
         ; LowerOption == 'r' -> clearScreen, deletaAtividade
         ; LowerOption == 'i' -> clearScreen, comecarAtividade, retornoMenuRestrito
-        % ; LowerOption == 'f' -> clearScreen, finalizarAtividade, retornoMenuRestrito
-        % ; LowerOption == 'v' -> clearScreen, visualizarAtividades, retornoMenuRestrito
+        ; LowerOption == 'f' -> clearScreen, finalizarAtividade, retornoMenuRestrito
+        ; LowerOption == 'v' -> clearScreen, visualizarAtividades, retornoMenuRestrito
         ; LowerOption == 'a' -> clearScreen, visualizarStatusAtividade, retornoMenuRestrito
-        % ; LowerOption == 'd' -> clearScreen, consultarAtividade, retornoMenuRestrito
-        % ; LowerOption == 'o' -> clearScreen, criaFeedback, retornoMenuRestrito
+        ; LowerOption == 'd' -> clearScreen, consultarAtividade, retornoMenuRestrito
+        ; LowerOption == 'o' -> clearScreen, criaFeedback, retornoMenuRestrito
         ; LowerOption == 'm' -> clearScreen, menuPrincipal
         ; LowerOption == 'p' -> clearScreen, menuRestritoProjeto
         ; LowerOption == 's' -> sairDoSistema
         ; erroMenuGerente ).
         
 alterarIdProjeto:-
-        % lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
+        % lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
         
         writeln('Deseja adicionar a atividade a um projeto? (S/N)'),
         get_single_char(CodigoASCII),
@@ -321,8 +321,8 @@ deletaAtividade :-
         ler_string(IdProjeto), nl,
         % Sem a leitura abaixo não consigo remover
         (nao_vazia(IdProjeto) ->
-                        lerProjetosJson('Database/projetos.json', ProjetosDoSistema),
-                        lerBancoDeAtividadesJson('Database/bancoDeAtividades.json', AtividadesDoSistema),
+                        lerJSON('Database/projetos.json', ProjetosDoSistema),
+                        lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
                         write('Verificando ID Projeto : '), writeln(IdProjeto), nl,
                         verifica_id(IdProjeto, ProjetosDoSistema, Existe),
 
