@@ -140,9 +140,7 @@ menuProjetos :-
                 (EhGerente -> clearScreen, menuRestritoProjeto
                 ; clearScreen, menuPublicoProjeto)
 
-        ; erroMenuPrincipal),
-
-        retornoMenuPrincipal. 
+        ; erroMenuPrincipal).
 
 erroMenuPrincipal :-
         clearScreen,

@@ -4,6 +4,7 @@
                         consultarAtividade/0, criaFeedback/0]).
 
 :- use_module("Controllers/Usuario.pl").
+:- use_module("Controllers/Projeto.pl").
 :- use_module("Controllers/Atividades.pl").
 :- use_module("Controllers/Utils.pl").
 
@@ -29,12 +30,9 @@ menuPublicoProjeto :-
 
 processaEntradaMenuPublico(Entrada) :- 
 
-        clearScreen,
-
-        ( Entrada == 'l' -> visualizarProjetos
-        ; Entrada == 'b' -> menuPublicoBancoDeAtividades
-        ; Entrada == 'm' -> consult('Menus/MenuGeral.pl')
-        ; Entrada == 'i' -> imprimeAtividade
+        ( Entrada == 'l' -> clearScreen, visualizarProjetos
+        ; Entrada == 'b' -> clearScreen, menuPublicoBancoDeAtividades
+        ; Entrada == 'm' -> clearScreen, menuPrincipal
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPublico ).
 
@@ -68,18 +66,17 @@ retornoMenuPublico :-
         char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption),
 
-        (LowerOption == 's' ->
-                sairDoSistema
+        (LowerOption == 's' -> sairDoSistema
 
-        ; LowerOption == 'p' -> menuPublicoProjeto, !
+        ; LowerOption == 'p' -> clearScreen, menuPublicoProjeto
 
-        ; LowerOption == 'm' -> clearScreen, consult('Menus/MenuGeral.pl'), !
+        ; LowerOption == 'm' -> clearScreen, consult('Menus/MenuGeral.pl')
         
         ;       clearScreen,
                 writeln('                                                          '),
                 writeln('         |  Entrada Inválida. Tente novamente!  |         '),
                 writeln('                                                          '),
-                retornoMenuPublico, !
+                retornoMenuPublico
         ).
 
 % Menu do banco
@@ -118,7 +115,7 @@ processaEntradaBancoDeAtividades(Entrada) :-
         ; Entrada == 'a' -> clearScreen, visualizarStatusAtividade, retornoMenuPublico
         ; Entrada == 'd' -> clearScreen, consultarAtividade, retornoMenuPublico
         ; Entrada == 'o' -> clearScreen, criaFeedback, retornoMenuPublico
-        ; Entrada == 'm' -> menuPrincipal 
+        ; Entrada == 'm' -> clearScreen, menuPrincipal 
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPublico ).
 
@@ -153,15 +150,15 @@ criaAtividade :-
         ).
 
 listarAtividades :-
-        writeln('                                                       '),
-        writeln('          |  Listar Atividades cadastradas:  |         '),
-        writeln('                                                       '),
+        writeln('                                                '),
+        writeln('          |  Atividades cadastradas:  |         '),
+        writeln('                                                '),
         exibirAtividades('Database/bancoDeAtividades.json'). 
 
 comecarAtividade :-
-        writeln('                                                          '),
-        writeln('                |  Começar atividade:  |                  '),
-        writeln('                                                          '),
+        writeln('                                                      '),
+        writeln('            |  Começar atividade:  |                  '),
+        writeln('                                                      '),
 
         write('Digite seu ID: '),
         ler_string(IdUsuario), nl,
@@ -170,6 +167,8 @@ comecarAtividade :-
         verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
 
         (ExisteUsuario ->
+
+                listarAtividades, nl,
 
                 write('Digite o ID da atividade que deseja começar: '),
                 ler_string(IdAtividade), nl,
@@ -205,9 +204,9 @@ comecarAtividade :-
 
 finalizarAtividade:-
 
-        writeln('                                                          '),
-        writeln('              |  Finalizar atividade:  |                  '),
-        writeln('                                                          '),
+        writeln('                                                        '),
+        writeln('            |  Finalizar atividade:  |                  '),
+        writeln('                                                        '),
 
         write('Digite seu ID: '),
         ler_string(IdUsuario), nl,
@@ -216,6 +215,8 @@ finalizarAtividade:-
         verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
 
         (ExisteUsuario ->
+
+                listarAtividades, nl,
 
                 write('Digite o ID da atividade que deseja começar: '),
                 ler_string(IdAtividade), nl,
@@ -249,10 +250,13 @@ finalizarAtividade:-
         ).
 
 visualizarStatusAtividade:-
+
+        listarAtividades,
+
         writeln('                                                          '),
         writeln('           |  Mostrar status da atividade:  |             '),
         writeln('                                                          '),
-        
+
         write('Digite o ID da atividade: '),
         ler_string(IdAtividade), nl,
 
@@ -270,6 +274,8 @@ visualizarStatusAtividade:-
         ).
 
 consultarAtividade:-
+
+        listarAtividades,
 
         writeln('                                                          '),
         writeln('                |  Mostrar Atividade:  |                  '),
@@ -293,32 +299,61 @@ consultarAtividade:-
 
 
 criaFeedback:-
+
+        listarAtividades,
+
         writeln('                                                                       '),
         writeln('   |  Comente sobre uma atividade que você criou ou foi designado:  |  '),
         writeln('                                                                       '),
-        lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),  
+        lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
 
-        write('Digite o ID da atividade: '),
-        ler_string(IdAtividade), nl,
+        write('Digite seu ID: '),
+        ler_string(IdUsuario), nl,
+
+        lerJSON('Database/usuarios.json', UsuariosDoSistema),
+        verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
+
+        (ExisteUsuario ->
+
+                write('Digite o ID da atividade: '),
+                ler_string(IdAtividade), nl,
+
+                atividadeJaExiste(IdAtividade, AtividadesDoSistema, ExisteAtividade),
+
+                (ExisteAtividade -> 
+
+                        getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
+
+                        IdProjeto = Atividade.idProjetoAtividade,
+
+                        lerJSON('Database/projetos.json', ProjetosDoSistema),
+                        getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
+
+                        ((Atividade.idMembroResponsavel == IdUsuario ; Projeto.idGerente == IdUsuario) , IdProjeto \= 'Não atribuído!' ->
+
+                                write('Escreva um breve comentário sobre a atividade: '),
+                                ler_string(Feedback), nl,
+
+                                criarFeedback('Database/bancoDeAtividades.json', IdAtividade, Feedback),
+                                writeln('                                                          '),
+                                writeln('   |  Comentário adicionado com sucesso a atividade de ID '), write(IdAtividade), write(' |                  '),
+                                writeln('                                                          '),
+                                getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
+                                exibirAtividade(Atividade), nl
+
+                        ; clearScreen,
+                          writeln('                                                               '),
+                          writeln('    |  Você não está autorizado a realizar esta ação!  |       '),
+                          writeln('                                                               '))
+
+                ; clearScreen,
+                  writeln('                                                      '),
+                  writeln('       |  Atividade inexistente! Tente novamente.  |  '),
+                  writeln('                                                      '))
+
+        ; clearScreen,
+          writeln('                                                          '),
+          writeln('           |  ID incorreto! Tente novamente.  |           '),
+          writeln('                                                          ')
+        ).
         
-        (atividadeJaExiste(IdAtividade, AtividadesDoSistema) -> 
-                write('Escreva um breve comentário sobre a atividade: '),
-                % ler_string(Feedback), nl,
-
-                % so quem cria ou é designado pode
-                writeln('                                                                 '),
-                writeln('      |  Você não está autorizado a realizar esta ação!  |                  '),
-                writeln('                                                                 '),
-        
-                writeln('                                                          '),
-                writeln('           |  ID incorreto! Tente novamente.  |                  '),
-                writeln('                                                          '),
-
-                writeln('                                                          '),
-                writeln('   |  Comentário adicionado com sucesso a atividade de ID '), IdAtividade, write(' |                  '),
-                writeln('                                                          ')
-
-                % MOSTRAR A ATIVIDADE COM O FEEDBACK
-
-                % addFeedback ----- PRECISA CRIAR AINDA
-        ; erroMenuGerente).
