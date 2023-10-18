@@ -1,6 +1,6 @@
 :- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
                     exibirProjetos/1,getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
-                    verifica_id_projeto/3, editarMembros/3, ehGerente/3]).
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3,membroDeProjeto/2]).
 :- use_module(library(http/json)).
 
 :- use_module(library(http/json)).
@@ -96,3 +96,20 @@ editarMembros(FilePath, IdP, NovoMembro) :-
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 % falta adicionar atividades a um projeto
+
+%%%%%%%%%%%%%verificações de pertencimento a algum projeto%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+
+% Verifica se o usuário é membro ou gerente de algum projeto
+usuarioFazParteDeProjeto(IdUsuario, Projetos) :-
+    membroDeProjeto(IdUsuario, Projetos).
+
+
+membroDeProjeto(_, []):- false. % Caso base: usuário não é membro de nenhum projeto.
+membroDeProjeto(IdUsuario, [Projeto|OutrosProjetos]) :-
+    % Verifica se o usuário é membro ou gerente do projeto atual.
+    ( member(IdUsuario, Projeto.membros); Projeto.idGerente == IdUsuario )
+    % Se o usuário for membro ou gerente do projeto atual, retorna true.
+    ;
+    % Caso contrário, verifica nos outros projetos.
+    membroDeProjeto(IdUsuario, OutrosProjetos).
