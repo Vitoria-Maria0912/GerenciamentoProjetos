@@ -73,6 +73,9 @@ editarAtividades(FilePath, IdU, NovaAtividade) :-
     usuariosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
+% Verifica se a senha e o ID de um usuário conferem
+
+
 % POSSIVELMENTE DESNECESSÁRIO - FOI UM TESTE, MAS, FUNCIONA!
 % editarNomeJSON([], _, _, []).
 % editarNomeJSON([H|T], H.idUsuario, Nome, [_{idUsuario:H.idUsuario, nome:Nome, senha:H.senha, atividadesAtribuidas:H.atividadesAtribuidas}|T]).
