@@ -5,11 +5,12 @@
                       exibirAtividade/1, exibirAtividades/1, getMembroResponsavel/2, editarFeedbacks/4, criarFeedback/3]).
 
 :- use_module(library(http/json)).
+:- use_module(library(http/json_convert)).
 :- use_module("Controllers/Utils.pl").
 
 % Cria uma atividade
 atividadeToJSON(Titulo, Descricao, Dificuldade, Id_Atividade, Status, IdProjetoAtividade, IdMembroResponsavel, Feedbacks, Atividade) :-
-		swritef(Atividade, '{"titulo":"%w", "descricao":"%w", "dificuldade":"%w", "idAtividade":"%w", "status":"%w", "idProjetoAtividade":"%w", "idMembroResponsavel":"%w", "feedbacks":"%w"}',
+		swritef(Atividade, '{"titulo":"%w", "descricao":"%w", "dificuldade":"%w", "idAtividade":"%w", "status":"%w", "idProjetoAtividade":"%w", "idMembroResponsavel":"%w", "feedbacks":%w}',
     [Titulo, Descricao, Dificuldade, Id_Atividade, Status, IdProjetoAtividade, IdMembroResponsavel, Feedbacks]).
 
 % Convertendo uma lista de objetos em JSON para 
@@ -142,75 +143,16 @@ editarStatusAtividade(FilePath, IdAtividade, Status) :-
 % Predicado para verificar se uma atividade com o mesmo IdAtividade já existe no sistema
 atividadeJaExiste(_, [], false). 
 atividadeJaExiste(Busca, [Atividade|_], true) :- 
-    get_dict(_, Atividade, Id),
+    get_dict(idAtividade, Atividade, Id),
     Busca == Id.
 atividadeJaExiste(Busca, [_|T], R) :- atividadeJaExiste(Busca, T, R).
 
-% Removendo a atividade pelo ID
-removerAtividadeJSON([], _, []).
-removerAtividadeJSON([H|T], Id, Out) :-
-    H.idAtividade =\= Id,
-    removerAtividadeJSON(T, Id, Resto),
-    Out = [H | Resto].
-removerAtividadeJSON([H|T], Id, Out) :-
-    H.idAtividade =:= Id, % Verifica se o ID corresponde
-    removerAtividadeJSON(T, Id, Out).
+% Adiciona um feedback a uma atividade
+criarFeedback(FilePath, Atividade, NovoFeedback) :-
 
-removerAtividade(FilePath, Id) :-
-    lerJSON(FilePath, File),
-    removerAtividadeJSON(File, Id, SaidaParcial),
-    atividadesToJSON(SaidaParcial, Saida),
-    open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-
-editarFeedbacks([], _, _, []).
-editarFeedbacks([H|T], H.idAtividade, Feedback, [_{ titulo:H.titulo, 
-                                                    descricao:H.descricao,
-                                                    status:H.status, 
-                                                    dificuldade:H.dificuldade, 
-                                                    idProjetoAtividade:H.idProjetoAtividade, 
-                                                    idAtividade:H.idAtividade, 
-                                                    idMembroResponsavel:H.idMembroResponsavel, 
-                                                    feedbacks:[Feedback|H.feedbacks]}|T]).
-                                  
-editarFeedbacks([H|T], IdAtividade, Feedback, [H|Out]) :- editarFeedbacks(T, IdAtividade, Feedback, Out).
-
-criarFeedback(FilePath, IdAtividade, Feedback) :-
-  lerJSON(FilePath, File),
-  editarFeedbacks(File, IdAtividade, Feedback, SaidaParcial),
-  atividadesToJSON(SaidaParcial, Saida),
-  open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-
-% adicionarFeedback(ListaFeedbacks, NovaAtividade, NovaListaAtividades) :-
-%   NovaListaAtividades1 = [NovaAtividade|ListaFeedbacks],
-%   NovaListaAtividades = [NovaAtividade, ListaFeedbacks].
-
-
-% editarAtivUsuarioJSON([], _, _, []).
-% editarAtivUsuarioJSON([H|T], H.id, IdAtividade, [NovoUsuario|T]):-
-%     NovoUsuario = _{id:H.id, atividadesAtribuidas:[IdAtividade|H.atividadesAtribuidas], nome:H.nome, senha:H.senha}.
-% editarAtivUsuarioJSON([H|T], Id, IdAtividade, [H|Out]) :- 
-% 		editarAtivUsuarioJSON(T, Id, IdAtividade, Out).
-
-% addAtividadeUsuario(FilePath, IdUsuario, IdAtividade) :-
-% 		lerUsuariosJSON(FilePath, File),
-% 		editarAtivUsuarioJSON(File, IdUsuario, IdAtividade, SaidaParcial),
-% 		usuariosToJSON(SaidaParcial, Saida),
-% 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-
-% editarAtividadesJSON([], _, _, []).
-% editarAtividadesJSON([H|T], H.idUsuario, NovaAtividade, [_{idUsuario:H.idUsuario, nome:H.nome, senha:H.senha, atividadesAtribuidas:NovaListaAtividades}|T]) :-
-%     adicionarAtividade(H.atividadesAtribuidas, NovaAtividade, NovaListaAtividades).
-% editarAtividadesJSON([H|T], Id, NovaAtividade, [H|Out]) :- editarAtividadesJSON(T, Id, NovaAtividade, Out).
-
-% adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
-%     NovaListaAtividades = [NovaAtividade|ListaAtividades].
-
-% editarAtividades(FilePath, IdU, NovaAtividade) :-
-%     lerJSON(FilePath, File),
-%     editarAtividadesJSON(File, IdU, NovaAtividade, SaidaParcial),
-%     usuariosToJSON(SaidaParcial, Saida),
-%     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-
-
-
-
+  lerJSON(FilePath, Atividades),  
+  AtividadeAtualizada = Atividade.put(feedbacks, [NovoFeedback|Atividade.feedbacks]),
+  selectchk(Atividade, Atividades, AtividadeAtualizada, AtividadesAtualizadas),
+  open(FilePath, write, Stream),
+  json_write(Stream, AtividadesAtualizadas, [width(1)]),  % voltar para 0 depois
+  close(Stream).

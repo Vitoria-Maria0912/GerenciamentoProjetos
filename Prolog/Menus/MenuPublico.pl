@@ -305,13 +305,13 @@ criaFeedback:-
         writeln('                                                                       '),
         writeln('   |  Comente sobre uma atividade que você criou ou foi designado:  |  '),
         writeln('                                                                       '),
-        lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
 
         write('Digite seu ID: '),
         ler_string(IdUsuario), nl,
 
         lerJSON('Database/usuarios.json', UsuariosDoSistema),
         verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
+        lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
 
         (ExisteUsuario ->
 
@@ -320,7 +320,7 @@ criaFeedback:-
 
                 atividadeJaExiste(IdAtividade, AtividadesDoSistema, ExisteAtividade),
 
-                (ExisteAtividade -> 
+                (ExisteAtividade -> % Mesmo existindo não reconhece
 
                         getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
 
@@ -334,12 +334,13 @@ criaFeedback:-
                                 write('Escreva um breve comentário sobre a atividade: '),
                                 ler_string(Feedback), nl,
 
-                                criarFeedback('Database/bancoDeAtividades.json', IdAtividade, Feedback),
+                                criarFeedback('Database/bancoDeAtividades.json', Atividade, Feedback),
                                 writeln('                                                          '),
                                 writeln('   |  Comentário adicionado com sucesso a atividade de ID '), write(IdAtividade), write(' |                  '),
                                 writeln('                                                          '),
-                                getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
-                                exibirAtividade(Atividade), nl
+                                lerJSON('Database/bancoDeAtividades.json', AtividadesAtualizadas),
+                                getAtividadeJSON(IdAtividade, AtividadesAtualizadas, AtividadeAtualizada),
+                                exibirAtividade(AtividadeAtualizada)
 
                         ; clearScreen,
                           writeln('                                                               '),
