@@ -2,19 +2,19 @@
                     exibirProjetos/1,getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
                     verifica_id_projeto/3, editarMembros/3, ehGerente/3]).
 :- use_module(library(http/json)).
-
-:- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
+
+
 % Cria um projeto
-projetoToJSON(IdGerente, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, Projeto) :-
-    swritef(Projeto, '{"idGerente" :"%w", "nomeProjeto":"%w", "descricaoProjeto":"%w", "idProjeto":"%w", "atividadesAtribuidas":%w,"membros":%w}', 
-    [IdGerente, NomeProjeto, DescricaoProjeto,IdProjeto, Atividades, Membros]).
+projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente, Projeto) :-
+    swritef(Projeto, '{"nomeProjeto":"%w", "descricaoProjeto":"%w", "idProjeto":"%w", "atividadesAtribuidas":%w,"membros":%w, "idGerente":"%w"}', 
+    [ NomeProjeto, DescricaoProjeto,IdProjeto, Atividades, Membros, IdGerente]).
 
 % Convertendo uma lista de objetos em JSON para
 projetosToJSON([], []).
-projetosToJSON([H|T], [U|Projeto]) :-
-    projetoToJSON(H.idGerente, H.nomeProjeto, H.descricaoProjeto, H.idProjeto, H.atividadesAtribuidas, H.membros, P),
+projetosToJSON([H|T], [P|Projeto]) :-
+    projetoToJSON(H.nomeProjeto, H.descricaoProjeto, H.idProjeto, H.atividadesAtribuidas, H.membros, H.idGerente, P),
     projetosToJSON(T, Projeto).
 
 % Salvar em arquivo JSON

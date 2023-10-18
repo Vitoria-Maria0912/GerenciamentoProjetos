@@ -57,7 +57,6 @@ verifica_id(Busca, [Usuario|_], true) :-
     Busca == Id.
 verifica_id(Busca, [_|T], R) :- verifica_id(Busca, T, R).
 
-% falta adicionar atividades a um usuario
 
 % falta testar - Adicionando atividades a lista de atividades atribuidas de um usuário
 editarAtivUsuarioJSON([], _, _, []).
@@ -85,6 +84,9 @@ editarAtividades(FilePath, IdU, NovaAtividade) :-
     editarAtividadesJSON(File, IdU, NovaAtividade, SaidaParcial),
     usuariosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
+% Verifica se a senha e o ID de um usuário conferem
+
 
 % POSSIVELMENTE DESNECESSÁRIO - FOI UM TESTE, MAS, FUNCIONA!
 % editarNomeJSON([], _, _, []).

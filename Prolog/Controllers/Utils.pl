@@ -1,5 +1,8 @@
-:- module(utils, [nao_vazia/1, ler_string/1, clearScreen/0, lerJSON/2, sairDoSistema/0]).
+:- module(utils, [nao_vazia/1, ler_string/1, clearScreen/0, lerJSON/2, verificaSenhaIdUsuario/3, sairDoSistema/0]).
+
 :- use_module(library(http/json)).
+:- use_module("Controllers/Usuario.pl").
+
 
 nao_vazia(Input) :-
     Input \= "".
@@ -14,9 +17,15 @@ lerJSON(FilePath, File) :-
     open(FilePath, read, F),
     json_read_dict(F, File).
 
+verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) :-
+    getUsuarioJSON(IdUsuario, Usuarios, Usuario),
+    Usuario.senha == Senha.
+
+
 sairDoSistema :-
     clearScreen,
     writeln('                                                          '),
     writeln('        |  Você saiu do sistema! Até a próxima!  |        '),
     writeln('                                                          '), 
     halt.
+
