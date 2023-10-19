@@ -192,53 +192,31 @@ processaEntradaMenuChat(Entrada) :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
 
-% Verifica se a senha e o ID de um usuário conferem
-verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) :-
-    getUsuarioJSON(IdUsuario, Usuarios, Usuario),
-    Usuario.senha == Senha.
-
-            usuarioFazParteDeProjeto(_, []) :- false.  % Base case, usuário não faz parte de nenhum projeto
-            usuarioFazParteDeProjeto(IdUsuario, [Projeto|Projetos]) :-
-                get_dict(membros, Projeto, Membros),
-                (member(IdUsuario, Membros) -> true ; usuarioFazParteDeProjeto(IdUsuario, Projetos)).
             
-            enviarMGeral :-
+        enviarMGeral :-
                 writeln('                                                            '),
                 writeln('  |  Enviar mensagem para todos os membros do projeto:  |   '),
                 writeln('                                                            '),
-            
+                
                 write('Digite seu ID: '),
                 ler_string(IdUsuario), nl,
                 lerJSON('Database/usuarios.json', UsuariosDoSistema),
-                lerJSON('Database/projetos.json', ProjetosDoSistema),
-            
                 verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
-            
-                % Verifica se o usuário existe
-                (ExisteUsuario ->
-                    % Confere a senha correta
+                (ExisteUsuario -> 
                     write('Digite sua senha: '),
                     ler_string(Senha),
                     (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
-                        write('Senha correta'),
-            
-                        % Verifica se o usuário está em algum projeto
-                        (membroDeProjeto(IdUsuario, ProjetosDoSistema) -> 
-                            write('Faz parte de algum projeto')
-                            ;
-                            write('Não faz parte de nenhum projeto')
-                        )
-                        ;
+                        write('Senha correta')
+                    ;
                         write('Senha incorreta')
                     )
-                    ;
-                    % Usuário não existe
+                ;
+                    % usuário não existe
                     writeln('                                                            '),
                     writeln('           |  ID inexistente! Tente novamente!  |           '),
                     writeln('                                                            ')
                 ).
-            
-            
+               
         % ler_string(IdUsuario),
 
         % SE O USUÁRIO NÃO EXISTE

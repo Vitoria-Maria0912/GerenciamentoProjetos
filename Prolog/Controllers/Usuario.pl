@@ -1,5 +1,5 @@
 :- module(usuario, [usuarioToJSON/5, usuariosToJSON/2, salvarUsuario/5, exibirUsuariosAux/1, 
-                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3]).
+                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3,verificaSenhaIdUsuario/3]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
@@ -29,6 +29,10 @@ exibirUsuariosAux([H|T]) :-
     write('Nome: '), writeln(H.nome),
     write('ID Usuário: '), writeln(H.idUsuario), 
 		nl, exibirUsuariosAux(T).
+% Verifica se a senha e o ID de um usuário conferem
+verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) :-
+    getUsuarioJSON(IdUsuario, Usuarios, Usuario),
+    Usuario.senha == Senha.
 
 exibirUsuarios(FilePath) :-
 		lerJSON(FilePath, Usuarios),
