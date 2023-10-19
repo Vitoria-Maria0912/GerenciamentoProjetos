@@ -7,6 +7,7 @@
 :- use_module("Menus/MenuPublico.pl").
 :- use_module("Controllers/Utils.pl").
 :- use_module("Controllers/Usuario.pl").
+:- use_module("Controllers/Projeto.pl").
 
 % | Menu dos projetos, apenas os gerentes têm acesso
 menuRestritoProjeto :-

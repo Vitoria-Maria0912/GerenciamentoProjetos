@@ -18,10 +18,10 @@ projetosToJSON([H|T], [P|Projeto]) :-
     projetosToJSON(T, Projeto).
 
 % Salvar em arquivo JSON
-salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto, IdGerente, Atividades, Membros) :-
+salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente) :-
     lerJSON(FilePath, File),
     projetosToJSON(File, ListaProjetos),
-    projetoToJSON(IdGerente, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, Projetos),
+    projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente, Projetos),
     append(ListaProjetos, [Projetos], Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
@@ -58,6 +58,11 @@ verifica_id_projeto(Busca, [Projeto|_], true) :-
     get_dict(idProjeto, Projeto, Id),
     Busca == Id.
 verifica_id_projeto(Busca, [_|T], R) :- verifica_id_projeto(Busca, T, R).
+
+
+
+
+
 
 % verifica se um id de usuario é de um gerente de projeto
 ehGerente(_, [], false).
