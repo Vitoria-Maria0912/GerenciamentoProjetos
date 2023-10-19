@@ -36,6 +36,9 @@ exibirProjetos(FilePath) :-
 		lerJSON(FilePath, Projetos),
 		exibirProjetosAux(Projetos).
 
+
+
+
 % Pega uma projeto por ID
 getProjetoJSON(IdProjeto, [Projeto|_], Projeto):- IdProjeto == Projeto.idProjeto.
 getProjetoJSON(IdProjeto, [_|T], Projeto):- getProjetoJSON(IdProjeto, T, Projeto).
@@ -58,6 +61,8 @@ verifica_id_projeto(Busca, [Projeto|_], true) :-
     get_dict(idProjeto, Projeto, Id),
     Busca == Id.
 verifica_id_projeto(Busca, [_|T], R) :- verifica_id_projeto(Busca, T, R).
+
+
 
 % verifica se um id de usuario é de um gerente de projeto
 ehGerente(_, [], false).
@@ -96,8 +101,14 @@ editarMembros(FilePath, IdP, NovoMembro) :-
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
+
+
 % Predicado para verificar se um usuário é membro de um projeto
 membroDeProjeto(IdUsuario, IdProjeto, Projetos) :-
     member(Projeto, Projetos),
     Projeto = [idProjeto=IdProjeto, membros=Membros, idGerente=IdGerente],
     ( member(IdUsuario, Membros) ; IdUsuario = IdGerente ).
+
+
+% falta adicionar a parte de imprimir membros do projeto e remover membros
+
