@@ -39,15 +39,6 @@ processaEntradaMenuRestrito(Entrada) :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuGerente ).
 
-
-visualizarProjetos :-
-        writeln('                                                          '),
-        writeln('         |  Estes são os projetos no sistema:  |          '),
-        writeln('                                                          '),
-        retornoMenuRestrito. 
-%         visualizarProjetos.
-
-
 deletarProjeto :-
         writeln('                                                          '),
         writeln('                 |  Remover Projeto:  |                   '),
@@ -57,7 +48,6 @@ deletarProjeto :-
     
         (nao_vazia(IdUsuario) ->
             lerJSON('Database/projetos.json', ProjetosDoSistema),
-
             write('Digite o ID do projeto que deseja excluir: '),
             ler_string(IdProjeto), nl,
             
@@ -72,9 +62,10 @@ deletarProjeto :-
             ;
                 writeln('ID do projeto não pode ser vazio. Tente novamente.'), nl, retornoMenuRestrito
             )
-        ; erroMenuGerente
-        ), retornoMenuRestrito.
-        
+        ;
+            erroMenuGerente
+        ),
+        retornoMenuRestrito.
 
 gerenciarMembros :-
         writeln('                                                          '),
