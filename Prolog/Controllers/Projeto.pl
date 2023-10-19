@@ -103,11 +103,11 @@ editarMembros(FilePath, IdP, NovoMembro) :-
 
 
 
-% Predicado para verificar se um usuário é membro de um projeto
-membroDeProjeto(IdUsuario, IdProjeto, Projetos) :-
-    member(Projeto, Projetos),
-    Projeto = [idProjeto=IdProjeto, membros=Membros, idGerente=IdGerente],
-    ( member(IdUsuario, Membros) ; IdUsuario = IdGerente ).
+% % Predicado para verificar se um usuário é membro de um projeto
+% membroDeProjeto(IdUsuario, IdProjeto, Projetos) :-
+%     member(Projeto, Projetos),
+%     Projeto = [idProjeto=IdProjeto, membros=Membros, idGerente=IdGerente],
+%     ( member(IdUsuario, Membros) ; IdUsuario = IdGerente ).
 
 
 % falta adicionar a parte de imprimir membros do projeto e remover membros
