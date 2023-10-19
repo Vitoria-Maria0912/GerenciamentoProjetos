@@ -1,7 +1,8 @@
-:- module(utils, [nao_vazia/1, ler_string/1, clearScreen/0, lerJSON/2, verificaSenhaIdUsuario/3, sairDoSistema/0]).
+:- module(utils, [nao_vazia/1, ler_string/1, clearScreen/0, lerJSON/2, verificaSenhaIdUsuario/3, gerenteDoProjeto/3, sairDoSistema/0]).
 
 :- use_module(library(http/json)).
 :- use_module("Controllers/Usuario.pl").
+:- use_module("Controllers/Projeto.pl").
 
 
 nao_vazia(Input) :-
@@ -20,6 +21,10 @@ lerJSON(FilePath, File) :-
 verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) :-
     getUsuarioJSON(IdUsuario, Usuarios, Usuario),
     Usuario.senha == Senha.
+
+gerenteDoProjeto(IdProjeto, IdUsuario, Projetos) :-
+    getProjetoJSON(IdProjeto, Projetos, Projeto),
+    Projeto.idGerente == IdUsuario.
 
 
 sairDoSistema :-

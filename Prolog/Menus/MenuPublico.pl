@@ -42,8 +42,9 @@ visualizarProjetos :-
         writeln('                                                          '),
         writeln('         |  Estes são os projetos no sistema:  |          '),
         writeln('                                                          '),
-        % visualizarProjetos.
+        exibirProjetos('Database/projetos.json').
         retornoMenuPublico.
+
 
 erroMenuPublico :-
         clearScreen,
