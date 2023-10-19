@@ -36,6 +36,9 @@ exibirProjetos(FilePath) :-
 		lerJSON(FilePath, Projetos),
 		exibirProjetosAux(Projetos).
 
+
+
+
 % Pega uma projeto por ID
 getProjetoJSON(IdProjeto, [Projeto|_], Projeto):- IdProjeto == Projeto.idProjeto.
 getProjetoJSON(IdProjeto, [_|T], Projeto):- getProjetoJSON(IdProjeto, T, Projeto).
@@ -58,9 +61,6 @@ verifica_id_projeto(Busca, [Projeto|_], true) :-
     get_dict(idProjeto, Projeto, Id),
     Busca == Id.
 verifica_id_projeto(Busca, [_|T], R) :- verifica_id_projeto(Busca, T, R).
-
-
-
 
 
 
