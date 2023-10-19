@@ -1,7 +1,7 @@
 :- module(menuGeral, [menuPrincipal/0, processaEntradaMenuPrincipal/1, cadastrarUsuario/0, deletarUsuario/0, cadastrarProjeto/0,
                       menuProjetos/0, menuChat/0, enviarMPrivada/0, enviarMGeral/0, visualizarMensagensPrivadas/0,
                       visualizarMensagensGerais/0, erroMenuPrincipal/0, erroMenuChat/0, menuChat/0, processaEntradaMenuChat/1,
-                      retornoMenuPrincipal/0]).
+                      retornoMenuPrincipal/0, checarMembro/0]).
 
 :- initialization(menuPrincipal).
 :- use_module("Controllers/Usuario.pl").
@@ -39,7 +39,6 @@ processaEntradaMenuPrincipal(Entrada) :-
         ; Entrada == 'd' -> deletarUsuario
         ; Entrada == 'p' -> cadastrarProjeto
         ; Entrada == 'g' -> menuProjetos
-        ; Entrada == 'a' -> adicionaAtividade
         ; Entrada == 'm' -> clearScreen, menuChat
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
@@ -95,30 +94,6 @@ deletarUsuario :-
                     erroMenuPrincipal
                 ).
 
-%% PASSAR PRA O MENU GERENTE 
-adicionaAtividade :-
-                writeln('                                                          '),
-                writeln('               |     Alterar nome:    |                 '),
-                writeln('                                                          '),
-                write('Digite seu Id: '),
-                ler_string(IdUsuario), nl,
-                write('Digite a nova Atividade: '),
-                ler_string(Atividade), nl,
-        
-                % FALTA VERIFICAÇÃO SE O ID DA ATIVIDADE EXISTE    
-                (nao_vazia(IdUsuario), nao_vazia(Atividade) ->
-                        lerJSON('Database/usuarios.json', UsuariosDoSistema),
-                        verifica_id(IdUsuario, UsuariosDoSistema, Existe),
-                                (Existe = true ->
-                                editarAtividades('Database/usuarios.json', IdUsuario, Atividade),
-                                write('Sucesso!')
-                                ;
-                                writeln('O usuário não existe. Tente novamente.'), nl, retornoMenuPrincipal
-                                )
-                        ;
-                            erroMenuPrincipal
-                        ).
-        
 
 % teste pra ver se getUsuario está funcionando
 % imprimeUsuario :-
