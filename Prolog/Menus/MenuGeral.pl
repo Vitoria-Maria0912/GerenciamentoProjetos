@@ -224,12 +224,10 @@ menuChat :-
 
 processaEntradaMenuChat(Entrada) :- 
 
-        clearScreen,
-
-        ( Entrada == 'c' -> visualizarMensagensGerais
-        ; Entrada == 'h' -> visualizarMensagensPrivadas
-        ; Entrada == 'a' -> enviarMGeral
-        ; Entrada == 't' -> enviarMPrivada
+        ( Entrada == 'c' -> clearScreen, visualizarMensagensGerais
+        ; Entrada == 'h' -> clearScreen, visualizarMensagensPrivadas
+        ; Entrada == 'a' -> clearScreen, enviarMGeral
+        ; Entrada == 't' -> clearScreen, enviarMPrivada
         ; Entrada == 'm' -> clearScreen, menuChat
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
