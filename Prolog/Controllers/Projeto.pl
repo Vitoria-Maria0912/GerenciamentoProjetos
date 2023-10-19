@@ -1,6 +1,6 @@
 :- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
                     exibirProjetos/1,getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
-                    verifica_id_projeto/3, editarMembros/3, ehGerente/3]).
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDeProjeto/2, addAtividadesProj/2]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
@@ -18,10 +18,10 @@ projetosToJSON([H|T], [P|Projeto]) :-
     projetosToJSON(T, Projeto).
 
 % Salvar em arquivo JSON
-salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto, IdGerente, Atividades, Membros) :-
+salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente) :-
     lerJSON(FilePath, File),
     projetosToJSON(File, ListaProjetos),
-    projetoToJSON(IdGerente, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, Projetos),
+    projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente, Projetos),
     append(ListaProjetos, [Projetos], Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
@@ -75,7 +75,7 @@ editarAtividadesJSON([H|T], Id, NovaAtividade, [H|Out]) :- editarAtividadesJSON(
 adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
     NovaListaAtividades = [NovaAtividade|ListaAtividades].
 
-editarAtividades(FilePath, IdP, NovaAtividade) :-
+addAtividadesProj(FilePath, IdP, NovaAtividade) :-
     lerJSON(FilePath, File),
     editarAtividadesJSON(File, IdP, NovaAtividade, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
@@ -83,7 +83,7 @@ editarAtividades(FilePath, IdP, NovaAtividade) :-
 
 % adiciona membros a um projeto 
 editarMembrosJSON([], _, _, []).
-editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [_{idProjeto:H.idProjeto, nomeProjeto:H.nomeProjeto, descricaoProjeto:H.descricaoProjeto, atividadesAtribuidas:H.atividadesAtribuidas, membros:NovaListaDeMembros}|T]) :-
+editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [_{idProjeto:H.idProjeto, nomeProjeto:H.nomeProjeto, descricaoProjeto:H.descricaoProjeto, atividadesAtribuidas:H.atividadesAtribuidas, membros:NovaListaDeMembros, idGerente:H.idGerente}|T]) :-
 adicionarMembro(H.atividadesAtribuidas, NovoMembro, NovaListaDeMembros).
 editarMembrosJSON([H|T], Id, NovoMembro, [H|Out]) :- editarMembrosJSON(T, Id, NovaAtividade, Out).
 
@@ -95,4 +95,12 @@ editarMembros(FilePath, IdP, NovoMembro) :-
     editarMembrosJSON(File, IdP, NovoMembro, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-% falta adicionar atividades a um projeto
+
+% Verifica se o usuário é membro ou gerente de algum projeto
+membroDeProjeto(_, []):- false. % Caso base: usuário não é membro de nenhum projeto.
+membroDeProjeto(IdUsuario, [Projeto|OutrosProjetos]) :-
+    % usa o member pra ver se é membro e verifica se é idGerente de algum  projeto
+    ( member(IdUsuario, Projeto.membros); Projeto.idGerente == IdUsuario )
+    ;
+    % verifica nos outros projetos
+    membroDeProjeto(IdUsuario, OutrosProjetos)

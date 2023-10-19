@@ -39,7 +39,6 @@ processaEntradaMenuPrincipal(Entrada) :-
         ; Entrada == 'd' -> deletarUsuario
         ; Entrada == 'p' -> cadastrarProjeto
         ; Entrada == 'g' -> menuProjetos
-        ; Entrada == 'a' -> adicionaAtividade
         ; Entrada == 'm' -> clearScreen, menuChat
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
@@ -95,30 +94,6 @@ deletarUsuario :-
                     erroMenuPrincipal
                 ).
 
-%% PASSAR PRA O MENU GERENTE 
-adicionaAtividade :-
-                writeln('                                                          '),
-                writeln('               |     Alterar nome:    |                 '),
-                writeln('                                                          '),
-                write('Digite seu Id: '),
-                ler_string(IdUsuario), nl,
-                write('Digite a nova Atividade: '),
-                ler_string(Atividade), nl,
-        
-                % FALTA VERIFICAÇÃO SE O ID DA ATIVIDADE EXISTE    
-                (nao_vazia(IdUsuario), nao_vazia(Atividade) ->
-                        lerJSON('Database/usuarios.json', UsuariosDoSistema),
-                        verifica_id(IdUsuario, UsuariosDoSistema, Existe),
-                                (Existe = true ->
-                                editarAtividades('Database/usuarios.json', IdUsuario, Atividade),
-                                write('Sucesso!')
-                                ;
-                                writeln('O usuário não existe. Tente novamente.'), nl, retornoMenuPrincipal
-                                )
-                        ;
-                            erroMenuPrincipal
-                        ).
-        
 
 % teste pra ver se getUsuario está funcionando
 % imprimeUsuario :-
