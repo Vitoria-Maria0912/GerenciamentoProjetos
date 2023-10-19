@@ -197,25 +197,40 @@ processaEntradaMenuChat(Entrada) :-
                 writeln('                                                            '),
                 writeln('  |  Enviar mensagem para todos os membros do projeto:  |   '),
                 writeln('                                                            '),
-                
+            
                 write('Digite seu ID: '),
-                ler_string(IdUsuario), nl,
+                ler_string(IdUsuario),
+                nl,
                 lerJSON('Database/usuarios.json', UsuariosDoSistema),
+                lerJSON('Database/projetos.json', ProjetosDoSistema),
                 verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
                 (ExisteUsuario -> 
                     write('Digite sua senha: '),
                     ler_string(Senha),
                     (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
-                        write('Senha correta')
-                    ;
-                        write('Senha incorreta')
+                        write('Senha correta'),
+            
+                        % Verifica se pertence a algum projeto
+                        (membroDeProjeto(IdUsuario, ProjetosDoSistema) -> 
+                            write('Faz parte de algum projeto')
+                            ;
+                            writeln('                                                            '),
+                            writeln('      |  Este usuário não é membro de nenhum projeto!  |    '),
+                            writeln('                                                            ')
+                        )
+                        ;
+                        % SE A SENHA INCORRETA: 
+                        writeln('                                                            '),
+                        writeln('           |  Senha incorreta! Tente novamente!  |          '),
+                        writeln('                                                            ')
                     )
-                ;
-                    % usuário não existe
+                    ;
+                    % Usuário não existe
                     writeln('                                                            '),
                     writeln('           |  ID inexistente! Tente novamente!  |           '),
                     writeln('                                                            ')
                 ).
+            
                
         % ler_string(IdUsuario),
 
