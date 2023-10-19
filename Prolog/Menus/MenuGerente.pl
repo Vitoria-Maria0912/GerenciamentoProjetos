@@ -221,30 +221,33 @@ atribuirAtividade(IdProjeto) :-
         (nao_vazia(IdAtividade) ->
         verifica_id_atividade(IdAtividade, Atividades, AtvExiste),
         (AtvExiste ->
-                write('Digite o ID do membro que deseja atribuir à atividade: '),
-                ler_string(IdMembro), nl,
-                (nao_vazia(IdMembro) ->
-                verifica_id(IdMembro, Usuarios, Existe),
-                (Existe ->
-                        membroDeProjeto(IdMembro, Projetos) ->
-                        editarAtividades('Database/usuarios.json', IdUsuario, Atividade),
-                        addAtividadesProj('Database/projetos.json' IdProjeto, Atividade),
-                        writeln('                                                                      '),
-                        writeln('              |     Atividade atribuída com sucesso!    |             '),
-                        writeln('                                                                      '), ln
-                        ;
-                        writeln('                                                                      '),
-                        writeln('               |     Membro não está no projeto!    |                 '),
-                        writeln('                                                                      '), nl, retornoMenuRestrito
-                ;writeln('                                                                    '),
-                 writeln('              |     ID inexistente, tente novamente!    |           '),
-                 writeln('                                                                    '), nl, retornoMenuRestrito  
-                ); erroMenuGerente, retornoMenuRestrito
-                );  writeln('                                                          '),
-                    writeln('           |     A atividade não existe!    |             '),
-                    writeln('                                                          '), nl, retornoMenuRestrito )
-                ;
-                erroMenuGerente, retornoMenuRestrito
+        write('Digite o ID do membro que deseja atribuir à atividade: '),
+        ler_string(IdMembro), nl,
+        (nao_vazia(IdMembro) ->
+        verifica_id(IdMembro, Usuarios, Existe),
+        (Existe ->
+        % membroDeProjeto(IdMembro, Projetos) ->
+        editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
+        addAtividadesProj('Database/projetos.json', IdProjeto, IdAtividade),
+        writeln('                                                                      '),
+        writeln('              |     Atividade atribuída com sucesso!    |             '),
+        writeln('                                                                      '), nl, retornoMenuRestrito
+        % ;
+        % writeln('                                                                      '),
+        % writeln('               |     Membro não está no projeto!    |                 '),
+        % writeln('                                                                      '), nl, retornoMenuRestrito
+        ;
+        writeln('                                                                    '),
+        writeln('              |     ID inexistente, tente novamente!    |           '),
+        writeln('                                                                    '), nl, retornoMenuRestrito  
+        ); 
+        erroMenuGerente, retornoMenuRestrito
+        );  
+        writeln('                                                          '),
+        writeln('           |     A atividade não existe!    |             '),
+        writeln('                                                          '), nl, retornoMenuRestrito 
+        );
+        erroMenuGerente, retornoMenuRestrito
         ).
 
 

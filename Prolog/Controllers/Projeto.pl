@@ -1,6 +1,6 @@
 :- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
                     exibirProjetos/1,getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
-                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDeProjeto/2, addAtividadesProj/2]).
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDeProjeto/2, addAtividadesProj/3]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
@@ -68,7 +68,7 @@ ehGerente(Busca, [_|T], R) :- ehGerente(Busca, T, R).
 
 % adiciona atividades a um projeto (ver se funciona na pratica)
 editarAtividadesJSON([], _, _, []).
-editarAtividadesJSON([H|T], H.idProjeto, NovaAtividade, [_{idProjeto:H.idProjeto, nomeProjeto:H.nomeProjeto, descricaoProjeto:H.descricaoProjeto, atividadesAtribuidas:NovaListaAtividades, membros: H.membros}|T]) :-
+editarAtividadesJSON([H|T], H.idProjeto, NovaAtividade, [_{idProjeto:H.idProjeto, nomeProjeto:H.nomeProjeto, descricaoProjeto:H.descricaoProjeto, atividadesAtribuidas:NovaListaAtividades, membros: H.membros, idGerente:H.idGerente}|T]) :-
     adicionarAtividade(H.atividadesAtribuidas, NovaAtividade, NovaListaAtividades).
 editarAtividadesJSON([H|T], Id, NovaAtividade, [H|Out]) :- editarAtividadesJSON(T, Id, NovaAtividade, Out).
 
