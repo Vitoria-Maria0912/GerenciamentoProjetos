@@ -100,4 +100,6 @@ editarMembros(FilePath, IdP, NovoMembro) :-
     editarMembrosJSON(File, IdP, NovoMembro, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-% falta adicionar atividades a um projeto
+
+
+% falta adicionar a parte de imprimir membros do projeto e remover membros
