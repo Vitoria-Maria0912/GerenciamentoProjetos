@@ -9,9 +9,11 @@ usuarioToJSON(Nome, Senha, IdUsuario, Atividades, Usuario) :-
     swritef(Usuario, '{"nome":"%w", "senha":"%w", "idUsuario":"%w", "atividadesAtribuidas":%w}',
 [Nome, Senha, IdUsuario, Atividades]).
 
+
 % Convertendo uma lista de objetos em JSON para 
 usuariosToJSON([], []).
 usuariosToJSON([H|T], [U|Usuario]) :- 
+
     usuarioToJSON(H.nome, H.senha, H.idUsuario, H.atividadesAtribuidas, U),
     usuariosToJSON(T, Usuario).
 
@@ -20,6 +22,7 @@ salvarUsuario(FilePath, Nome, Senha, IdUsuario, Atividades) :-
     lerJSON(FilePath, File),
     usuariosToJSON(File, ListaUsuarios),
     usuarioToJSON(Nome, Senha, IdUsuario, Atividades, Usuarios),
+
     append(ListaUsuarios, [Usuarios], Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
@@ -44,6 +47,7 @@ removerUsuarioJSON([H|T], H.idUsuario, T).
 removerUsuarioJSON([H|T], Id, [H|Out]):- removerUsuarioJSON(T, Id, Out).
 
 removerUsuario(FilePath, Id):-
+
     lerJSON(FilePath, File),
     removerUsuarioJSON(File, Id, SaidaParcial),
     usuariosToJSON(SaidaParcial, Saida),

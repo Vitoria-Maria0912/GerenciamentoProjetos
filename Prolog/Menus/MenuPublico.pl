@@ -10,7 +10,7 @@
 
 % | Menu dos projetos, todos os usuários tem acesso
 menuPublicoProjeto :-
-
+        visualizarProjetos,
         writeln('                                                          '),
         writeln('             |     Menu de projetos:    |                 '),
         writeln('                                                          '),
@@ -37,13 +37,24 @@ processaEntradaMenuPublico(Entrada) :-
         ; erroMenuPublico ).
 
 
+% visualizarProjetos :-
+%         clearScreen,
+%         writeln('                                                          '),
+%         writeln('         |  Estes são os projetos no sistema:  |          '),
+%         writeln('                                                          '),
+%         % visualizarProjetos.
+
+%         retornoMenuPublico.
+
 visualizarProjetos :-
         clearScreen,
-        writeln('                                                          '),
-        writeln('         |  Estes são os projetos no sistema:  |          '),
-        writeln('                                                          '),
-        % visualizarProjetos.
+        writeln('-----------------------------------------------------------'),
+        writeln('            Estes são os projetos no sistema:'),
+        writeln('-----------------------------------------------------------'),
+        exibirProjetosAux('Database/projetos.json'),
         retornoMenuPublico.
+    
+
 
 erroMenuPublico :-
         clearScreen,

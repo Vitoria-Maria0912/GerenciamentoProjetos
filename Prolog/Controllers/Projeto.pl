@@ -5,7 +5,6 @@
 :- use_module("Controllers/Utils.pl").
 
 
-
 % Cria um projeto
 projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente, Projeto) :-
     swritef(Projeto, '{"nomeProjeto":"%w", "descricaoProjeto":"%w", "idProjeto":"%w", "atividadesAtribuidas":%w,"membros":%w, "idGerente":"%w"}', 
@@ -22,14 +21,15 @@ salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto, IdGerente, Ati
     lerJSON(FilePath, File),
     projetosToJSON(File, ListaProjetos),
     projetoToJSON(IdGerente, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, Projetos),
+
     append(ListaProjetos, [Projetos], Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 % Exibe os projetos cadastrados omitindo a descricaoProjeto
 exibirProjetosAux([]).
 exibirProjetosAux([H|T]) :-
-    write('Nome do projeto: '), writeln(H.nomeProjeto),
-    write('ID Projeto: '), writeln(H.idProjeto),
+    write('NomeProjeto:'), writeln(H.nomeProjeto),
+    write('ID Projeto:'), writeln(H.idProjeto),
 		nl, exibirProjetosAux(T).
 
 exibirProjetos(FilePath) :-
@@ -58,6 +58,7 @@ verifica_id_projeto(Busca, [Projeto|_], true) :-
     get_dict(idProjeto, Projeto, Id),
     Busca == Id.
 verifica_id_projeto(Busca, [_|T], R) :- verifica_id_projeto(Busca, T, R).
+
 
 % verifica se um id de usuario é de um gerente de projeto
 ehGerente(_, [], false).
@@ -95,4 +96,5 @@ editarMembros(FilePath, IdP, NovoMembro) :-
     editarMembrosJSON(File, IdP, NovoMembro, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
 % falta adicionar atividades a um projeto
