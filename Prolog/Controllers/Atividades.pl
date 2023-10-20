@@ -1,6 +1,6 @@
 :- module(atividade, [lerJSON/2, atividadeToJSON/9, atividadesToJSON/2, salvarAtividade/9,
                       exibirAtividadesAux/1, exibirAtividades/1, editarIdProjetoAtividadeJSON/4, editarIdProjetoAtividade/3, 
-                      editarMembroResponsavelAtividadeJSON/4, getAtividadesJSON/3, atividadeJaExiste/3, removerAtividade/2,
+                      editarMembroResponsavelAtividadeJSON/4, getAtividadesJSON/3, removerAtividade/2,
                       verifica_id_atividade/3, getAtividadeJSON/3, editarStatusAtividade/3, editarStatusAtividadeJSON/4,
                       exibirAtividade/1, exibirAtividades/1, getMembroResponsavel/2, editarFeedbacks/4, criarFeedback/3]).
 
@@ -54,7 +54,7 @@ exibirAtividade(Atividade) :-
     write('|- Feedbacks: '), writeln(Atividade.feedbacks),
 		nl.
 
-% Verifica se um ID existe dentro da lista de atividades
+% Predicado para verificar se uma atividade com o mesmo IdAtividade já existe no sistema
 verifica_id_atividade(_, [], false).
 verifica_id_atividade(Busca, [Atividade|_], true) :-
     get_dict(idAtividade, Atividade, Id),
@@ -139,13 +139,6 @@ editarStatusAtividade(FilePath, IdAtividade, Status) :-
   editarStatusAtividadeJSON(File, IdAtividade, Status, SaidaParcial),
   atividadesToJSON(SaidaParcial, Saida),
   open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-
-% Predicado para verificar se uma atividade com o mesmo IdAtividade já existe no sistema
-atividadeJaExiste(_, [], false). 
-atividadeJaExiste(Busca, [Atividade|_], true) :- 
-    get_dict(idAtividade, Atividade, Id),
-    Busca == Id.
-atividadeJaExiste(Busca, [_|T], R) :- atividadeJaExiste(Busca, T, R).
 
 % Adiciona um feedback a uma atividade
 criarFeedback(FilePath, Atividade, NovoFeedback) :-

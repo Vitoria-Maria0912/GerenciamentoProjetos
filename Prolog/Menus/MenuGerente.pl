@@ -40,7 +40,7 @@ processaEntradaMenuRestrito(Entrada) :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuProjeto ).
 
-deletarProjeto :-
+deletarProjeto :-    % seria uma boa tambem colocar a senha
 
         visualizarProjetos,
 
@@ -291,7 +291,7 @@ menuBancoDeAtividades :-
         
         ( LowerOption == 'l' -> clearScreen, listarAtividades, retornoMenuProjetos
         ; LowerOption == 'c' -> clearScreen, criaAtividade, addIdProjeto
-        % ; LowerOption == 'r' -> clearScreen, deletaAtividade
+        ; LowerOption == 'r' -> clearScreen, deletaAtividade
         ; LowerOption == 'i' -> clearScreen, comecarAtividade
         ; LowerOption == 'f' -> clearScreen, finalizarAtividade
         % ; LowerOption == 'v' -> clearScreen, visualizarAtividades, retornoMenuProjetos
@@ -304,8 +304,7 @@ menuBancoDeAtividades :-
         ; erroMenuProjeto ).
         
 addIdProjeto:-
-        % lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
-        
+
         writeln('Deseja adicionar a atividade a um projeto? (S/N)'),
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII), 
@@ -317,50 +316,84 @@ addIdProjeto:-
                                 write('Digite o ID do projeto que deseja adicionar a atividade: '),
                                 ler_string(IdProjetoAtividade), nl,
 
-                                % É NECESSÁRIA A VERIFICAÇÃO DO PROJETO!!!         <<<<< Não está alterando >>>>>>>>
+                                lerJSON('Database/projetos.json', ProjetosDoSistema),
 
-                                % poderia tirar o retorno, não?
-                                editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjetoAtividade),
-                                writeln('Atividade alterada com sucesso!'),
-                                retornoMenuProjetos
+                                verifica_id_projeto(IdProjeto, ProjetosDoSistema, ExisteProjeto),
+
+                                (ExisteProjeto -> 
+
+                                        write('Digite seu ID: '),
+                                        ler_string(IdUsuario), nl,
+                                
+                                        lerJSON('Database/usuarios.json', UsuariosDoSistema),
+                                        verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
+                        
+                                        getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
+                        
+                                        (ExisteUsuario, Projeto.idGerente == IdUsuario ->
+
+                                                editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjetoAtividade),
+                                                writeln('                                                    '),
+                                                writeln('            |  Atividade alterada com sucesso!  |   '),
+                                                writeln('                                                    ')
+
+                                        ; clearScreen,
+                                        writeln('                                                               '),
+                                        writeln('    |  Você não está autorizado a realizar esta ação!  |       '),
+                                        writeln('                                                               ')
+                                        )
+                                ; clearScreen,
+                                writeln('                                                                                                          '),
+                                writeln(' |  Campo obrigatório vazio ou inválido, não foi possível criar a atividade, tente novamente!  |          '),
+                                writeln('                                                                                                          ')
+                                )
         ; LowerOption == 'n' -> menuBancoDeAtividades
-        ; erroMenuProjeto).
+        ; erroMenuProjeto), retornoMenuProjetos.
 
 
-% Deleta uma atividade do projeto(Inicialmente remove pelo o ID da atividade)    <<<< Falta fazer verificação se é vazio as entradas>>>>>>>>>>>>>>>>>>>
-deletaAtividade :-
+% Deleta uma atividade do projeto
+deletaAtividade :-                % Ainda tem bugs
+
+        % visualizarAtividadesDoProjeto,       cadê????
+
         writeln('                                                                    '),
         writeln('               |  Deletar atividade de um projeto:  |               '),
         writeln('                                                                    '),
+
+        write('Digite o ID da atividade a ser deletada: '),
+        ler_string(IdAtividade), nl,
+        write('Digite o ID do projeto que a atividade pertence: '),
+        ler_string(IdProjetoAtividade), nl,
+
+        lerJSON('Database/usuarios.json', UsuariosDoSistema),
+        lerJSON('Database/projetos.json', ProjetosDoSistema),
+        lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
+
+        verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
+        verifica_id_projeto(IdProjeto, ProjetosDoSistema, ExisteProjeto),
+        verifica_id_atividade(IdAtividade, AtividadesEncontradas, ExisteAtividade),
+
+        (ExisteUsuario, ExisteProjeto, ExisteAtividade -> 
+
+                write('Digite seu ID: '),
+                ler_string(IdUsuario), nl,
         
-        %write('Digite o ID da Atividade a ser deletada: '),
-        %%ler_string(IdAtividade), nl,
-        %---- DEVERIA SER ESSA CONFIGURAÇÃO , COM BASE NO ID DO PROJETO PASSADO
-        write('Digite o ID do projeto que terá a atividade a ser deletada: '),
-        ler_string(IdProjeto), nl,
-        % Sem a leitura abaixo não consigo remover
-        (nao_vazia(IdProjeto) ->
-                        lerJSON('Database/projetos.json', ProjetosDoSistema),
-                        lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
-                        write('Verificando ID Projeto : '), writeln(IdProjeto), nl,
-                        verifica_id(IdProjeto, ProjetosDoSistema, Existe),
+                getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
 
-                        verifica_id(IdAtividade, AtividadesEncontradas, Presente),
-                                (Existe == true , Presente == true ->
-                                        
-                                        write('Digite o ID da atividade a ser removida'),
-                                        getAtividadeJSON(IdProjeto,AtividadesDoSistema,AtividadesEncontradas),
-                                        exibirAtividadesAux(AtividadesEncontradas),
-                                        ler_string(IdAtividade), nl,
-                                        removerAtividade('Database/bancoDeAtividades.json', IdAtividade), 
-                                    
-                                        %% listar atividades do projeto e depois escolhe e remove 
-                                
-                                writeln('O usuário não existe. Tente novamente.'), 
-                                retornoMenuProjetos
-                                
-                                )   
-        ; erroMenuProjeto),
+                (Projeto.idGerente == IdUsuario ->
 
-       retornoMenuProjetos.
+                        editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, 'Não atribuído!'),
+                        writeln('                                                    '),
+                        writeln('            |  Atividade deletada com sucesso!  |   '),
+                        writeln('                                                    ')
 
+                ; clearScreen,
+                writeln('                                                               '),
+                writeln('    |  Você não está autorizado a realizar esta ação!  |       '),
+                writeln('                                                               ')
+                )
+        ; clearScreen,
+        writeln('                                                                                                          '),
+        writeln(' |  Campo obrigatório vazio ou inválido, não foi possível criar a atividade, tente novamente!  |          '),
+        writeln('                                                                                                          ')
+        ), retornoMenuProjetos.

@@ -140,7 +140,7 @@ criaAtividade :-
                 random(10000, 99999, Idatom),
                 atom_string(Idatom,IdAtividade),
                 lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
-                atividadeJaExiste(IdAtividade, AtividadesDoSistema, Existe),
+                verifica_id_atividade(IdAtividade, AtividadesDoSistema, Existe),
                 (\+ Existe -> 
                         salvarAtividade('Database/bancoDeAtividades.json', Titulo, Descricao, Dificuldade, IdAtividade, 'Não atribuída!', 'Não atribuído!', 'Não atribuído!', []), 
                         write('Atividade criada! E o ID dela é: '), writeln(IdAtividade), nl
@@ -178,7 +178,7 @@ comecarAtividade :-
         ler_string(IdAtividade), nl,
 
         lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
-        atividadeJaExiste(IdAtividade, AtividadesDoSistema, ExisteAtividade),
+        verifica_id_atividade(IdAtividade, AtividadesDoSistema, ExisteAtividade),
 
         (ExisteUsuario, ExisteAtividade ->
 
@@ -221,7 +221,7 @@ finalizarAtividade:-
         ler_string(IdAtividade), nl,
 
         lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
-        atividadeJaExiste(IdAtividade, AtividadesDoSistema, ExisteAtividade),
+        verifica_id_atividade(IdAtividade, AtividadesDoSistema, ExisteAtividade),
 
         (ExisteUsuario, ExisteAtividade ->
 
@@ -256,7 +256,7 @@ visualizarStatusAtividade:-
         ler_string(IdAtividade), nl,
 
         lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),  
-        atividadeJaExiste(IdAtividade, AtividadesDoSistema, ExisteAtividade),
+        verifica_id_atividade(IdAtividade, AtividadesDoSistema, ExisteAtividade),
 
         (ExisteAtividade -> 
                 getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
@@ -281,7 +281,7 @@ consultarAtividade:-
         ler_string(IdAtividade), nl,
 
         lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),  
-        atividadeJaExiste(IdAtividade, AtividadesDoSistema, ExisteAtividade),
+        verifica_id_atividade(IdAtividade, AtividadesDoSistema, ExisteAtividade),
 
         (ExisteAtividade -> 
                 getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
@@ -315,9 +315,9 @@ criaFeedback:-
         getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
         IdProjeto = Atividade.idProjetoAtividade,
 
-        atividadeJaExiste(IdAtividade, AtividadesDoSistema, ExisteAtividade),
+        verifica_id_atividade(IdAtividade, AtividadesDoSistema, ExisteAtividade),
 
-        (ExisteUsuario, ExisteAtividade, (IdProjeto \= 'Não atribuído!') -> % Mesmo existindo não reconhece
+        (ExisteUsuario, ExisteAtividade, (IdProjeto \= 'Não atribuído!') -> 
 
                 lerJSON('Database/projetos.json', ProjetosDoSistema),
                 getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
