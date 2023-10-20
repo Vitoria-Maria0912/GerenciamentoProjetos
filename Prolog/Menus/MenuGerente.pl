@@ -132,16 +132,18 @@ processaEntradaMembros(Entrada, IdProjeto) :-
 
 visualizarMembros(IdProjeto) :-
 
-        % FALTA A RESPOSTA CASO O PROJETO NAO TENHA MEMBROS.
-        % FALTA FORMATAR ESSE PRIMEIRO PRINT AQUI
-        writeln('                                                                                     '),
-        writeln('   |  Estes são os membros do projeto:'), write(IdProjeto), write('  |          '),
-        writeln('                                                                                     '),
-        
-        lerJSON('Database/projetos.json', Projetos),
+        lerJSON('Database/projetos.json', ProjetosDoSistema),
         lerJSON('Database/usuarios.json', Usuarios),
-        retornarMembros(IdProjeto, Projetos, Membros),
-        exibirMembros(Membros, Usuarios).
+
+        getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
+        ListaMembros = Projeto.membros,
+        length(ListaMembros, QuantidadeDeMembros),
+
+        (QuantidadeDeMembros == 0 -> nl, write('      |     Não há membros no projeto: (ID: '), write(IdProjeto), write(')    |     '), nl
+
+        ; nl, write('   |     Estes são os membros do projeto: (ID: '), write(IdProjeto), write(')    |     '), nl,
+        nl, retornarMembros(IdProjeto, ProjetosDoSistema, Membros, Usuarios)
+        ).
 
 % FALTA VERIFICAÇÃO SE É MEMBRO DE UM PROJETO, OU SE JÁ É MEMBRO DO PROJETO
 adicionaNovoMembro(IdProjeto) :-
@@ -232,11 +234,13 @@ atribuirAtividade(IdProjeto) :-
         writeln('                                                                    '),
         writeln('              |     Atuais membros do projeto:    |                  '),
         writeln('                                                                    '),
-        % imprimirMembrosDoProjeto  >>>>>>>> AINDA PRECISA SER FEITO
+       
+       visualizarMembros(IdProjeto),
 
         lerJSON('Database/projetos.json', Projetos),
         lerJSON('Database/usuarios.json', Usuarios),
         lerJSON('Database/bancoDeAtividades.json', Atividades),
+        getProjetoJSON(IdProjeto, Projetos, Projeto),
 
         write('Digite o ID da atividade: '),
         ler_string(IdAtividade), nl,
@@ -249,16 +253,22 @@ atribuirAtividade(IdProjeto) :-
         (nao_vazia(IdMembro) ->
         verifica_id(IdMembro, Usuarios, Existe),
         (Existe ->
-        editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
-        addAtividadesProj('Database/projetos.json', IdProjeto, IdAtividade),
-        writeln('                                                                      '),
-        writeln('              |     Atividade atribuída com sucesso!    |             '),
-        writeln('                                                                      '), nl, retornoMenuProjetos
+                membroDoProjeto(IdMembro, Projeto) ->
+                editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
+                addAtividadesProj('Database/projetos.json', IdProjeto, IdAtividade),
+                writeln('                                                                      '),
+                writeln('              |     Atividade atribuída com sucesso!    |             '),
+                writeln('                                                                      '), nl, retornoMenuProjetos
+                ; 
+                writeln('                                                                      '),
+                writeln('              |     Membro não está no projeto!         |             '),
+                writeln('                                                                      '), nl, retornoMenuProjetos
         ;
         writeln('                                                                    '),
         writeln('              |     ID inexistente, tente novamente!    |           '),
         writeln('                                                                    '), nl, retornoMenuProjetos  
-        ); 
+        )
+        ; 
         erroMenuProjeto, retornoMenuProjetos
         );  
         writeln('                                                          '),
