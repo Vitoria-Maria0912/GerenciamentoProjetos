@@ -256,6 +256,7 @@ atribuirAtividade(IdProjeto) :-
                 membroDoProjeto(IdMembro, Projeto) ->
                 editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
                 addAtividadesProj('Database/projetos.json', IdProjeto, IdAtividade),
+                editarMembroResponsavelAtividade('Database/bancoDeAtividades.json', IdAtividade, IdMembro),
                 writeln('                                                                      '),
                 writeln('              |     Atividade atribuída com sucesso!    |             '),
                 writeln('                                                                      '), nl, retornoMenuProjetos
