@@ -13,16 +13,16 @@
 menuRestritoProjeto :-
 
         writeln('                                                          '),
-        writeln('             |     Menu de projetos:    |                 '),
+        writeln('             |     Menu de projetos:    |                 '), nl,
         writeln('                                                          '),
-        writeln('                 Selecione uma opção:                     '),
+        writeln('                 Selecione uma opção:                     '), nl,
         writeln('                                                          '),
-        writeln('           L - Listar projetos cadastrados                '), 
-        writeln('           P - Remover projeto                            '),  
-        writeln('           G - Gerenciar membros do projeto               '),  
-        writeln('           B - Menu do banco de atividades                '),  
-        writeln('           M - Voltar ao menu principal                   '),
-        writeln('           S - Sair do sistema                            '),  
+        writeln('           L - Listar projetos cadastrados                '), nl, 
+        writeln('           P - Remover projeto                            '), nl,  
+        writeln('           G - Gerenciar membros do projeto               '), nl,  
+        writeln('           B - Menu do banco de atividades                '), nl,  
+        writeln('           M - Voltar ao menu principal                   '), nl,
+        writeln('           S - Sair do sistema                            '), 
         writeln('                                                          '),
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII),
@@ -92,16 +92,16 @@ gerenciarMembros :-                     % Prolog está frescando no retornoMenuP
 
         (ExisteProjeto -> 
                 writeln('                                                          '),
-                writeln('                O que deseja fazer agora?                 '),
+                writeln('                O que deseja fazer agora?                 '), nl,
                 writeln('                                                          '),
-                writeln('                  Selecione uma opção:                    '),
+                writeln('                  Selecione uma opção:                    '), nl,
                 writeln('                                                          '),
-                writeln('            M - Visualizar membros do projeto             '),
-                writeln('            A - Atribuir atividade a um membro            '),
-                writeln('            N - Adicionar membro ao projeto               '),
-                writeln('            R - Remover membro do projeto                 '),
-                writeln('            V - Voltar ao menu principal                  '),
-                writeln('            P - Voltar ao menu de projetos                '),
+                writeln('            M - Visualizar membros do projeto             '), nl,
+                writeln('            A - Atribuir atividade a um membro            '), nl,
+                writeln('            N - Adicionar membro ao projeto               '), nl,
+                writeln('            R - Remover membro do projeto                 '), nl,
+                writeln('            V - Voltar ao menu principal                  '), nl,
+                writeln('            P - Voltar ao menu de projetos                '), nl,
                 writeln('            S - Sair do sistema                           '),
                 writeln('                                                          '), 
 
@@ -246,7 +246,7 @@ atribuirAtividade(IdProjeto) :-
         verifica_id(IdMembro, Usuarios, Existe),
         (Existe ->
         editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
-        addAtividadesProj('Database/projetos.json', IdProjeto, IdAtividade),
+        addAtividadesProjeto('Database/projetos.json', IdProjeto, IdAtividade),
         writeln('                                                                      '),
         writeln('              |     Atividade atribuída com sucesso!    |             '),
         writeln('                                                                      '), nl, retornoMenuProjetos
@@ -267,21 +267,21 @@ atribuirAtividade(IdProjeto) :-
 
 menuBancoDeAtividades :-
         writeln('                                                          '),
-        writeln('           |     Menu Banco de Atividades    |            '),
+        writeln('           |     Menu Banco de Atividades    |            '), nl,
         writeln('                                                          '),
-        writeln('                 Selecione uma opção:                     '),
+        writeln('                 Selecione uma opção:                     '), nl,
         writeln('                                                          '),
-        writeln('             L - Listar atividades cadastradas            '),
-        writeln('             C - Criar uma atividade                      '),
-        writeln('             R - Remover uma atividade                    '),
-        writeln('             I - Iniciar uma atividade                    '), 
-        writeln('             F - Finalizar uma atividade                  '),
-        writeln('             V - Visualizar atividades do projeto         '),
-        writeln('             A - Visualizar status de uma atividade       '),
-        writeln('             D - Consultar uma atividade por ID           '),
-        writeln('             O - Dar feedback em uma atividade            '),
-        writeln('             P - Voltar ao menu de projetos               '),
-        writeln('             M - Voltar ao menu principal                 '),
+        writeln('             L - Listar atividades cadastradas            '), nl,
+        writeln('             C - Criar uma atividade                      '), nl,
+        writeln('             R - Remover uma atividade                    '), nl,
+        writeln('             I - Iniciar uma atividade                    '), nl, 
+        writeln('             F - Finalizar uma atividade                  '), nl,
+        writeln('             V - Visualizar atividades do projeto         '), nl,
+        writeln('             A - Visualizar status de uma atividade       '), nl,
+        writeln('             D - Consultar uma atividade por ID           '), nl,
+        writeln('             O - Dar feedback em uma atividade            '), nl,
+        writeln('             P - Voltar ao menu de projetos               '), nl,
+        writeln('             M - Voltar ao menu principal                 '), nl,
         writeln('             S - Sair do sistema                          '),
         writeln('                                                          '),
 
@@ -310,7 +310,9 @@ addIdProjeto:-
         char_code(Input, CodigoASCII), 
         downcase_atom(Input, LowerOption), nl,
 
-        ( LowerOption == 's' -> write('Digite, novamente, o ID da atividade: '),
+        ( LowerOption == 's' -> visualizarProjetos, nl,
+                
+                                write('Digite, novamente, o ID da atividade: '),
                                 ler_string(IdAtividade), nl,
 
                                 write('Digite o ID do projeto que deseja adicionar a atividade: '),
@@ -318,9 +320,10 @@ addIdProjeto:-
 
                                 lerJSON('Database/projetos.json', ProjetosDoSistema),
 
-                                verifica_id_projeto(IdProjeto, ProjetosDoSistema, ExisteProjeto),
+                                verifica_id_projeto(IdProjetoAtividade, ProjetosDoSistema, ExisteProjeto),
+                                verifica_id_atividade(IdAtividade, AtividadesDoSistema, ExisteAtividade),
 
-                                (ExisteProjeto -> 
+                                (ExisteProjeto, ExisteAtividade -> 
 
                                         write('Digite seu ID: '),
                                         ler_string(IdUsuario), nl,
@@ -328,11 +331,12 @@ addIdProjeto:-
                                         lerJSON('Database/usuarios.json', UsuariosDoSistema),
                                         verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
                         
-                                        getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
+                                        getProjetoJSON(IdProjetoAtividade, ProjetosDoSistema, Projeto),
                         
                                         (ExisteUsuario, Projeto.idGerente == IdUsuario ->
 
                                                 editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjetoAtividade),
+                                                addAtividadesProjeto('Database/bancoDeAtividades.json', IdProjetoAtividade, IdAtividade),
                                                 writeln('                                                    '),
                                                 writeln('            |  Atividade alterada com sucesso!  |   '),
                                                 writeln('                                                    ')
@@ -352,9 +356,9 @@ addIdProjeto:-
 
 
 % Deleta uma atividade do projeto
-deletaAtividade :-                % Ainda tem bugs
+deletaAtividade :-                
 
-        % visualizarAtividadesDoProjeto,       cadê????
+        visualizarProjetos,
 
         writeln('                                                                    '),
         writeln('               |  Deletar atividade de um projeto:  |               '),
@@ -365,26 +369,28 @@ deletaAtividade :-                % Ainda tem bugs
         write('Digite o ID do projeto que a atividade pertence: '),
         ler_string(IdProjetoAtividade), nl,
 
+        % visualizarAtividadesDoProjeto(IdProjetoAtividade), nl,     cadê????
+
         lerJSON('Database/usuarios.json', UsuariosDoSistema),
         lerJSON('Database/projetos.json', ProjetosDoSistema),
         lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
 
-        verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
-        verifica_id_projeto(IdProjeto, ProjetosDoSistema, ExisteProjeto),
-        verifica_id_atividade(IdAtividade, AtividadesEncontradas, ExisteAtividade),
+        verifica_id_projeto(IdProjetoAtividade, ProjetosDoSistema, ExisteProjeto),
+        verifica_id_atividade(IdAtividade, AtividadesDoSistema, ExisteAtividade),
 
-        (ExisteUsuario, ExisteProjeto, ExisteAtividade -> 
+        (ExisteProjeto, ExisteAtividade -> 
 
                 write('Digite seu ID: '),
                 ler_string(IdUsuario), nl,
-        
-                getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
+                
+                verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
+                getProjetoJSON(IdProjetoAtividade, ProjetosDoSistema, Projeto),
 
-                (Projeto.idGerente == IdUsuario ->
+                (ExisteUsuario, Projeto.idGerente == IdUsuario ->
 
                         editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, 'Não atribuído!'),
                         writeln('                                                    '),
-                        writeln('            |  Atividade deletada com sucesso!  |   '),
+                        writeln('        |  Atividade deletada do projeto com sucesso!  |   '),
                         writeln('                                                    ')
 
                 ; clearScreen,
@@ -394,6 +400,6 @@ deletaAtividade :-                % Ainda tem bugs
                 )
         ; clearScreen,
         writeln('                                                                                                          '),
-        writeln(' |  Campo obrigatório vazio ou inválido, não foi possível criar a atividade, tente novamente!  |          '),
+        writeln(' |  Campo obrigatório vazio ou inválido, não foi possível deletar a atividade, tente novamente!  |          '),
         writeln('                                                                                                          ')
         ), retornoMenuProjetos.

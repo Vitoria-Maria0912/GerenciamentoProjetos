@@ -18,10 +18,10 @@ erroMenuProjeto :-
 % | Retorna ao menu principal ou sai do sistema
 retornoMenuProjetos :- 
         writeln('                                                          '),
-        writeln('       | Deseja voltar ao menu ou sair do sistema?  |     '),
+        writeln('       | Deseja voltar ao menu ou sair do sistema?  |     '), nl,
         writeln('                                                          '),
-        writeln('                 M - Menu Principal                       '),
-        writeln('                 P - Menu de Projetos                     '),
+        writeln('                 M - Menu Principal                       '), nl,
+        writeln('                 P - Menu de Projetos                     '), nl,
         writeln('                 S - Sair do sistema                      '),
         writeln('                                                          '),
         
@@ -41,15 +41,15 @@ retornoMenuProjetos :-
 menuPublicoProjeto :-
 
         writeln('                                                          '),
-        writeln('             |     Menu de projetos:    |                 '),
+        writeln('             |     Menu de projetos:    |                 '), nl,
         writeln('                                                          '),
-        writeln('                 Selecione uma opção:                     '),
-        writeln('                                                          '),
-        writeln('            L - Listar projetos cadastrados               '), 
-        writeln('            B - Menu do banco de atividades               '),  
-        writeln('            M - Voltar ao menu principal                  '),
-        writeln('            S - Sair do sistema                           '),
-        writeln('                                                          '),       
+        writeln('                 Selecione uma opção:                     '), nl,
+        writeln('                                                          '), 
+        writeln('            L - Listar projetos cadastrados               '), nl, 
+        writeln('            B - Menu do banco de atividades               '), nl,  
+        writeln('            M - Voltar ao menu principal                  '), nl,
+        writeln('            S - Sair do sistema                           '), 
+        writeln('                                                          '),     
    
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII), 
@@ -67,7 +67,6 @@ processaEntradaMenuPublico(Entrada) :-
 
 
 visualizarProjetos :-
-        clearScreen,
         writeln('                                                          '),
         writeln('         |  Estes são os projetos no sistema:  |          '),
         writeln('                                                          '),
@@ -76,20 +75,20 @@ visualizarProjetos :-
 % Menu do banco
 menuPublicoBancoDeAtividades :-
         writeln('                                                         '),
-        writeln('           |  Menu Banco de Atividades  |                '),
+        writeln('           |  Menu Banco de Atividades  |                '), nl,
         writeln('                                                         '),
-        writeln('                 Selecione uma opção:                    '),
+        writeln('                 Selecione uma opção:                    '), nl,
         writeln('                                                         '),
-        writeln('            L - Listar atividades cadastradas            '),
-        writeln('            C - Criar uma atividade                      '),
-        writeln('            I - Iniciar uma atividade                    '), 
-        writeln('            F - Finalizar uma atividade                  '),
-        writeln('            V - Visualizar atividades do projeto         '),
-        writeln('            A - Visualizar status de uma atividade       '),
-        writeln('            D - Consultar uma atividade por ID           '),
-        writeln('            O - Dar feedback em uma atividade            '),
-        writeln('            M - Voltar ao menu principal                 '),
-        writeln('            S - Sair do sistema                          '),
+        writeln('            L - Listar atividades cadastradas            '), nl,
+        writeln('            C - Criar uma atividade                      '), nl,
+        writeln('            I - Iniciar uma atividade                    '), nl, 
+        writeln('            F - Finalizar uma atividade                  '), nl,
+        writeln('            V - Visualizar atividades do projeto         '), nl,
+        writeln('            A - Visualizar status de uma atividade       '), nl,
+        writeln('            D - Consultar uma atividade por ID           '), nl,
+        writeln('            O - Dar feedback em uma atividade            '), nl,
+        writeln('            M - Voltar ao menu principal                 '), nl,
+        writeln('            S - Sair do sistema                          '), nl,
         writeln('                                                         '),
 
         get_single_char(CodigoASCII),

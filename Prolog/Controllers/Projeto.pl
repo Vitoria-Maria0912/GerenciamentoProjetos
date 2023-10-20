@@ -1,6 +1,6 @@
 :- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
-                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDeProjeto/3, addAtividadesProj/3]).
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDeProjeto/3, addAtividadesProjeto/3]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
@@ -28,8 +28,9 @@ salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Me
 % Exibe os projetos cadastrados omitindo a descricaoProjeto
 exibirProjetosAux([]).
 exibirProjetosAux([H|T]) :-
-    write('Nome do projeto: '), writeln(H.nomeProjeto),
     write('ID Projeto: '), writeln(H.idProjeto),
+    write('Nome do projeto: '), writeln(H.nomeProjeto),
+    write('Atividades do projeto: '), writeln(H.atividadesAtribuidas),
 		nl, exibirProjetosAux(T).
 
 exibirProjetos(FilePath) :-
@@ -65,7 +66,6 @@ verifica_id_projeto(Busca, [Projeto|_], true) :-
 verifica_id_projeto(Busca, [_|T], R) :- verifica_id_projeto(Busca, T, R).
 
 
-
 % verifica se um id de usuario é de um gerente de projeto
 ehGerente(_, [], false).
 ehGerente(Busca, [Projeto|_], true) :-
@@ -82,7 +82,7 @@ editarAtividadesJSON([H|T], Id, NovaAtividade, [H|Out]) :- editarAtividadesJSON(
 adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
     NovaListaAtividades = [NovaAtividade|ListaAtividades].
 
-addAtividadesProj(FilePath, IdP, NovaAtividade) :-
+addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
     lerJSON(FilePath, File),
     editarAtividadesJSON(File, IdP, NovaAtividade, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
@@ -102,7 +102,6 @@ editarMembros(FilePath, IdP, NovoMembro) :-
     editarMembrosJSON(File, IdP, NovoMembro, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-
 
 
 % Predicado para verificar se um usuário é membro de um projeto
