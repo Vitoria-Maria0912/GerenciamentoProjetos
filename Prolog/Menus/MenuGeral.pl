@@ -95,18 +95,6 @@ deletarUsuario :-
                 ).
 
 
-% teste pra ver se getUsuario está funcionando
-% imprimeUsuario :-
-%         write('Digite seu Id: '),
-%         ler_string(IdUsuario), nl,
-%         (nao_vazia(IdUsuario) ->
-%                 lerJSON('Database/usuarios.json', UsuariosDoSistema),
-%                 getUsuarioJSON(IdUsuario, UsuariosDoSistema, Usuario),
-%                 write(Usuario);
-%                 erroMenuGeral).
-
-
-
 cadastrarProjeto :-
         writeln('                                                          '),
         writeln('               |     Criar projeto:    |                  '),
@@ -151,7 +139,7 @@ menuProjetos :-
         lerJSON('Database/usuarios.json', UsuariosDoSistema),
         verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
 
-        (ExisteUsuario ->
+        (nao_vazia(IdUsuario), ExisteUsuario ->
 
                 lerJSON('Database/projetos.json', ProjetosDoSistema),
                 ehGerente(IdUsuario, ProjetosDoSistema, EhGerente),
@@ -159,7 +147,11 @@ menuProjetos :-
                 (EhGerente -> clearScreen, menuRestritoProjeto
                 ; clearScreen, menuPublicoProjeto)
 
-        ; erroMenuPrincipal).
+        ; clearScreen,
+          writeln('                                                                                                          '),
+          writeln(' |  Campo obrigatório vazio ou inválido, não foi possível criar a atividade, tente novamente!  |          '),
+          writeln('                                                                                                          ')
+        ), retornoMenuPrincipal.
 
 erroMenuPrincipal :-
         clearScreen,
@@ -199,12 +191,10 @@ menuChat :-
 
 processaEntradaMenuChat(Entrada) :- 
 
-        clearScreen,
-
-        ( Entrada == 'c' -> visualizarMensagensGerais
-        ; Entrada == 'h' -> visualizarMensagensPrivadas
-        ; Entrada == 'a' -> enviarMGeral
-        ; Entrada == 't' -> enviarMPrivada
+        ( Entrada == 'c' -> clearScreen, visualizarMensagensGerais
+        ; Entrada == 'h' -> clearScreen, visualizarMensagensPrivadas
+        ; Entrada == 'a' -> clearScreen, enviarMGeral
+        ; Entrada == 't' -> clearScreen, enviarMPrivada
         ; Entrada == 'm' -> clearScreen, menuChat
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).

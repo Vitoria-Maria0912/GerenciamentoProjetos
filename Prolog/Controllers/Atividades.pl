@@ -10,7 +10,7 @@
 
 % Cria uma atividade
 atividadeToJSON(Titulo, Descricao, Dificuldade, Id_Atividade, Status, IdProjetoAtividade, IdMembroResponsavel, Feedbacks, Atividade) :-
-		swritef(Atividade, '{"titulo":"%w", "descricao":"%w", "dificuldade":"%w", "idAtividade":"%w", "status":"%w", "idProjetoAtividade":"%w", "idMembroResponsavel":"%w", "feedbacks":%w}',
+		swritef(Atividade, '{"titulo":"%w", "descricao":"%w", "dificuldade":"%w", "idAtividade":"%w", "status":"%w", "idProjetoAtividade":"%w", "idMembroResponsavel":"%w", "feedbacks":"%w"}',
     [Titulo, Descricao, Dificuldade, Id_Atividade, Status, IdProjetoAtividade, IdMembroResponsavel, Feedbacks]).
 
 % Convertendo uma lista de objetos em JSON para 
@@ -154,5 +154,5 @@ criarFeedback(FilePath, Atividade, NovoFeedback) :-
   AtividadeAtualizada = Atividade.put(feedbacks, [NovoFeedback|Atividade.feedbacks]),
   selectchk(Atividade, Atividades, AtividadeAtualizada, AtividadesAtualizadas),
   open(FilePath, write, Stream),
-  json_write(Stream, AtividadesAtualizadas, [width(1)]),  % voltar para 0 depois
+  json_write(Stream, AtividadesAtualizadas, [width(0)]), 
   close(Stream).
