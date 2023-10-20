@@ -8,48 +8,12 @@
 :- use_module("Controllers/Atividades.pl").
 :- use_module("Controllers/Utils.pl").
 
-% | Menu dos projetos, todos os usuários tem acesso
-menuPublicoProjeto :-
-
-        writeln('                                                          '),
-        writeln('             |     Menu de projetos:    |                 '),
-        writeln('                                                          '),
-        writeln('                 Selecione uma opção:                     '),
-        writeln('                                                          '),
-        writeln('            L - Listar projetos cadastrados               '), 
-        writeln('            B - Menu do banco de atividades               '),  
-        writeln('            M - Voltar ao menu principal                  '),
-        writeln('            S - Sair do sistema                           '),
-        writeln('                                                          '),       
-   
-        get_single_char(CodigoASCII),
-        char_code(Input, CodigoASCII), 
-        downcase_atom(Input, LowerOption),
-        processaEntradaMenuPublico(LowerOption),
-        halt. 
-
-processaEntradaMenuPublico(Entrada) :- 
-
-        ( Entrada == 'l' -> clearScreen, visualizarProjetos
-        ; Entrada == 'b' -> clearScreen, menuPublicoBancoDeAtividades
-        ; Entrada == 'm' -> clearScreen, menuPrincipal
-        ; Entrada == 's' -> sairDoSistema
-        ; erroMenuProjeto ).
-
 erroMenuProjeto :-
         clearScreen,
         writeln('                                                          '),
         writeln('         |  Entrada Inválida. Tente novamente!  |         '),
         writeln('                                                          '),
         menuProjetos.
-
-visualizarProjetos :-
-        clearScreen,
-        writeln('                                                          '),
-        writeln('         |  Estes são os projetos no sistema:  |          '),
-        writeln('                                                          '),
-        exibirProjetos('Database/projetos.json'),
-        retornoMenuProjetos.
 
 % | Retorna ao menu principal ou sai do sistema
 retornoMenuProjetos :- 
@@ -72,6 +36,42 @@ retornoMenuProjetos :-
         ; LowerOption == 'm' -> clearScreen, menuPrincipal
         
         ; erroMenuProjeto ).
+
+% | Menu dos projetos, todos os usuários tem acesso
+menuPublicoProjeto :-
+
+        writeln('                                                          '),
+        writeln('             |     Menu de projetos:    |                 '),
+        writeln('                                                          '),
+        writeln('                 Selecione uma opção:                     '),
+        writeln('                                                          '),
+        writeln('            L - Listar projetos cadastrados               '), 
+        writeln('            B - Menu do banco de atividades               '),  
+        writeln('            M - Voltar ao menu principal                  '),
+        writeln('            S - Sair do sistema                           '),
+        writeln('                                                          '),       
+   
+        get_single_char(CodigoASCII),
+        char_code(Input, CodigoASCII), 
+        downcase_atom(Input, LowerOption),
+        processaEntradaMenuPublico(LowerOption),
+        halt. 
+
+processaEntradaMenuPublico(Entrada) :- 
+
+        ( Entrada == 'l' -> clearScreen, visualizarProjetos, retornoMenuProjetos
+        ; Entrada == 'b' -> clearScreen, menuPublicoBancoDeAtividades
+        ; Entrada == 'm' -> clearScreen, menuPrincipal
+        ; Entrada == 's' -> sairDoSistema
+        ; erroMenuProjeto ).
+
+
+visualizarProjetos :-
+        clearScreen,
+        writeln('                                                          '),
+        writeln('         |  Estes são os projetos no sistema:  |          '),
+        writeln('                                                          '),
+        exibirProjetos('Database/projetos.json').
 
 % Menu do banco
 menuPublicoBancoDeAtividades :-

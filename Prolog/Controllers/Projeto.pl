@@ -53,7 +53,9 @@ removerProjeto(FilePath, Id):-
     removerProjetoJSON(File, Id, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream),
-    writeln('Projeto removido com sucesso. Até a próxima!').
+    writeln('                                                    '),
+    writeln('            |  Projeto removido com sucesso!  |     '),
+    writeln('                                                    ').
 
 % verifica se um id existe dentro da lista de projetos
 verifica_id_projeto(_, [], false).
