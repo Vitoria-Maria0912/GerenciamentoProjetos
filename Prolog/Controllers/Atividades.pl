@@ -154,5 +154,5 @@ criarFeedback(FilePath, Atividade, NovoFeedback) :-
   AtividadeAtualizada = Atividade.put(feedbacks, [NovoFeedback|Atividade.feedbacks]),
   selectchk(Atividade, Atividades, AtividadeAtualizada, AtividadesAtualizadas),
   open(FilePath, write, Stream),
-  json_write(Stream, AtividadesAtualizadas, [width(1)]),  % voltar para 0 depois
+  json_write(Stream, AtividadesAtualizadas, [width(0)]), 
   close(Stream).

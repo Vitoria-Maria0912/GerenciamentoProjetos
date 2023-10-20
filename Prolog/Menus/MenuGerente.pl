@@ -171,9 +171,6 @@ adicionaNovoMembro(IdProjeto) :-
         % writeln('              |     Membro já está no projeto    |                  '),
         % writeln('                                                                    '),
 
-       
-
-
 
 removeMembroProjeto(IdProjeto) :-
         writeln('                                                                    '),
@@ -284,7 +281,7 @@ menuBancoDeAtividades :-
         ; LowerOption == 'r' -> clearScreen, deletaAtividade
         ; LowerOption == 'i' -> clearScreen, comecarAtividade, retornoMenuRestrito
         ; LowerOption == 'f' -> clearScreen, finalizarAtividade, retornoMenuRestrito
-        ; LowerOption == 'v' -> clearScreen, visualizarAtividades, retornoMenuRestrito
+        % ; LowerOption == 'v' -> clearScreen, visualizarAtividades, retornoMenuRestrito
         ; LowerOption == 'a' -> clearScreen, visualizarStatusAtividade, retornoMenuRestrito
         ; LowerOption == 'd' -> clearScreen, consultarAtividade, retornoMenuRestrito
         ; LowerOption == 'o' -> clearScreen, criaFeedback, retornoMenuRestrito
