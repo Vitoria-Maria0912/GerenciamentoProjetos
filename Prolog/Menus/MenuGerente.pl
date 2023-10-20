@@ -132,14 +132,18 @@ processaEntradaMembros(Entrada, IdProjeto) :-
 
 visualizarMembros(IdProjeto) :-
 
-        % precisa ser melhorado depois
+        % FALTA A RESPOSTA CASO O PROJETO NAO TENHA MEMBROS.
+        % FALTA FORMATAR ESSE PRIMEIRO PRINT AQUI
         writeln('                                                                                     '),
-        writeln('   |     Estes são os membros do projeto: (ID '), IdProjeto, write('    |            '),
+        writeln('   |  Estes são os membros do projeto:'), write(IdProjeto), write('  |          '),
         writeln('                                                                                     '),
-        % imprimeMembrosDoProjeto >>>>>>>> AINDA PRECISA SER FEITO
-        retornoMenuProjetos.
+        
+        lerJSON('Database/projetos.json', Projetos),
+        lerJSON('Database/usuarios.json', Usuarios),
+        retornarMembros(IdProjeto, Projetos, Membros),
+        exibirMembros(Membros, Usuarios).
 
-
+% FALTA VERIFICAÇÃO SE É MEMBRO DE UM PROJETO, OU SE JÁ É MEMBRO DO PROJETO
 adicionaNovoMembro(IdProjeto) :-
         writeln('                                                                    '),
         writeln('                 |     Adicionar novo membro:    |                  '),
