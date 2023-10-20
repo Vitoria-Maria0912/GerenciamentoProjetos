@@ -1,7 +1,7 @@
 :- module(menuGeral, [menuPrincipal/0, processaEntradaMenuPrincipal/1, cadastrarUsuario/0, deletarUsuario/0, cadastrarProjeto/0,
                       menuProjetos/0, menuChat/0, enviarMPrivada/0, enviarMGeral/0, visualizarMensagensPrivadas/0,
                       visualizarMensagensGerais/0, erroMenuPrincipal/0, erroMenuChat/0, menuChat/0, processaEntradaMenuChat/1,
-                      retornoMenuPrincipal/0]).
+                      retornoMenuPrincipal/0, checarMembro/0]).
 
 :- initialization(menuPrincipal).
 :- use_module("Controllers/Usuario.pl").
@@ -39,7 +39,6 @@ processaEntradaMenuPrincipal(Entrada) :-
         ; Entrada == 'd' -> deletarUsuario
         ; Entrada == 'p' -> cadastrarProjeto
         ; Entrada == 'g' -> menuProjetos
-        ; Entrada == 'a' -> adicionaAtividade
         ; Entrada == 'm' -> clearScreen, menuChat
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
@@ -74,54 +73,74 @@ deletarUsuario :-
         writeln('                                                          '),
         writeln('               |     Deletar perfil:    |                 '),
         writeln('                                                          '),
-        write('Digite seu ID: '),
-        ler_string(IdUsuario), nl,           
-        (nao_vazia(IdUsuario) ->
-                lerJSON('Database/usuarios.json', UsuariosDoSistema),
 
-
+        write('Digite seu Id: '),
+        ler_string(IdUsuario), nl,
+        write('Digite sua senha: '),
+        ler_string(Senha), nl,            
+        (nao_vazia(IdUsuario), nao_vazia(Senha) ->
+                lerJSON('Database/usuarios.json', Usuarios),
                 write('Verificando usuário com ID: '), writeln(IdUsuario), nl,
-                verifica_id(IdUsuario, UsuariosDoSistema, Existe),
-                        (Existe == true ->
-                        removerUsuario('Database/usuarios.json', IdUsuario)
+                verifica_id(IdUsuario, Usuarios, Existe),
+                        (Existe = true ->
+                                verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) ->
+                                     removerUsuario('Database/usuarios.json', IdUsuario)
+                                ; 
+                                writeln('Senha incorreta. Tente novamente'), nl, retornoMenuPrincipal
                         ;
                         writeln('O usuário não existe. Tente novamente.'), nl, retornoMenuPrincipal
                         )
                 ;
-                    erroMenuGeral
+                    erroMenuPrincipal
                 ).
+
+
+% teste pra ver se getUsuario está funcionando
+% imprimeUsuario :-
+%         write('Digite seu Id: '),
+%         ler_string(IdUsuario), nl,
+%         (nao_vazia(IdUsuario) ->
+%                 lerJSON('Database/usuarios.json', UsuariosDoSistema),
+%                 getUsuarioJSON(IdUsuario, UsuariosDoSistema, Usuario),
+%                 write(Usuario);
+%                 erroMenuGeral).
+
 
 
 cadastrarProjeto :-
         writeln('                                                          '),
         writeln('               |     Criar projeto:    |                  '),
         writeln('                                                          '),
-                
         write('Digite seu ID: '),
-        ler_string(IdGerente), nl, 
+        ler_string(IdUsuario), nl, 
+
         write('Digite o nome do projeto: '),
         ler_string(NomeProjeto), nl,
         write('Digite a descrição do projeto: '),
         ler_string(DescricaoProjeto), nl,
         random(1000, 9999, IdAtom),
         atom_string(IdAtom, IdProjeto),
-        lerJSON('Database/projetos.json', ProjetosDoSistema),
+        lerJSON('Database/projetos.json', ProjetosDoSistema), 
+        lerJSON('Database/usuarios.json', Usuarios),
                 
-        (nao_vazia(NomeProjeto), nao_vazia(DescricaoProjeto) ->
+        (nao_vazia(IdUsuario), nao_vazia(NomeProjeto), nao_vazia(DescricaoProjeto) ->
         verifica_id_projeto(IdProjeto, ProjetosDoSistema, Existe),
         (Existe ->
-                        writeln('O projeto já existe. Tente novamente.'), nl, retornoMenuPrincipal
-                        ;
-                        salvarProjeto('Database/projetos.json', NomeProjeto, DescricaoProjeto, IdProjeto, IdGerente, [], []),
-                        write('Projeto cadastrado com sucesso! O ID do projeto é: '), write(IdProjeto), nl, retornoMenuPrincipal
-                        )
-                        ;
-                                writeln('Nome e descrição do projeto não podem ser vazios. Tente novamente.'), nl, retornoMenuPrincipal
-                        ),
-                        retornoMenuPrincipal.
+                writeln('O projeto já existe. Tente novamente.'), nl, retornoMenuPrincipal
+        ;
+        verifica_id(IdUsuario, Usuarios, ExisteUsuario),
+        (ExisteUsuario ->
+                salvarProjeto('Database/projetos.json', NomeProjeto, DescricaoProjeto, IdProjeto, [], [], IdUsuario),
+                write('Projeto cadastrado com sucesso! O ID do projeto é: '), writeln(IdProjeto), nl, retornoMenuPrincipal       
+        ;
+        write('Usuario não existe! Tente novamente'), nl, retornoMenuPrincipal
+        )
+        )                 
+        ;
+        erroMenuPrincipal
+        ).
 
 menuProjetos :-
-
         writeln('                                                          '),
         writeln('             |     Menu de projetos:    |                 '),
         writeln('                                                          '),
@@ -150,7 +169,6 @@ erroMenuPrincipal :-
         writeln('         |  Entrada Inválida. Tente novamente!  |         '),
         writeln('                                                          '),
         retornoMenuPrincipal.
-
 %  Exibe erro e retorna ao menuChat
 erroMenuChat :-
         clearScreen,
@@ -208,12 +226,16 @@ processaEntradaMenuChat(Entrada) :-
                     write('Digite sua senha: '),
                     ler_string(Senha),
                     (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
-                        write('Senha correta'),
+                        writeln('Senha correta'),
             
                         % Verifica se pertence a algum projeto
+                       
+                            
                         (membroDeProjeto(IdUsuario, ProjetosDoSistema) -> 
-                            write('Faz parte de algum projeto')
+                            writeln('Faz parte de algum projeto')
                             ;
+                          %(string_presente(IdUsuario, ["1","2","3","4","5","988"]),
+                        %write('madruga_improdutiva');write('não funciona')),
                             writeln('                                                            '),
                             writeln('      |  Este usuário não é membro de nenhum projeto!  |    '),
                             writeln('                                                            ')
@@ -234,18 +256,6 @@ processaEntradaMenuChat(Entrada) :-
                
         % ler_string(IdUsuario),
 
-        % SE O USUÁRIO NÃO EXISTE
-        writeln('                                                            '),
-        writeln('           |  ID inexistente! Tente novamente!  |           '),
-        writeln('                                                            '),
-
-        write('Digite sua senha: '),
-        % ler_string(Senha),
-
-        % SE A SENHA INCORRETA: 
-        writeln('                                                            '),
-        writeln('           |  Senha incorreta! Tente novamente!  |          '),
-        writeln('                                                            '),
 
         % FALTA MUITA COISA, olhar no de haskell
 
