@@ -1,6 +1,6 @@
 :- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
-                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, addAtividadesProj/3, retornarMembros/4, exibirMembros/2]).
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, jaAtribuida/2, addAtividadesProj/3, retornarMembros/4, exibirMembros/2]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 :- use_module("Controllers/Usuario.pl").
@@ -92,7 +92,7 @@ addAtividadesProj(FilePath, IdP, NovaAtividade) :-
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
-% adiciona membros a um projeto 
+% adiciona os membros ao JSON
 editarMembrosJSON([], _, _, []).
 editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [NovoProjeto|T]) :-
     append(H.membros, [NovoMembro], NovaListaDeMembros),
@@ -106,6 +106,7 @@ editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [NovoProjeto|T]) :-
     }.
 editarMembrosJSON([H|T], Id, NovoMembro, [H|Out]) :- editarMembrosJSON(T, Id, NovoMembro, Out).
 
+% adiciona membros a um projeto 
 editarMembros(FilePath, IdP, NovoMembro) :-
     lerJSON(FilePath, File),
     editarMembrosJSON(File, IdP, NovoMembro, SaidaParcial),
@@ -114,16 +115,12 @@ editarMembros(FilePath, IdP, NovoMembro) :-
 
 
 % Checa se o usuário é membro de algum projeto.
-% Caso base: usuário não é membro de nenhum projeto.
 ehMembro(_, []):- false.
-% Caso em que o usuário é membro de algum projeto.
 ehMembro(IdUsuario, [Projeto|OutrosProjetos]) :-
-     Membros = (Projeto.membros),% writeln(Membros),
+     Membros = (Projeto.membros),
      string_para_numero(IdUsuario, Idfake),
-    % Verifica se o usuário é o gerente do projeto ou é membro do projeto.
     (Projeto.idGerente == IdUsuario; 
          member(Idfake, Projeto.membros)) -> true;
-    % Caso o usuário não seja o gerente nem membro do projeto, verifica nos outros projetos.
 ehMembro(IdUsuario, OutrosProjetos).
 
 % Checa se o usuário é membro de um projeto específico
@@ -134,18 +131,28 @@ membroDoProjeto(IdUsuario, Projeto) :-
     (Projeto.idGerente == IdUsuario; 
          member(Idfake, Projeto.membros)) -> true.
 
+% Retorna os membros de um projeto de acordo com o seu ID.
 retornarMembros(IdProjeto, Projetos, ListaMembros, Usuarios) :-
+     %findall(Membro, membroDeProjeto(_, IdProjeto, Projetos), ListaMembros).
     getProjetoJSON(IdProjeto, Projetos, Projeto),
     ListaMembros = Projeto.membros,
     exibirMembros(ListaMembros, Usuarios).
-    
-    %findall(Membro, membroDeProjeto(_, IdProjeto, Projetos), ListaMembros).
+   
+
+% Exibe os membros da lista de membros do projeto
 exibirMembros([], _).
 exibirMembros([IdMembro|T], Usuarios) :-
 atom_string(IdMembro, StringId),
 getUsuarioJSON(StringId, Usuarios, Usuario),
 exibirUsuario(Usuario),
 exibirMembros(T, Usuarios).
+
+% Checa se uma atividade já está atribuida ao projeto
+jaAtribuida(_, Projeto):- false.
+jaAtribuida(IdAtividade, Projeto) :-
+     Atividades = (Projeto.atividadesAtribuidas),
+     string_para_numero(IdAtividade, Idfake),
+         member(Idfake, Projeto.atividadesAtribuidas) -> true.
 
 % falta adicionar a parte de imprimir membros do projeto e remover membros
 
