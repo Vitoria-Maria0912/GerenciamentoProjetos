@@ -2,7 +2,7 @@
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
                     verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, 
                     addAtividadesProj/3, retornarMembros/2, exibirMembros/3, exibirAtividadesDoProjeto/3,
-                    retornarAtividadesDoProjeto/2]).
+                    retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4]).
 
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
@@ -173,8 +173,29 @@ exibirAtividadesDoProjeto(IdProjeto, Projetos, Atividades) :-
 retornarAtividadesDoProjeto([], _).
 retornarAtividadesDoProjeto([IdAtividadesDoProjeto|T], Atividades) :-
     atom_string(IdAtividadesDoProjeto, StringId),
-    getAtividadeJSON(IdAtividadesDoProjeto, Atividades, Atividade),
+    getAtividadeJSON(StringId, Atividades, Atividade),
     exibirAtividade(Atividade),
     retornarAtividadesDoProjeto(T, Atividades).
 
+% remove um membro de um projeto 
+removerMembroJSON([], _, _, []).
+removerMembroJSON([H|T], IdProjeto, IdMembro, [NovoProjeto|T]) :-
+    ( H.idProjeto \= IdProjeto -> NovoProjeto = H ;
+      delete(H.membros, IdMembro, NovaListaDeMembros),
+      NovoProjeto = _{
+        idProjeto:H.idProjeto,
+        nomeProjeto:H.nomeProjeto,
+        descricaoProjeto:H.descricaoProjeto,
+        atividadesAtribuidas:H.atividadesAtribuidas,
+        membros:NovaListaDeMembros,
+        idGerente:H.idGerente
+      }
+    ).
+removerMembroJSON([H|T], Id, IdMembro, [H|Out]) :- removerMembroJSON(T, Id, IdMembro, Out).
 
+% remove um membro de um projeto 
+removerMembro(FilePath, IdP, IdMembro) :-
+    lerJSON(FilePath, File),
+    removerMembroJSON(File, IdP, IdMembro, SaidaParcial),
+    projetosToJSON(SaidaParcial, Saida),
+    open(FilePath, write, Stream), write(Stream, Saida), close(Stream).

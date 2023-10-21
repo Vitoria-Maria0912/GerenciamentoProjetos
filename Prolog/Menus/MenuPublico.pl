@@ -3,11 +3,12 @@
                         criaAtividade/0, listarAtividades/0, comecarAtividade/0, finalizarAtividade/0, visualizarStatusAtividade/0,
                         consultarAtividade/0, criaFeedback/0, visualizarAtividadesDoProjeto/0]).
 
+:- use_module("Controllers/Utils.pl").
 :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Projeto.pl").
 :- use_module("Controllers/Atividades.pl").
-:- use_module("Controllers/Utils.pl").
 
+% | Exibe uma mensagem de erro e volta ao menu de projetos 
 erroMenuProjeto :-
         clearScreen,
         writeln('                                                          '),
@@ -35,7 +36,7 @@ retornoMenuProjetos :-
 
         ; LowerOption == 'm' -> clearScreen, menuPrincipal
         
-        ; erroMenuProjeto ).
+        ; erroMenuProjeto).
 
 % | Menu dos projetos, todos os usuários tem acesso
 menuPublicoProjeto :-
@@ -53,11 +54,7 @@ menuPublicoProjeto :-
    
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII), 
-        downcase_atom(Input, LowerOption),
-        processaEntradaMenuPublico(LowerOption),
-        halt. 
-
-processaEntradaMenuPublico(Entrada) :- 
+        downcase_atom(Input, Entrada),
 
         ( Entrada == 'l' -> clearScreen, visualizarProjetos, retornoMenuProjetos
         ; Entrada == 'b' -> clearScreen, menuPublicoBancoDeAtividades
@@ -65,14 +62,14 @@ processaEntradaMenuPublico(Entrada) :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuProjeto ).
 
-
+% | Exibe todos os projetos do sistema
 visualizarProjetos :-
         writeln('                                                          '),
         writeln('         |  Estes são os projetos no sistema:  |          '),
         writeln('                                                          '),
         exibirProjetos('Database/projetos.json').
 
-% Menu do banco
+% | Menu do banco, com opções limitadas
 menuPublicoBancoDeAtividades :-
         writeln('                                                         '),
         writeln('           |  Menu Banco de Atividades  |                '), nl,
@@ -93,32 +90,30 @@ menuPublicoBancoDeAtividades :-
 
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII),
-        downcase_atom(Input, LowerOption),
-        processaEntradaBancoDeAtividades(LowerOption),
-        retornoMenuProjetos. 
-        
+        downcase_atom(Input, Entrada),
 
-processaEntradaBancoDeAtividades(Entrada) :- 
-
-        ( Entrada == 'l' -> clearScreen, listarAtividades, retornoMenuProjetos
+        ( Entrada == 'l' -> clearScreen, listarAtividades
         ; Entrada == 'c' -> clearScreen, criaAtividade
         ; Entrada == 'i' -> clearScreen, comecarAtividade
         ; Entrada == 'f' -> clearScreen, finalizarAtividade
-        ; Entrada == 'v' -> clearScreen, visualizarAtividadesDoProjeto, retornoMenuProjetos
+        ; Entrada == 'v' -> clearScreen, visualizarAtividadesDoProjeto
         ; Entrada == 'a' -> clearScreen, visualizarStatusAtividade
         ; Entrada == 'd' -> clearScreen, consultarAtividade
         ; Entrada == 'o' -> clearScreen, criaFeedback
         ; Entrada == 'm' -> clearScreen, menuPrincipal 
         ; Entrada == 's' -> sairDoSistema
-        ; erroMenuProjeto ).
+        ; erroMenuProjeto ),
 
+        retornoMenuProjetos. 
+
+% | Exibe todas as atividades do sistema
 listarAtividades :-
         writeln('                                                '),
         writeln('          |  Atividades cadastradas:  |         '),
         writeln('                                                '),
         exibirAtividades('Database/bancoDeAtividades.json').
 
-
+% | Cria uma atividade apenas no banco de atividades, sem atribuir a nenhum projeto 
 criaAtividade :- 
 
         listarAtividades,
@@ -159,6 +154,7 @@ criaAtividade :-
         ). 
 
 
+% | Inicia uma atividade, mudando o status para pendente
 comecarAtividade :-
 
         listarAtividades,
@@ -199,9 +195,10 @@ comecarAtividade :-
           writeln('                                                                                                             '),
           writeln(' |  Campo obrigatório vazio ou inválido, não foi possível iniciar a atividade, tente novamente!  |          '),
           writeln('                                                                                                          ')
-        ), retornoMenuProjetos. 
+        ). 
       
 
+% | Finaliza uma atividade, mudando o status para concluída
 finalizarAtividade:-
 
         listarAtividades,
@@ -241,9 +238,10 @@ finalizarAtividade:-
           writeln('                                                                                                          '),
           writeln(' |  Campo obrigatório vazio ou inválido, não foi possível finalizar a atividade, tente novamente!  |          '),
           writeln('                                                                                                          ')
-        ), retornoMenuProjetos.
+        ).
 
 
+% | Exibe todas as atividades de um projeto específico
 visualizarAtividadesDoProjeto:-
 
         writeln('                                                        '),
@@ -254,6 +252,7 @@ visualizarAtividadesDoProjeto:-
         ler_string(IdProjeto), nl,
 
         lerJSON('Database/projetos.json', ProjetosDoSistema),
+        lerJSON('Database/bancoDeAtividades.json', Atividades),
 
         verifica_id_projeto(IdProjeto, ProjetosDoSistema, ExisteProjeto),
 
@@ -263,9 +262,9 @@ visualizarAtividadesDoProjeto:-
                 ListaAtividades = Projeto.atividadesAtribuidas,
                 length(ListaAtividades, QuantidadeDeAtividades),
 
-                (QuantidadeDeAtividades == 0 -> nl, write('      |     Não há atividades no projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl
+                (QuantidadeDeAtividades == 0 -> nl, clearScreen, write('      |     Não há atividades no projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl
 
-                ; nl, write('   |     Estas são as atividades do projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl,
+                ; nl, clearScreen, write('   |     Estas são as atividades do projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl,
                 exibirAtividadesDoProjeto(IdProjeto, ProjetosDoSistema, Atividades)
                 )
 
@@ -275,6 +274,7 @@ visualizarAtividadesDoProjeto:-
         writeln('                                                                   ')
         ).
 
+% | Exibe o status de uma atividade específica
 visualizarStatusAtividade:-
 
         listarAtividades,
@@ -291,15 +291,17 @@ visualizarStatusAtividade:-
 
         (ExisteAtividade -> 
                 getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
-                exibirAtividade(Atividade)
+                write('|- Título: '), writeln(Atividade.titulo),
+                write('|- Status: '), writeln(Atividade.status)
 
         ; clearScreen,
         writeln('                                                                                                          '),
         writeln(' |  Campo obrigatório vazio ou inválido, não foi possível mostrar o status a atividade, tente novamente!  |          '),
         writeln('                                                                                                          ')
-        ), retornoMenuProjetos.
+        ).
       
 
+% | Exibe uma atividade específica
 consultarAtividade:-
 
         listarAtividades,
@@ -322,9 +324,10 @@ consultarAtividade:-
         writeln('                                                                                                          '),
         writeln(' |  Campo obrigatório vazio ou inválido, não foi possível mostrar a atividade, tente novamente!  |        '),
         writeln('                                                                                                          ')
-        ), retornoMenuProjetos.
+        ).
 
 
+% | Cria um comentário sobre uma atividade específica
 criaFeedback:-
 
         listarAtividades,
@@ -375,5 +378,5 @@ criaFeedback:-
         writeln('                                                                                                          '),
         writeln(' |  Campo obrigatório vazio ou inválido, não foi possível criar a atividade, tente novamente!  |          '),
         writeln('                                                                                                          ')
-        ), retornoMenuProjetos.
+        ).
         

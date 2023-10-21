@@ -26,9 +26,10 @@ salvarUsuario(FilePath, Nome, Senha, IdUsuario, Atividades) :-
 % Exibe os usuarios cadastrados omitindo a senha 
 exibirUsuariosAux([]).
 exibirUsuariosAux([H|T]) :- 
-    write('Nome: '), writeln(H.nome),
-    write('ID Usuário: '), writeln(H.idUsuario), 
-		nl, exibirUsuariosAux(T).
+    write('|- ID Usuário: '), writeln(H.idUsuario), 
+    write('|- Nome: '), writeln(H.nome),
+    write('|- Atividades atribuídas: '), writeln(H.atividadesAtribuidas),    
+    nl, exibirUsuariosAux(T).
 
 exibirUsuarios(FilePath) :-
 		lerJSON(FilePath, Usuarios),

@@ -1,6 +1,6 @@
 :- module(atividade, [lerJSON/2, atividadeToJSON/9, atividadesToJSON/2, salvarAtividade/9,
                       exibirAtividadesAux/1, exibirAtividades/1, editarIdProjetoAtividadeJSON/4, editarIdProjetoAtividade/3, 
-                      editarMembroResponsavelAtividadeJSON/4, editarMembroResponsavelAtividade/3, getAtividadesJSON/3, removerAtividade/2,
+                      editarMembroResponsavelAtividadeJSON/4, editarMembroResponsavelAtividade/3, removerAtividade/2,
                       verifica_id_atividade/3, getAtividadeJSON/3, editarStatusAtividade/3, editarStatusAtividadeJSON/4,
                       exibirAtividade/1, exibirAtividades/1, getMembroResponsavel/2, editarFeedbacks/4, criarFeedback/3]).
 
@@ -31,7 +31,7 @@ salvarAtividade(FilePath, Titulo, Descricao, Dificuldade, Id_Atividade, Status, 
 exibirAtividadesAux([]).
 exibirAtividadesAux([H|T]) :- 
     write('|- ID Atividade: '), writeln(H.idAtividade), 
-    write('|- Titulo: '), writeln(H.titulo),
+    write('|- Título: '), writeln(H.titulo),
 		write('|- Descricao: '), writeln(H.descricao), 
     write('|- Status: '), writeln(H.status), 
     write('|- Dificuldade: '), writeln(H.dificuldade), 
@@ -47,7 +47,7 @@ exibirAtividades(FilePath) :-
 % Exibe as atividade cadastradas 
 exibirAtividade(Atividade) :- 
     write('|- ID Atividade: '), writeln(Atividade.idAtividade), 
-    write('|- Titulo: '), writeln(Atividade.titulo),
+    write('|- Título: '), writeln(Atividade.titulo),
     write('|- Descricao: '), writeln(Atividade.descricao), 
     write('|- Dificuldade: '), writeln(Atividade.dificuldade), 
     write('|- Status: '), writeln(Atividade.status), 
@@ -67,15 +67,6 @@ verifica_id_membroResp(Busca, [Atividade|_], true) :-
     get_dict(idMembroResponsavel, Atividade, Id),
     Busca == Id.
 verifica_id_membroResp(Busca, [_|T], R) :- verifica_id_membroResp(Busca, T, R).
-
-% Pega atividades por ID de Projeto
-getAtividadesJSON(_, [], []).
-getAtividadesJSON(IdProjeto, [Atividade|Resto], AtividadesEncontradas) :-
-    Atividade.idProjetoAtividade == IdProjeto,
-getAtividadesJSON(IdProjeto, Resto, RestoAtividades),
-    AtividadesEncontradas = [Atividade|RestoAtividades].
-getAtividadesJSON(IdProjeto, [_|Resto], AtividadesEncontradas) :-
-getAtividadesJSON(IdProjeto, Resto, AtividadesEncontradas).
 
 % pega atividade por ID
 getAtividadeJSON(IdAtividade, [Atividade|_], Atividade):- IdAtividade == Atividade.idAtividade.

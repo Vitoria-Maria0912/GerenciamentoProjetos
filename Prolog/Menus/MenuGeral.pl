@@ -46,7 +46,7 @@ processaEntradaMenuPrincipal(Entrada) :-
 cadastrarUsuario :-
         writeln('                                                          '),
         writeln('                  |     Cadastro:    |                    '),
-        writeln('                                                          '),
+        writeln('                                                          '), nl,
         
         write('Digite seu nome: '),
         ler_string(Nome), nl,
@@ -131,7 +131,7 @@ cadastrarProjeto :-
 menuProjetos :-
         writeln('                                                          '),
         writeln('             |     Menu de projetos:    |                 '),
-        writeln('                                                          '),
+        writeln('                                                          '), nl,
         
         write('Digite seu ID: '),
         ler_string(IdUsuario), nl,
