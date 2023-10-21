@@ -1,5 +1,5 @@
 :- module(usuario, [usuarioToJSON/5, usuariosToJSON/2, salvarUsuario/5, exibirUsuariosAux/1, 
-                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3]).
+                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3, exibirUsuario/1]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
@@ -36,7 +36,12 @@ exibirUsuarios(FilePath) :-
 
 % Pega uma usuario por ID
 getUsuarioJSON(IdUsuario, [Usuario|_], Usuario):- IdUsuario == Usuario.idUsuario.
-getUsuarioJSON(IdUsuario, [_|T], Usuario):- getUsuarioJSON(IdUsuario, T, Usuario).    
+getUsuarioJSON(IdUsuario, [_|T], Usuario):- getUsuarioJSON(IdUsuario, T, Usuario).   
+
+% Exibe um usuario
+exibirUsuario(Usuario) :-
+    write('Nome: '), writeln(Usuario.nome),
+    write('ID Usuário: '), writeln(Usuario.idUsuario), nl.
 
 % Removendo um usuário - ainda nao funciona
 removerUsuarioJSON([], _, []).
@@ -59,12 +64,15 @@ verifica_id(Busca, [_|T], R) :- verifica_id(Busca, T, R).
 
 
 editarAtividadesJSON([], _, _, []).
-editarAtividadesJSON([H|T], H.idUsuario, NovaAtividade, [_{idUsuario:H.idUsuario, nome:H.nome, senha:H.senha, atividadesAtribuidas:NovaListaAtividades}|T]) :-
-    adicionarAtividade(H.atividadesAtribuidas, NovaAtividade, NovaListaAtividades).
+editarAtividadesJSON([H|T], H.idUsuario, NovaAtividade, [NovoUsuario|T]) :-
+    append(H.atividadesAtribuidas, [NovaAtividade], NovaListaAtividades),
+    NovoUsuario = _{
+        idUsuario:H.idUsuario,
+        nome:H.nome,
+        senha:H.senha,
+        atividadesAtribuidas:NovaListaAtividades
+    }.
 editarAtividadesJSON([H|T], Id, NovaAtividade, [H|Out]) :- editarAtividadesJSON(T, Id, NovaAtividade, Out).
-
-adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
-    NovaListaAtividades = [NovaAtividade|ListaAtividades].
 
 editarAtividades(FilePath, IdU, NovaAtividade) :-
     lerJSON(FilePath, File),

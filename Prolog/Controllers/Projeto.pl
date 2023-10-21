@@ -1,12 +1,10 @@
 :- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
-                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDeProjeto/3, addAtividadesProjeto/3,
-                    retornarMembros/2, exibirMembros/3]).
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, addAtividadesProj/3, retornarMembros/2, exibirMembros/3]).
 
 :- use_module(library(http/json)).
-:- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Utils.pl").
-
+:- use_module("Controllers/Usuario.pl").
 
 % Cria um projeto
 projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente, Projeto) :-
@@ -38,6 +36,7 @@ exibirProjetosAux([H|T]) :-
 exibirProjetos(FilePath) :-
 		lerJSON(FilePath, Projetos),
 		exibirProjetosAux(Projetos).
+
 
 % Pega uma projeto por ID
 getProjetoJSON(IdProjeto, [Projeto|_], Projeto):- IdProjeto == Projeto.idProjeto.
@@ -72,16 +71,24 @@ ehGerente(Busca, [Projeto|_], true) :-
     Busca == Id.
 ehGerente(Busca, [_|T], R) :- ehGerente(Busca, T, R).
 
-% adiciona atividades a um projeto (ver se funciona na pratica)
+% adiciona atividades a um projeto 
 editarAtividadesJSON([], _, _, []).
-editarAtividadesJSON([H|T], H.idProjeto, NovaAtividade, [_{idProjeto:H.idProjeto, nomeProjeto:H.nomeProjeto, descricaoProjeto:H.descricaoProjeto, atividadesAtribuidas:NovaListaAtividades, membros: H.membros, idGerente:H.idGerente}|T]) :-
-    adicionarAtividade(H.atividadesAtribuidas, NovaAtividade, NovaListaAtividades).
+editarAtividadesJSON([H|T], H.idProjeto, NovaAtividade, [NovoProjeto|T]) :-
+    append(H.atividadesAtribuidas, [NovaAtividade], NovaListaAtividades),
+    NovoProjeto = _{
+        idProjeto:H.idProjeto,
+        nomeProjeto:H.nomeProjeto,
+        descricaoProjeto:H.descricaoProjeto,
+        atividadesAtribuidas:NovaListaAtividades,
+        membros:H.membros,
+        idGerente:H.idGerente
+    }.
 editarAtividadesJSON([H|T], Id, NovaAtividade, [H|Out]) :- editarAtividadesJSON(T, Id, NovaAtividade, Out).
 
 adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
     NovaListaAtividades = [NovaAtividade|ListaAtividades].
 
-addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
+addAtividadesProj(FilePath, IdP, NovaAtividade) :-
     lerJSON(FilePath, File),
     editarAtividadesJSON(File, IdP, NovaAtividade, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
@@ -89,12 +96,17 @@ addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
 
 % adiciona membros a um projeto 
 editarMembrosJSON([], _, _, []).
-editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [_{idProjeto:H.idProjeto, nomeProjeto:H.nomeProjeto, descricaoProjeto:H.descricaoProjeto, atividadesAtribuidas:H.atividadesAtribuidas, membros:NovaListaDeMembros, idGerente:H.idGerente}|T]) :-
-adicionarMembro(H.membros, NovoMembro, NovaListaDeMembros).
-editarMembrosJSON([H|T], Id, NovoMembro, [H|Out]) :- editarMembrosJSON(T, Id, NovaAtividade, Out).
-
-adicionarMembro(ListaMembros, NovoMembro, NovaListaDeMembros) :-
-NovaListaDeMembros = [NovoMembro|ListaMembros].
+editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [NovoProjeto|T]) :-
+    append(H.membros, [NovoMembro], NovaListaDeMembros),
+    NovoProjeto = _{
+        idProjeto:H.idProjeto,
+        nomeProjeto:H.nomeProjeto,
+        descricaoProjeto:H.descricaoProjeto,
+        atividadesAtribuidas:H.atividadesAtribuidas,
+        membros:NovaListaDeMembros,
+        idGerente:H.idGerente
+    }.
+editarMembrosJSON([H|T], Id, NovoMembro, [H|Out]) :- editarMembrosJSON(T, Id, NovoMembro, Out).
 
 editarMembros(FilePath, IdP, NovoMembro) :-
     lerJSON(FilePath, File),
@@ -114,11 +126,37 @@ exibirMembros(IdProjeto, Projetos, ListaMembros) :-
     ListaMembros = Projeto.membros,
     retornarMembros(ListaMembros, Usuarios).
 
+% Checa se o usuário é membro de algum projeto.
+% Caso base: usuário não é membro de nenhum projeto.
+ehMembro(_, []):- false.
+% Caso em que o usuário é membro de algum projeto.
+ehMembro(IdUsuario, [Projeto|OutrosProjetos]) :-
+     Membros = (Projeto.membros),
+     string_para_numero(IdUsuario, Idfake),
+    % Verifica se o usuário é o gerente do projeto ou é membro do projeto.
+    (Projeto.idGerente == IdUsuario; 
+         member(Idfake, Projeto.membros)) -> true;
+    % Caso o usuário não seja o gerente nem membro do projeto, verifica nos outros projetos.
+ehMembro(IdUsuario, OutrosProjetos).
+
+% Checa se o usuário é membro de um projeto específico
+membroDoProjeto(_, Projeto):- false.
+membroDoProjeto(IdUsuario, Projeto) :-
+     Membros = (Projeto.membros),
+     string_para_numero(IdUsuario, Idfake),
+    (Projeto.idGerente == IdUsuario; 
+         member(Idfake, Projeto.membros)) -> true.
+
+exibirMembros(IdProjeto, Projetos, Usuarios) :-
+    getProjetoJSON(IdProjeto, Projetos, Projeto),
+    ListaMembros = Projeto.membros,
+    retornarMembros(ListaMembros, Usuarios).
+    
 retornarMembros([], _).
 retornarMembros([IdMembro|T], Usuarios) :-
     atom_string(IdMembro, StringId),
     getUsuarioJSON(StringId, Usuarios, Usuario),
     exibirUsuario(Usuario),
     retornarMembros(T, Usuarios).
-% falta adicionar a parte de imprimir membros do projeto e remover membros
+
 
