@@ -156,23 +156,31 @@ adicionaNovoMembro(IdProjeto) :-
         exibirUsuarios('Database/usuarios.json'),
         lerJSON('Database/usuarios.json', Usuarios),
         lerJSON('Database/projetos.json', Projetos),
+        getProjetoJSON(IdProjeto, Projetos, Projeto),
 
         write('Digite o ID do membro que deseja adicionar: '),
         ler_string(IdNovoMembro), nl,
         (nao_vazia(IdNovoMembro) ->
         verifica_id(IdNovoMembro, Usuarios, Existe),
-        (Existe ->
+        (Existe ->     
                 (gerenteDoProjeto(IdProjeto, IdNovoMembro, Projetos) ->
                 writeln('                                                                    '),
                 writeln('            |      O ID pertence ao gerente do projeto!    |        '),
                 writeln('                                                                    '), 
                 retornoMenuProjetos
                 ; 
-                editarMembros('Database/projetos.json', IdProjeto, IdNovoMembro),
-                writeln('                                                                    '),
-                writeln('              |     Membro adicionado com sucesso!    |             '),
-                writeln('                                                                    '),
-                retornoMenuProjetos
+                (membroDoProjeto(IdNovoMembro, Projeto) ->
+                    writeln('                                                                    '),
+                    writeln('        |     O membro já pertence ao projeto!    |                 '),
+                    writeln('                                                                    '),
+                    retornoMenuProjetos
+                ;
+                    editarMembros('Database/projetos.json', IdProjeto, IdNovoMembro),
+                    writeln('                                                                    '),
+                    writeln('              |     Membro adicionado com sucesso!    |             '),
+                    writeln('                                                                    '),
+                   retornoMenuProjetos
+                )
                 )
                 ; 
                 writeln('                                                                    '),
@@ -180,15 +188,7 @@ adicionaNovoMembro(IdProjeto) :-
                 writeln('                                                                    '),
                 retornoMenuProjetos
         ) ; erroMenuProjeto
-        );
-        
-        retornoMenuProjetos.
-
-
-        % SE JÁ ESTÁ NO PROJETO
-        % writeln('                                                                    '),
-        % writeln('              |     Membro já está no projeto    |                  '),
-        % writeln('                                                                    '),
+        ).
 
 
 removeMembroProjeto(IdProjeto) :-
@@ -248,6 +248,10 @@ atribuirAtividade(IdProjeto) :-
         (nao_vazia(IdAtividade) ->
         verifica_id_atividade(IdAtividade, Atividades, AtvExiste),
         (AtvExiste ->
+        jaAtribuida(IdAtividade, Projeto) ->
+        writeln('                                                          '),
+        writeln('           |     A atividade já está atribuída!    |      '),
+        writeln('                                                          '), nl, retornoMenuProjetos;
         write('Digite o ID do membro que deseja atribuir à atividade: '),
         ler_string(IdMembro), nl,
         (nao_vazia(IdMembro) ->
