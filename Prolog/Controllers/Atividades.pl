@@ -142,7 +142,6 @@ editarStatusAtividade(FilePath, IdAtividade, Status) :-
 
 % Adiciona um feedback a uma atividade
 criarFeedback(FilePath, Atividade, NovoFeedback) :-
-
   lerJSON(FilePath, Atividades),  
   AtividadeAtualizada = Atividade.put(feedbacks, [NovoFeedback|Atividade.feedbacks]),
   selectchk(Atividade, Atividades, AtividadeAtualizada, AtividadesAtualizadas),

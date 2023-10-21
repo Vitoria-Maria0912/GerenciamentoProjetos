@@ -311,7 +311,7 @@ menuBancoDeAtividades :-
         ; LowerOption == 'r' -> clearScreen, deletaAtividade
         ; LowerOption == 'i' -> clearScreen, comecarAtividade
         ; LowerOption == 'f' -> clearScreen, finalizarAtividade
-        % ; LowerOption == 'v' -> clearScreen, visualizarAtividades, retornoMenuProjetos
+        ; LowerOption == 'v' -> clearScreen, visualizarAtividadesDoProjeto, retornoMenuProjetos
         ; LowerOption == 'a' -> clearScreen, visualizarStatusAtividade
         ; LowerOption == 'd' -> clearScreen, consultarAtividade
         ; LowerOption == 'o' -> clearScreen, criaFeedback
@@ -386,7 +386,7 @@ deletaAtividade :-
         write('Digite o ID do projeto que a atividade pertence: '),
         ler_string(IdProjetoAtividade), nl,
 
-        % visualizarAtividadesDoProjeto(IdProjetoAtividade), nl,     cadê????
+        visualizarAtividadesDoProjeto, nl,
 
         lerJSON('Database/usuarios.json', UsuariosDoSistema),
         lerJSON('Database/projetos.json', ProjetosDoSistema),

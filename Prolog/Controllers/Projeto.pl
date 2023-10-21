@@ -1,6 +1,8 @@
 :- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
-                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, addAtividadesProj/3, retornarMembros/2, exibirMembros/3]).
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, 
+                    addAtividadesProj/3, retornarMembros/2, exibirMembros/3, exibirAtividadesDoProjeto/3,
+                    retornarAtividadesDoProjeto/2]).
 
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
@@ -158,5 +160,17 @@ retornarMembros([IdMembro|T], Usuarios) :-
     getUsuarioJSON(StringId, Usuarios, Usuario),
     exibirUsuario(Usuario),
     retornarMembros(T, Usuarios).
+
+exibirAtividadesDoProjeto(IdProjeto, Projetos, Atividades) :-
+    getProjetoJSON(IdProjeto, Projetos, Projeto),
+    ListaDeAtividades = Projeto.atividadesAtribuidas,
+    retornarAtividadesDoProjeto(ListaDeAtividades, Atividades).
+        
+retornarAtividadesDoProjeto([], _).
+retornarAtividadesDoProjeto([IdAtividadesDoProjeto|T], Atividades) :-
+    atom_string(IdAtividadesDoProjeto, StringId),
+    getAtividadeJSON(IdAtividadesDoProjeto, Atividades, Atividade),
+    exibirAtividade(Atividade),
+    retornarAtividadesDoProjeto(T, Atividades).
 
 

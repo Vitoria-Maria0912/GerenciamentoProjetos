@@ -1,7 +1,7 @@
 :- module(menuPublico, [menuPublicoProjeto/0, processaEntradaMenuPublico/1, visualizarProjetos/0, erroMenuProjeto/0, 
                         retornoMenuProjetos/0 , menuPublicoBancoDeAtividades/0 , processaEntradaBancoDeAtividades/1,
                         criaAtividade/0, listarAtividades/0, comecarAtividade/0, finalizarAtividade/0, visualizarStatusAtividade/0,
-                        consultarAtividade/0, criaFeedback/0]).
+                        consultarAtividade/0, criaFeedback/0, visualizarAtividadesDoProjeto/0]).
 
 :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Projeto.pl").
@@ -104,7 +104,7 @@ processaEntradaBancoDeAtividades(Entrada) :-
         ; Entrada == 'c' -> clearScreen, criaAtividade
         ; Entrada == 'i' -> clearScreen, comecarAtividade
         ; Entrada == 'f' -> clearScreen, finalizarAtividade
-        % ; Entrada == 'v' -> clearScreen, visualizarAtividadesDoProjeto, retornoMenuProjetos
+        ; Entrada == 'v' -> clearScreen, visualizarAtividadesDoProjeto, retornoMenuProjetos
         ; Entrada == 'a' -> clearScreen, visualizarStatusAtividade
         ; Entrada == 'd' -> clearScreen, consultarAtividade
         ; Entrada == 'o' -> clearScreen, criaFeedback
@@ -242,6 +242,39 @@ finalizarAtividade:-
           writeln(' |  Campo obrigatório vazio ou inválido, não foi possível finalizar a atividade, tente novamente!  |          '),
           writeln('                                                                                                          ')
         ), retornoMenuProjetos.
+
+
+visualizarAtividadesDoProjeto:-
+
+        writeln('                                                        '),
+        writeln('        |  Visualizar atividades do projeto:  |         '),
+        writeln('                                                        '),
+
+        write('Digite o ID do projeto: '),
+        ler_string(IdProjeto), nl,
+
+        lerJSON('Database/projetos.json', ProjetosDoSistema),
+
+        verifica_id_projeto(IdProjeto, ProjetosDoSistema, ExisteProjeto),
+
+        (ExisteProjeto ->
+
+                getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
+                ListaAtividades = Projeto.atividadesAtribuidas,
+                length(ListaAtividades, QuantidadeDeAtividades),
+
+                (QuantidadeDeAtividades == 0 -> nl, write('      |     Não há atividades no projeto: (ID: '), write(IdProjeto), write(')    |     '), nl
+
+                ; writeln('                                                                       '),
+                write('   |     Estas são as atividades do projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl,
+                exibirAtividadesDoProjeto(IdProjeto, ProjetosDoSistema, Atividades)
+                )
+
+        ; clearScreen,
+        writeln('                                                                   '),
+        writeln('               |  Projeto inexistente!  |                          '),
+        writeln('                                                                   ')
+        ).
 
 visualizarStatusAtividade:-
 
