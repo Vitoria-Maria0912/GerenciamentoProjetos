@@ -210,7 +210,7 @@ processaEntradaMenuChat(Entrada) :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
 
-            
+            %falta verificar se é campo em branco
         enviarMGeral :-
                 writeln('                                                            '),
                 writeln('  |  Enviar mensagem para todos os membros do projeto:  |   '),
@@ -232,10 +232,12 @@ processaEntradaMenuChat(Entrada) :-
                        
                             
                         (membroDeProjeto(IdUsuario, ProjetosDoSistema) -> 
-                            writeln('Faz parte de algum projeto')
+                            writeln('Escolha o IdProjeto que deseja enviar uma mensagem para seus membros:'),
+                        imprimirProjetos_Gerente(IdUsuario, ProjetosDoSistema),
+                        imprimirProjetos_membro(IdUsuario, Proj),
+                            ler_string(IdProjeto)
                             ;
-                          %(string_presente(IdUsuario, ["1","2","3","4","5","988"]),
-                        %write('madruga_improdutiva');write('não funciona')),
+                          
                             writeln('                                                            '),
                             writeln('      |  Este usuário não é membro de nenhum projeto!  |    '),
                             writeln('                                                            ')
@@ -251,7 +253,9 @@ processaEntradaMenuChat(Entrada) :-
                     writeln('                                                            '),
                     writeln('           |  ID inexistente! Tente novamente!  |           '),
                     writeln('                                                            ')
-                ).
+                
+                ), retornoMenuPrincipal.
+        
             
                
         % ler_string(IdUsuario),

@@ -1,6 +1,6 @@
 :- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
-                    verifica_id_projeto/3, editarMembros/3, ehGerente/3,usuarioEstaEmProjeto/2, membroDeProjeto/3,membroDeProjeto/2,getMembros/2, addAtividadesProj/3]).
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3,usuarioEstaEmProjeto/2, membroDeProjeto/3,membroDeProjeto/2,imprimirProjetos_membro/2,getMembros/2,imprimirProjetos_Gerente/2,addAtividadesProj/3,imprimirProjeto/1]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 :- use_module("Controllers/Usuario.pl").
@@ -114,18 +114,36 @@ getMembros(IdProjeto, Membros) :-
 
 
    % Caso base: usuário não é membro de nenhum projeto.
-membroDeProjeto(_, []):- false.
+   membroDeProjeto(_, []):- false.
+   membroDeProjeto(IdUsuario, [Projeto|OutrosProjetos]) :-
+    
+    string_para_numero(IdUsuario, Idfake),
+    (IdUsuario == Projeto.idGerente -> true;
+    member(Idfake, Projeto.membros) ->
+        writeln('Projetos em que o usuário é membro: '), imprimirProjeto(Projeto), true;
+    membroDeProjeto(IdUsuario, OutrosProjetos)).
 
-% Caso em que o usuário é membro de algum projeto.
-membroDeProjeto(IdUsuario, [Projeto|OutrosProjetos]) :-
-     Membros = (Projeto.membros),% writeln(Membros),
-     string_para_numero(IdUsuario, Idfake),
-    % Verifica se o usuário é o gerente do projeto ou é membro do projeto.
-    (Projeto.idGerente == IdUsuario; 
-         member(Idfake, Projeto.membros)) -> true;
-    % Caso o usuário não seja o gerente nem membro do projeto, verifica nos outros projetos.
-    membroDeProjeto(IdUsuario, OutrosProjetos).
+    imprimirProjetos_Gerente(_, []).
+imprimirProjetos_Gerente(IdUsuario, [Projeto|OutrosProjetos]) :-
+    (IdUsuario == Projeto.idGerente) ->
+        writeln('Projetos em que o usuário é gerente: '), imprimirProjeto(Projeto),
+        imprimirProjetos_Gerente(IdUsuario, OutrosProjetos);
+    imprimirProjetos_Gerente(IdUsuario, OutrosProjetos).
 
+imprimirProjetos_membro(_, []).
+imprimirProjetos_membro(IdUsuario, [Projeto|OutrosProjetos]) :-
+    string_para_numero(IdUsuario, Idfake),
+    member(Idfake, Projeto.membros) ->
+        writeln('Projetos em que o usuário é membro: '), imprimirProjeto(Projeto), imprimirProjetos_membro(IdUsuario,OutrosProjetos);
+    imprimirProjetos_membro(IdUsuario,OutrosProjetos).
+
+
+
+   imprimirProjeto(Projeto) :-
+    Nome = Projeto.nomeProjeto,
+    Id = Projeto.idProjeto,
+    write('Título: '), write(Nome),
+    write(' (ID: '), write(Id), writeln(')').
 
 % Função que lista, com base no ID, os projetos dos quais o usuário participa.
 listarProjetosDoUsuario(IdUsuario, Projetos, ListaProjetos) :-
