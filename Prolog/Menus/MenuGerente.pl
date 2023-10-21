@@ -3,6 +3,7 @@
           removerMembroProjeto/1, atribuirAtividade/1, menuBancoDeAtividades/0, deletaAtividade/0, 
           addIdProjeto/0, retornoMenuProjetos/0, erroMenuProjeto/0]).
 
+
 :- use_module("Controllers/Atividades.pl").
 :- use_module("Menus/MenuPublico.pl").
 :- use_module("Controllers/Utils.pl").
@@ -130,6 +131,23 @@ processaEntradaMembros(Entrada, IdProjeto) :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuProjeto ).
 
+% visualizarMembros(IdProjeto) :-
+
+%         lerJSON('Database/projetos.json', ProjetosDoSistema),
+%         lerJSON('Database/usuarios.json', Usuarios),
+
+%         getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
+%         ListaMembros = Projeto.membros,
+%         length(ListaMembros, QuantidadeDeMembros),
+
+%         (QuantidadeDeMembros == 0 -> nl, write('      |     Não há membros no projeto: (ID: '), write(IdProjeto), write(')    |     '), nl
+
+%         ; nl, write('   |     Estes são os membros do projeto: (ID: '), write(IdProjeto), write(')    |     '), nl,
+%         nl, retornarMembros(IdProjeto, ProjetosDoSistema, Membros, Usuarios)
+%         ).
+
+
+%testando -------------------------
 visualizarMembros(IdProjeto) :-
 
         lerJSON('Database/projetos.json', ProjetosDoSistema),
@@ -139,11 +157,13 @@ visualizarMembros(IdProjeto) :-
         ListaMembros = Projeto.membros,
         length(ListaMembros, QuantidadeDeMembros),
 
-        (QuantidadeDeMembros == 0 -> nl, write('      |     Não há membros no projeto: (ID: '), write(IdProjeto), write(')    |     '), nl
+        (QuantidadeDeMembros == 0 -> nl, clearScreen, write('      |     Não há membros no projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl
 
-        ; nl, write('   |     Estes são os membros do projeto: (ID: '), write(IdProjeto), write(')    |     '), nl,
-        nl, retornarMembros(IdProjeto, ProjetosDoSistema, Membros, Usuarios)
+        ; nl, clearScreen, write('   |     Estes são os membros do projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl,
+        exibirMembros(IdProjeto, ProjetosDoSistema, Usuarios)
         ).
+%------------------------------------
+
 
 % FALTA VERIFICAÇÃO SE É MEMBRO DE UM PROJETO, OU SE JÁ É MEMBRO DO PROJETO
 adicionaNovoMembro(IdProjeto) :-
@@ -198,7 +218,7 @@ adicionaNovoMembro(IdProjeto) :-
                 writeln('                                                                    '),
                 writeln('              |     Atuais membros do projeto:    |                  '),
                 writeln('                                                                    '),
-                retornarMembros(IdProjeto, Projetos, ListaMembros, 'Database/usuarios.json'),
+                exibirMembros(IdProjeto, ProjetosDoSistema, Usuarios),
                 lerJSON('Database/projetos.json', Projetos),
                 getProjetoJSON(IdProjeto, Projetos, Projeto),
                 write('Digite o ID do membro que deseja remover: '),

@@ -131,21 +131,43 @@ membroDoProjeto(IdUsuario, Projeto) :-
     (Projeto.idGerente == IdUsuario; 
          member(Idfake, Projeto.membros)) -> true.
 
-% Retorna os membros de um projeto de acordo com o seu ID.
-retornarMembros(IdProjeto, Projetos, ListaMembros, Usuarios) :-
-     %findall(Membro, membroDeProjeto(_, IdProjeto, Projetos), ListaMembros).
-    getProjetoJSON(IdProjeto, Projetos, Projeto),
-    ListaMembros = Projeto.membros,
-    exibirMembros(ListaMembros, Usuarios).
+% % Retorna os membros de um projeto de acordo com o seu ID.
+% retornarMembros(IdProjeto, Projetos, ListaMembros, Usuarios) :-
+%      %findall(Membro, membroDeProjeto(_, IdProjeto, Projetos), ListaMembros).
+%     getProjetoJSON(IdProjeto, Projetos, Projeto),
+%     ListaMembros = Projeto.membros,
+%     exibirMembros(ListaMembros, Usuarios).
    
 
-% Exibe os membros da lista de membros do projeto
-exibirMembros([], _).
-exibirMembros([IdMembro|T], Usuarios) :-
-atom_string(IdMembro, StringId),
-getUsuarioJSON(StringId, Usuarios, Usuario),
-exibirUsuario(Usuario),
-exibirMembros(T, Usuarios).
+% % Exibe os membros da lista de membros do projeto
+% exibirMembros([], _).
+% exibirMembros([IdMembro|T], Usuarios) :-
+% atom_string(IdMembro, StringId),
+% getUsuarioJSON(StringId, Usuarios, Usuario),
+% exibirUsuario(Usuario),
+% exibirMembros(T, Usuarios).
+
+
+%testandooo-----------------------------
+% Exibe os membros do projeto
+exibirMembros(IdProjeto, Projetos, Usuarios) :-
+    getProjetoJSON(IdProjeto, Projetos, Projeto),
+    ListaMembros = Projeto.membros,
+    retornarMembros(ListaMembros, Usuarios).
+    
+retornarMembros([], _).
+retornarMembros([IdMembro|T], Usuarios) :-
+    atom_string(IdMembro, StringId),
+    getUsuarioJSON(StringId, Usuarios, Usuario),
+    exibirUsuario(Usuario),
+    retornarMembros(T, Usuarios).
+%------------------------
+
+
+
+
+
+
 
 % Checa se uma atividade já está atribuida ao projeto
 jaAtribuida(_, Projeto):- false.
