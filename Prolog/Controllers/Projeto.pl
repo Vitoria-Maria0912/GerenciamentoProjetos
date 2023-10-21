@@ -1,6 +1,6 @@
 :- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
-                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDeProjeto/3, addAtividadesProj/3, retornarMembros/3, exibirMembros/2]).
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, addAtividadesProj/3, retornarMembros/4, exibirMembros/2]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 :- use_module("Controllers/Usuario.pl").
@@ -113,16 +113,31 @@ editarMembros(FilePath, IdP, NovoMembro) :-
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 
-% Predicado para verificar se um usuário é membro de um projeto
-membroDeProjeto(IdUsuario, IdProjeto, Projetos) :-
-    member(Projeto, Projetos),
-    Projeto = [idProjeto=IdProjeto, membros=Membros, idGerente=IdGerente],
-    ( member(IdUsuario, Membros) ; IdUsuario = IdGerente ).
+% Checa se o usuário é membro de algum projeto.
+% Caso base: usuário não é membro de nenhum projeto.
+ehMembro(_, []):- false.
+% Caso em que o usuário é membro de algum projeto.
+ehMembro(IdUsuario, [Projeto|OutrosProjetos]) :-
+     Membros = (Projeto.membros),% writeln(Membros),
+     string_para_numero(IdUsuario, Idfake),
+    % Verifica se o usuário é o gerente do projeto ou é membro do projeto.
+    (Projeto.idGerente == IdUsuario; 
+         member(Idfake, Projeto.membros)) -> true;
+    % Caso o usuário não seja o gerente nem membro do projeto, verifica nos outros projetos.
+ehMembro(IdUsuario, OutrosProjetos).
 
+% Checa se o usuário é membro de um projeto específico
+membroDoProjeto(_, Projeto):- false.
+membroDoProjeto(IdUsuario, Projeto) :-
+     Membros = (Projeto.membros),
+     string_para_numero(IdUsuario, Idfake),
+    (Projeto.idGerente == IdUsuario; 
+         member(Idfake, Projeto.membros)) -> true.
 
-retornarMembros(IdProjeto, Projetos, ListaMembros) :-
+retornarMembros(IdProjeto, Projetos, ListaMembros, Usuarios) :-
     getProjetoJSON(IdProjeto, Projetos, Projeto),
-    ListaMembros = Projeto.membros.
+    ListaMembros = Projeto.membros,
+    exibirMembros(ListaMembros, Usuarios).
     
     %findall(Membro, membroDeProjeto(_, IdProjeto, Projetos), ListaMembros).
 exibirMembros([], _).

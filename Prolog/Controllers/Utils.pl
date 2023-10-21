@@ -1,4 +1,4 @@
-:- module(utils, [nao_vazia/1, ler_string/1, clearScreen/0, lerJSON/2, verificaSenhaIdUsuario/3, gerenteDoProjeto/3, sairDoSistema/0]).
+:- module(utils, [nao_vazia/1, ler_string/1, clearScreen/0, lerJSON/2, verificaSenhaIdUsuario/3, gerenteDoProjeto/3, string_para_numero/2, sairDoSistema/0]).
 
 :- use_module(library(http/json)).
 :- use_module("Controllers/Usuario.pl").
@@ -25,6 +25,9 @@ verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) :-
 gerenteDoProjeto(IdProjeto, IdUsuario, Projetos) :-
     getProjetoJSON(IdProjeto, Projetos, Projeto),
     Projeto.idGerente == IdUsuario.
+
+string_para_numero(String, Numero) :-
+    number_string(Numero, String).
 
 
 sairDoSistema :-
