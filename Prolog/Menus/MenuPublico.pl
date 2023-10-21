@@ -263,10 +263,9 @@ visualizarAtividadesDoProjeto:-
                 ListaAtividades = Projeto.atividadesAtribuidas,
                 length(ListaAtividades, QuantidadeDeAtividades),
 
-                (QuantidadeDeAtividades == 0 -> nl, write('      |     Não há atividades no projeto: (ID: '), write(IdProjeto), write(')    |     '), nl
+                (QuantidadeDeAtividades == 0 -> nl, write('      |     Não há atividades no projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl
 
-                ; writeln('                                                                       '),
-                write('   |     Estas são as atividades do projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl,
+                ; nl, write('   |     Estas são as atividades do projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl,
                 exibirAtividadesDoProjeto(IdProjeto, ProjetosDoSistema, Atividades)
                 )
 

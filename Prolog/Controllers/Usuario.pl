@@ -40,8 +40,8 @@ getUsuarioJSON(IdUsuario, [_|T], Usuario):- getUsuarioJSON(IdUsuario, T, Usuario
 
 % Exibe um usuario
 exibirUsuario(Usuario) :-
-    write('Nome: '), writeln(Usuario.nome),
-    write('ID Usuário: '), writeln(Usuario.idUsuario), nl.
+    write('|- Nome: '), writeln(Usuario.nome),
+    write('|- ID Usuário: '), writeln(Usuario.idUsuario), nl.
 
 % Removendo um usuário - ainda nao funciona
 removerUsuarioJSON([], _, []).

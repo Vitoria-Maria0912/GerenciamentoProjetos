@@ -7,6 +7,7 @@
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 :- use_module("Controllers/Usuario.pl").
+:- use_module("Controllers/Atividades.pl").
 
 % Cria um projeto
 projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente, Projeto) :-
@@ -30,14 +31,15 @@ salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Me
 % Exibe os projetos cadastrados omitindo a descricaoProjeto
 exibirProjetosAux([]).
 exibirProjetosAux([H|T]) :-
-    write('ID Projeto: '), writeln(H.idProjeto),
-    write('Nome do projeto: '), writeln(H.nomeProjeto),
-    write('Atividades do projeto: '), writeln(H.atividadesAtribuidas),
-		nl, exibirProjetosAux(T).
+    write('|- ID Projeto: '), writeln(H.idProjeto),
+    write('|- Nome do projeto: '), writeln(H.nomeProjeto),
+    write('|- Membros do projeto: '), writeln(H.membros),
+    write('|- Atividades do projeto: '), writeln(H.atividadesAtribuidas),
+	nl, exibirProjetosAux(T).
 
 exibirProjetos(FilePath) :-
-		lerJSON(FilePath, Projetos),
-		exibirProjetosAux(Projetos).
+    lerJSON(FilePath, Projetos),
+    exibirProjetosAux(Projetos).
 
 
 % Pega uma projeto por ID
@@ -149,6 +151,7 @@ membroDoProjeto(IdUsuario, Projeto) :-
     (Projeto.idGerente == IdUsuario; 
          member(Idfake, Projeto.membros)) -> true.
 
+% Exibe os membros do projeto
 exibirMembros(IdProjeto, Projetos, Usuarios) :-
     getProjetoJSON(IdProjeto, Projetos, Projeto),
     ListaMembros = Projeto.membros,
@@ -161,6 +164,7 @@ retornarMembros([IdMembro|T], Usuarios) :-
     exibirUsuario(Usuario),
     retornarMembros(T, Usuarios).
 
+% Exibe as atividades do projeto
 exibirAtividadesDoProjeto(IdProjeto, Projetos, Atividades) :-
     getProjetoJSON(IdProjeto, Projetos, Projeto),
     ListaDeAtividades = Projeto.atividadesAtribuidas,
