@@ -1,7 +1,7 @@
 :- module(menuGeral, [menuPrincipal/0, processaEntradaMenuPrincipal/1, cadastrarUsuario/0, deletarUsuario/0, cadastrarProjeto/0,
                       menuProjetos/0, menuChat/0, enviarMPrivada/0, enviarMGeral/0, visualizarMensagensPrivadas/0,
                       visualizarMensagensGerais/0, erroMenuPrincipal/0, erroMenuChat/0, menuChat/0, processaEntradaMenuChat/1,
-                      retornoMenuPrincipal/0, checarMembro/0]).
+                      retornoMenuPrincipal/0]).
 
 :- initialization(menuPrincipal).
 :- use_module("Controllers/Usuario.pl").

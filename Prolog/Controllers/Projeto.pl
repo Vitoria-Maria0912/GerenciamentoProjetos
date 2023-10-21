@@ -1,9 +1,11 @@
 :- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
-                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDeProjeto/3, addAtividadesProjeto/3]).
-:- use_module(library(http/json)).
-:- use_module("Controllers/Utils.pl").
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDeProjeto/3, addAtividadesProjeto/3,
+                    retornarMembros/2, exibirMembros/3]).
 
+:- use_module(library(http/json)).
+:- use_module("Controllers/Usuario.pl").
+:- use_module("Controllers/Utils.pl").
 
 
 % Cria um projeto
@@ -36,9 +38,6 @@ exibirProjetosAux([H|T]) :-
 exibirProjetos(FilePath) :-
 		lerJSON(FilePath, Projetos),
 		exibirProjetosAux(Projetos).
-
-
-
 
 % Pega uma projeto por ID
 getProjetoJSON(IdProjeto, [Projeto|_], Projeto):- IdProjeto == Projeto.idProjeto.
@@ -110,6 +109,16 @@ membroDeProjeto(IdUsuario, IdProjeto, Projetos) :-
     Projeto = [idProjeto=IdProjeto, membros=Membros, idGerente=IdGerente],
     ( member(IdUsuario, Membros) ; IdUsuario = IdGerente ).
 
+exibirMembros(IdProjeto, Projetos, ListaMembros) :-
+    getProjetoJSON(IdProjeto, Projetos, Projeto),
+    ListaMembros = Projeto.membros,
+    retornarMembros(ListaMembros, Usuarios).
 
+retornarMembros([], _).
+retornarMembros([IdMembro|T], Usuarios) :-
+    atom_string(IdMembro, StringId),
+    getUsuarioJSON(StringId, Usuarios, Usuario),
+    exibirUsuario(Usuario),
+    retornarMembros(T, Usuarios).
 % falta adicionar a parte de imprimir membros do projeto e remover membros
 
