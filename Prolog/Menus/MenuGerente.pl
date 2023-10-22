@@ -263,44 +263,36 @@ removeMembroProjeto(IdProjeto) :-
         writeln('              |     Remover membro do projeto:    |                 '),
         writeln('                                                                    '),
         writeln('                                                                    '),
-    
-        exibirMembros(IdProjeto, ProjetosDoSistema, Usuarios),
+        lerJSON('Database/projetos.json', Projetos),
+        lerJSON('Database/usuarios.json', Usuarios),
+
+        exibirMembros(IdProjeto, Projetos, Usuarios),
         write('Digite o ID do membro que deseja remover: '),
         ler_string(IdMembro), nl,
     
-        lerJSON('Database/projetos.json', Projetos),
+        verifica_id(IdMembro, Usuarios, Existe), 
+            
+        (Existe ->
+                % SE É O GERENTE 
 
-    
-        (\+(membroDoProjeto(IdMembro, Projeto)) ->
-            writeln('                                                                    '),
-            writeln('              |     Usuário não é membro do projeto    |            '),
-            writeln('                                                                    ')
-    
-        ); % SE É O GERENTE
-            (   
-                verifica_id(IdMembro, Usuarios, Existe),
-                (   
-                        ehGerente(IdProjeto, IdMembro, Projetos), Existe ->
-                    (   
+                ((membroDoProjeto(IdMembro, Projeto)) ->
                         
+                        removerMembro('Database/projetos.json', IdProjeto, IdMembro),
                         writeln('                                                                    '),
-                        writeln('          |     O ID pertence ao gerente do projeto!    |           '),
+                        writeln('              |     Membro removido com sucesso!    |               '),
+                        writeln('                                                                    ')
+                                        
+                        ;
+                        %(\+(membroDoProjeto(IdMembro, Projeto)) ->
                         writeln('                                                                    '),
-    
-                     % SE DEU CERTO
-                          
-                            removerMembro('Database/projetos.json', IdProjeto, IdMembro),
-                            writeln('                                                                    '),
-                            writeln('              |     Membro removido com sucesso!    |               '),
-                            writeln('                                                                    '),
-                            retornarMembros(IdProjeto, Projetos, ListaMembros, 'Database/usuarios.json')
-                        
-                    )
-                ; % SE NÃO EXISTE 
-                    writeln('                                                                    '),
-                    writeln('              |     ID inexistente, tente novamente!    |            '),
-                    writeln('                                                                    ')
+                        writeln('              |     Usuário não é membro do projeto    |            '),
+                        writeln('                                                                    ')
                 )
+        ;
+                % SE NÃO EXISTE 
+                writeln('                                                                    '),
+                writeln('              |     ID inexistente, tente novamente!    |            '),
+                writeln('                                                                    ')
         ).
     
 
