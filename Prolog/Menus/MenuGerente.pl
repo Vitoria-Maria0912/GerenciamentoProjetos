@@ -1,5 +1,5 @@
-:- module(menuGerente, [menuRestritoProjeto/0, processaEntradaMenuRestrito/1, deletarProjeto/0, 
-          gerenciarMembros/0, processaEntradaMembros/2, visualizarMembros/1, adicionaNovoMembro/1,
+:- module(menuGerente, [menuRestritoProjeto/0, deletarProjeto/0, 
+          gerenciarMembros/0, visualizarMembros/1, adicionaNovoMembro/1,
           removeMembroProjeto/1, atribuirAtividade/1, menuBancoDeAtividades/0, deletaAtividade/0, 
           addIdProjeto/0, retornoMenuProjetos/0, erroMenuProjeto/0]).
 
@@ -155,10 +155,9 @@ atribuirAtividade(IdProjeto) :-
         writeln('       |     Atribuir uma atividade a um membro:    |             '),
         writeln('                                                                  '), nl,
 
-        lerJSON('Database/projetos.json', Projetos),
+        lerJSON('Database/projetos.json', ProjetosDoSistema),
         lerJSON('Database/usuarios.json', Usuarios),
         lerJSON('Database/bancoDeAtividades.json', Atividades),
-        getProjetoJSON(IdProjeto, Projetos, Projeto),
 
         getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
         ListaMembros = Projeto.membros,
@@ -177,17 +176,17 @@ atribuirAtividade(IdProjeto) :-
 
                         visualizarMembros(IdProjeto), nl,
 
-                        editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjeto),
-                        editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
-                        addAtividadesProjeto('Database/projetos.json', IdProjeto, IdAtividade),
-
                         write('Digite o ID do membro que deseja atribuir à atividade: '),
                         ler_string(IdMembro), nl,
                         verifica_id(IdMembro, Usuarios, ExisteUsuario),
 
                         (ExisteUsuario, membroDoProjeto(IdMembro, Projeto)) ->
 
+                                editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjeto),
+                                editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
+                                addAtividadesProjeto('Database/projetos.json', IdProjeto, IdAtividade),
                                 editarMembroResponsavelAtividade('Database/bancoDeAtividades.json', IdAtividade, IdMembro),
+
                                 clearScreen,
                                 writeln('                                                                      '),
                                 writeln('              |     Atividade atribuída com sucesso!    |             '),
@@ -253,6 +252,7 @@ adicionaNovoMembro(IdProjeto) :-
         
         ).
 
+% | Remove um membro do projeto
 removeMembroProjeto(IdProjeto) :-
         writeln('                                                                    '),
         writeln('              |     Remover membro do projeto:    |                 '),
@@ -263,7 +263,7 @@ removeMembroProjeto(IdProjeto) :-
         write('Digite o ID do membro que deseja remover: '),
         ler_string(IdMembro), nl,
 
-        lerJSON('Database/projetos.json', Projetos),
+        % lerJSON('Database/projetos.json', Projetos),
         removerMembro('Database/projetos.json', IdProjeto, IdMembro),
         
         % exibirMembros(IdProjeto, ProjetosDoSistema, Usuarios),
@@ -350,6 +350,7 @@ addIdProjeto:-
                                 ler_string(IdProjetoAtividade), nl,
 
                                 lerJSON('Database/projetos.json', ProjetosDoSistema),
+                                lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
 
                                 verifica_id_projeto(IdProjetoAtividade, ProjetosDoSistema, ExisteProjeto),
                                 verifica_id_atividade(IdAtividade, AtividadesDoSistema, ExisteAtividade),
@@ -420,9 +421,9 @@ deletaAtividade :-
 
                 (ExisteUsuario, Projeto.idGerente == IdUsuario, verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
 
-                        removerAtividadesProjeto('Database/bancoDeAtividades.json', IdProjetoAtividade, IdAtividade),
-
+                        removerAtividadeProjeto('Database/bancoDeAtividades.json', IdProjetoAtividade, IdAtividade),
                         editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, 'Não atribuído!'),
+                        clearScreen,
                         writeln('                                                    '),
                         writeln('        |  Atividade deletada do projeto com sucesso!  |   '),
                         writeln('                                                    ')

@@ -1,5 +1,5 @@
-:- module(menuPublico, [menuPublicoProjeto/0, processaEntradaMenuPublico/1, visualizarProjetos/0, erroMenuProjeto/0, 
-                        retornoMenuProjetos/0 , menuPublicoBancoDeAtividades/0 , processaEntradaBancoDeAtividades/1,
+:- module(menuPublico, [menuPublicoProjeto/0, visualizarProjetos/0, erroMenuProjeto/0, 
+                        retornoMenuProjetos/0 , menuPublicoBancoDeAtividades/0 ,
                         criaAtividade/0, listarAtividades/0, comecarAtividade/0, finalizarAtividade/0, visualizarStatusAtividade/0,
                         consultarAtividade/0, criaFeedback/0, visualizarAtividadesDoProjeto/0]).
 

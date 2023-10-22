@@ -90,9 +90,6 @@ editarAtividadesJSON([H|T], H.idProjeto, NovaAtividade, [NovoProjeto|T]) :-
     }.
 editarAtividadesJSON([H|T], Id, NovaAtividade, [H|Out]) :- editarAtividadesJSON(T, Id, NovaAtividade, Out).
 
-adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
-    NovaListaAtividades = [NovaAtividade|ListaAtividades].
-
 addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
     lerJSON(FilePath, File),
     editarAtividadesJSON(File, IdP, NovaAtividade, SaidaParcial),
@@ -150,14 +147,14 @@ membroDeProjeto(IdUsuario, IdProjeto, Projetos) :-
 exibirMembros(IdProjeto, Projetos, ListaMembros) :-
     getProjetoJSON(IdProjeto, Projetos, Projeto),
     ListaMembros = Projeto.membros,
-    retornarMembros(ListaMembros, Usuarios).
+    retornarMembros(ListaMembros, _).
 
 % Checa se o usuário é membro de algum projeto.
 % Caso base: usuário não é membro de nenhum projeto.
 ehMembro(_, []):- false.
 % Caso em que o usuário é membro de algum projeto.
 ehMembro(IdUsuario, [Projeto|OutrosProjetos]) :-
-     Membros = (Projeto.membros),
+    %  Membros = (Projeto.membros),
      string_para_numero(IdUsuario, Idfake),
     % Verifica se o usuário é o gerente do projeto ou é membro do projeto.
     (Projeto.idGerente == IdUsuario; 
@@ -166,9 +163,9 @@ ehMembro(IdUsuario, [Projeto|OutrosProjetos]) :-
 ehMembro(IdUsuario, OutrosProjetos).
 
 % Checa se o usuário é membro de um projeto específico
-membroDoProjeto(_, Projeto):- false.
+membroDoProjeto(_, _):- false.
 membroDoProjeto(IdUsuario, Projeto) :-
-     Membros = (Projeto.membros),
+    %  Membros = (Projeto.membros),
      string_para_numero(IdUsuario, Idfake),
     (Projeto.idGerente == IdUsuario; 
          member(Idfake, Projeto.membros)) -> true.
@@ -223,8 +220,8 @@ removerMembro(FilePath, IdP, IdMembro) :-
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 % Checa se uma atividade já está atribuida ao projeto
-jaAtribuida(_, Projeto):- false.
+jaAtribuida(_, _):- false.
 jaAtribuida(IdAtividade, Projeto) :-
-     Atividades = (Projeto.atividadesAtribuidas),
+    %  Atividades = (Projeto.atividadesAtribuidas),
      string_para_numero(IdAtividade, Idfake),
          member(Idfake, Projeto.atividadesAtribuidas) -> true.
