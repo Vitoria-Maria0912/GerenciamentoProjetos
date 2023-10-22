@@ -32,7 +32,7 @@ exibirMensagensAux([H|T],IdCaixa) :-
     (IdCaixa == H.idMensagem ->
     writeln('__________________________________________________________________'),
     write('Mensagem enviada por: '), write(H.nomeDestinatario), writeln('  ✔ '),
-    write('ID Projeto: '), write(H.idMensagem),nl,write('"'),
+    write(''), write(H.idMensagem),nl,write('"'),
     write(H.conteudoMensagem),writeln('"'), exibirMensagensAux(T,IdCaixa);exibirMensagensAux(T,IdCaixa)).
 
 exibirMensagens(FilePath,IdCaixa) :-

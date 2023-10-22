@@ -1,5 +1,5 @@
 :- module(usuario, [usuarioToJSON/5, usuariosToJSON/2, salvarUsuario/5, exibirUsuariosAux/1, 
-                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3, exibirUsuario/1,exibeUsuarios_id_nome/1]).
+                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3, exibirUsuario/1,exibeUsuarios_id_nome/1,exibirUsuarios_id_nome_aux/1]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
