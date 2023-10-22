@@ -262,40 +262,39 @@ removeMembroProjeto(IdProjeto) :-
         writeln('                                                                    '),
         writeln('              |     Remover membro do projeto:    |                 '),
         writeln('                                                                    '),
-        writeln('              |     Atuais membros do projeto:    |                  '),
         writeln('                                                                    '),
     
+        exibirMembros(IdProjeto, ProjetosDoSistema, Usuarios),
         write('Digite o ID do membro que deseja remover: '),
         ler_string(IdMembro), nl,
     
         lerJSON('Database/projetos.json', Projetos),
-        exibirMembros(IdProjeto, ProjetosDoSistema, Usuarios),
+
     
-        (not(membroDoProjeto(IdMembro, Projeto)) ->
+        (\+(membroDoProjeto(IdMembro, Projeto)) ->
             writeln('                                                                    '),
             writeln('              |     Usuário não é membro do projeto    |            '),
             writeln('                                                                    ')
     
         ); % SE É O GERENTE
             (   
-                nao_vazia(IdMembro) ->
                 verifica_id(IdMembro, Usuarios, Existe),
                 (   
-                    Existe ->
+                        ehGerente(IdProjeto, IdMembro, Projetos), Existe ->
                     (   
-                        ehGerente(IdProjeto, IdMembro, Projetos) ->
+                        
                         writeln('                                                                    '),
                         writeln('          |     O ID pertence ao gerente do projeto!    |           '),
-                        writeln('                                                                    ')
+                        writeln('                                                                    '),
     
-                    ; % SE DEU CERTO
-                        (   
+                     % SE DEU CERTO
+                          
                             removerMembro('Database/projetos.json', IdProjeto, IdMembro),
                             writeln('                                                                    '),
                             writeln('              |     Membro removido com sucesso!    |               '),
                             writeln('                                                                    '),
                             retornarMembros(IdProjeto, Projetos, ListaMembros, 'Database/usuarios.json')
-                        )
+                        
                     )
                 ; % SE NÃO EXISTE 
                     writeln('                                                                    '),
