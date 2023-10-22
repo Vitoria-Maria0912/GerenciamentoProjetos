@@ -245,9 +245,10 @@ processaEntradaMenuChat(Entrada) :-
                             writeln('Digite a mensagem a ser enviada para o IdProjeto selecionado: '),
                             ler_string(Conteudo),nl,
                             %writeln(""),writeln('Carregando....'),sleep(1.5),
-                            salvarMensagem('Database/mensagens.json',Usuario.nome,Conteudo,IdMensagem)
-                            %exibirMensagens('Database/mensagens.json',IdMensagem)
-
+                            salvarMensagem('Database/mensagens.json',Usuario.nome,Conteudo,IdMensagem),
+                            writeln('                                                            '),
+                            writeln('             |  Mensagem enviada com sucesso !  |           '),
+                            writeln('                                                            ')
                             ;
                           
                             writeln('                                                            '),
@@ -269,12 +270,10 @@ processaEntradaMenuChat(Entrada) :-
                 ), retornoMenuPrincipal.
         
             
-               
-        % ler_string(IdUsuario),
+        
 
 
-        % FALTA MUITA COISA, olhar no de haskell
-
+      
         writeln('                                                            '),
         writeln('             |  Mensagem enviada com sucesso !  |           '),
         writeln('                                                            '),
@@ -368,10 +367,18 @@ visualizarMensagensGerais :-
                 imprimirProjetos_membro(IdUsuario, ProjetosDoSistema),
                 writeln('Escolha o IdProjeto que deseja visualizar uma mensagem geral:'),
                     ler_string(IdMensagem),nl,
-
-                    writeln('                                                                   '),
-                    writeln('   Carregando.........                                             '),
                     sleep(1.5),
+                    writeln('  ________________________________________________________________________________________________________________ '),
+
+                    writeln(' | ATENÇÃO : Caixa de Mensagem que nunca receberam nenhuma mensagem de seus membros será representada como vazia  |'),
+                    writeln(' |________________________________________________________________________________________________________________|'),
+                    writeln(''),
+                    writeln(''),
+                    writeln('                                                                   '),
+                    writeln('                 Carregando.........                               '),
+
+                    sleep(1.5),
+                    write('Caixa de Mensagem (IdProjeto - '), write(IdMensagem),writeln(')'),
                     exibirMensagens('Database/mensagens.json',IdMensagem)
 
                     ;
