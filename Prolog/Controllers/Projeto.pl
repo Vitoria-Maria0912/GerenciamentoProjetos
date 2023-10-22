@@ -5,7 +5,6 @@
                     retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4, jaAtribuida/2,
                     removerAtividadeProjeto/3, removerAtividadeProjetoJSON/4]).
 
-
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 :- use_module("Controllers/Usuario.pl").
@@ -100,30 +99,28 @@ addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
-% AINDA NEM TESTEI, SE ALGUÉM TIVER FEITO, PODE SUBSTITUIR
 % Remove uma atividade de um projeto
-% removerAtividadeProjetoJSON([], _, _, []).
-% removerAtividadeProjetoJSON([H|T], H.idProjeto, IdAtividade, [NovoProjeto|T]) :-
-%     subtract(H.atividadesAtribuidas, [IdAtividade], NovaListaAtividades),
-%     NovoProjeto = _{
-%         idProjeto:H.idProjeto,
-%         nomeProjeto:H.nomeProjeto,
-%         descricaoProjeto:H.descricaoProjeto,
-%         atividadesAtribuidas:NovaListaAtividades,
-%         membros:H.membros,
-%         idGerente:H.idGerente
-%     }.
-% removerAtividadeProjetoJSON([H|T], Id, IdAtividade, [H|Out]) :- removerAtividadeProjetoJSON(T, Id, IdAtividade, Out).
+removerAtividadeProjetoJSON([], _, _, []).
+removerAtividadeProjetoJSON([H|T], H.idProjeto, IdAtividade, [NovoProjeto|T]) :-
+    subtract(H.atividadesAtribuidas, [IdAtividade], NovaListaAtividades),
+    NovoProjeto = _{
+        idProjeto:H.idProjeto,
+        nomeProjeto:H.nomeProjeto,
+        descricaoProjeto:H.descricaoProjeto,
+        atividadesAtribuidas:NovaListaAtividades,
+        membros:H.membros,
+        idGerente:H.idGerente
+    }.
+removerAtividadeProjetoJSON([H|T], Id, IdAtividade, [H|Out]) :- removerAtividadeProjetoJSON(T, Id, IdAtividade, Out).
 
-% removerAtividadeProjeto(FilePath, IdProjeto, IdAtividade) :-
-%     lerJSON(FilePath, Projetos),
-%     removerAtividadeProjetoJSON(Projetos, IdProjeto, IdAtividade, NovosProjetos),
-%     projetosToJSON(NovosProjetos, NovoConteudo),
-%     open(FilePath, write, Stream), write(Stream, NovoConteudo), close(Stream).
+removerAtividadeProjeto(FilePath, IdProjeto, IdAtividade) :-
+    lerJSON(FilePath, Projetos),
+    removerAtividadeProjetoJSON(Projetos, IdProjeto, IdAtividade, NovosProjetos),
+    projetosToJSON(NovosProjetos, NovoConteudo),
+    open(FilePath, write, Stream), write(Stream, NovoConteudo), close(Stream).
 
 
 % adiciona membros a um projeto 
-
 editarMembrosJSON([], _, _, []).
 editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [NovoProjeto|T]) :-
     append(H.membros, [NovoMembro], NovaListaDeMembros),
@@ -137,7 +134,6 @@ editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [NovoProjeto|T]) :-
     }.
 editarMembrosJSON([H|T], Id, NovoMembro, [H|Out]) :- editarMembrosJSON(T, Id, NovoMembro, Out).
 
-% adiciona membros a um projeto 
 editarMembros(FilePath, IdP, NovoMembro) :-
     lerJSON(FilePath, File),
     editarMembrosJSON(File, IdP, NovoMembro, SaidaParcial),
@@ -157,12 +153,16 @@ exibirMembros(IdProjeto, Projetos, ListaMembros) :-
     retornarMembros(ListaMembros, Usuarios).
 
 % Checa se o usuário é membro de algum projeto.
+% Caso base: usuário não é membro de nenhum projeto.
 ehMembro(_, []):- false.
+% Caso em que o usuário é membro de algum projeto.
 ehMembro(IdUsuario, [Projeto|OutrosProjetos]) :-
      Membros = (Projeto.membros),
      string_para_numero(IdUsuario, Idfake),
+    % Verifica se o usuário é o gerente do projeto ou é membro do projeto.
     (Projeto.idGerente == IdUsuario; 
          member(Idfake, Projeto.membros)) -> true;
+    % Caso o usuário não seja o gerente nem membro do projeto, verifica nos outros projetos.
 ehMembro(IdUsuario, OutrosProjetos).
 
 % Checa se o usuário é membro de um projeto específico
@@ -198,30 +198,29 @@ retornarAtividadesDoProjeto([IdAtividadesDoProjeto|T], Atividades) :-
     getAtividadeJSON(StringId, Atividades, Atividade),
     exibirAtividade(Atividade),
     retornarAtividadesDoProjeto(T, Atividades).
-    
-% ÍRIS FEZ, MAS AINDA NÃO ESTÁ FINALIZADO
-%% remove um membro de um projeto 
-% removerMembroJSON([], _, _, []).
-% removerMembroJSON([H|T], IdProjeto, IdMembro, [NovoProjeto|T]) :-
-%     ( H.idProjeto \= IdProjeto -> NovoProjeto = H ;
-%       delete(H.membros, IdMembro, NovaListaDeMembros),
-%       NovoProjeto = _{
-%         idProjeto:H.idProjeto,
-%         nomeProjeto:H.nomeProjeto,
-%         descricaoProjeto:H.descricaoProjeto,
-%         atividadesAtribuidas:H.atividadesAtribuidas,
-%         membros:NovaListaDeMembros,
-%         idGerente:H.idGerente
-%       }
-%     ).
-% removerMembroJSON([H|T], Id, IdMembro, [H|Out]) :- removerMembroJSON(T, Id, IdMembro, Out).
 
-% % remove um membro de um projeto 
-% removerMembro(FilePath, IdP, IdMembro) :-
-%     lerJSON(FilePath, File),
-%     removerMembroJSON(File, IdP, IdMembro, SaidaParcial),
-%     projetosToJSON(SaidaParcial, Saida),
-%     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+% remove um membro de um projeto 
+removerMembroJSON([], _, _, []).
+removerMembroJSON([H|T], IdProjeto, IdMembro, [NovoProjeto|T]) :-
+    ( H.idProjeto \= IdProjeto -> NovoProjeto = H ;
+      delete(H.membros, IdMembro, NovaListaDeMembros),
+      NovoProjeto = _{
+        idProjeto:H.idProjeto,
+        nomeProjeto:H.nomeProjeto,
+        descricaoProjeto:H.descricaoProjeto,
+        atividadesAtribuidas:H.atividadesAtribuidas,
+        membros:NovaListaDeMembros,
+        idGerente:H.idGerente
+      }
+    ).
+removerMembroJSON([H|T], Id, IdMembro, [H|Out]) :- removerMembroJSON(T, Id, IdMembro, Out).
+
+% remove um membro de um projeto 
+removerMembro(FilePath, IdP, IdMembro) :-
+    lerJSON(FilePath, File),
+    removerMembroJSON(File, IdP, IdMembro, SaidaParcial),
+    projetosToJSON(SaidaParcial, Saida),
+    open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 % Checa se uma atividade já está atribuida ao projeto
 jaAtribuida(_, Projeto):- false.

@@ -77,7 +77,7 @@ deletarProjeto :-
         writeln('                                                                                                             '),
         writeln(' |  Campo obrigatório vazio ou inválido, não foi possível remover o projeto, tente novamente!  |          '),
         writeln('                                                                                                          ')
-        ), retornoMenuProjetos. 
+        ). 
   
 
 % | Menu de gerenciamento de membros de um projeto
@@ -131,7 +131,8 @@ gerenciarMembros :-
         writeln(' |  Campo obrigatório vazio ou inválido, não foi possível gerenciar os membros do projeto, tente novamente!  |          '),
         writeln('                                                                                                                        ')
 
-        ), retornoMenuProjetos.
+        ).
+
 % | Exibe todos os membros de um projeto específico
 visualizarMembros(IdProjeto) :-
 
@@ -142,7 +143,7 @@ visualizarMembros(IdProjeto) :-
         ListaMembros = Projeto.membros,
         length(ListaMembros, QuantidadeDeMembros),
 
-        (QuantidadeDeMembros == 0 -> clearScreen, write('      |     Não há membros no projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl, nl
+        (QuantidadeDeMembros == 0 -> write('      |     Não há membros no projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl, nl
 
         ; write('   |     Estes são os membros do projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl,nl,
         exibirMembros(IdProjeto, ProjetosDoSistema, Usuarios)
@@ -150,59 +151,61 @@ visualizarMembros(IdProjeto) :-
 
 % | Atribui a atividade a um membro, tornando-o membro responsável por ela
 atribuirAtividade(IdProjeto) :-
-        writeln('                                                                    '),
-        writeln('         |     Atribuir uma atividade a um membro:    |             '),
-        writeln('                                                                    '),
-        writeln('              |     Atuais membros do projeto:    |                  '),
-        writeln('                                                                    '),
-       
-        visualizarMembros(IdProjeto),
+        writeln('                                                                  '),
+        writeln('       |     Atribuir uma atividade a um membro:    |             '),
+        writeln('                                                                  '), nl,
 
         lerJSON('Database/projetos.json', Projetos),
         lerJSON('Database/usuarios.json', Usuarios),
         lerJSON('Database/bancoDeAtividades.json', Atividades),
         getProjetoJSON(IdProjeto, Projetos, Projeto),
 
-        write('Digite o ID da atividade: '),
-        ler_string(IdAtividade), nl,
+        getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
+        ListaMembros = Projeto.membros,
+        length(ListaMembros, QuantidadeDeMembros),
 
-        (nao_vazia(IdAtividade) ->
-        verifica_id_atividade(IdAtividade, Atividades, AtvExiste),
-        (AtvExiste ->
-        jaAtribuida(IdAtividade, Projeto) ->
-        writeln('                                                          '),
-        writeln('           |     A atividade já está atribuída!    |      '),
-        writeln('                                                          '), nl, retornoMenuProjetos;
-        write('Digite o ID do membro que deseja atribuir à atividade: '),
-        ler_string(IdMembro), nl,
-        (nao_vazia(IdMembro) ->
-        verifica_id(IdMembro, Usuarios, Existe),
-        (Existe ->
-                membroDoProjeto(IdMembro, Projeto) ->
-                editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
-                addAtividadesProj('Database/projetos.json', IdProjeto, IdAtividade),
-                editarMembroResponsavelAtividade('Database/bancoDeAtividades.json', IdAtividade, IdMembro),
-                writeln('                                                                      '),
-                writeln('              |     Atividade atribuída com sucesso!    |             '),
-                writeln('                                                                      '), nl, retornoMenuProjetos
-                ; 
-                writeln('                                                                      '),
-                writeln('              |     Membro não está no projeto!         |             '),
-                writeln('                                                                      '), nl, retornoMenuProjetos
-        ;
-        writeln('                                                                    '),
-        writeln('              |     ID inexistente, tente novamente!    |           '),
-        writeln('                                                                    '), nl, retornoMenuProjetos  
-        )
-        ; 
-        erroMenuProjeto, retornoMenuProjetos
-        );  
-        writeln('                                                          '),
-        writeln('           |     A atividade não existe!    |             '),
-        writeln('                                                          '), nl, retornoMenuProjetos 
-        );
-        erroMenuProjeto, retornoMenuProjetos
-        ).
+        (QuantidadeDeMembros \= 0 ->
+
+                listarAtividades,
+
+                write('Digite o ID da atividade que deseja atribuir: '),
+                ler_string(IdAtividade), nl,
+
+                verifica_id_atividade(IdAtividade, Atividades, AtvExiste),
+
+                (AtvExiste, \+ jaAtribuida(IdAtividade, Projeto) ->
+
+                        visualizarMembros(IdProjeto), nl,
+
+                        editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjeto),
+                        editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
+                        addAtividadesProjeto('Database/projetos.json', IdProjeto, IdAtividade),
+
+                        write('Digite o ID do membro que deseja atribuir à atividade: '),
+                        ler_string(IdMembro), nl,
+                        verifica_id(IdMembro, Usuarios, ExisteUsuario),
+
+                        (ExisteUsuario, membroDoProjeto(IdMembro, Projeto)) ->
+
+                                editarMembroResponsavelAtividade('Database/bancoDeAtividades.json', IdAtividade, IdMembro),
+                                clearScreen,
+                                writeln('                                                                      '),
+                                writeln('              |     Atividade atribuída com sucesso!    |             '),
+                                writeln('                                                                      ')
+
+                        ; clearScreen,
+                                writeln('                                                                    '),
+                                writeln('      |     Usuário inexistente ou não é membro no projeto.    |    '),
+                                writeln('                                                                    ')
+                        )
+                ; clearScreen,  
+                        writeln('                                                                               '),
+                        writeln('           |     A atividade não existe ou já tem responsável!    |             '),
+                        writeln('                                                                                 ')
+                )
+                
+        ; writeln('                                                                                  '),
+        write('      |     Não há membros no projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl.
 
 
 % | Adiciona um novo membro a um projeto específico
@@ -216,39 +219,32 @@ adicionaNovoMembro(IdProjeto) :-
         exibirUsuarios('Database/usuarios.json'),
         lerJSON('Database/usuarios.json', Usuarios),
         lerJSON('Database/projetos.json', Projetos),
-        getProjetoJSON(IdProjeto, Projetos, Projeto),
 
         write('Digite o ID do membro que deseja adicionar: '),
         ler_string(IdNovoMembro), nl,
-        (nao_vazia(IdNovoMembro) ->
-        verifica_id(IdNovoMembro, Usuarios, Existe),
-        (Existe ->     
+
+        verifica_id(IdNovoMembro, Usuarios, ExisteUsuario),
+
+        (ExisteUsuario ->
+
+                getProjetoJSON(IdProjeto, Projetos, Projeto),
+
                 (gerenteDoProjeto(IdProjeto, IdNovoMembro, Projetos) ->
-                writeln('                                                                    '),
-                writeln('            |      O ID pertence ao gerente do projeto!    |        '),
-                writeln('                                                                    '), 
-                retornoMenuProjetos
-                ; 
-                (membroDoProjeto(IdNovoMembro, Projeto) ->
-                    writeln('                                                                    '),
-                    writeln('        |     O membro já pertence ao projeto!    |                 '),
-                    writeln('                                                                    '),
-                    retornoMenuProjetos
-                ;
-                    editarMembros('Database/projetos.json', IdProjeto, IdNovoMembro),
-                    writeln('                                                                    '),
-                    writeln('              |     Membro adicionado com sucesso!    |             '),
-                    writeln('                                                                    '),
-                   retornoMenuProjetos
+                        writeln('                                                               '),
+                        writeln('         |    O ID pertence ao gerente do projeto!    |        '),
+                        writeln('                                                               ')
+
+                ; \+ membroDoProjeto(IdNovoMembro, Projeto) ->
+                        editarMembros('Database/projetos.json', IdProjeto, IdNovoMembro),
+                        writeln('                                                              '),
+                        writeln('         |    Membro adicionado com sucesso!    |             '),
+                        writeln('                                                              ')
+
+                ; membroDoProjeto(IdNovoMembro, Projeto) ->
+                        writeln('                                                                    '),
+                        writeln('        |    O usuário já é membro do projeto!    |                 '),
+                        writeln('                                                                    ')
                 )
-                )
-                ; 
-                writeln('                                                                    '),
-                writeln('              |     ID inexistente, tente novamente!    |           '),
-                writeln('                                                                    '),
-                retornoMenuProjetos
-        ) ; erroMenuProjeto
-        ).
 
         ; clearScreen,
         writeln('                                                                                                                        '),
@@ -295,8 +291,8 @@ removeMembroProjeto(IdProjeto) :-
         writeln('                                                                    '),
         writeln('              |     ID inexistente, tente novamente!    |            '),
         writeln('                                                                    ').
-        
 
+% Exibe o menu das atividades, com todas as opções para o gerente de um projeto
 menuBancoDeAtividades :-
         writeln('                                                          '),
         writeln('           |     Menu Banco de Atividades    |            '), nl,
@@ -425,9 +421,10 @@ deletaAtividade :-
                 (ExisteUsuario, Projeto.idGerente == IdUsuario, verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
 
                         removerAtividadesProjeto('Database/bancoDeAtividades.json', IdProjetoAtividade, IdAtividade),
+
                         editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, 'Não atribuído!'),
                         writeln('                                                    '),
-                        writeln('      |  Atividade deletada do projeto com sucesso!  |   '),
+                        writeln('        |  Atividade deletada do projeto com sucesso!  |   '),
                         writeln('                                                    ')
 
                 ; clearScreen,
