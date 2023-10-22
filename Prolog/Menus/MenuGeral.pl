@@ -6,6 +6,7 @@
 :- initialization(menuPrincipal).
 :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Projeto.pl").
+:- use_module("Controllers/Mensagem.pl").
 :- use_module("Menus/MenuGerente.pl").
 :- use_module("Menus/MenuPublico.pl").
 :- use_module("Controllers/Utils.pl").
@@ -236,7 +237,8 @@ enviarMGeral :-
                             salvarMensagem('Database/mensagens.json',Usuario.nome,Conteudo,IdMensagem),
                             writeln('                                                            '),
                             writeln('             |  Mensagem enviada com sucesso !  |           '),
-                            writeln('                                                            ')
+                            writeln('                                                            '),
+                            retornoMenuPrincipal
                             ;
                           
                             writeln('                                                            '),
@@ -256,59 +258,103 @@ enviarMGeral :-
                     writeln('                                                            ')
                 
                 ), retornoMenuPrincipal.
+
+visualizarMensagensPrivadas:- 
+        writeln('                                                            '),
+        writeln('           |  Mensagens privadas de um usuário:  |          '),
+        writeln('                                                            '),
+
+        write('Digite seu ID: '),
+                ler_string(IdUsuario),
+                lerJSON('Database/usuarios.json', UsuariosDoSistema),
+                verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
+                (ExisteUsuario -> 
+                    write('Digite sua senha: '),
+                    ler_string(Senha),
+                    (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
+                        writeln('Senha correta'),
+                            sleep(1.5),
+                            writeln('  ________________________________________________________________________________________________________________ '),
+        
+                            writeln(' | ATENÇÃO : Caixa de Mensagem que nunca receberam nenhuma mensagem de seus membros será representada como vazia  |'),
+                            writeln(' |________________________________________________________________________________________________________________|'),
+                            writeln(''),
+                            writeln(''),
+                            writeln('                                                                   '),
+                            writeln('                 Carregando.........                               '),
+                            writeln(''),
+                            sleep(1.5),
+                            write('Caixa de Mensagem (IdUsuario - '), write(IdUsuario),writeln(')'),
+                            exibirMensagens('Database/mensagens.json',IdUsuario),
+                            retornoMenuPrincipal
+                            ;
+                            
+                            writeln('                                                            '),
+                            writeln('           |  Senha incorreta! Tente novamente!  |          '),
+                            writeln('                                                            ')
+                    ) ;
+                    writeln('                                                            '),
+                    writeln('           |  ID inexistente! Tente novamente!  |           '),
+                    writeln('                                                            '),
+
+                    )
+        retornoMenuPrincipal.
+
 enviarMPrivada :- 
         writeln('                                                            '),
         writeln('          |  Enviar mensagem para um usuário:  |            '),
         writeln('                                                            '),
 
         write('Digite seu ID: '),
-        % ler_string(IdUsuario),
-
-        % SE O USUÁRIO NÃO EXISTE
-        writeln('                                                            '),
-        writeln('           |  ID inexistente! Tente novamente!  |           '),
-        writeln('                                                            '),
-
-        write('Digite sua senha: '),
-        % ler_string(Senha),
-
-        % SE A SENHA INCORRETA: 
-        writeln('                                                            '),
-        writeln('           |  Senha incorreta! Tente novamente!  |          '),
-        writeln('                                                            '),
-
-        % FALTA MUITA COISA, olhar no de haskell
-
-        writeln('                                                            '),
-        writeln('             |  Mensagem enviada com sucesso !  |           '),
-        writeln('                                                            '),
-
-        retornoMenuPrincipal.
-
-visualizarMensagensPrivadas :- 
-        writeln('                                                            '),
-        writeln('           |  Mensagens privadas de um usuário:  |          '),
-        writeln('                                                            '),
-
-        write('Digite seu ID: '),
-        % ler_string(IdUsuario),
-
-        write('Digite sua senha: '),
-        % ler_string(Senha),
-
-        % SE A SENHA INCORRETA: 
-        writeln('                                                            '),
-        writeln('           |  Senha incorreta! Tente novamente!  |          '),
-        writeln('                                                            '),
-
-        % FALTA MUITA COISA, olhar no de haskell
-
-        writeln('                             '),
-        writeln('   Carregando.........       '),
-
-        % VAI COLOCAR O DELAY????
+        ler_string(IdUsuario),
+        lerJSON('Database/usuarios.json', UsuariosDoSistema),
+        verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
+                (ExisteUsuario -> 
+                    write('Digite sua senha: '),
+                    ler_string(Senha),
+                    (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
+                        writeln('Senha correta'),
+                        getUsuarioJSON(IdUsuario,UsuariosDoSistema,Usuario),
+                        % Verifica se pertence a algum projeto
+                        exibeUsuarios_id_nome('Database/usuarios.json'),
+                        % Pede o id que terá a mensagem privada encaminhada
+                        writeln('Digite o id usuário que deseja enviar uma mensagem privada'),
+                        ler_string(IdDestinatario),
+                        verifica_id(IdDestinatario, UsuariosDoSistema, ExisteDestinatario),    
+                        (ExisteDestinatario -> 
+                        writeln(""),
+                        writeln('Digite a mensagem a ser enviada para o Id escolhido:'),
+                            ler_string(ConteudoMsg),nl,
+                            salvarMensagem('Database/mensagens.json',Usuario.nome,ConteudoMsg,IdDestinatario),
+                            writeln('                                                            '),
+                            writeln('             |  Mensagem enviada com sucesso !  |           '),
+                            writeln('                                                            '),
+                            
+                            retornoMenuPrincipal
+                            ;
+                          
+                            writeln('                                                                    '),
+                            writeln('      |  Este Id Destinatário digitado não existe no sistema!  |    '),
+                            writeln('                                                                    ')
+                        )
+                        ;
+                        % SE A SENHA INCORRETA: 
+                        writeln('                                                            '),
+                        writeln('           |  Senha incorreta! Tente novamente!  |          '),
+                        writeln('                                                            ')
+                    )
+                    ;
+                    % Usuário não existe
+                    writeln('                                                            '),
+                    writeln('           |  ID inexistente! Tente novamente!  |           '),
+                    writeln('                                                            ')
+                
+                ), retornoMenuPrincipal.
         
-        retornoMenuPrincipal.
+        
+        % ler_string(Senha),
+
+        % FALTA MUITA COISA, olhar no de haskell
 
 visualizarMensagensGerais :-
                 writeln('                                                          '),
@@ -348,11 +394,11 @@ visualizarMensagensGerais :-
                             writeln(''),
                             writeln('                                                                   '),
                             writeln('                 Carregando.........                               '),
-        
+                            writeln(''),
                             sleep(1.5),
                             write('Caixa de Mensagem (IdProjeto - '), write(IdMensagem),writeln(')'),
-                            exibirMensagens('Database/mensagens.json',IdMensagem)
-        
+                            exibirMensagens('Database/mensagens.json',IdMensagem),
+                            retornoMenuPrincipal
                             ;
                           
                             writeln('                                                            '),
@@ -373,7 +419,6 @@ visualizarMensagensGerais :-
                 
                 ), retornoMenuPrincipal.
         
-                retornoMenuPrincipal.
 % | Retorna ao menu principal ou sai do sistema
 retornoMenuPrincipal :- 
         writeln('                                                          '),
