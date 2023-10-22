@@ -301,9 +301,9 @@ visualizarMensagensPrivadas:-
         retornoMenuPrincipal.
 
 enviarMPrivada :- 
-        writeln('                                                            '),
-        writeln('          |  Enviar mensagem para um usuário:  |            '),
-        writeln('                                                            '),
+               writeln('                                                            '),
+               writeln('          |  Enviar mensagem para um usuário:  |            '),
+               writeln('                                                            '),
 
         write('Digite seu ID: '),
         ler_string(IdUsuario),
@@ -352,9 +352,6 @@ enviarMPrivada :-
                 ), retornoMenuPrincipal.
         
         
-        % ler_string(Senha),
-
-        % FALTA MUITA COISA, olhar no de haskell
 
 visualizarMensagensGerais :-
                 writeln('                                                          '),
