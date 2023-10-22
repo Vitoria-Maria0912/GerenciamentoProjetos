@@ -6,6 +6,7 @@
 :- initialization(menuPrincipal).
 :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Projeto.pl").
+:- use_module("Controllers/Mensagem.pl").
 :- use_module("Menus/MenuGerente.pl").
 :- use_module("Menus/MenuPublico.pl").
 :- use_module("Controllers/Utils.pl").
