@@ -1,12 +1,11 @@
 :- module(menuGeral, [menuPrincipal/0, processaEntradaMenuPrincipal/1, cadastrarUsuario/0, deletarUsuario/0, cadastrarProjeto/0,
                       menuProjetos/0, menuChat/0, enviarMPrivada/0, enviarMGeral/0, visualizarMensagensPrivadas/0,
                       visualizarMensagensGerais/0, erroMenuPrincipal/0, erroMenuChat/0, menuChat/0, processaEntradaMenuChat/1,
-                      retornoMenuPrincipal/0, checarMembro/0]).
+                      retornoMenuPrincipal/0]).
 
 :- initialization(menuPrincipal).
 :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Projeto.pl").
-:- use_module("Controllers/Mensagem.pl").
 :- use_module("Menus/MenuGerente.pl").
 :- use_module("Menus/MenuPublico.pl").
 :- use_module("Controllers/Utils.pl").
@@ -96,18 +95,6 @@ deletarUsuario :-
                 ).
 
 
-% teste pra ver se getUsuario está funcionando
-% imprimeUsuario :-
-%         write('Digite seu Id: '),
-%         ler_string(IdUsuario), nl,
-%         (nao_vazia(IdUsuario) ->
-%                 lerJSON('Database/usuarios.json', UsuariosDoSistema),
-%                 getUsuarioJSON(IdUsuario, UsuariosDoSistema, Usuario),
-%                 write(Usuario);
-%                 erroMenuGeral).
-
-
-
 cadastrarProjeto :-
         writeln('                                                          '),
         writeln('               |     Criar projeto:    |                  '),
@@ -160,15 +147,11 @@ menuProjetos :-
                 (EhGerente -> clearScreen, menuRestritoProjeto
                 ; clearScreen, menuPublicoProjeto)
 
-<<<<<<< HEAD
         ; clearScreen,
           writeln('                                                                                                          '),
           writeln(' |  Campo obrigatório vazio ou inválido, não foi possível criar a atividade, tente novamente!  |          '),
           writeln('                                                                                                          ')
         ), retornoMenuPrincipal.
-=======
-        ; erroMenuPrincipal).
->>>>>>> main
 
 erroMenuPrincipal :-
         clearScreen,
@@ -217,7 +200,7 @@ processaEntradaMenuChat(Entrada) :-
         ; erroMenuPrincipal ).
 
 
-        enviarMGeral :-
+enviarMGeral :-
                 writeln('                                                            '),
                 writeln('  |  Enviar mensagem para todos os membros do projeto:  |   '),
                 writeln('                                                            '),
@@ -327,7 +310,7 @@ visualizarMensagensPrivadas :-
         
         retornoMenuPrincipal.
 
-        visualizarMensagensGerais :-
+visualizarMensagensGerais :-
                 writeln('                                                          '),
                 writeln('           |  Mensagens gerais de um projeto:  |          '),
                 writeln('                                                          '),

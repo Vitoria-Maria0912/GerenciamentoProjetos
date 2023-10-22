@@ -3,15 +3,13 @@
                     verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, 
                     addAtividadesProjeto/3, retornarMembros/2, exibirMembros/3, exibirAtividadesDoProjeto/3,
                     retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4, jaAtribuida/2,
-                    removerAtividadeProjeto/3, removerAtividadeProjetoJSON/4, imprimirProjetos_Gerente/2,imprimirProjetos_membro/2,imprimirProjeto/1]).
+                    removerAtividadeProjeto/3, removerAtividadeProjetoJSON/4,imprimirProjetos_Gerente/2,imprimirProjetos_membro/2,imprimirProjeto/1]).
 
 
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Atividades.pl").
-
-
 
 % Cria um projeto
 projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente, Projeto) :-
@@ -44,9 +42,6 @@ exibirProjetosAux([H|T]) :-
 exibirProjetos(FilePath) :-
     lerJSON(FilePath, Projetos),
     exibirProjetosAux(Projetos).
-
-
-
 
 % Pega uma projeto por ID
 getProjetoJSON(IdProjeto, [Projeto|_], Projeto):- IdProjeto == Projeto.idProjeto.
@@ -84,14 +79,22 @@ ehGerente(Busca, [_|T], R) :- ehGerente(Busca, T, R).
 
 % adiciona atividades a um projeto 
 editarAtividadesJSON([], _, _, []).
-editarAtividadesJSON([H|T], H.idProjeto, NovaAtividade, [_{idProjeto:H.idProjeto, nomeProjeto:H.nomeProjeto, descricaoProjeto:H.descricaoProjeto, atividadesAtribuidas:NovaListaAtividades, membros: H.membros, idGerente:H.idGerente}|T]) :-
-    adicionarAtividade(H.atividadesAtribuidas, NovaAtividade, NovaListaAtividades).
+editarAtividadesJSON([H|T], H.idProjeto, NovaAtividade, [NovoProjeto|T]) :-
+    append(H.atividadesAtribuidas, [NovaAtividade], NovaListaAtividades),
+    NovoProjeto = _{
+        idProjeto:H.idProjeto,
+        nomeProjeto:H.nomeProjeto,
+        descricaoProjeto:H.descricaoProjeto,
+        atividadesAtribuidas:NovaListaAtividades,
+        membros:H.membros,
+        idGerente:H.idGerente
+    }.
 editarAtividadesJSON([H|T], Id, NovaAtividade, [H|Out]) :- editarAtividadesJSON(T, Id, NovaAtividade, Out).
 
 adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
     NovaListaAtividades = [NovaAtividade|ListaAtividades].
 
-addAtividadesProj(FilePath, IdP, NovaAtividade) :-
+addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
     lerJSON(FilePath, File),
     editarAtividadesJSON(File, IdP, NovaAtividade, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
@@ -122,12 +125,17 @@ addAtividadesProj(FilePath, IdP, NovaAtividade) :-
 % adiciona membros a um projeto 
 
 editarMembrosJSON([], _, _, []).
-editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [_{idProjeto:H.idProjeto, nomeProjeto:H.nomeProjeto, descricaoProjeto:H.descricaoProjeto, atividadesAtribuidas:H.atividadesAtribuidas, membros:NovaListaDeMembros, idGerente:H.idGerente}|T]) :-
-adicionarMembro(H.membros, NovoMembro, NovaListaDeMembros).
-editarMembrosJSON([H|T], Id, NovoMembro, [H|Out]) :- editarMembrosJSON(T, Id, NovaAtividade, Out).
-
-adicionarMembro(ListaMembros, NovoMembro, NovaListaDeMembros) :-
-NovaListaDeMembros = [NovoMembro|ListaMembros].
+editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [NovoProjeto|T]) :-
+    append(H.membros, [NovoMembro], NovaListaDeMembros),
+    NovoProjeto = _{
+        idProjeto:H.idProjeto,
+        nomeProjeto:H.nomeProjeto,
+        descricaoProjeto:H.descricaoProjeto,
+        atividadesAtribuidas:H.atividadesAtribuidas,
+        membros:NovaListaDeMembros,
+        idGerente:H.idGerente
+    }.
+editarMembrosJSON([H|T], Id, NovoMembro, [H|Out]) :- editarMembrosJSON(T, Id, NovoMembro, Out).
 
 % adiciona membros a um projeto 
 editarMembros(FilePath, IdP, NovoMembro) :-
@@ -221,7 +229,6 @@ jaAtribuida(IdAtividade, Projeto) :-
      Atividades = (Projeto.atividadesAtribuidas),
      string_para_numero(IdAtividade, Idfake),
          member(Idfake, Projeto.atividadesAtribuidas) -> true.
-
 % Exibição de projeto no CHAT
 imprimirProjetos_Gerente(_, []).
 imprimirProjetos_Gerente(IdUsuario, [Projeto|OutrosProjetos]) :-
