@@ -3,7 +3,7 @@
                     verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, 
                     addAtividadesProjeto/3, retornarMembros/2, exibirMembros/3, exibirAtividadesDoProjeto/3,
                     retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4, jaAtribuida/2,
-                    removerAtividadeProjeto/3, removerAtividadeProjetoJSON/4]).
+                    removerAtividadeProjeto/3, removerAtividadeProjetoJSON/4,imprimirProjetos_Gerente/2,imprimirProjetos_membro/2,imprimirProjeto/1]).
 
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
@@ -225,3 +225,22 @@ jaAtribuida(IdAtividade, Projeto) :-
     %  Atividades = (Projeto.atividadesAtribuidas),
      string_para_numero(IdAtividade, Idfake),
          member(Idfake, Projeto.atividadesAtribuidas) -> true.
+% Exibição de projeto no CHAT
+imprimirProjetos_Gerente(_, []).
+imprimirProjetos_Gerente(IdUsuario, [Projeto|OutrosProjetos]) :-
+(IdUsuario == Projeto.idGerente) -> imprimirProjeto(Projeto),
+    imprimirProjetos_Gerente(IdUsuario, OutrosProjetos);
+imprimirProjetos_Gerente(IdUsuario, OutrosProjetos).
+
+imprimirProjetos_membro(_, []).
+imprimirProjetos_membro(IdUsuario, [Projeto|OutrosProjetos]) :-
+string_para_numero(IdUsuario, Idfake),
+member(Idfake, Projeto.membros) -> imprimirProjeto(Projeto), imprimirProjetos_membro(IdUsuario,OutrosProjetos);
+imprimirProjetos_membro(IdUsuario,OutrosProjetos).
+
+
+imprimirProjeto(Projeto) :-
+Nome = Projeto.nomeProjeto,
+Id = Projeto.idProjeto, writeln(""),
+writeln('Título: '), write(Nome),
+write(' (ID: '), write(Id), writeln(')').
