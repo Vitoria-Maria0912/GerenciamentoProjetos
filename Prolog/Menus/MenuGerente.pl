@@ -254,48 +254,56 @@ adicionaNovoMembro(IdProjeto) :-
         writeln('                                                                                                                        '),
         writeln(' |  Campo obrigatório vazio ou inválido, não foi possível adicionar o membro ao projeto, tente novamente!  |          '),
         writeln('                                                                                                                        ')
-        
+
         ).
 
+%AQUI ----------------------------------------------------------------------------------------------------------
 removeMembroProjeto(IdProjeto) :-
         writeln('                                                                    '),
         writeln('              |     Remover membro do projeto:    |                 '),
         writeln('                                                                    '),
         writeln('              |     Atuais membros do projeto:    |                  '),
         writeln('                                                                    '),
-
+    
         write('Digite o ID do membro que deseja remover: '),
         ler_string(IdMembro), nl,
-
+    
         lerJSON('Database/projetos.json', Projetos),
-        removerMembro('Database/projetos.json', IdProjeto, IdMembro),
-        
-        % exibirMembros(IdProjeto, ProjetosDoSistema, Usuarios),
-
-        % SE NÃO ESTÁ NO PROJETO
-        writeln('                                                                    '),
-        writeln('              |     Usuário não é membro do projeto    |            '),
-        writeln('                                                                    '),
-
-        % SE É O GERENTE
-        writeln('                                                                    '),
-        writeln('          |     O ID pertence ao gerente do projeto!    |           '),
-        writeln('                                                                    '),
-
-        % SE DEU CERTO
-        writeln('                                                                    '),
-        writeln('              |     Membro removido com sucesso!    |               '),
-        writeln('                                                                    '),
-
-        writeln('              |     Atuais membros do projeto:    |                  '),
-        writeln('                                                                    '),
-        % imprimirMembrosDoProjeto  >>>>>>>> AINDA PRECISA SER FEITO
-
-        % SE NÃO EXISTE usuário/ atividade /projeto
-        writeln('                                                                    '),
-        writeln('              |     ID inexistente, tente novamente!    |            '),
-        writeln('                                                                    ').
-        
+        exibirMembros(IdProjeto, ProjetosDoSistema, Usuarios),
+    
+        (not(membroDoProjeto(IdMembro, Projeto)) ->
+            writeln('                                                                    '),
+            writeln('              |     Usuário não é membro do projeto    |            '),
+            writeln('                                                                    ')
+    
+        ); % SE É O GERENTE
+            (   
+                nao_vazia(IdMembro) ->
+                verifica_id(IdMembro, Usuarios, Existe),
+                (   
+                    Existe ->
+                    (   
+                        ehGerente(IdProjeto, IdMembro, Projetos) ->
+                        writeln('                                                                    '),
+                        writeln('          |     O ID pertence ao gerente do projeto!    |           '),
+                        writeln('                                                                    ')
+    
+                    ; % SE DEU CERTO
+                        (   
+                            removerMembro('Database/projetos.json', IdProjeto, IdMembro),
+                            writeln('                                                                    '),
+                            writeln('              |     Membro removido com sucesso!    |               '),
+                            writeln('                                                                    '),
+                            retornarMembros(IdProjeto, Projetos, ListaMembros, 'Database/usuarios.json')
+                        )
+                    )
+                ; % SE NÃO EXISTE 
+                    writeln('                                                                    '),
+                    writeln('              |     ID inexistente, tente novamente!    |            '),
+                    writeln('                                                                    ')
+                )
+        ).
+    
 
 menuBancoDeAtividades :-
         writeln('                                                          '),
