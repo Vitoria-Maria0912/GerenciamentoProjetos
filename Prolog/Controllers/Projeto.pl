@@ -1,8 +1,8 @@
 :- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
                     verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, 
-                    addAtividadesProj/3, retornarMembros/2, exibirMembros/3, exibirAtividadesDoProjeto/3,
-                    retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4]).
+                    addAtividadesProjeto/3, retornarMembros/2, exibirMembros/3, exibirAtividadesDoProjeto/3,
+                    retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4, jaAtribuida/2]).
 
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
@@ -41,7 +41,6 @@ exibirProjetos(FilePath) :-
     lerJSON(FilePath, Projetos),
     exibirProjetosAux(Projetos).
 
-
 % Pega uma projeto por ID
 getProjetoJSON(IdProjeto, [Projeto|_], Projeto):- IdProjeto == Projeto.idProjeto.
 getProjetoJSON(IdProjeto, [_|T], Projeto):- getProjetoJSON(IdProjeto, T, Projeto).
@@ -59,6 +58,7 @@ removerProjeto(FilePath, Id):-
     writeln('                                                    '),
     writeln('            |  Projeto removido com sucesso!  |     '),
     writeln('                                                    ').
+
 
 % verifica se um id existe dentro da lista de projetos
 verifica_id_projeto(_, [], false).
@@ -92,7 +92,7 @@ editarAtividadesJSON([H|T], Id, NovaAtividade, [H|Out]) :- editarAtividadesJSON(
 adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
     NovaListaAtividades = [NovaAtividade|ListaAtividades].
 
-addAtividadesProj(FilePath, IdP, NovaAtividade) :-
+addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
     lerJSON(FilePath, File),
     editarAtividadesJSON(File, IdP, NovaAtividade, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
@@ -199,3 +199,10 @@ removerMembro(FilePath, IdP, IdMembro) :-
     removerMembroJSON(File, IdP, IdMembro, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
+% Checa se uma atividade já está atribuida ao projeto
+jaAtribuida(_, Projeto):- false.
+jaAtribuida(IdAtividade, Projeto) :-
+     Atividades = (Projeto.atividadesAtribuidas),
+     string_para_numero(IdAtividade, Idfake),
+         member(Idfake, Projeto.atividadesAtribuidas) -> true.
