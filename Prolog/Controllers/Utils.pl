@@ -25,8 +25,7 @@ verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) :-
 gerenteDoProjeto(IdProjeto, IdUsuario, Projetos) :-
     getProjetoJSON(IdProjeto, Projetos, Projeto),
     Projeto.idGerente == IdUsuario.
-% Verificar se uma string está presente em uma lista de strings
-string_presente(String, Lista) :- member(String, Lista).
+
 string_para_numero(String, Numero) :-
     number_string(Numero, String).
 

@@ -1,5 +1,5 @@
 :- module(usuario, [usuarioToJSON/5, usuariosToJSON/2, salvarUsuario/5, exibirUsuariosAux/1, 
-                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3,verificaSenhaIdUsuario/3]).
+                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3, exibirUsuario/1]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
@@ -26,13 +26,10 @@ salvarUsuario(FilePath, Nome, Senha, IdUsuario, Atividades) :-
 % Exibe os usuarios cadastrados omitindo a senha 
 exibirUsuariosAux([]).
 exibirUsuariosAux([H|T]) :- 
-    write('Nome: '), writeln(H.nome),
-    write('ID Usuário: '), writeln(H.idUsuario), 
-		nl, exibirUsuariosAux(T).
-% Verifica se a senha e o ID de um usuário conferem
-verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) :-
-    getUsuarioJSON(IdUsuario, Usuarios, Usuario),
-    Usuario.senha == Senha.
+    write('|- ID Usuário: '), writeln(H.idUsuario), 
+    write('|- Nome: '), writeln(H.nome),
+    write('|- Atividades atribuídas: '), writeln(H.atividadesAtribuidas),    
+    nl, exibirUsuariosAux(T).
 
 exibirUsuarios(FilePath) :-
 		lerJSON(FilePath, Usuarios),
@@ -40,7 +37,12 @@ exibirUsuarios(FilePath) :-
 
 % Pega uma usuario por ID
 getUsuarioJSON(IdUsuario, [Usuario|_], Usuario):- IdUsuario == Usuario.idUsuario.
-getUsuarioJSON(IdUsuario, [_|T], Usuario):- getUsuarioJSON(IdUsuario, T, Usuario).    
+getUsuarioJSON(IdUsuario, [_|T], Usuario):- getUsuarioJSON(IdUsuario, T, Usuario).   
+
+% Exibe um usuario
+exibirUsuario(Usuario) :-
+    write('|- Nome: '), writeln(Usuario.nome),
+    write('|- ID Usuário: '), writeln(Usuario.idUsuario), nl.
 
 % Removendo um usuário - ainda nao funciona
 removerUsuarioJSON([], _, []).
@@ -61,45 +63,20 @@ verifica_id(Busca, [Usuario|_], true) :-
     Busca == Id.
 verifica_id(Busca, [_|T], R) :- verifica_id(Busca, T, R).
 
-% falta adicionar atividades a um usuario
-
-% falta testar - Adicionando atividades a lista de atividades atribuidas de um usuário
-editarAtivUsuarioJSON([], _, _, []).
-editarAtivUsuarioJSON([H|T], H.id, IdAtividade, [NovoUsuario|T]):-
-    NovoUsuario = _{id:H.id, atividadesAtribuidas:[IdAtividade|H.atividadesAtribuidas], nome:H.nome, senha:H.senha}.
-editarAtivUsuarioJSON([H|T], Id, IdAtividade, [H|Out]) :- 
-		editarAtivUsuarioJSON(T, Id, IdAtividade, Out).
-
-addAtividadeUsuario(FilePath, IdUsuario, IdAtividade) :-
-		lerUsuariosJSON(FilePath, File),
-		editarAtivUsuarioJSON(File, IdUsuario, IdAtividade, SaidaParcial),
-		usuariosToJSON(SaidaParcial, Saida),
-		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 editarAtividadesJSON([], _, _, []).
-editarAtividadesJSON([H|T], H.idUsuario, NovaAtividade, [_{idUsuario:H.idUsuario, nome:H.nome, senha:H.senha, atividadesAtribuidas:NovaListaAtividades}|T]) :-
-    adicionarAtividade(H.atividadesAtribuidas, NovaAtividade, NovaListaAtividades).
+editarAtividadesJSON([H|T], H.idUsuario, NovaAtividade, [NovoUsuario|T]) :-
+    append(H.atividadesAtribuidas, [NovaAtividade], NovaListaAtividades),
+    NovoUsuario = _{
+        idUsuario:H.idUsuario,
+        nome:H.nome,
+        senha:H.senha,
+        atividadesAtribuidas:NovaListaAtividades
+    }.
 editarAtividadesJSON([H|T], Id, NovaAtividade, [H|Out]) :- editarAtividadesJSON(T, Id, NovaAtividade, Out).
-
-adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
-    NovaListaAtividades = [NovaAtividade|ListaAtividades].
 
 editarAtividades(FilePath, IdU, NovaAtividade) :-
     lerJSON(FilePath, File),
     editarAtividadesJSON(File, IdU, NovaAtividade, SaidaParcial),
     usuariosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-
-% POSSIVELMENTE DESNECESSÁRIO - FOI UM TESTE, MAS, FUNCIONA!
-% editarNomeJSON([], _, _, []).
-% editarNomeJSON([H|T], H.idUsuario, Nome, [_{idUsuario:H.idUsuario, nome:Nome, senha:H.senha, atividadesAtribuidas:H.atividadesAtribuidas}|T]).
-% editarNomeJSON([H|T], Id, Nome, [H|Out]) :- 
-% 		editarNomeJSON(T, Id, Nome, Out).
-
-% editarNome(FilePath, IdU, NovoNome) :-
-% 		lerJSON(FilePath, File),
-% 		editarNomeJSON(File, IdU, NovoNome, SaidaParcial),
-% 		usuariosToJSON(SaidaParcial, Saida),
-% 		open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-
-
