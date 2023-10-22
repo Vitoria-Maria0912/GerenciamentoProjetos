@@ -1,7 +1,7 @@
 :- module(menuGeral, [menuPrincipal/0, processaEntradaMenuPrincipal/1, cadastrarUsuario/0, deletarUsuario/0, cadastrarProjeto/0,
                       menuProjetos/0, menuChat/0, enviarMPrivada/0, enviarMGeral/0, visualizarMensagensPrivadas/0,
                       visualizarMensagensGerais/0, erroMenuPrincipal/0, erroMenuChat/0, menuChat/0, processaEntradaMenuChat/1,
-                      retornoMenuPrincipal/0, checarMembro/0]).
+                      retornoMenuPrincipal/0]).
 
 :- initialization(menuPrincipal).
 :- use_module("Controllers/Usuario.pl").
@@ -14,16 +14,16 @@
 menuPrincipal :-
 
         writeln('                                                          '),
-        writeln('             |     Menu Principal    |                    '),
+        writeln('             |     Menu Principal    |                    '), nl,
         writeln('                                                          '),
-        writeln('                 Selecione uma opção:                     '),
+        writeln('                 Selecione uma opção:                     '), nl,
         writeln('                                                          '),
-        writeln('            C - Cadastrar novo usuário                    '),
-        writeln('            D - Deletar perfil                            '),
-        writeln('            P - Criar projeto                             '),
-        writeln('            G - Menu de projetos                          '),
-        writeln('            M - Caixa de mensagens                        '),
-        writeln('            S - Sair do sistema                           '),
+        writeln('            C - Cadastrar novo usuário                    '), nl,
+        writeln('            D - Deletar perfil                            '), nl,
+        writeln('            P - Criar projeto                             '), nl,
+        writeln('            G - Menu de projetos                          '), nl,
+        writeln('            M - Caixa de mensagens                        '), nl,
+        writeln('            S - Sair do sistema                           '), 
         writeln('                                                          '),
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII), 
@@ -46,7 +46,7 @@ processaEntradaMenuPrincipal(Entrada) :-
 cadastrarUsuario :-
         writeln('                                                          '),
         writeln('                  |     Cadastro:    |                    '),
-        writeln('                                                          '),
+        writeln('                                                          '), nl,
         
         write('Digite seu nome: '),
         ler_string(Nome), nl,
@@ -131,7 +131,7 @@ cadastrarProjeto :-
 menuProjetos :-
         writeln('                                                          '),
         writeln('             |     Menu de projetos:    |                 '),
-        writeln('                                                          '),
+        writeln('                                                          '), nl,
         
         write('Digite seu ID: '),
         ler_string(IdUsuario), nl,
@@ -170,18 +170,18 @@ erroMenuChat :-
 
 menuChat :-
         writeln('                                                                                         '),
-        writeln('                            |     Bem-vindo ao Chat!    |                                '),
+        writeln('                            |     Bem-vindo ao Chat!    |                                '), nl,
         writeln('                                                                                         '),
-        writeln('    |     Envie mensagens entre membros do seu projeto e usuários do sistema!    |       '),
-        writeln('                                                                                         '),
-        writeln('                                  Selecione uma opção:                                   '),
-        writeln('                                                                                         '),
-        writeln('                        C - Visualizar mensagens gerais de um projeto                    '),
-        writeln('                        H - Visualizar mensagens privadas                                '),
-        writeln('                        A - Enviar mensagem geral para membros do projeto                '),
-        writeln('                        T - Enviar mensagem privada                                      '),
-        writeln('                        M - Voltar ao menu                                                                 '),
-        writeln('                        S - Sair do sistema                                              '),
+        writeln('    |     Envie mensagens entre membros do seu projeto e usuários do sistema!    |       '), nl,
+        writeln('                                                                                         '), 
+        writeln('                                  Selecione uma opção:                                   '), nl,
+        writeln('                                                                                         '), 
+        writeln('                        C - Visualizar mensagens gerais de um projeto                    '), nl,
+        writeln('                        H - Visualizar mensagens privadas                                '), nl,
+        writeln('                        A - Enviar mensagem geral para membros do projeto                '), nl,
+        writeln('                        T - Enviar mensagem privada                                      '), nl,
+        writeln('                        M - Voltar ao menu                                               '), nl,
+        writeln('                        S - Sair do sistema                                              '), nl,
         writeln('                                                                                         '),
         get_single_char(CodigoASCII),
         char_code(Input, CodigoASCII), 
@@ -328,9 +328,9 @@ visualizarMensagensGerais :-
 % | Retorna ao menu principal ou sai do sistema
 retornoMenuPrincipal :- 
         writeln('                                                          '),
-        writeln('  | Deseja voltar ao menu principal ou sair do sistema?  |'),
+        writeln('  | Deseja voltar ao menu principal ou sair do sistema?  |'), nl,
         writeln('                                                          '),
-        writeln('                 M - Menu principal                       '),
+        writeln('                 M - Menu principal                       '), nl,
         writeln('                 S - Sair do sistema                      '),
         writeln('                                                          '),
         get_single_char(CodigoASCII),

@@ -1,11 +1,15 @@
 :- module(projeto, [lerJSON/2, projetoToJSON/7, projetosToJSON/2, salvarProjeto/7, exibirProjetosAux/1,
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
-                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, jaAtribuida/2, addAtividadesProj/3, retornarMembros/4, exibirMembros/2]).
+                    verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, 
+                    addAtividadesProjeto/3, retornarMembros/2, exibirMembros/3, exibirAtividadesDoProjeto/3,
+                    retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4, jaAtribuida/2,
+                    removerAtividadeProjeto/3, removerAtividadeProjetoJSON/4]).
+
+
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 :- use_module("Controllers/Usuario.pl").
-
-
+:- use_module("Controllers/Atividades.pl").
 
 % Cria um projeto
 projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente, Projeto) :-
@@ -29,14 +33,15 @@ salvarProjeto(FilePath, NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Me
 % Exibe os projetos cadastrados omitindo a descricaoProjeto
 exibirProjetosAux([]).
 exibirProjetosAux([H|T]) :-
-    write('Nome do projeto: '), writeln(H.nomeProjeto),
-    write('ID Projeto: '), writeln(H.idProjeto),
-		nl, exibirProjetosAux(T).
+    write('|- ID Projeto: '), writeln(H.idProjeto),
+    write('|- Nome do projeto: '), writeln(H.nomeProjeto),
+    write('|- Membros do projeto: '), writeln(H.membros),
+    write('|- Atividades do projeto: '), writeln(H.atividadesAtribuidas),
+	nl, exibirProjetosAux(T).
 
 exibirProjetos(FilePath) :-
-		lerJSON(FilePath, Projetos),
-		exibirProjetosAux(Projetos).
-
+    lerJSON(FilePath, Projetos),
+    exibirProjetosAux(Projetos).
 
 % Pega uma projeto por ID
 getProjetoJSON(IdProjeto, [Projeto|_], Projeto):- IdProjeto == Projeto.idProjeto.
@@ -56,13 +61,13 @@ removerProjeto(FilePath, Id):-
     writeln('            |  Projeto removido com sucesso!  |     '),
     writeln('                                                    ').
 
+
 % verifica se um id existe dentro da lista de projetos
 verifica_id_projeto(_, [], false).
 verifica_id_projeto(Busca, [Projeto|_], true) :-
     get_dict(idProjeto, Projeto, Id),
     Busca == Id.
 verifica_id_projeto(Busca, [_|T], R) :- verifica_id_projeto(Busca, T, R).
-
 
 
 % verifica se um id de usuario é de um gerente de projeto
@@ -86,13 +91,39 @@ editarAtividadesJSON([H|T], H.idProjeto, NovaAtividade, [NovoProjeto|T]) :-
     }.
 editarAtividadesJSON([H|T], Id, NovaAtividade, [H|Out]) :- editarAtividadesJSON(T, Id, NovaAtividade, Out).
 
-addAtividadesProj(FilePath, IdP, NovaAtividade) :-
+adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
+    NovaListaAtividades = [NovaAtividade|ListaAtividades].
+
+addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
     lerJSON(FilePath, File),
     editarAtividadesJSON(File, IdP, NovaAtividade, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
-% adiciona os membros ao JSON
+% AINDA NEM TESTEI, SE ALGUÉM TIVER FEITO, PODE SUBSTITUIR
+% Remove uma atividade de um projeto
+% removerAtividadeProjetoJSON([], _, _, []).
+% removerAtividadeProjetoJSON([H|T], H.idProjeto, IdAtividade, [NovoProjeto|T]) :-
+%     subtract(H.atividadesAtribuidas, [IdAtividade], NovaListaAtividades),
+%     NovoProjeto = _{
+%         idProjeto:H.idProjeto,
+%         nomeProjeto:H.nomeProjeto,
+%         descricaoProjeto:H.descricaoProjeto,
+%         atividadesAtribuidas:NovaListaAtividades,
+%         membros:H.membros,
+%         idGerente:H.idGerente
+%     }.
+% removerAtividadeProjetoJSON([H|T], Id, IdAtividade, [H|Out]) :- removerAtividadeProjetoJSON(T, Id, IdAtividade, Out).
+
+% removerAtividadeProjeto(FilePath, IdProjeto, IdAtividade) :-
+%     lerJSON(FilePath, Projetos),
+%     removerAtividadeProjetoJSON(Projetos, IdProjeto, IdAtividade, NovosProjetos),
+%     projetosToJSON(NovosProjetos, NovoConteudo),
+%     open(FilePath, write, Stream), write(Stream, NovoConteudo), close(Stream).
+
+
+% adiciona membros a um projeto 
+
 editarMembrosJSON([], _, _, []).
 editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [NovoProjeto|T]) :-
     append(H.membros, [NovoMembro], NovaListaDeMembros),
@@ -114,6 +145,17 @@ editarMembros(FilePath, IdP, NovoMembro) :-
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 
+% Predicado para verificar se um usuário é membro de um projeto
+membroDeProjeto(IdUsuario, IdProjeto, Projetos) :-
+    member(Projeto, Projetos),
+    Projeto = [idProjeto=IdProjeto, membros=Membros, idGerente=IdGerente],
+    ( member(IdUsuario, Membros) ; IdUsuario = IdGerente ).
+
+exibirMembros(IdProjeto, Projetos, ListaMembros) :-
+    getProjetoJSON(IdProjeto, Projetos, Projeto),
+    ListaMembros = Projeto.membros,
+    retornarMembros(ListaMembros, Usuarios).
+
 % Checa se o usuário é membro de algum projeto.
 ehMembro(_, []):- false.
 ehMembro(IdUsuario, [Projeto|OutrosProjetos]) :-
@@ -131,21 +173,55 @@ membroDoProjeto(IdUsuario, Projeto) :-
     (Projeto.idGerente == IdUsuario; 
          member(Idfake, Projeto.membros)) -> true.
 
-% Retorna os membros de um projeto de acordo com o seu ID.
-retornarMembros(IdProjeto, Projetos, ListaMembros, Usuarios) :-
-     %findall(Membro, membroDeProjeto(_, IdProjeto, Projetos), ListaMembros).
+% Exibe os membros do projeto
+exibirMembros(IdProjeto, Projetos, Usuarios) :-
     getProjetoJSON(IdProjeto, Projetos, Projeto),
     ListaMembros = Projeto.membros,
-    exibirMembros(ListaMembros, Usuarios).
-   
+    retornarMembros(ListaMembros, Usuarios).
+    
+retornarMembros([], _).
+retornarMembros([IdMembro|T], Usuarios) :-
+    atom_string(IdMembro, StringId),
+    getUsuarioJSON(StringId, Usuarios, Usuario),
+    exibirUsuario(Usuario),
+    retornarMembros(T, Usuarios).
 
-% Exibe os membros da lista de membros do projeto
-exibirMembros([], _).
-exibirMembros([IdMembro|T], Usuarios) :-
-atom_string(IdMembro, StringId),
-getUsuarioJSON(StringId, Usuarios, Usuario),
-exibirUsuario(Usuario),
-exibirMembros(T, Usuarios).
+% Exibe as atividades do projeto
+exibirAtividadesDoProjeto(IdProjeto, Projetos, Atividades) :-
+    getProjetoJSON(IdProjeto, Projetos, Projeto),
+    ListaDeAtividades = Projeto.atividadesAtribuidas,
+    retornarAtividadesDoProjeto(ListaDeAtividades, Atividades).
+        
+retornarAtividadesDoProjeto([], _).
+retornarAtividadesDoProjeto([IdAtividadesDoProjeto|T], Atividades) :-
+    atom_string(IdAtividadesDoProjeto, StringId),
+    getAtividadeJSON(StringId, Atividades, Atividade),
+    exibirAtividade(Atividade),
+    retornarAtividadesDoProjeto(T, Atividades).
+    
+% ÍRIS FEZ, MAS AINDA NÃO ESTÁ FINALIZADO
+%% remove um membro de um projeto 
+% removerMembroJSON([], _, _, []).
+% removerMembroJSON([H|T], IdProjeto, IdMembro, [NovoProjeto|T]) :-
+%     ( H.idProjeto \= IdProjeto -> NovoProjeto = H ;
+%       delete(H.membros, IdMembro, NovaListaDeMembros),
+%       NovoProjeto = _{
+%         idProjeto:H.idProjeto,
+%         nomeProjeto:H.nomeProjeto,
+%         descricaoProjeto:H.descricaoProjeto,
+%         atividadesAtribuidas:H.atividadesAtribuidas,
+%         membros:NovaListaDeMembros,
+%         idGerente:H.idGerente
+%       }
+%     ).
+% removerMembroJSON([H|T], Id, IdMembro, [H|Out]) :- removerMembroJSON(T, Id, IdMembro, Out).
+
+% % remove um membro de um projeto 
+% removerMembro(FilePath, IdP, IdMembro) :-
+%     lerJSON(FilePath, File),
+%     removerMembroJSON(File, IdP, IdMembro, SaidaParcial),
+%     projetosToJSON(SaidaParcial, Saida),
+%     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 % Checa se uma atividade já está atribuida ao projeto
 jaAtribuida(_, Projeto):- false.
@@ -153,6 +229,3 @@ jaAtribuida(IdAtividade, Projeto) :-
      Atividades = (Projeto.atividadesAtribuidas),
      string_para_numero(IdAtividade, Idfake),
          member(Idfake, Projeto.atividadesAtribuidas) -> true.
-
-% falta adicionar a parte de imprimir membros do projeto e remover membros
-

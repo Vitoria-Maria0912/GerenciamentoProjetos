@@ -26,9 +26,10 @@ salvarUsuario(FilePath, Nome, Senha, IdUsuario, Atividades) :-
 % Exibe os usuarios cadastrados omitindo a senha 
 exibirUsuariosAux([]).
 exibirUsuariosAux([H|T]) :- 
-    write('Nome: '), writeln(H.nome),
-    write('ID Usuário: '), writeln(H.idUsuario), 
-		nl, exibirUsuariosAux(T).
+    write('|- ID Usuário: '), writeln(H.idUsuario), 
+    write('|- Nome: '), writeln(H.nome),
+    write('|- Atividades atribuídas: '), writeln(H.atividadesAtribuidas),    
+    nl, exibirUsuariosAux(T).
 
 exibirUsuarios(FilePath) :-
 		lerJSON(FilePath, Usuarios),
@@ -40,8 +41,8 @@ getUsuarioJSON(IdUsuario, [_|T], Usuario):- getUsuarioJSON(IdUsuario, T, Usuario
 
 % Exibe um usuario
 exibirUsuario(Usuario) :-
-    write('Nome: '), writeln(Usuario.nome),
-    write('ID Usuário: '), writeln(Usuario.idUsuario), nl.
+    write('|- Nome: '), writeln(Usuario.nome),
+    write('|- ID Usuário: '), writeln(Usuario.idUsuario), nl.
 
 % Removendo um usuário - ainda nao funciona
 removerUsuarioJSON([], _, []).
