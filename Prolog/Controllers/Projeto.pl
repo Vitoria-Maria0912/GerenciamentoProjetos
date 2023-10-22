@@ -11,6 +11,8 @@
 :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Atividades.pl").
 
+
+
 % Cria um projeto
 projetoToJSON(NomeProjeto, DescricaoProjeto, IdProjeto, Atividades, Membros, IdGerente, Projeto) :-
     swritef(Projeto, '{"nomeProjeto":"%w", "descricaoProjeto":"%w", "idProjeto":"%w", "atividadesAtribuidas":%w,"membros":%w, "idGerente":"%w"}', 
@@ -43,6 +45,9 @@ exibirProjetos(FilePath) :-
     lerJSON(FilePath, Projetos),
     exibirProjetosAux(Projetos).
 
+
+
+
 % Pega uma projeto por ID
 getProjetoJSON(IdProjeto, [Projeto|_], Projeto):- IdProjeto == Projeto.idProjeto.
 getProjetoJSON(IdProjeto, [_|T], Projeto):- getProjetoJSON(IdProjeto, T, Projeto).
@@ -70,6 +75,10 @@ verifica_id_projeto(Busca, [Projeto|_], true) :-
 verifica_id_projeto(Busca, [_|T], R) :- verifica_id_projeto(Busca, T, R).
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 % verifica se um id de usuario é de um gerente de projeto
 ehGerente(_, [], false).
 ehGerente(Busca, [Projeto|_], true) :-
@@ -79,6 +88,7 @@ ehGerente(Busca, [_|T], R) :- ehGerente(Busca, T, R).
 
 % adiciona atividades a um projeto 
 editarAtividadesJSON([], _, _, []).
+<<<<<<< HEAD
 editarAtividadesJSON([H|T], H.idProjeto, NovaAtividade, [NovoProjeto|T]) :-
     append(H.atividadesAtribuidas, [NovaAtividade], NovaListaAtividades),
     NovoProjeto = _{
@@ -89,12 +99,20 @@ editarAtividadesJSON([H|T], H.idProjeto, NovaAtividade, [NovoProjeto|T]) :-
         membros:H.membros,
         idGerente:H.idGerente
     }.
+=======
+editarAtividadesJSON([H|T], H.idProjeto, NovaAtividade, [_{idProjeto:H.idProjeto, nomeProjeto:H.nomeProjeto, descricaoProjeto:H.descricaoProjeto, atividadesAtribuidas:NovaListaAtividades, membros: H.membros, idGerente:H.idGerente}|T]) :-
+    adicionarAtividade(H.atividadesAtribuidas, NovaAtividade, NovaListaAtividades).
+>>>>>>> main
 editarAtividadesJSON([H|T], Id, NovaAtividade, [H|Out]) :- editarAtividadesJSON(T, Id, NovaAtividade, Out).
 
 adicionarAtividade(ListaAtividades, NovaAtividade, NovaListaAtividades) :-
     NovaListaAtividades = [NovaAtividade|ListaAtividades].
 
+<<<<<<< HEAD
 addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
+=======
+addAtividadesProj(FilePath, IdP, NovaAtividade) :-
+>>>>>>> main
     lerJSON(FilePath, File),
     editarAtividadesJSON(File, IdP, NovaAtividade, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
@@ -125,6 +143,7 @@ addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
 % adiciona membros a um projeto 
 
 editarMembrosJSON([], _, _, []).
+<<<<<<< HEAD
 editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [NovoProjeto|T]) :-
     append(H.membros, [NovoMembro], NovaListaDeMembros),
     NovoProjeto = _{
@@ -136,6 +155,14 @@ editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [NovoProjeto|T]) :-
         idGerente:H.idGerente
     }.
 editarMembrosJSON([H|T], Id, NovoMembro, [H|Out]) :- editarMembrosJSON(T, Id, NovoMembro, Out).
+=======
+editarMembrosJSON([H|T], H.idProjeto, NovoMembro, [_{idProjeto:H.idProjeto, nomeProjeto:H.nomeProjeto, descricaoProjeto:H.descricaoProjeto, atividadesAtribuidas:H.atividadesAtribuidas, membros:NovaListaDeMembros, idGerente:H.idGerente}|T]) :-
+adicionarMembro(H.membros, NovoMembro, NovaListaDeMembros).
+editarMembrosJSON([H|T], Id, NovoMembro, [H|Out]) :- editarMembrosJSON(T, Id, NovaAtividade, Out).
+
+adicionarMembro(ListaMembros, NovoMembro, NovaListaDeMembros) :-
+NovaListaDeMembros = [NovoMembro|ListaMembros].
+>>>>>>> main
 
 % adiciona membros a um projeto 
 editarMembros(FilePath, IdP, NovoMembro) :-
@@ -145,12 +172,17 @@ editarMembros(FilePath, IdP, NovoMembro) :-
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 % Predicado para verificar se um usuário é membro de um projeto
 membroDeProjeto(IdUsuario, IdProjeto, Projetos) :-
     member(Projeto, Projetos),
     Projeto = [idProjeto=IdProjeto, membros=Membros, idGerente=IdGerente],
     ( member(IdUsuario, Membros) ; IdUsuario = IdGerente ).
 
+<<<<<<< HEAD
 exibirMembros(IdProjeto, Projetos, ListaMembros) :-
     getProjetoJSON(IdProjeto, Projetos, Projeto),
     ListaMembros = Projeto.membros,
@@ -249,3 +281,8 @@ Nome = Projeto.nomeProjeto,
 Id = Projeto.idProjeto, writeln(""),
 writeln('Título: '), write(Nome),
 write(' (ID: '), write(Id), writeln(')').
+=======
+
+% falta adicionar a parte de imprimir membros do projeto e remover membros
+
+>>>>>>> main

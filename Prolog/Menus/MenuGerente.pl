@@ -1,13 +1,20 @@
 :- module(menuGerente, [menuRestritoProjeto/0, processaEntradaMenuRestrito/1, deletarProjeto/0, 
           gerenciarMembros/0, processaEntradaMembros/2, visualizarMembros/1, adicionaNovoMembro/1,
           removeMembroProjeto/1, atribuirAtividade/1, menuBancoDeAtividades/0, deletaAtividade/0, 
+<<<<<<< HEAD
           addIdProjeto/0, retornoMenuProjetos/0, erroMenuProjeto/0]).
+=======
+          alterarIdProjeto/0, retornoMenuRestrito/0, erroMenuGerente/0]).
+>>>>>>> main
 
 :- use_module("Menus/MenuPublico.pl").
 :- use_module("Controllers/Utils.pl").
 :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Projeto.pl").
+<<<<<<< HEAD
 :- use_module("Controllers/Atividades.pl").
+=======
+>>>>>>> main
 
 % | Menu dos projetos, apenas os gerentes têm acesso
 menuRestritoProjeto :-
@@ -28,7 +35,13 @@ menuRestritoProjeto :-
         char_code(Input, CodigoASCII),
         downcase_atom(Input, Entrada),
 
+<<<<<<< HEAD
         ( Entrada == 'l' -> clearScreen, visualizarProjetos
+=======
+processaEntradaMenuRestrito(Entrada) :- 
+
+        ( Entrada == 'l' -> clearScreen, visualizarProjetos, retornoMenuRestrito
+>>>>>>> main
         ; Entrada == 'p' -> clearScreen, deletarProjeto
         ; Entrada == 'g' -> clearScreen, gerenciarMembros
         ; Entrada == 'b' -> clearScreen, menuBancoDeAtividades
@@ -93,6 +106,7 @@ gerenciarMembros :-
         write('Digite o ID do projeto: '),
         ler_string(IdProjeto), nl,
 
+<<<<<<< HEAD
         lerJSON('Database/projetos.json', ProjetosDoSistema),
         verifica_id_projeto(IdProjeto, ProjetosDoSistema, ExisteProjeto),
 
@@ -130,6 +144,47 @@ gerenciarMembros :-
         writeln('                                                                                                                        '),
         writeln(' |  Campo obrigatório vazio ou inválido, não foi possível gerenciar os membros do projeto, tente novamente!  |          '),
         writeln('                                                                                                                        ')
+=======
+        verifica_id_projeto(IdProjeto, ProjetosDoSistema, Existe),
+
+        (Existe -> 
+                writeln('                                                          '),
+                writeln('                O que deseja fazer agora?                 '),
+                writeln('                                                          '),
+                writeln('                  Selecione uma opção:                    '),
+                writeln('                                                          '),
+                writeln('            M - Visualizar membros do projeto             '),
+                writeln('            A - Atribuir atividade a um membro            '),
+                writeln('            N - Adicionar membro ao projeto               '),
+                writeln('            R - Remover membro do projeto                 '),
+                writeln('            V - Voltar ao menu principal                  '),
+                writeln('            P - Voltar ao menu de projetos                '),
+                writeln('            S - Sair do sistema                           '),
+                writeln('                                                          '), 
+
+                get_single_char(CodigoASCII),
+                char_code(Input, CodigoASCII),
+                downcase_atom(Input, LowerOption),
+                processaEntradaMembros(LowerOption, IdProjeto)
+        
+        ;
+        erroMenuGerente
+        ),
+        retornoMenuRestrito.
+
+processaEntradaMembros(Entrada, IdProjeto) :- 
+
+        clearScreen,       
+
+        ( Entrada == 'm' -> visualizarMembros(IdProjeto)
+        ; Entrada == 'a' -> atribuirAtividade(IdProjeto)
+        ; Entrada == 'n' -> adicionaNovoMembro(IdProjeto)
+        % ; Entrada == 'r' -> removerMembro
+        ; Entrada == 'p' -> menuRestritoProjeto
+        ; Entrada == 'v' -> menuPrincipal
+        ; Entrada == 's' -> sairDoSistema
+        ; erroMenuGerente ).
+>>>>>>> main
 
         ), retornoMenuProjetos.
 % | Exibe todos os membros de um projeto específico
@@ -138,6 +193,7 @@ visualizarMembros(IdProjeto) :-
         lerJSON('Database/projetos.json', ProjetosDoSistema),
         lerJSON('Database/usuarios.json', Usuarios),
 
+<<<<<<< HEAD
         getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
         ListaMembros = Projeto.membros,
         length(ListaMembros, QuantidadeDeMembros),
@@ -206,6 +262,9 @@ atribuirAtividade(IdProjeto) :-
 
 
 % | Adiciona um novo membro a um projeto específico
+=======
+
+>>>>>>> main
 adicionaNovoMembro(IdProjeto) :-
         writeln('                                                                    '),
         writeln('                 |     Adicionar novo membro:    |                  '),
@@ -216,17 +275,25 @@ adicionaNovoMembro(IdProjeto) :-
         exibirUsuarios('Database/usuarios.json'),
         lerJSON('Database/usuarios.json', Usuarios),
         lerJSON('Database/projetos.json', Projetos),
+<<<<<<< HEAD
         getProjetoJSON(IdProjeto, Projetos, Projeto),
+=======
+>>>>>>> main
 
         write('Digite o ID do membro que deseja adicionar: '),
         ler_string(IdNovoMembro), nl,
         (nao_vazia(IdNovoMembro) ->
         verifica_id(IdNovoMembro, Usuarios, Existe),
+<<<<<<< HEAD
         (Existe ->     
+=======
+        (Existe ->
+>>>>>>> main
                 (gerenteDoProjeto(IdProjeto, IdNovoMembro, Projetos) ->
                 writeln('                                                                    '),
                 writeln('            |      O ID pertence ao gerente do projeto!    |        '),
                 writeln('                                                                    '), 
+<<<<<<< HEAD
                 retornoMenuProjetos
                 ; 
                 (membroDoProjeto(IdNovoMembro, Projeto) ->
@@ -241,14 +308,40 @@ adicionaNovoMembro(IdProjeto) :-
                     writeln('                                                                    '),
                    retornoMenuProjetos
                 )
+=======
+                retornoMenuRestrito
+                ; 
+                editarMembros('Database/projetos.json', IdProjeto, IdNovoMembro),
+                writeln('                                                                    '),
+                writeln('              |     Membro adicionado com sucesso!    |             '),
+                writeln('                                                                    '),
+                retornoMenuRestrito
+>>>>>>> main
                 )
                 ; 
                 writeln('                                                                    '),
                 writeln('              |     ID inexistente, tente novamente!    |           '),
                 writeln('                                                                    '),
+<<<<<<< HEAD
                 retornoMenuProjetos
         ) ; erroMenuProjeto
         ).
+=======
+                retornoMenuRestrito
+        ) ; erroMenuGerente
+        );
+        
+        retornoMenuRestrito.
+
+
+        % SE JÁ ESTÁ NO PROJETO
+        % writeln('                                                                    '),
+        % writeln('              |     Membro já está no projeto    |                  '),
+        % writeln('                                                                    '),
+
+       
+
+>>>>>>> main
 
         ; clearScreen,
         writeln('                                                                                                                        '),
@@ -294,8 +387,57 @@ removeMembroProjeto(IdProjeto) :-
         % SE NÃO EXISTE usuário/ atividade /projeto
         writeln('                                                                    '),
         writeln('              |     ID inexistente, tente novamente!    |            '),
+<<<<<<< HEAD
         writeln('                                                                    ').
         
+=======
+        writeln('                                                                    '),
+
+        retornoMenuRestrito.
+
+atribuirAtividade(IdProjeto) :-
+        writeln('                                                                    '),
+        writeln('         |     Atribuir uma atividade a um membro:    |             '),
+        writeln('                                                                    '),
+        writeln('              |     Atuais membros do projeto:    |                  '),
+        writeln('                                                                    '),
+        % imprimirMembrosDoProjeto  >>>>>>>> AINDA PRECISA SER FEITO
+
+        lerJSON('Database/projetos.json', Projetos),
+        lerJSON('Database/usuarios.json', Usuarios),
+        lerJSON('Database/bancoDeAtividades.json', Atividades),
+
+        write('Digite o ID da atividade: '),
+        ler_string(IdAtividade), nl,
+
+        (nao_vazia(IdAtividade) ->
+        verifica_id_atividade(IdAtividade, Atividades, AtvExiste),
+        (AtvExiste ->
+        write('Digite o ID do membro que deseja atribuir à atividade: '),
+        ler_string(IdMembro), nl,
+        (nao_vazia(IdMembro) ->
+        verifica_id(IdMembro, Usuarios, Existe),
+        (Existe ->
+        editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
+        addAtividadesProj('Database/projetos.json', IdProjeto, IdAtividade),
+        writeln('                                                                      '),
+        writeln('              |     Atividade atribuída com sucesso!    |             '),
+        writeln('                                                                      '), nl, retornoMenuRestrito
+        ;
+        writeln('                                                                    '),
+        writeln('              |     ID inexistente, tente novamente!    |           '),
+        writeln('                                                                    '), nl, retornoMenuRestrito  
+        ); 
+        erroMenuGerente, retornoMenuRestrito
+        );  
+        writeln('                                                          '),
+        writeln('           |     A atividade não existe!    |             '),
+        writeln('                                                          '), nl, retornoMenuRestrito 
+        );
+        erroMenuGerente, retornoMenuRestrito
+        ).
+
+>>>>>>> main
 
 menuBancoDeAtividades :-
         writeln('                                                          '),

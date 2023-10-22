@@ -131,8 +131,21 @@ editarStatusAtividade(FilePath, IdAtividade, Status) :-
   atividadesToJSON(SaidaParcial, Saida),
   open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
+<<<<<<< HEAD
 % Adiciona um feedback a uma atividade
 criarFeedback(FilePath, Atividade, NovoFeedback) :-
+=======
+% Predicado para verificar se uma atividade com o mesmo IdAtividade já existe no sistema
+atividadeJaExiste(_, [], false). 
+atividadeJaExiste(Busca, [Atividade|_], true) :- 
+    get_dict(idAtividade, Atividade, Id),
+    Busca == Id.
+atividadeJaExiste(Busca, [_|T], R) :- atividadeJaExiste(Busca, T, R).
+
+% Adiciona um feedback a uma atividade
+criarFeedback(FilePath, Atividade, NovoFeedback) :-
+
+>>>>>>> main
   lerJSON(FilePath, Atividades),  
   AtividadeAtualizada = Atividade.put(feedbacks, [NovoFeedback|Atividade.feedbacks]),
   selectchk(Atividade, Atividades, AtividadeAtualizada, AtividadesAtualizadas),
