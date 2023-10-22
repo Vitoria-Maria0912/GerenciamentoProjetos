@@ -244,6 +244,7 @@ processaEntradaMenuChat(Entrada) :-
                             ler_string(IdMensagem),
                             writeln('Digite a mensagem a ser enviada para o IdProjeto selecionado: '),
                             ler_string(Conteudo),
+                            writeln(""),
                             salvarMensagem('Database/mensagens.json',Usuario.nome,Conteudo,IdMensagem),
                             exibirMensagens('Database/mensagens.json')
 
