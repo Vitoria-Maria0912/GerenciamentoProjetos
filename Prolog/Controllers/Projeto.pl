@@ -230,7 +230,6 @@ jaAtribuida(IdAtividade, Projeto) :-
      string_para_numero(IdAtividade, Idfake),
          member(Idfake, Projeto.atividadesAtribuidas) -> true.
 
-
 % Exibição de projeto no CHAT
 imprimirProjetos_Gerente(_, []).
 imprimirProjetos_Gerente(IdUsuario, [Projeto|OutrosProjetos]) :-
@@ -250,4 +249,3 @@ Nome = Projeto.nomeProjeto,
 Id = Projeto.idProjeto, writeln(""),
 writeln('Título: '), write(Nome),
 write(' (ID: '), write(Id), writeln(')').
-
