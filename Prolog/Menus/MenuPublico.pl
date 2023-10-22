@@ -56,17 +56,19 @@ menuPublicoProjeto :-
         char_code(Input, CodigoASCII), 
         downcase_atom(Input, Entrada),
 
-        ( Entrada == 'l' -> clearScreen, visualizarProjetos, retornoMenuProjetos
+        ( Entrada == 'l' -> clearScreen, visualizarProjetos
         ; Entrada == 'b' -> clearScreen, menuPublicoBancoDeAtividades
         ; Entrada == 'm' -> clearScreen, menuPrincipal
         ; Entrada == 's' -> sairDoSistema
-        ; erroMenuProjeto ).
+        ; erroMenuProjeto),
+
+        retornoMenuProjetos.
 
 % | Exibe todos os projetos do sistema
 visualizarProjetos :-
         writeln('                                                          '),
         writeln('         |  Estes são os projetos no sistema:  |          '),
-        writeln('                                                          '),
+        writeln('                                                          '), nl,
         exibirProjetos('Database/projetos.json').
 
 % | Menu do banco, com opções limitadas
@@ -102,15 +104,13 @@ menuPublicoBancoDeAtividades :-
         ; Entrada == 'o' -> clearScreen, criaFeedback
         ; Entrada == 'm' -> clearScreen, menuPrincipal 
         ; Entrada == 's' -> sairDoSistema
-        ; erroMenuProjeto ),
-
-        retornoMenuProjetos. 
+        ; erroMenuProjeto).
 
 % | Exibe todas as atividades do sistema
 listarAtividades :-
         writeln('                                                '),
         writeln('          |  Atividades cadastradas:  |         '),
-        writeln('                                                '),
+        writeln('                                                '), nl,
         exibirAtividades('Database/bancoDeAtividades.json').
 
 % | Cria uma atividade apenas no banco de atividades, sem atribuir a nenhum projeto 
@@ -120,7 +120,7 @@ criaAtividade :-
 
         writeln('                                                       '),
         writeln('               |  Criar atividade:  |                  '),
-        writeln('                                                       '),
+        writeln('                                                       '), nl,
         
         write('Digite um título para sua atividade: '),
         ler_string(Titulo), nl,
@@ -142,15 +142,13 @@ criaAtividade :-
                 ; clearScreen,
                   writeln('                                                          '),
                   writeln('           |  Atividade inexistente! Tente novamente.  |  '),
-                  writeln('                                                          '),
-                  retornoMenuProjetos
+                  writeln('                                                          ')
                 )
 
         ; clearScreen,
           writeln('                                                                                                          '),
           writeln(' |  Campo obrigatório vazio ou inválido, não foi possível criar a atividade, tente novamente!  |          '),
-          writeln('                                                                                                          '),
-          retornoMenuProjetos
+          writeln('                                                                                                          ')
         ). 
 
 
@@ -161,7 +159,7 @@ comecarAtividade :-
 
         writeln('                                                      '),
         writeln('            |  Começar atividade:  |                  '),
-        writeln('                                                      '),
+        writeln('                                                      '), nl,
 
         write('Digite seu ID: '),
         ler_string(IdUsuario), nl,
@@ -205,7 +203,7 @@ finalizarAtividade:-
 
         writeln('                                                        '),
         writeln('            |  Finalizar atividade:  |                  '),
-        writeln('                                                        '),
+        writeln('                                                        '), nl,
 
         write('Digite seu ID: '),
         ler_string(IdUsuario), nl,
@@ -225,6 +223,7 @@ finalizarAtividade:-
 
                 (Atividade.idMembroResponsavel == IdUsuario ->
                         editarStatusAtividade('Database/bancoDeAtividades.json', IdAtividade, 'Concluída!'),
+                        clearScreen,
                         writeln('                                                         '),
                         writeln('         |  Atividade concluída com sucesso!  |          '),
                         writeln('                                                         ')
@@ -246,7 +245,7 @@ visualizarAtividadesDoProjeto:-
 
         writeln('                                                        '),
         writeln('        |  Visualizar atividades do projeto:  |         '),
-        writeln('                                                        '),
+        writeln('                                                        '), nl,
 
         write('Digite o ID do projeto: '),
         ler_string(IdProjeto), nl,
@@ -262,9 +261,9 @@ visualizarAtividadesDoProjeto:-
                 ListaAtividades = Projeto.atividadesAtribuidas,
                 length(ListaAtividades, QuantidadeDeAtividades),
 
-                (QuantidadeDeAtividades == 0 -> nl, clearScreen, write('      |     Não há atividades no projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl
+                (QuantidadeDeAtividades == 0 -> write('      |     Não há atividades no projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl, nl
 
-                ; nl, clearScreen, write('   |     Estas são as atividades do projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl,
+                ; write('   |     Estas são as atividades do projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl, nl,
                 exibirAtividadesDoProjeto(IdProjeto, ProjetosDoSistema, Atividades)
                 )
 
@@ -308,7 +307,7 @@ consultarAtividade:-
 
         writeln('                                                          '),
         writeln('                |  Mostrar Atividade:  |                  '),
-        writeln('                                                          '),
+        writeln('                                                          '), nl,
 
         write('Digite o ID da atividade: '),
         ler_string(IdAtividade), nl,
@@ -334,7 +333,7 @@ criaFeedback:-
 
         writeln('                                                                       '),
         writeln('   |  Comente sobre uma atividade que você criou ou foi designado:  |  '),
-        writeln('                                                                       '),
+        writeln('                                                                       '), nl,
 
         write('Digite seu ID: '),
         ler_string(IdUsuario), nl,
@@ -362,6 +361,7 @@ criaFeedback:-
                         ler_string(Feedback), nl,
 
                         criarFeedback('Database/bancoDeAtividades.json', Atividade, Feedback),
+                        clearScreen,
                         writeln('                                                          '),
                         writeln('   |  Comentário adicionado com sucesso a atividade de ID '), write(IdAtividade), write(' |                  '),
                         writeln('                                                          '),

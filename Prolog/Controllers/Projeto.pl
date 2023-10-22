@@ -2,7 +2,8 @@
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
                     verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, 
                     addAtividadesProjeto/3, retornarMembros/2, exibirMembros/3, exibirAtividadesDoProjeto/3,
-                    retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4, jaAtribuida/2]).
+                    retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4, jaAtribuida/2,
+                    removerAtividadeProjeto/3, removerAtividadeProjetoJSON/4]).
 
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
@@ -97,6 +98,27 @@ addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
     editarAtividadesJSON(File, IdP, NovaAtividade, SaidaParcial),
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
+% Remove uma atividade de um projeto
+removerAtividadeProjetoJSON([], _, _, []).
+removerAtividadeProjetoJSON([H|T], H.idProjeto, IdAtividade, [NovoProjeto|T]) :-
+    subtract(H.atividadesAtribuidas, [IdAtividade], NovaListaAtividades),
+    NovoProjeto = _{
+        idProjeto:H.idProjeto,
+        nomeProjeto:H.nomeProjeto,
+        descricaoProjeto:H.descricaoProjeto,
+        atividadesAtribuidas:NovaListaAtividades,
+        membros:H.membros,
+        idGerente:H.idGerente
+    }.
+removerAtividadeProjetoJSON([H|T], Id, IdAtividade, [H|Out]) :- removerAtividadeProjetoJSON(T, Id, IdAtividade, Out).
+
+removerAtividadeProjeto(FilePath, IdProjeto, IdAtividade) :-
+    lerJSON(FilePath, Projetos),
+    removerAtividadeProjetoJSON(Projetos, IdProjeto, IdAtividade, NovosProjetos),
+    projetosToJSON(NovosProjetos, NovoConteudo),
+    open(FilePath, write, Stream), write(Stream, NovoConteudo), close(Stream).
+
 
 % adiciona membros a um projeto 
 editarMembrosJSON([], _, _, []).

@@ -144,7 +144,7 @@ visualizarMembros(IdProjeto) :-
 
         (QuantidadeDeMembros == 0 -> clearScreen, write('      |     Não há membros no projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl, nl
 
-        ; clearScreen, write('   |     Estes são os membros do projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl,nl,
+        ; write('   |     Estes são os membros do projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl,nl,
         exibirMembros(IdProjeto, ProjetosDoSistema, Usuarios)
         ).
 
@@ -152,7 +152,7 @@ visualizarMembros(IdProjeto) :-
 atribuirAtividade(IdProjeto) :-
         writeln('                                                                  '),
         writeln('       |     Atribuir uma atividade a um membro:    |             '),
-        writeln('                                                                  '), nl,
+        writeln('                                                                  '),
 
         lerJSON('Database/projetos.json', Projetos),
         lerJSON('Database/usuarios.json', Usuarios),
@@ -165,7 +165,7 @@ atribuirAtividade(IdProjeto) :-
 
         (QuantidadeDeMembros \= 0 ->
 
-                listarAtividades,
+                listarAtividades, nl,
 
                 write('Digite o ID da atividade que deseja atribuir: '),
                 ler_string(IdAtividade), nl,
@@ -189,7 +189,7 @@ atribuirAtividade(IdProjeto) :-
                                 editarMembroResponsavelAtividade('Database/bancoDeAtividades.json', IdAtividade, IdMembro),
                                 clearScreen,
                                 writeln('                                                                      '),
-                                writeln('              |     Atividade atribuída com sucesso!    |             '),
+                                writeln('           |     Atividade atribuída com sucesso!    |             '),
                                 writeln('                                                                      ')
 
                         ; clearScreen,
@@ -413,16 +413,17 @@ deletaAtividade :-
                 ler_string(IdUsuario), nl,
 
                 write('Digite sua senha: '),
-                ler_string(IdUsuario), nl,
+                ler_string(Senha), nl,
                 
                 verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
                 getProjetoJSON(IdProjetoAtividade, ProjetosDoSistema, Projeto),
 
                 (ExisteUsuario, Projeto.idGerente == IdUsuario, verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
 
+                        removerAtividadesProjeto('Database/bancoDeAtividades.json', IdProjetoAtividade, IdAtividade),
                         editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, 'Não atribuído!'),
                         writeln('                                                    '),
-                        writeln('        |  Atividade deletada do projeto com sucesso!  |   '),
+                        writeln('      |  Atividade deletada do projeto com sucesso!  |   '),
                         writeln('                                                    ')
 
                 ; clearScreen,
