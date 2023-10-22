@@ -6,6 +6,7 @@
 :- initialization(menuPrincipal).
 :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Projeto.pl").
+:- use_module("Controllers/Mensagem.pl").
 :- use_module("Menus/MenuGerente.pl").
 :- use_module("Menus/MenuPublico.pl").
 :- use_module("Controllers/Utils.pl").
@@ -227,15 +228,25 @@ processaEntradaMenuChat(Entrada) :-
                     ler_string(Senha),
                     (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
                         writeln('Senha correta'),
-            
+                        getUsuarioJSON(IdUsuario,UsuariosDoSistema,Usuario),
                         % Verifica se pertence a algum projeto
                        
                             
                         (membroDeProjeto(IdUsuario, ProjetosDoSistema) -> 
-                            writeln('Escolha o IdProjeto que deseja enviar uma mensagem para seus membros:'),
+                            writeln(""),
+                        
+                        writeln('Projetos em que o usuário é gerente: '),
                         imprimirProjetos_Gerente(IdUsuario, ProjetosDoSistema),
-                        imprimirProjetos_membro(IdUsuario, Proj),
-                            ler_string(IdProjeto)
+                        writeln(""),
+                        writeln('Projetos em que o usuário é membro: '),
+                        imprimirProjetos_membro(IdUsuario, ProjetosDoSistema),
+                        writeln('Escolha o IdProjeto que deseja enviar uma mensagem para seus membros:'),
+                            ler_string(IdMensagem),
+                            writeln('Digite a mensagem a ser enviada para o IdProjeto selecionado: '),
+                            ler_string(Conteudo),
+                            salvarMensagem('Database/mensagens.json',Usuario.nome,Conteudo,IdMensagem),
+                            exibirMensagens('Database/mensagens.json')
+
                             ;
                           
                             writeln('                                                            '),

@@ -119,30 +119,26 @@ getMembros(IdProjeto, Membros) :-
     
     string_para_numero(IdUsuario, Idfake),
     (IdUsuario == Projeto.idGerente -> true;
-    member(Idfake, Projeto.membros) ->
-        writeln('Projetos em que o usuário é membro: '), imprimirProjeto(Projeto), true;
+    member(Idfake, Projeto.membros) -> true;
     membroDeProjeto(IdUsuario, OutrosProjetos)).
 
     imprimirProjetos_Gerente(_, []).
-imprimirProjetos_Gerente(IdUsuario, [Projeto|OutrosProjetos]) :-
-    (IdUsuario == Projeto.idGerente) ->
-        writeln('Projetos em que o usuário é gerente: '), imprimirProjeto(Projeto),
+    imprimirProjetos_Gerente(IdUsuario, [Projeto|OutrosProjetos]) :-
+    (IdUsuario == Projeto.idGerente) -> imprimirProjeto(Projeto),
         imprimirProjetos_Gerente(IdUsuario, OutrosProjetos);
     imprimirProjetos_Gerente(IdUsuario, OutrosProjetos).
 
 imprimirProjetos_membro(_, []).
 imprimirProjetos_membro(IdUsuario, [Projeto|OutrosProjetos]) :-
     string_para_numero(IdUsuario, Idfake),
-    member(Idfake, Projeto.membros) ->
-        writeln('Projetos em que o usuário é membro: '), imprimirProjeto(Projeto), imprimirProjetos_membro(IdUsuario,OutrosProjetos);
+    member(Idfake, Projeto.membros) -> imprimirProjeto(Projeto), imprimirProjetos_membro(IdUsuario,OutrosProjetos);
     imprimirProjetos_membro(IdUsuario,OutrosProjetos).
-
 
 
    imprimirProjeto(Projeto) :-
     Nome = Projeto.nomeProjeto,
-    Id = Projeto.idProjeto,
-    write('Título: '), write(Nome),
+    Id = Projeto.idProjeto, writeln(""),
+    writeln('Título: '), write(Nome),
     write(' (ID: '), write(Id), writeln(')').
 
 % Função que lista, com base no ID, os projetos dos quais o usuário participa.

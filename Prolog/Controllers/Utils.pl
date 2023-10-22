@@ -1,9 +1,16 @@
-:- module(utils, [nao_vazia/1, ler_string/1, clearScreen/0, lerJSON/2, verificaSenhaIdUsuario/3, gerenteDoProjeto/3, string_presente/2, sairDoSistema/0, string_para_numero/2]).
+:- module(utils, [obterHorarioDaMensagem/2,nao_vazia/1, ler_string/1, clearScreen/0, lerJSON/2, obterHoraAtual/1, verificaSenhaIdUsuario/3, gerenteDoProjeto/3, string_presente/2, sairDoSistema/0, string_para_numero/2]).
 
 :- use_module(library(http/json)).
 :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Projeto.pl").
+:- use_module(library(system)).
 
+% Função que obtém o horário da mensagem com base no carimbo de data e hora
+obterHorarioDaMensagem(Carimbo, Horario) :-
+    parse_time(Carimbo, Timestamp),
+    stamp_date_time(Timestamp, DateTime, 'local'),
+    time(H, M, _S) = DateTime,
+    format_time(atom(Horario, '%H:%M', DateTime)).
 
 nao_vazia(Input) :-
     Input \= "".
