@@ -1,5 +1,5 @@
 :- module(usuario, [usuarioToJSON/5, usuariosToJSON/2, salvarUsuario/5, exibirUsuariosAux/1, 
-                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3, exibirUsuario/1]).
+                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3, exibirUsuario/1,exibeUsuarios_id_nome/1,exibirUsuarios_id_nome_aux/1]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
@@ -80,3 +80,12 @@ editarAtividades(FilePath, IdU, NovaAtividade) :-
     editarAtividadesJSON(File, IdU, NovaAtividade, SaidaParcial),
     usuariosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
+
+%%%%%Necessário para formatação Usuário no CHAT
+exibeUsuarios_id_nome(FilePath):-
+    lerJSON(FilePath, Usuarios),
+    exibirUsuarios_id_nome_aux(Usuarios).
+exibirUsuarios_id_nome_aux([]).
+exibirUsuarios_id_nome_aux([H|T]) :-
+    write('|- Nome: '), writeln(H.nome),
+    write('|- ID Usuário: '), writeln(H.idUsuario), nl,exibirUsuarios_id_nome_aux(T).
