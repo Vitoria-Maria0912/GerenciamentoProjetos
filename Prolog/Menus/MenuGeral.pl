@@ -13,6 +13,28 @@
 :- use_module("Controllers/Projeto.pl").
 :- use_module("Controllers/Mensagem.pl").
 
+
+% | Retorna ao menu principal ou sai do sistema
+retornoMenuPrincipal :- 
+        writeln('                                                          '),
+        writeln('  | Deseja voltar ao menu principal ou sair do sistema?  |'), nl,
+        writeln('                                                          '),
+        writeln('                 M - Menu principal                       '), nl,
+        writeln('                 S - Sair do sistema                      '),
+        writeln('                                                          '),
+        get_single_char(CodigoASCII),
+        char_code(Input, CodigoASCII), 
+        downcase_atom(Input, LowerOption),
+
+        (LowerOption == 's' ->
+                sairDoSistema, !
+                
+        ; LowerOption == 'm' ->
+                clearScreen,
+                menuPrincipal
+
+        ; erroMenuPrincipal).
+
 % Menu principal com as principais funcionalidades
 menuPrincipal :-
 
@@ -373,27 +395,4 @@ visualizarMensagensGerais :-
                     writeln('                                                            '),
                     writeln('           |  ID inexistente! Tente novamente!  |           '),
                     writeln('                                                            ')
-                
-                ), retornoMenuPrincipal.
-        
-                retornoMenuPrincipal.
-% | Retorna ao menu principal ou sai do sistema
-retornoMenuPrincipal :- 
-        writeln('                                                          '),
-        writeln('  | Deseja voltar ao menu principal ou sair do sistema?  |'), nl,
-        writeln('                                                          '),
-        writeln('                 M - Menu principal                       '), nl,
-        writeln('                 S - Sair do sistema                      '),
-        writeln('                                                          '),
-        get_single_char(CodigoASCII),
-        char_code(Input, CodigoASCII), 
-        downcase_atom(Input, LowerOption),
-
-        (LowerOption == 's' ->
-                sairDoSistema, !
-                
-        ; LowerOption == 'm' ->
-                clearScreen,
-                menuPrincipal
-
-        ; erroMenuPrincipal).
+                ). 

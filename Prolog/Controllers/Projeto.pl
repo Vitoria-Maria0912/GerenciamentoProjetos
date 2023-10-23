@@ -99,15 +99,15 @@ addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
 % Remove uma atividade de um projeto
 removerAtividadeProjetoJSON([], _, _, []).
 removerAtividadeProjetoJSON([H|T], H.idProjeto, IdAtividade, [NovoProjeto|T]) :-
-    subtract(H.atividadesAtribuidas, [IdAtividade], NovaListaAtividades),
-    NovoProjeto = _{
+    delete(H.atividadesAtribuidas, IdAtividade, NovaListaAtividades),
+      NovoProjeto = _{
         idProjeto:H.idProjeto,
         nomeProjeto:H.nomeProjeto,
         descricaoProjeto:H.descricaoProjeto,
         atividadesAtribuidas:NovaListaAtividades,
         membros:H.membros,
         idGerente:H.idGerente
-    }.
+      }.
 removerAtividadeProjetoJSON([H|T], Id, IdAtividade, [H|Out]) :- removerAtividadeProjetoJSON(T, Id, IdAtividade, Out).
 
 removerAtividadeProjeto(FilePath, IdProjeto, IdAtividade) :-
@@ -143,11 +143,6 @@ membroDeProjeto(IdUsuario, IdProjeto, Projetos) :-
     member(Projeto, Projetos),
     Projeto = [idProjeto=IdProjeto, membros=Membros, idGerente=IdGerente],
     ( member(IdUsuario, Membros) ; IdUsuario = IdGerente ).
-
-exibirMembros(IdProjeto, Projetos, ListaMembros) :-
-    getProjetoJSON(IdProjeto, Projetos, Projeto),
-    ListaMembros = Projeto.membros,
-    retornarMembros(ListaMembros, _).
 
 % Checa se o usuário é membro de algum projeto.
 % Caso base: usuário não é membro de nenhum projeto.
