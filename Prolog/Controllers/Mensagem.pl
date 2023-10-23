@@ -1,4 +1,4 @@
-:- module( mensagem, [mensagemToJSON/5, mensagensToJSON/2, salvarMensagem/4, exibirMensagensAux/2,exibirMensagens/2]).
+:- module( mensagem, [lerJSON/2, mensagemToJSON/5, mensagensToJSON/2, salvarMensagem/4, exibirMensagensAux/2,exibirMensagens/2]).
 
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
