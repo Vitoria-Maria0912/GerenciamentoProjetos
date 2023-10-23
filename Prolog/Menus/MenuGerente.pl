@@ -377,6 +377,7 @@ addIdProjeto:-
                                                 writeln('                                                    '),
                                                 writeln('            |  Atividade alterada com sucesso!  |   '),
                                                 writeln('                                                    ')
+                                                % adicionaNovoMembro(IdProjetoAtividade) % adicionar um membro no momento da criação de uma atividade
 
                                         ; clearScreen,
                                         writeln('                                                               '),
