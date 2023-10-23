@@ -4,12 +4,14 @@
                       retornoMenuPrincipal/0]).
 
 :- initialization(menuPrincipal).
-:- use_module("Controllers/Usuario.pl").
-:- use_module("Controllers/Projeto.pl").
-:- use_module("Controllers/Mensagem.pl").
+
 :- use_module("Menus/MenuGerente.pl").
 :- use_module("Menus/MenuPublico.pl").
 :- use_module("Controllers/Utils.pl").
+
+:- use_module("Controllers/Usuario.pl").
+:- use_module("Controllers/Projeto.pl").
+:- use_module("Controllers/Mensagem.pl").
 
 % Menu principal com as principais funcionalidades
 menuPrincipal :-
@@ -326,7 +328,7 @@ visualizarMensagensGerais :-
                     ler_string(Senha),
                     (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
                         writeln('Senha correta'),
-                        getUsuarioJSON(IdUsuario,UsuariosDoSistema,Usuario),
+                        getUsuarioJSON(IdUsuario,UsuariosDoSistema,_), % Usuario não usado
                         % Verifica se pertence a algum projeto
                        
                             

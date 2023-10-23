@@ -371,7 +371,8 @@ addIdProjeto:-
                                                 addAtividadesProjeto('Database/bancoDeAtividades.json', IdProjetoAtividade, IdAtividade),
                                                 writeln('                                                    '),
                                                 writeln('            |  Atividade alterada com sucesso!  |   '),
-                                                writeln('                                                    ')
+                                                writeln('                                                    '),
+                                                adicionaNovoMembro(IdProjetoAtividade) % adicionar um membro no momento da criação de uma atividade
 
                                         ; clearScreen,
                                         writeln('                                                               '),
