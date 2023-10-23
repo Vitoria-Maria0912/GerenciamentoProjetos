@@ -1,5 +1,5 @@
 :- module(menuGeral, [menuPrincipal/0, processaEntradaMenuPrincipal/1, cadastrarUsuario/0, deletarUsuario/0, cadastrarProjeto/0,
-                      menuProjetos/0, menuChat/0, enviarMPrivada/0, enviarMGeral/0, visualizarMensagensPrivadas/0,
+                      menuProjetos/0, menuChat/0, enviarMPrivada/0, enviarMGeral/0, visualizarMensagensP/0,
                       visualizarMensagensGerais/0, erroMenuPrincipal/0, erroMenuChat/0, menuChat/0, processaEntradaMenuChat/1,
                       retornoMenuPrincipal/0]).
 
@@ -193,13 +193,54 @@ menuChat :-
 processaEntradaMenuChat(Entrada) :- 
 
         ( Entrada == 'c' -> clearScreen, visualizarMensagensGerais
-        ; Entrada == 'h' -> clearScreen, visualizarMensagensPrivadas
+        ; Entrada == 'h' -> clearScreen, visualizarMensagensP
         ; Entrada == 'a' -> clearScreen, enviarMGeral
         ; Entrada == 't' -> clearScreen, enviarMPrivada
         ; Entrada == 'm' -> clearScreen, menuChat
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuPrincipal ).
 
+
+visualizarMensagensP:- 
+                writeln('                                                            '),
+                writeln('           |  Mensagens privadas de um usuário:  |          '),
+                writeln('                                                            '),
+
+                write('Digite seu ID: '),
+                ler_string(IdUsuario),
+                lerJSON('Database/usuarios.json', UsuariosDoSistema),
+                verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
+                (ExisteUsuario -> 
+                    write('Digite sua senha: '),
+                    ler_string(Senha),
+                    (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
+                        writeln('Senha correta'),
+                            sleep(1.5),
+                            writeln('  ________________________________________________________________________________________________________________ '),
+        
+                            writeln(' | ATENÇÃO : Caixa de Mensagem que nunca receberam nenhuma mensagem de seus membros será representada como vazia  |'),
+                            writeln(' |________________________________________________________________________________________________________________|'),
+                            writeln(''),
+                            writeln(''),
+                            writeln('                                                                   '),
+                            writeln('                 Carregando.........                               '),
+                            writeln(''),
+                            sleep(1.5),
+                            write('Caixa de Mensagem (IdUsuario - '), write(IdUsuario),writeln(')'),
+                            exibirMensagens('Database/mensagens.json',IdUsuario),
+                            retornoMenuPrincipal
+                            ;
+                            
+                            writeln('                                                            '),
+                            writeln('           |  Senha incorreta! Tente novamente!  |          '),
+                            writeln('                                                            ')
+                    ) ;
+                    writeln('                                                            '),
+                    writeln('           |  ID inexistente! Tente novamente!  |           '),
+                    writeln('                                                            ')
+
+                    ),
+        retornoMenuPrincipal.
 
 enviarMGeral :-
                 writeln('                                                            '),
@@ -237,7 +278,8 @@ enviarMGeral :-
                             salvarMensagem('Database/mensagens.json',Usuario.nome,Conteudo,IdMensagem),
                             writeln('                                                            '),
                             writeln('             |  Mensagem enviada com sucesso !  |           '),
-                            writeln('                                                            ')
+                            writeln('                                                            '),
+                            retornoMenuPrincipal
                             ;
                           
                             writeln('                                                            '),
@@ -257,49 +299,65 @@ enviarMGeral :-
                     writeln('                                                            ')
                 
                 ), retornoMenuPrincipal.
+
+%visualizarMensagensPrivadas :- 
+ %       writeln('                                                            ').
+       
 enviarMPrivada :- 
-        writeln('                                                            '),
-        writeln('           |  Mensagens privadas de um usuário:  |          '),
-        writeln('                                                            '),
+               writeln('                                                            '),
+               writeln('          |  Enviar mensagem para um usuário:  |            '),
+               writeln('                                                            '),
 
         write('Digite seu ID: '),
         ler_string(IdUsuario),
         lerJSON('Database/usuarios.json', UsuariosDoSistema),
         verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
-        (ExisteUsuario -> 
-            write('Digite sua senha: '),
-            ler_string(Senha),
-            (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
-                writeln('Senha correta'),
-                    sleep(1.5),
-                    writeln('  ________________________________________________________________________________________________________________ '),
-
-                    writeln(' | ATENÇÃO : Caixa de Mensagem que nunca receberam nenhuma mensagem de seus membros será representada como vazia  |'),
-                    writeln(' |________________________________________________________________________________________________________________|'),
-                    writeln(''),
-                    writeln(''),
-                    writeln('                                                                   '),
-                    writeln('                 Carregando.........                               '),
-                    writeln(''),
-                    sleep(1.5),
-                    write('Caixa de Mensagem (IdUsuario - '), write(IdUsuario),writeln(')'),
-                    exibirMensagens('Database/mensagens.json',IdUsuario),
-                    retornoMenuPrincipal
+                (ExisteUsuario -> 
+                    write('Digite sua senha: '),
+                    ler_string(Senha),
+                    (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
+                        writeln('Senha correta'),
+                        getUsuarioJSON(IdUsuario,UsuariosDoSistema,Usuario),
+                        % Verifica se pertence a algum projeto
+                        exibeUsuarios_id_nome('Database/usuarios.json'),
+                        % Pede o id que terá a mensagem privada encaminhada
+                        writeln('Digite o id usuário que deseja enviar uma mensagem privada'),
+                        ler_string(IdDestinatario),
+                        verifica_id(IdDestinatario, UsuariosDoSistema, ExisteDestinatario),    
+                        (ExisteDestinatario -> 
+                        writeln(""),
+                        writeln('Digite a mensagem a ser enviada para o Id escolhido:'),
+                            ler_string(ConteudoMsg),nl,
+                            salvarMensagem('Database/mensagens.json',Usuario.nome,ConteudoMsg,IdDestinatario),
+                            writeln('                                                            '),
+                            writeln('             |  Mensagem enviada com sucesso !  |           '),
+                            writeln('                                                            '),
+                            
+                            retornoMenuPrincipal
+                            ;
+                          
+                            writeln('                                                                    '),
+                            writeln('      |  Este Id Destinatário digitado não existe no sistema!  |    '),
+                            writeln('                                                                    ')
+                        )
+                        ;
+                        % SE A SENHA INCORRETA: 
+                        writeln('                                                            '),
+                        writeln('           |  Senha incorreta! Tente novamente!  |          '),
+                        writeln('                                                            ')
+                    )
                     ;
-                    
+                    % Usuário não existe
                     writeln('                                                            '),
-                    writeln('           |  Senha incorreta! Tente novamente!  |          '),
+                    writeln('           |  ID inexistente! Tente novamente!  |           '),
                     writeln('                                                            ')
-            ) ;
-            writeln('                                                            '),
-            writeln('           |  ID inexistente! Tente novamente!  |           '),
-            writeln('                                                            ')
+                
+                ), retornoMenuPrincipal.
+        
+        
 
-            ),
-retornoMenuPrincipal.
-
-visualizarMensagensPrivadas :- 
-        writeln('                                                          '),
+visualizarMensagensGerais :-
+                writeln('                                                          '),
                 writeln('           |  Mensagens gerais de um projeto:  |          '),
                 writeln('                                                          '),
         
@@ -360,71 +418,7 @@ visualizarMensagensPrivadas :-
                     writeln('                                                            ')
                 
                 ), retornoMenuPrincipal.
-
-visualizarMensagensGerais :-
-                writeln('                                                          '),
-                writeln('           |  Mensagens gerais de um projeto:  |          '),
-                writeln('                                                          '),
         
-                write('Digite seu ID: '),
-                ler_string(IdUsuario),
-                lerJSON('Database/usuarios.json', UsuariosDoSistema),
-                lerJSON('Database/projetos.json', ProjetosDoSistema),
-                verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
-                (ExisteUsuario -> 
-                    write('Digite sua senha: '),
-                    ler_string(Senha),
-                    (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
-                        writeln('Senha correta'),
-                        getUsuarioJSON(IdUsuario,UsuariosDoSistema,Usuario),
-                        % Verifica se pertence a algum projeto
-                       
-                            
-                        (ehMembro(IdUsuario, ProjetosDoSistema) -> 
-                        writeln(""),
-                        
-                        writeln('Projetos em que o usuário é gerente: '),
-                        imprimirProjetos_Gerente(IdUsuario, ProjetosDoSistema),
-                        writeln(""),
-                        writeln('Projetos em que o usuário é membro: '),
-                        imprimirProjetos_membro(IdUsuario, ProjetosDoSistema),
-                        writeln('Escolha o IdProjeto que deseja visualizar uma mensagem geral:'),
-                            ler_string(IdMensagem),nl,
-                            sleep(1.5),
-                            writeln('  ________________________________________________________________________________________________________________ '),
-        
-                            writeln(' | ATENÇÃO : Caixa de Mensagem que nunca receberam nenhuma mensagem de seus membros será representada como vazia  |'),
-                            writeln(' |________________________________________________________________________________________________________________|'),
-                            writeln(''),
-                            writeln(''),
-                            writeln('                                                                   '),
-                            writeln('                 Carregando.........                               '),
-        
-                            sleep(1.5),
-                            write('Caixa de Mensagem (IdProjeto - '), write(IdMensagem),writeln(')'),
-                            exibirMensagens('Database/mensagens.json',IdMensagem)
-        
-                            ;
-                          
-                            writeln('                                                            '),
-                            writeln('      |  Este usuário não é membro de nenhum projeto!  |    '),
-                            writeln('                                                            ')
-                        )
-                        ;
-                        % SE A SENHA INCORRETA: 
-                        writeln('                                                            '),
-                        writeln('           |  Senha incorreta! Tente novamente!  |          '),
-                        writeln('                                                            ')
-                    )
-                    ;
-                    % Usuário não existe
-                    writeln('                                                            '),
-                    writeln('           |  ID inexistente! Tente novamente!  |           '),
-                    writeln('                                                            ')
-                
-                ), retornoMenuPrincipal.
-        
-                retornoMenuPrincipal.
 % | Retorna ao menu principal ou sai do sistema
 retornoMenuPrincipal :- 
         writeln('                                                          '),
