@@ -199,30 +199,29 @@ retornarAtividadesDoProjeto([IdAtividadesDoProjeto|T], Atividades) :-
     exibirAtividade(Atividade),
     retornarAtividadesDoProjeto(T, Atividades).
     
-% AINDA NÃO ESTÁ FINALIZADO
-% remove um membro de um projeto 
-removerMembroJSON([], _, _, []).
-removerMembroJSON([H|T], IdProjeto, IdMembro, [NovoProjeto|T]) :-
-    ( H.idProjeto \= IdProjeto -> NovoProjeto = H ;
-      delete(H.membros, IdMembro, NovaListaDeMembros),
-      NovoProjeto = _{
-        idProjeto:H.idProjeto,
-        nomeProjeto:H.nomeProjeto,
-        descricaoProjeto:H.descricaoProjeto,
-        atividadesAtribuidas:H.atividadesAtribuidas,
-        membros:NovaListaDeMembros,
-        idGerente:H.idGerente
-      }
-    ).
-removerMembroJSON([H|T], Id, IdMembro, [H|Out]) :- removerMembroJSON(T, Id, IdMembro, Out).
+% ÍRIS FEZ, MAS AINDA NÃO ESTÁ FINALIZADO
+%% remove um membro de um projeto 
+% removerMembroJSON([], _, _, []).
+% removerMembroJSON([H|T], IdProjeto, IdMembro, [NovoProjeto|T]) :-
+%     ( H.idProjeto \= IdProjeto -> NovoProjeto = H ;
+%       delete(H.membros, IdMembro, NovaListaDeMembros),
+%       NovoProjeto = _{
+%         idProjeto:H.idProjeto,
+%         nomeProjeto:H.nomeProjeto,
+%         descricaoProjeto:H.descricaoProjeto,
+%         atividadesAtribuidas:H.atividadesAtribuidas,
+%         membros:NovaListaDeMembros,
+%         idGerente:H.idGerente
+%       }
+%     ).
+% removerMembroJSON([H|T], Id, IdMembro, [H|Out]) :- removerMembroJSON(T, Id, IdMembro, Out).
 
-% remove um membro de um projeto 
-removerMembro(FilePath, IdP, IdMembro) :-
-    lerJSON(FilePath, File),
-    removerMembroJSON(File, IdP, IdMembro, SaidaParcial),
-    projetosToJSON(SaidaParcial, Saida),
-    open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
-
+% % remove um membro de um projeto 
+% removerMembro(FilePath, IdP, IdMembro) :-
+%     lerJSON(FilePath, File),
+%     removerMembroJSON(File, IdP, IdMembro, SaidaParcial),
+%     projetosToJSON(SaidaParcial, Saida),
+%     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 % Checa se uma atividade já está atribuida ao projeto
 jaAtribuida(_, Projeto):- false.
