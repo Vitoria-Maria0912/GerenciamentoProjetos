@@ -12,9 +12,8 @@ ler_string(X) :-
     read_line_to_codes(user_input, R),
     atom_string(R, X).
 
-clearScreen :- shell('clear').% só serve no unix
-
-clearScreen :- shell('cls').
+clearScreen :- shell('clear'). % serve para unix 
+clearScreen :- shell('cls'). % seve para windows
 
 lerJSON(FilePath, File) :-
     open(FilePath, read, F),

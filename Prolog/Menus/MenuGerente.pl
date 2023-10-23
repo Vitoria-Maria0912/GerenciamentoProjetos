@@ -155,7 +155,7 @@ visualizarMembros(IdProjeto) :-
 atribuirAtividade(IdProjeto) :-
         writeln('                                                                  '),
         writeln('       |     Atribuir uma atividade a um membro:    |             '),
-        writeln('                                                                  '), nl,
+        writeln('                                                                  '),
 
         lerJSON('Database/projetos.json', ProjetosDoSistema),
         lerJSON('Database/usuarios.json', Usuarios),
@@ -167,7 +167,7 @@ atribuirAtividade(IdProjeto) :-
 
         (QuantidadeDeMembros \= 0 ->
 
-                listarAtividades,
+                listarAtividades, nl,
 
                 write('Digite o ID da atividade que deseja atribuir: '),
                 ler_string(IdAtividade), nl,
@@ -182,7 +182,7 @@ atribuirAtividade(IdProjeto) :-
                         ler_string(IdMembro), nl,
                         verifica_id(IdMembro, Usuarios, ExisteUsuario),
 
-                        (ExisteUsuario, membroDoProjeto(IdMembro, Projeto)) ->
+                        (ExisteUsuario, membroDoProjeto(IdMembro, Projeto) ->
 
                                 editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjeto),
                                 editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
@@ -199,14 +199,15 @@ atribuirAtividade(IdProjeto) :-
                                 writeln('      |     Usuário inexistente ou não é membro no projeto.    |    '),
                                 writeln('                                                                    ')
                         )
+                
                 ; clearScreen,  
-                        writeln('                                                                               '),
-                        writeln('           |     A atividade não existe ou já tem responsável!    |             '),
-                        writeln('                                                                                 ')
+                        writeln('                                                                        '),
+                        writeln('    |     A atividade não existe ou já tem responsável!    |            '),
+                        writeln('                                                                        ')
                 )
                 
         ; writeln('                                                                                  '),
-        write('      |     Não há membros no projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl.
+        write('      |     Não há membros no projeto: (ID: '), write(IdProjeto), writeln(')    |     '), nl).
 
 
 % | Adiciona um novo membro a um projeto específico
