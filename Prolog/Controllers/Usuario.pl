@@ -1,5 +1,5 @@
 :- module(usuario, [usuarioToJSON/5, usuariosToJSON/2, salvarUsuario/5, exibirUsuariosAux/1, 
-                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3, exibirUsuario/1,exibeUsuarios_id_nome/1,exibirUsuarios_id_nome_aux/1]).
+                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3, exibirUsuario/1]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
@@ -43,15 +43,6 @@ getUsuarioJSON(IdUsuario, [_|T], Usuario):- getUsuarioJSON(IdUsuario, T, Usuario
 exibirUsuario(Usuario) :-
     write('|- Nome: '), writeln(Usuario.nome),
     write('|- ID Usuário: '), writeln(Usuario.idUsuario), nl.
-
-exibeUsuarios_id_nome(FilePath):-
-    lerJSON(FilePath, Usuarios),
-    exibirUsuarios_id_nome_aux(Usuarios).
-exibirUsuarios_id_nome_aux([]).
-exibirUsuarios_id_nome_aux([H|T]) :-
-    write('|- Nome: '), writeln(H.nome),
-    write('|- ID Usuário: '), writeln(H.idUsuario), nl,exibirUsuarios_id_nome_aux(T).
-
 
 % Removendo um usuário - ainda nao funciona
 removerUsuarioJSON([], _, []).
