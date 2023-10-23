@@ -227,7 +227,8 @@ visualizarMensagensP:-
                             writeln(''),
                             sleep(1.5),
                             write('Caixa de Mensagem (IdUsuario - '), write(IdUsuario),writeln(')'),
-                            exibirMensagens('Database/mensagens.json',IdUsuario)
+                            exibirMensagens('Database/mensagens.json',IdUsuario),
+                            sleep(1.5)
                             ;
                             
                             writeln('                                                            '),
@@ -393,7 +394,8 @@ visualizarMensagensGerais :-
                             sleep(1.5),
                             writeln(''),
                             write('Caixa de Mensagem (IdProjeto - '), write(IdMensagem),writeln(')'),
-                            exibirMensagens('Database/mensagens.json',IdMensagem)
+                            exibirMensagens('Database/mensagens.json',IdMensagem),
+                            sleep(1.5)
                             ;
                           
                             writeln('                                                            '),
