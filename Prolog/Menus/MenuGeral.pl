@@ -214,11 +214,11 @@ visualizarMensagensP:-
                     write('Digite sua senha: '),
                     ler_string(Senha),
                     (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
-                        writeln('Senha correta'),
+                        writeln(''),
                             sleep(1.5),
                             writeln('  ________________________________________________________________________________________________________________ '),
-        
-                            writeln(' | ATENÇÃO : Caixa de Mensagem que nunca receberam nenhuma mensagem de seus membros será representada como vazia  |'),
+                            writeln(' |                                                                                                                |'),
+                            writeln(' |         ATENÇÃO : Caixa de Mensagem que nunca receberam nenhuma mensagem será representada como vazia          |'),
                             writeln(' |________________________________________________________________________________________________________________|'),
                             writeln(''),
                             writeln(''),
@@ -227,8 +227,7 @@ visualizarMensagensP:-
                             writeln(''),
                             sleep(1.5),
                             write('Caixa de Mensagem (IdUsuario - '), write(IdUsuario),writeln(')'),
-                            exibirMensagens('Database/mensagens.json',IdUsuario),
-                            retornoMenuPrincipal
+                            exibirMensagens('Database/mensagens.json',IdUsuario)
                             ;
                             
                             writeln('                                                            '),
@@ -257,13 +256,13 @@ enviarMGeral :-
                     write('Digite sua senha: '),
                     ler_string(Senha),
                     (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
-                        writeln('Senha correta'),
+                        writeln(''),
                         getUsuarioJSON(IdUsuario,UsuariosDoSistema,Usuario),
                         % Verifica se pertence a algum projeto
                        
                             
                         (ehMembro(IdUsuario, ProjetosDoSistema) -> 
-                            writeln(""),
+                        writeln(""),
                         
                         writeln('Projetos em que o usuário é gerente: '),
                         imprimirProjetos_Gerente(IdUsuario, ProjetosDoSistema),
@@ -278,8 +277,7 @@ enviarMGeral :-
                             salvarMensagem('Database/mensagens.json',Usuario.nome,Conteudo,IdMensagem),
                             writeln('                                                            '),
                             writeln('             |  Mensagem enviada com sucesso !  |           '),
-                            writeln('                                                            '),
-                            retornoMenuPrincipal
+                            writeln('                                                            ')
                             ;
                           
                             writeln('                                                            '),
@@ -300,9 +298,6 @@ enviarMGeral :-
                 
                 ), retornoMenuPrincipal.
 
-%visualizarMensagensPrivadas :- 
- %       writeln('                                                            ').
-       
 enviarMPrivada :- 
                writeln('                                                            '),
                writeln('          |  Enviar mensagem para um usuário:  |            '),
@@ -316,7 +311,7 @@ enviarMPrivada :-
                     write('Digite sua senha: '),
                     ler_string(Senha),
                     (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
-                        writeln('Senha correta'),
+                        writeln(''),
                         getUsuarioJSON(IdUsuario,UsuariosDoSistema,Usuario),
                         % Verifica se pertence a algum projeto
                         exibeUsuarios_id_nome('Database/usuarios.json'),
@@ -331,9 +326,8 @@ enviarMPrivada :-
                             salvarMensagem('Database/mensagens.json',Usuario.nome,ConteudoMsg,IdDestinatario),
                             writeln('                                                            '),
                             writeln('             |  Mensagem enviada com sucesso !  |           '),
-                            writeln('                                                            '),
+                            writeln('                                                            ')
                             
-                            retornoMenuPrincipal
                             ;
                           
                             writeln('                                                                    '),
@@ -370,7 +364,7 @@ visualizarMensagensGerais :-
                     write('Digite sua senha: '),
                     ler_string(Senha),
                     (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
-                        writeln('Senha correta'),
+                        writeln(''),
                         getUsuarioJSON(IdUsuario,UsuariosDoSistema,Usuario),
                         % Verifica se pertence a algum projeto
                        
@@ -386,19 +380,20 @@ visualizarMensagensGerais :-
                         writeln('Escolha o IdProjeto que deseja visualizar uma mensagem geral:'),
                             ler_string(IdMensagem),nl,
                             sleep(1.5),
-                            writeln('  ________________________________________________________________________________________________________________ '),
-        
-                            writeln(' | ATENÇÃO : Caixa de Mensagem que nunca receberam nenhuma mensagem de seus membros será representada como vazia  |'),
-                            writeln(' |________________________________________________________________________________________________________________|'),
+                            writeln('  _________________________________________________________________________________________________________________________________ '),
+                            writeln(' |                                                                                                                                 |'),
+                            writeln(' |         ATENÇÃO : Caixa de Mensagem que nunca receberam nenhuma mensagem dos seus membros será representada como vazia          |'),
+                            writeln(' |_________________________________________________________________________________________________________________________________|'),
+                            writeln(''),
                             writeln(''),
                             writeln(''),
                             writeln('                                                                   '),
                             writeln('                 Carregando.........                               '),
                             writeln(''),
                             sleep(1.5),
+                            writeln(''),
                             write('Caixa de Mensagem (IdProjeto - '), write(IdMensagem),writeln(')'),
-                            exibirMensagens('Database/mensagens.json',IdMensagem),
-                            retornoMenuPrincipal
+                            exibirMensagens('Database/mensagens.json',IdMensagem)
                             ;
                           
                             writeln('                                                            '),
