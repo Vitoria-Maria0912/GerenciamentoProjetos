@@ -99,15 +99,15 @@ addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
 % Remove uma atividade de um projeto
 removerAtividadeProjetoJSON([], _, _, []).
 removerAtividadeProjetoJSON([H|T], H.idProjeto, IdAtividade, [NovoProjeto|T]) :-
-    subtract(H.atividadesAtribuidas, [IdAtividade], NovaListaAtividades),
-    NovoProjeto = _{
+    delete(H.atividadesAtribuidas, IdAtividade, NovaListaAtividades),
+      NovoProjeto = _{
         idProjeto:H.idProjeto,
         nomeProjeto:H.nomeProjeto,
         descricaoProjeto:H.descricaoProjeto,
         atividadesAtribuidas:NovaListaAtividades,
         membros:H.membros,
         idGerente:H.idGerente
-    }.
+      }.
 removerAtividadeProjetoJSON([H|T], Id, IdAtividade, [H|Out]) :- removerAtividadeProjetoJSON(T, Id, IdAtividade, Out).
 
 removerAtividadeProjeto(FilePath, IdProjeto, IdAtividade) :-

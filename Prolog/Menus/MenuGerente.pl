@@ -373,7 +373,7 @@ addIdProjeto:-
                                         (ExisteUsuario, Projeto.idGerente == IdUsuario ->
 
                                                 editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjetoAtividade),
-                                                addAtividadesProjeto('Database/bancoDeAtividades.json', IdProjetoAtividade, IdAtividade),
+                                                addAtividadesProjeto('Database/projetos.json', IdProjetoAtividade, IdAtividade),
                                                 writeln('                                                    '),
                                                 writeln('            |  Atividade alterada com sucesso!  |   '),
                                                 writeln('                                                    ')
@@ -426,7 +426,7 @@ deletaAtividade :-
 
                 (ExisteUsuario, Projeto.idGerente == IdUsuario, verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
 
-                        removerAtividadeProjeto('Database/bancoDeAtividades.json', IdProjetoAtividade, IdAtividade),
+                        removerAtividadeProjeto('Database/projetos.json', IdProjetoAtividade, IdAtividade),
                         editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, 'Não atribuído!'),
                         clearScreen,
                         writeln('                                                    '),
