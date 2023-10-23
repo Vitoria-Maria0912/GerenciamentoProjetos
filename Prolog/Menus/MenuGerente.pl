@@ -265,8 +265,9 @@ removeMembroProjeto(IdProjeto) :-
         writeln('                                                                    '),
         lerJSON('Database/projetos.json', Projetos),
         lerJSON('Database/usuarios.json', Usuarios),
+        getProjetoJSON(IdProjeto, Projetos, Projeto),
 
-        exibirMembros(IdProjeto, Projetos, Usuarios),
+        exibirMembros(IdProjeto, Projeto, Usuarios),
         write('Digite o ID do membro que deseja remover: '),
         ler_string(IdMembro), nl,
     
@@ -275,19 +276,19 @@ removeMembroProjeto(IdProjeto) :-
         (Existe ->
                 % SE É O GERENTE 
 
-                % ((membroDoProjeto(IdMembro, Projeto)) ->
+                ((membroDoProjeto(IdMembro, Projeto)) ->
                         
                         removerMembro('Database/projetos.json', IdProjeto, IdMembro),
                         writeln('                                                                    '),
                         writeln('              |     Membro removido com sucesso!    |               '),
                         writeln('                                                                    ')
                                         
-                %         ;
-                %         %(\+(membroDoProjeto(IdMembro, Projeto)) ->
-                %         writeln('                                                                    '),
-                %         writeln('              |     Usuário não é membro do projeto    |            '),
-                %         writeln('                                                                    ')
-                % )
+                        ;
+                        %(\+(membroDoProjeto(IdMembro, Projeto)) ->
+                        writeln('                                                                    '),
+                        writeln('              |     Usuário não é membro do projeto    |            '),
+                        writeln('                                                                    ')
+                )
 
         ;
                 % SE NÃO EXISTE 
