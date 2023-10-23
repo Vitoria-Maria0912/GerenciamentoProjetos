@@ -54,7 +54,7 @@ removerUsuario(FilePath, Id):-
     removerUsuarioJSON(File, Id, SaidaParcial),
     usuariosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream),
-    writeln('Usuário removido com sucesso. Até a próxima!').
+    writeln('         |    Usuário removido com sucesso. Até a próxima!    |').
 
 % verifica se um id existe dentro da lista de usuarios
 verifica_id(_, [], false).

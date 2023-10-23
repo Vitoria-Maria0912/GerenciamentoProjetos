@@ -4,7 +4,9 @@
           addIdProjeto/0, retornoMenuProjetos/0, erroMenuProjeto/0]).
 
 :- use_module("Menus/MenuPublico.pl").
+
 :- use_module("Controllers/Utils.pl").
+
 :- use_module("Controllers/Usuario.pl").
 :- use_module("Controllers/Projeto.pl").
 :- use_module("Controllers/Atividades.pl").
@@ -210,12 +212,12 @@ atribuirAtividade(IdProjeto) :-
 % | Adiciona um novo membro a um projeto específico
 adicionaNovoMembro(IdProjeto) :-
         writeln('                                                                    '),
-        writeln('                 |     Adicionar novo membro:    |                  '),
+        writeln('                 |     Adicionar novo membro:    |                  '), nl,
         writeln('                                                                    '),
-        writeln(' |     Usuários disponíveis no sistema para adição no projeto:    | '),
+        writeln(' |     Usuários disponíveis no sistema para adição no projeto:    | '), nl,
         writeln('                                                                    '),
 
-        exibirUsuarios('Database/usuarios.json'),
+        exibirUsuarios('Database/usuarios.json'), nl,
         lerJSON('Database/usuarios.json', Usuarios),
         lerJSON('Database/projetos.json', Projetos),
 
@@ -252,11 +254,11 @@ adicionaNovoMembro(IdProjeto) :-
         
         ).
 
+% | Remove um membro do projeto
 removeMembroProjeto(IdProjeto) :-
-        writeln('                                                                    '),
-        writeln('              |     Remover membro do projeto:    |                 '),
-        writeln('                                                                    '),
-        writeln('                                                                    '),
+        writeln('                                                                 '),
+        writeln('           |     Remover membro do projeto:    |                 '),
+        writeln('                                                                 '), nl,
         lerJSON('Database/projetos.json', Projetos),
         lerJSON('Database/usuarios.json', Usuarios),
         getProjetoJSON(IdProjeto, Projetos, Projeto),
@@ -297,7 +299,7 @@ removeMembroProjeto(IdProjeto) :-
                 )
         ).
         
-% Exibe o menu das atividades, com todas as opções para o gerente de um projeto
+% | Exibe o menu das atividades, com todas as opções para o gerente de um projeto
 menuBancoDeAtividades :-
         writeln('                                                          '),
         writeln('           |     Menu Banco de Atividades    |            '), nl,
@@ -364,20 +366,22 @@ addIdProjeto:-
 
                                         write('Digite seu ID: '),
                                         ler_string(IdUsuario), nl,
+
+                                        write('Digite sua senha: '),
+                                        ler_string(Senha), nl,
                                 
                                         lerJSON('Database/usuarios.json', UsuariosDoSistema),
                                         verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
                         
                                         getProjetoJSON(IdProjetoAtividade, ProjetosDoSistema, Projeto),
                         
-                                        (ExisteUsuario, Projeto.idGerente == IdUsuario ->
+                                        (ExisteUsuario, Projeto.idGerente == IdUsuario, verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
 
                                                 editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjetoAtividade),
                                                 addAtividadesProjeto('Database/projetos.json', IdProjetoAtividade, IdAtividade),
                                                 writeln('                                                    '),
                                                 writeln('            |  Atividade alterada com sucesso!  |   '),
                                                 writeln('                                                    ')
-                                                % adicionaNovoMembro(IdProjetoAtividade) % adicionar um membro no momento da criação de uma atividade
 
                                         ; clearScreen,
                                         writeln('                                                               '),
@@ -394,7 +398,7 @@ addIdProjeto:-
 
 
 % | Deleta uma atividade do projeto, mas não do banco de atividades(a tendência é que ele cresça)
-deletaAtividade :-                
+deletaAtividade :-
 
         visualizarProjetos,
 
