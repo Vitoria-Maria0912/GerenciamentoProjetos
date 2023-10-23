@@ -144,11 +144,6 @@ membroDeProjeto(IdUsuario, IdProjeto, Projetos) :-
     Projeto = [idProjeto=IdProjeto, membros=Membros, idGerente=IdGerente],
     ( member(IdUsuario, Membros) ; IdUsuario = IdGerente ).
 
-exibirMembros(IdProjeto, Projetos, ListaMembros) :-
-    getProjetoJSON(IdProjeto, Projetos, Projeto),
-    ListaMembros = Projeto.membros,
-    retornarMembros(ListaMembros, _).
-
 % Checa se o usuário é membro de algum projeto.
 % Caso base: usuário não é membro de nenhum projeto.
 ehMembro(_, []):- false.
