@@ -71,6 +71,7 @@ visualizarProjetos :-
         writeln('                                                          '), nl,
         exibirProjetos('Database/projetos.json').
 
+
 % | Menu do banco, com opções limitadas
 menuPublicoBancoDeAtividades :-
         writeln('                                                         '),
@@ -106,12 +107,14 @@ menuPublicoBancoDeAtividades :-
         ; Entrada == 's' -> sairDoSistema
         ; erroMenuProjeto).
 
+
 % | Exibe todas as atividades do sistema
 listarAtividades :-
         writeln('                                                '),
         writeln('          |  Atividades cadastradas:  |         '),
         writeln('                                                '), nl,
         exibirAtividades('Database/bancoDeAtividades.json').
+
 
 % | Cria uma atividade apenas no banco de atividades, sem atribuir a nenhum projeto 
 criaAtividade :- 

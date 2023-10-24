@@ -159,7 +159,7 @@ atribuirAtividade(IdProjeto) :-
 
         lerJSON('Database/projetos.json', ProjetosDoSistema),
         lerJSON('Database/usuarios.json', Usuarios),
-        lerJSON('Database/bancoDeAtividades.json', Atividades),
+        lerJSON('Database/bancoDeAtividades.json', AtividadesDoSistema),
 
         getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
         ListaMembros = Projeto.membros,
@@ -172,38 +172,49 @@ atribuirAtividade(IdProjeto) :-
                 write('Digite o ID da atividade que deseja atribuir: '),
                 ler_string(IdAtividade), nl,
 
-                verifica_id_atividade(IdAtividade, Atividades, AtvExiste),
+                verifica_id_atividade(IdAtividade, AtividadesDoSistema, AtvExiste),
 
-                (AtvExiste, \+ jaAtribuida(IdAtividade, Projeto) ->
+                (AtvExiste ->
 
-                        visualizarMembros(IdProjeto), nl,
+                        getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
+                        
+                        (Atividade.idMembroResponsavel \= "Não atribuído!" ->
+                                writeln('                                                                 '),
+                                writeln('         |     A atividade já está atribuída!    |               '),
+                                writeln('                                                                 ')
 
-                        write('Digite o ID do membro que deseja atribuir à atividade: '),
-                        ler_string(IdMembro), nl,
-                        verifica_id(IdMembro, Usuarios, ExisteUsuario),
+                        ; 
 
-                        (ExisteUsuario, membroDoProjeto(IdMembro, Projeto) ->
+                                % visualizarMembros(IdProjeto), nl,
 
-                                editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjeto),
-                                editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
-                                addAtividadesProjeto('Database/projetos.json', IdProjeto, IdAtividade),
-                                editarMembroResponsavelAtividade('Database/bancoDeAtividades.json', IdAtividade, IdMembro),
+                                write('Digite o ID do membro que deseja atribuir à atividade: '),
+                                ler_string(IdMembro), nl,
+                                verifica_id(IdMembro, Usuarios, ExisteUsuario),
 
-                                clearScreen,
-                                writeln('                                                                      '),
-                                writeln('              |     Atividade atribuída com sucesso!    |             '),
-                                writeln('                                                                      ')
+                                (ExisteUsuario, membroDoProjeto(IdMembro, Projeto) ->
 
-                        ; clearScreen,
-                                writeln('                                                                    '),
-                                writeln('      |     Usuário inexistente ou não é membro no projeto.    |    '),
-                                writeln('                                                                    ')
+                                        editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjeto),
+                                        editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
+                                        addAtividadesProjeto('Database/projetos.json', IdProjeto, IdAtividade),
+                                        editarMembroResponsavelAtividade('Database/bancoDeAtividades.json', IdAtividade, IdMembro),
+
+                                        clearScreen,
+                                        writeln('                                                                '),
+                                        writeln('        |     Atividade atribuída com sucesso!    |             '),
+                                        writeln('                                                                ')
+                                
+                                ; clearScreen,
+                                        writeln('                                                                 '),
+                                        writeln('   |     Usuário inexistente ou não é membro no projeto.    |    '),
+                                        writeln('                                                                 ')
+                                )
+                        %  write('------------')
                         )
-                
+
                 ; clearScreen,  
-                        writeln('                                                                        '),
-                        writeln('    |     A atividade não existe ou já tem responsável!    |            '),
-                        writeln('                                                                        ')
+                        writeln('                                                            '),
+                        writeln('             |     A atividade não existe!     |            '),
+                        writeln('                                                            ')
                 )
                 
         ; writeln('                                                                                  '),

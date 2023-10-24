@@ -238,7 +238,7 @@ menuChat :-
         downcase_atom(Input, Entrada),
 
         ( Entrada == 'c' -> clearScreen, visualizarMensagensGerais
-        ; Entrada == 'h' -> clearScreen, visualizarMensagensP
+        ; Entrada == 'h' -> clearScreen, visualizarMensagensPrivadas
         ; Entrada == 'a' -> clearScreen, enviarMGeral
         ; Entrada == 't' -> clearScreen, enviarMPrivada
         ; Entrada == 'm' -> clearScreen, menuPrincipal
@@ -249,7 +249,7 @@ menuChat :-
 
 
 % | Envia uma mensagem para todos os membros do projeto
-visualizarMensagensP:- 
+visualizarMensagensPrivadas:- 
                 writeln('                                                            '),
                 writeln('           |  Mensagens privadas de um usuário:  |          '),
                 writeln('                                                            '),

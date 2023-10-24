@@ -2,7 +2,7 @@
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
                     verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, 
                     addAtividadesProjeto/3, retornarMembros/2, exibirMembros/3, exibirAtividadesDoProjeto/3,
-                    retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4, jaAtribuida/2,
+                    retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4, jaAtribuidaAoProjeto/2,
                     removerAtividadeProjeto/3, removerAtividadeProjetoJSON/4,imprimirProjetos_Gerente/2,imprimirProjetos_membro/2,imprimirProjeto/1]).
 
 :- use_module(library(http/json)).
@@ -215,11 +215,12 @@ removerMembro(FilePath, IdP, IdMembro) :-
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 % Checa se uma atividade já está atribuida ao projeto
-jaAtribuida(_, _):- false.
-jaAtribuida(IdAtividade, Projeto) :-
+jaAtribuidaAoProjeto(_, _):- false.
+jaAtribuidaAoProjeto(IdAtividade, Projeto) :-
     %  Atividades = (Projeto.atividadesAtribuidas),
      string_para_numero(IdAtividade, Idfake),
          member(Idfake, Projeto.atividadesAtribuidas) -> true.
+        
 % Exibição de projeto no CHAT
 imprimirProjetos_Gerente(_, []).
 imprimirProjetos_Gerente(IdUsuario, [Projeto|OutrosProjetos]) :-
@@ -233,9 +234,8 @@ string_para_numero(IdUsuario, Idfake),
 member(Idfake, Projeto.membros) -> imprimirProjeto(Projeto), imprimirProjetos_membro(IdUsuario,OutrosProjetos);
 imprimirProjetos_membro(IdUsuario,OutrosProjetos).
 
-
 imprimirProjeto(Projeto) :-
-Nome = Projeto.nomeProjeto,
-Id = Projeto.idProjeto, writeln(""),
-writeln('Título: '), write(Nome),
-write(' (ID: '), write(Id), writeln(')').
+    Nome = Projeto.nomeProjeto,
+    Id = Projeto.idProjeto, writeln(""),
+    writeln('Título: '), write(Nome),
+    write(' (ID: '), write(Id), writeln(')').
