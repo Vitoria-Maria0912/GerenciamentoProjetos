@@ -1,5 +1,7 @@
 :- module(usuario, [usuarioToJSON/5, usuariosToJSON/2, salvarUsuario/5, exibirUsuariosAux/1, 
-                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, verifica_id/3, editarAtividades/3, exibirUsuario/1,exibeUsuarios_id_nome/1,exibirUsuarios_id_nome_aux/1]).
+                    exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, 
+                    verifica_id/3, editarAtividades/3, exibirUsuario/1,exibeUsuarios_id_nome/1,
+                    exibirUsuarios_id_nome_aux/1]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
 
@@ -41,8 +43,8 @@ getUsuarioJSON(IdUsuario, [_|T], Usuario):- getUsuarioJSON(IdUsuario, T, Usuario
 
 % Exibe um usuario
 exibirUsuario(Usuario) :-
-    write('|- Nome: '), writeln(Usuario.nome),
-    write('|- ID Usuário: '), writeln(Usuario.idUsuario), nl.
+    write('|- ID Usuário: '), writeln(Usuario.idUsuario), 
+    write('|- Nome: '), writeln(Usuario.nome),nl.
 
 % Removendo um usuário - ainda nao funciona
 removerUsuarioJSON([], _, []).
@@ -54,7 +56,7 @@ removerUsuario(FilePath, Id):-
     removerUsuarioJSON(File, Id, SaidaParcial),
     usuariosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream),
-    writeln('Usuário removido com sucesso. Até a próxima!').
+    writeln('         |    Usuário removido com sucesso. Até a próxima!    |').
 
 % verifica se um id existe dentro da lista de usuarios
 verifica_id(_, [], false).
@@ -81,10 +83,11 @@ editarAtividades(FilePath, IdU, NovaAtividade) :-
     usuariosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
-%%%%%Necessário para formatação Usuário no CHAT
+% | Exibe apenas nome e ID dos usuários
 exibeUsuarios_id_nome(FilePath):-
     lerJSON(FilePath, Usuarios),
     exibirUsuarios_id_nome_aux(Usuarios).
+
 exibirUsuarios_id_nome_aux([]).
-exibirUsuarios_id_nome_aux([H|T]) :-
-    exibirUsuario(H),exibirUsuarios_id_nome_aux(T).
+exibirUsuarios_id_nome_aux([Usuario|T]) :-
+    exibirUsuario(Usuario), nl, exibirUsuarios_id_nome_aux(T).

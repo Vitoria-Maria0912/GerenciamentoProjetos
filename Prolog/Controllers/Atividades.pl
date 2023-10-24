@@ -1,8 +1,8 @@
 :- module(atividade, [lerJSON/2, atividadeToJSON/9, atividadesToJSON/2, salvarAtividade/9,
                       exibirAtividadesAux/1, exibirAtividades/1, editarIdProjetoAtividadeJSON/4, editarIdProjetoAtividade/3, 
-                      editarMembroResponsavelAtividadeJSON/4, editarMembroResponsavelAtividade/3, removerAtividade/2,
+                      editarMembroResponsavelAtividadeJSON/4, editarMembroResponsavelAtividade/3,
                       verifica_id_atividade/3, getAtividadeJSON/3, editarStatusAtividade/3, editarStatusAtividadeJSON/4,
-                      exibirAtividade/1, exibirAtividades/1, getMembroResponsavel/2, editarFeedbacks/4, criarFeedback/3]).
+                      exibirAtividade/1, exibirAtividades/1, getMembroResponsavel/2, criarFeedback/3]).
 
 :- use_module(library(http/json)).
 :- use_module(library(http/json_convert)).

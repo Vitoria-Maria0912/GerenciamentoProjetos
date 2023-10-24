@@ -5,31 +5,39 @@
 :- use_module("Controllers/Projeto.pl").
 
 
+% | Verifica se a entrada é vazia
 nao_vazia(Input) :-
     Input \= "".
 
+% | Lê uma entrada do usuário
 ler_string(X) :-
     read_line_to_codes(user_input, R),
     atom_string(R, X).
 
-clearScreen :- write("\e[H\e[2J"). % só serve no unix
+% | Limpa a tela, apagando os comandos anteriores
+clearScreen :- shell('clear'). % serve para unix 
+clearScreen :- shell('cls'). % seve para windows
 
+% Lê um arquivo JSON
 lerJSON(FilePath, File) :-
     open(FilePath, read, F),
     json_read_dict(F, File).
 
+% | Verifica se a senha pertence ao usuário
 verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) :-
     getUsuarioJSON(IdUsuario, Usuarios, Usuario),
     Usuario.senha == Senha.
 
+% | Verifica se o usuário é gerente do projeto
 gerenteDoProjeto(IdProjeto, IdUsuario, Projetos) :-
     getProjetoJSON(IdProjeto, Projetos, Projeto),
     Projeto.idGerente == IdUsuario.
 
+% | Transforma uma string em um número
 string_para_numero(String, Numero) :-
     number_string(Numero, String).
 
-
+% | Sai do sistema
 sairDoSistema :-
     clearScreen,
     writeln('                                                          '),
