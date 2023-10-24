@@ -255,8 +255,9 @@ visualizarMensagensPrivadas:-
                 writeln('                                                            '),
 
                 write('Digite seu ID: '),
-                ler_string(IdUsuario),
+                ler_string(IdUsuario),nl,
                 lerJSON('Database/usuarios.json', UsuariosDoSistema),
+                lerJSON('Database/mensagens.json', MensagensDoSistema),
                 verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
                 (ExisteUsuario -> 
                     write('Digite sua senha: '),
@@ -435,6 +436,7 @@ visualizarMensagensGerais :-
                         
                         writeln('Projetos em que o usuário é gerente: '),
                         imprimirProjetos_Gerente(IdUsuario, ProjetosDoSistema),
+                        writeln(""),
                         writeln(""),
                         writeln('Projetos em que o usuário é membro: '),
                         imprimirProjetos_membro(IdUsuario, ProjetosDoSistema),
