@@ -177,15 +177,17 @@ atribuirAtividade(IdProjeto) :-
                 (AtvExiste ->
 
                         getAtividadeJSON(IdAtividade, AtividadesDoSistema, Atividade),
-                        
-                        (Atividade.idMembroResponsavel \= "Não atribuído!" ->
+
+        
+                        jaAtribuida(Atividade, IdProjeto, Atribuida),
+                        (Atribuida ->
                                 writeln('                                                                 '),
                                 writeln('         |     A atividade já está atribuída!    |               '),
                                 writeln('                                                                 ')
 
-                        ; 
+                        ;
 
-                                % visualizarMembros(IdProjeto), nl,
+                                visualizarMembros(IdProjeto), nl,
 
                                 write('Digite o ID do membro que deseja atribuir à atividade: '),
                                 ler_string(IdMembro), nl,
@@ -208,7 +210,6 @@ atribuirAtividade(IdProjeto) :-
                                         writeln('   |     Usuário inexistente ou não é membro no projeto.    |    '),
                                         writeln('                                                                 ')
                                 )
-                        %  write('------------')
                         )
 
                 ; clearScreen,  
@@ -460,4 +461,4 @@ deletaAtividade :-
         writeln(' |  Campo obrigatório vazio ou inválido, não foi possível deletar a atividade, tente novamente!  |          '),
         writeln('                                                                                                          ')
 
-        ). 
+        ).

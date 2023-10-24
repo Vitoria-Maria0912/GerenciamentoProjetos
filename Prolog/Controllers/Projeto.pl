@@ -2,8 +2,8 @@
                     exibirProjetos/1, getProjetoJSON/3, removerProjeto/2, removerProjetoJSON/3, 
                     verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, 
                     addAtividadesProjeto/3, retornarMembros/2, exibirMembros/3, exibirAtividadesDoProjeto/3,
-                    retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4, jaAtribuidaAoProjeto/2,
-                    removerAtividadeProjeto/3, removerAtividadeProjetoJSON/4,imprimirProjetos_Gerente/2,imprimirProjetos_membro/2,imprimirProjeto/1]).
+                    retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4, jaAtribuida/3,
+                    removerAtividadeProjeto/3, removerAtividadeProjetoJSON/4,imprimirProjetos_Gerente/2,imprimirProjetos_membro/2, imprimirProjeto/1]).
 
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
@@ -138,12 +138,6 @@ editarMembros(FilePath, IdP, NovoMembro) :-
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
 
-% Predicado para verificar se um usuário é membro de um projeto
-membroDeProjeto(IdUsuario, IdProjeto, Projetos) :-
-    member(Projeto, Projetos),
-    Projeto = [idProjeto=IdProjeto, membros=Membros, idGerente=IdGerente],
-    ( member(IdUsuario, Membros) ; IdUsuario = IdGerente ).
-
 % Checa se o usuário é membro de algum projeto.
 % Caso base: usuário não é membro de nenhum projeto.
 ehMembro(_, []):- false.
@@ -214,12 +208,13 @@ removerMembro(FilePath, IdP, IdMembro) :-
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
-% Checa se uma atividade já está atribuida ao projeto
-jaAtribuidaAoProjeto(_, _):- false.
-jaAtribuidaAoProjeto(IdAtividade, Projeto) :-
-    %  Atividades = (Projeto.atividadesAtribuidas),
-     string_para_numero(IdAtividade, Idfake),
-         member(Idfake, Projeto.atividadesAtribuidas) -> true.
+%Checa se está atribuida dentro do projeto ou se ela está atrelada a outro projeto.
+jaAtribuida(Atividade, IdProjeto, true) :-
+    (Atividade.idMembroResponsavel \= "Não atribuído!",
+    Atividade.idProjetoAtividade == IdProjeto) ;
+    (Atividade.idProjetoAtividade \= IdProjeto,
+    Atividade.idProjetoAtividade \= "Não atribuído!").
+jaAtribuida(_, _, false).
         
 % Exibição de projeto no CHAT
 imprimirProjetos_Gerente(_, []).
