@@ -87,5 +87,4 @@ exibeUsuarios_id_nome(FilePath):-
     exibirUsuarios_id_nome_aux(Usuarios).
 exibirUsuarios_id_nome_aux([]).
 exibirUsuarios_id_nome_aux([H|T]) :-
-    write('|- Nome: '), writeln(H.nome),
-    write('|- ID Usuário: '), writeln(H.idUsuario), nl,exibirUsuarios_id_nome_aux(T).
+    exibirUsuario(H),exibirUsuarios_id_nome_aux(T).
