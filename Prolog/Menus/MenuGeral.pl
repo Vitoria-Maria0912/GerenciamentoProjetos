@@ -318,13 +318,20 @@ enviarMGeral :-
                         imprimirProjetos_membro(IdUsuario, ProjetosDoSistema),
                         writeln('Escolha o IdProjeto que deseja enviar uma mensagem para seus membros:'),
                             ler_string(IdMensagem),nl,
+                            getProjetoJSON(IdMensagem,ProjetosDoSistema,Projeto),
+                            (membroDoProjeto(IdMensagem,Projeto) ->
                             writeln('Digite a mensagem a ser enviada para o IdProjeto selecionado: '),
                             ler_string(Conteudo),nl,
-                            %writeln(""),writeln('Carregando....'),sleep(1.5),
                             salvarMensagem('Database/mensagens.json',Usuario.nome,Conteudo,IdMensagem),
                             writeln('                                                            '),
                             writeln('             |  Mensagem enviada com sucesso !  |           '),
                             writeln('                                                            ')
+                            ;
+
+                            writeln('                                                            '),
+                            writeln('      |  Este usuário não é membro desse projeto    !  |    '),
+                            writeln('                                                            ')
+                            )
                             ;
                           
                             writeln('                                                            '),
@@ -346,9 +353,9 @@ enviarMGeral :-
                 ).
 
 enviarMPrivada :- 
-               writeln('                                                            '),
-               writeln('          |  Enviar mensagem para um usuário:  |            '),
-               writeln('                                                            '),
+        writeln('                                                            '),
+        writeln('          |  Enviar mensagem para um usuário:  |            '),
+        writeln('                                                            '),
 
         write('Digite seu ID: '),
         ler_string(IdUsuario),
@@ -426,6 +433,8 @@ visualizarMensagensGerais :-
                         imprimirProjetos_membro(IdUsuario, ProjetosDoSistema),
                         writeln('Escolha o IdProjeto que deseja visualizar uma mensagem geral:'),
                             ler_string(IdMensagem),nl,
+                            getProjetoJSON(IdMensagem,ProjetosDoSistema,Projeto),
+                            (membroDoProjeto(IdMensagem,Projeto) ->
                             sleep(1.5),
                             writeln('  _________________________________________________________________________________________________________________________________ '),
                             writeln(' |                                                                                                                                 |'),
@@ -442,8 +451,14 @@ visualizarMensagensGerais :-
                             write('Caixa de Mensagem (IdProjeto - '), write(IdMensagem),writeln(')'),
                             exibirMensagens('Database/mensagens.json',IdMensagem),
                             sleep(1.5)
+
                             ;
-                          
+
+                            writeln('                                                            '),
+                            writeln('      |  Este usuário não é membro desse projeto    !  |    '),
+                            writeln('                                                            ')
+                            )
+                          ;
                             writeln('                                                            '),
                             writeln('      |  Este usuário não é membro de nenhum projeto!  |    '),
                             writeln('                                                            ')
