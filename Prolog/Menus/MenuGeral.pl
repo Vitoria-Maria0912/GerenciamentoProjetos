@@ -264,19 +264,26 @@ visualizarMensagensPrivadas:-
                     (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
                         writeln(''),
                             sleep(1.5),
-                            writeln('  ________________________________________________________________________________________________________________ '),
-                            writeln(' |                                                                                                                |'),
-                            writeln(' |         ATENÇÃO : Caixa de Mensagem que nunca receberam nenhuma mensagem será representada como vazia.         |'),
-                            writeln(' |________________________________________________________________________________________________________________|'),
                             writeln(''),
                             writeln(''),
                             writeln('                                                                   '),
                             writeln('                 Carregando.........                               '),
                             writeln(''),
+                            writeln(''),
+                            writeln(''),
                             sleep(1.5),
-                            write('Caixa de Mensagem (IdUsuario - '), write(IdUsuario),writeln(')'),
-                            exibirMensagens('Database/mensagens.json',IdUsuario),
-                            sleep(1.5)
+                            verifica_id_mensagem(IdUsuario,MensagensDoSistema,ExisteMensagem),
+                            (ExisteMensagem -> 
+                                write('Caixa de Mensagem (IdUsuario - '), write(IdUsuario),writeln(')'),
+                                exibirMensagens('Database/mensagens.json',IdUsuario),
+                                sleep(1.5)
+                        ;
+                        writeln('  ________________________________________________________________________________________________________________ '),
+                        writeln(' |                                                                                                                |'),
+                        writeln(' |                                Caixa de Mensagem vazia  !                                                      |'),
+                        writeln(' |________________________________________________________________________________________________________________|'), 
+                        sleep(1.5)
+                        )
                             ;
                             
                             writeln('                                                            '),
@@ -319,7 +326,7 @@ enviarMGeral :-
                         writeln('Escolha o IdProjeto que deseja enviar uma mensagem para seus membros:'),
                             ler_string(IdMensagem),nl,
                             getProjetoJSON(IdMensagem,ProjetosDoSistema,Projeto),
-                            (membroDoProjeto(IdMensagem,Projeto) ->
+                            (membroDoProjeto(IdUsuario,Projeto) ->
                             writeln('Digite a mensagem a ser enviada para o IdProjeto selecionado: '),
                             ler_string(Conteudo),nl,
                             salvarMensagem('Database/mensagens.json',Usuario.nome,Conteudo,IdMensagem),
@@ -443,16 +450,17 @@ visualizarMensagensGerais :-
                             writeln(''),
                             sleep(1.5),
                             writeln(''),
-                            verifica_id(IdMensagem,MensagensDoSistema,ExisteMensagem),
+                            verifica_id_mensagem(IdMensagem,MensagensDoSistema,ExisteMensagem),
                             (ExisteMensagem -> 
                                 write('Caixa de Mensagem (IdProjeto - '), write(IdMensagem),writeln(')'),
                                 exibirMensagens('Database/mensagens.json',IdMensagem),
                                 sleep(1.5)
                         ;
-                           writeln('----------------------------------------------------------------------------------------------------------------------------------------------'),
-                           writeln('                                  Caixa de Mensagem vazia!                                                                                    '),
-                           writeln('----------------------------------------------------------------------------------------------------------------------------------------------'),
-                           sleep(1.5)
+
+                        writeln('  ___________________________________________________________________________________________ '),
+                        writeln(' |                                                                                           |'),
+                        writeln(' |                                Caixa de Mensagem vazia  !                                 |'),
+                        writeln(' |___________________________________________________________________________________________|')
                         )
                             ;
 
