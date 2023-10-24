@@ -99,7 +99,8 @@ addAtividadesProjeto(FilePath, IdP, NovaAtividade) :-
 % Remove uma atividade de um projeto
 removerAtividadeProjetoJSON([], _, _, []).
 removerAtividadeProjetoJSON([H|T], H.idProjeto, IdAtividade, [NovoProjeto|T]) :-
-    delete(H.atividadesAtribuidas, IdAtividade, NovaListaAtividades),
+    string_para_numero(IdAtividade, IdAtvNumb),
+    delete(H.atividadesAtribuidas, IdAtvNumb, NovaListaAtividades),
       NovoProjeto = _{
         idProjeto:H.idProjeto,
         nomeProjeto:H.nomeProjeto,
@@ -187,9 +188,9 @@ retornarAtividadesDoProjeto([IdAtividadesDoProjeto|T], Atividades) :-
 
 % remove um membro de um projeto 
 removerMembroJSON([], _, _, []).
-removerMembroJSON([H|T], IdProjeto, IdMembro, [NovoProjeto|T]) :-
-    ( H.idProjeto \= IdProjeto -> NovoProjeto = H ;
-      delete(H.membros, IdMembro, NovaListaDeMembros),
+removerMembroJSON([H|T], H.idProjeto, IdMembro, [NovoProjeto|T]) :-
+    string_para_numero(IdMembro, IdMNumb),
+    delete(H.membros, IdMNumb, NovaListaDeMembros),
       NovoProjeto = _{
         idProjeto:H.idProjeto,
         nomeProjeto:H.nomeProjeto,
@@ -197,8 +198,7 @@ removerMembroJSON([H|T], IdProjeto, IdMembro, [NovoProjeto|T]) :-
         atividadesAtribuidas:H.atividadesAtribuidas,
         membros:NovaListaDeMembros,
         idGerente:H.idGerente
-      }
-    ).
+      }.
 removerMembroJSON([H|T], Id, IdMembro, [H|Out]) :- removerMembroJSON(T, Id, IdMembro, Out).
 
 % remove um membro de um projeto 
