@@ -67,10 +67,7 @@ deletarProjeto :-
                 getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
 
                 (Projeto.idGerente == IdUsuario, verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
-                    removerProjeto('Database/projetos.json', IdProjeto),
-                    writeln('                                                    '),
-                    writeln('            |  Projeto removido com sucesso!  |     '),
-                    writeln('                                                    ')
+                    removerProjeto('Database/projetos.json', IdProjeto)
                    
                 ; clearScreen,
                 writeln('                                                              '),
