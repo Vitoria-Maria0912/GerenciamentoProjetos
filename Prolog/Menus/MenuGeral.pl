@@ -255,8 +255,9 @@ visualizarMensagensPrivadas:-
                 writeln('                                                            '),
 
                 write('Digite seu ID: '),
-                ler_string(IdUsuario),
+                ler_string(IdUsuario),nl,
                 lerJSON('Database/usuarios.json', UsuariosDoSistema),
+                lerJSON('Database/mensagens.json', MensagensDoSistema),
                 verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
                 (ExisteUsuario -> 
                     write('Digite sua senha: '),
@@ -264,19 +265,26 @@ visualizarMensagensPrivadas:-
                     (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
                         writeln(''),
                             sleep(1.5),
-                            writeln('  ________________________________________________________________________________________________________________ '),
-                            writeln(' |                                                                                                                |'),
-                            writeln(' |         ATENÇÃO : Caixa de Mensagem que nunca receberam nenhuma mensagem será representada como vazia.         |'),
-                            writeln(' |________________________________________________________________________________________________________________|'),
                             writeln(''),
                             writeln(''),
                             writeln('                                                                   '),
                             writeln('                 Carregando.........                               '),
                             writeln(''),
+                            writeln(''),
+                            writeln(''),
                             sleep(1.5),
-                            write('Caixa de Mensagem (IdUsuario - '), write(IdUsuario),writeln(')'),
-                            exibirMensagens('Database/mensagens.json',IdUsuario),
-                            sleep(1.5)
+                            verifica_id_mensagem(IdUsuario,MensagensDoSistema,ExisteMensagem),
+                            (ExisteMensagem -> 
+                                write('Caixa de Mensagem (IdUsuario - '), write(IdUsuario),writeln(')'),
+                                exibirMensagens('Database/mensagens.json',IdUsuario),
+                                sleep(1.5)
+                        ;
+                        writeln('  ________________________________________________________________________________________________________________ '),
+                        writeln(' |                                                                                                                |'),
+                        writeln(' |                                Caixa de Mensagem vazia  !                                                      |'),
+                        writeln(' |________________________________________________________________________________________________________________|'), 
+                        sleep(1.5)
+                        )
                             ;
                             
                             writeln('                                                            '),
@@ -319,7 +327,7 @@ enviarMGeral :-
                         writeln('Escolha o IdProjeto que deseja enviar uma mensagem para seus membros:'),
                             ler_string(IdMensagem),nl,
                             getProjetoJSON(IdMensagem,ProjetosDoSistema,Projeto),
-                            (membroDoProjeto(IdMensagem,Projeto) ->
+                            (membroDoProjeto(IdUsuario,Projeto) ->
                             writeln('Digite a mensagem a ser enviada para o IdProjeto selecionado: '),
                             ler_string(Conteudo),nl,
                             salvarMensagem('Database/mensagens.json',Usuario.nome,Conteudo,IdMensagem),
@@ -413,12 +421,12 @@ visualizarMensagensGerais :-
                 ler_string(IdUsuario),
                 lerJSON('Database/usuarios.json', UsuariosDoSistema),
                 lerJSON('Database/projetos.json', ProjetosDoSistema),
+                lerJSON('Database/mensagens.json', MensagensDoSistema),
                 verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
                 (ExisteUsuario -> 
                     write('Digite sua senha: '),
                     ler_string(Senha),
                     (verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
-                        writeln('Senha correta'),
                         getUsuarioJSON(IdUsuario,UsuariosDoSistema,_), % Usuario não usado
                         % Verifica se pertence a algum projeto
                        
@@ -429,18 +437,14 @@ visualizarMensagensGerais :-
                         writeln('Projetos em que o usuário é gerente: '),
                         imprimirProjetos_Gerente(IdUsuario, ProjetosDoSistema),
                         writeln(""),
+                        writeln(""),
                         writeln('Projetos em que o usuário é membro: '),
                         imprimirProjetos_membro(IdUsuario, ProjetosDoSistema),
                         writeln('Escolha o IdProjeto que deseja visualizar uma mensagem geral:'),
                             ler_string(IdMensagem),nl,
                             getProjetoJSON(IdMensagem,ProjetosDoSistema,Projeto),
-                            (membroDoProjeto(IdMensagem,Projeto) ->
+                            (membroDoProjeto(IdUsuario,Projeto) ->
                             sleep(1.5),
-                            writeln('  _________________________________________________________________________________________________________________________________ '),
-                            writeln(' |                                                                                                                                 |'),
-                            writeln(' |         ATENÇÃO : Caixa de Mensagem que nunca receberam nenhuma mensagem dos seus membros será representada como vazia          |'),
-                            writeln(' |_________________________________________________________________________________________________________________________________|'),
-                            writeln(''),
                             writeln(''),
                             writeln(''),
                             writeln('                                                                   '),
@@ -448,10 +452,18 @@ visualizarMensagensGerais :-
                             writeln(''),
                             sleep(1.5),
                             writeln(''),
-                            write('Caixa de Mensagem (IdProjeto - '), write(IdMensagem),writeln(')'),
-                            exibirMensagens('Database/mensagens.json',IdMensagem),
-                            sleep(1.5)
+                            verifica_id_mensagem(IdMensagem,MensagensDoSistema,ExisteMensagem),
+                            (ExisteMensagem -> 
+                                write('Caixa de Mensagem (IdProjeto - '), write(IdMensagem),writeln(')'),
+                                exibirMensagens('Database/mensagens.json',IdMensagem),
+                                sleep(1.5)
+                        ;
 
+                        writeln('  ___________________________________________________________________________________________ '),
+                        writeln(' |                                                                                           |'),
+                        writeln(' |                                Caixa de Mensagem vazia  !                                 |'),
+                        writeln(' |___________________________________________________________________________________________|')
+                        )
                             ;
 
                             writeln('                                                            '),
