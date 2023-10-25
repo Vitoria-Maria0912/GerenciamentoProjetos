@@ -95,19 +95,27 @@ exibirUsuarios_id_nome_aux([Usuario|T]) :-
 
 listaProjetos(_, [], []).
 listaProjetos(IdUsuario, [Projeto|OutrosProjetos], [IdProjeto|OutrosIdsProjetos]) :-
-    ((string_para_numero(IdUsuario, Idfake), member(Idfake, Projeto.membros)) -> 
-    IdProjeto = Projeto.idProjeto,
-    listaProjetos(IdUsuario, OutrosProjetos, OutrosIdsProjetos);
-      listaProjetos(IdUsuario, OutrosProjetos, OutrosIdsProjetos)
+    (string_para_numero(IdUsuario, Idfake), member(Idfake, Projeto.membros) -> 
+        IdProjeto = Projeto.idProjeto,
+        listaProjetos(IdUsuario, OutrosProjetos, OutrosIdsProjetos);
+
+    (Projeto.idGerente == IdUsuario) ->
+        IdProjeto = Projeto.idProjeto,
+        listaProjetos(IdUsuario, OutrosProjetos, OutrosIdsProjetos) ;
+
+    listaProjetos(IdUsuario, OutrosProjetos, OutrosIdsProjetos)
     ).
 
-removerUsuarioDeProjetosAux([], _).
-removerUsuarioDeProjetosAux([IdProjeto | Resto], IdUsuario) :-
+removerUsuarioDeProjetosAux(_, [], _).
+removerUsuarioDeProjetosAux(ProjetosDoSistema, [IdProjeto | Resto], IdUsuario) :-
     removerMembro('Database/projetos.json', IdProjeto, IdUsuario),
-    removerUsuarioDeProjetosAux(Resto, IdUsuario).
+    getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
+    (Projeto.idGerente == IdUsuario -> % tem que remover todos os membros e todas as atividades
+        removerProjeto('Database/projetos.json', IdProjeto) ; true),
+    removerUsuarioDeProjetosAux(ProjetosDoSistema, Resto, IdUsuario).
 
 removerUsuarioDeProjetos(IdUsuario) :-
-    lerJSON('Database/projetos.json', Projetos),
-    listaProjetos(IdUsuario, Projetos, ListaProjetos),
-    removerUsuarioDeProjetosAux(ListaProjetos, IdUsuario).
+    lerJSON('Database/projetos.json', ProjetosDoSistema),
+    listaProjetos(IdUsuario, ProjetosDoSistema, ListaProjetos),
+    removerUsuarioDeProjetosAux(ProjetosDoSistema, ListaProjetos, IdUsuario).
 

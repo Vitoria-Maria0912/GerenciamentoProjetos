@@ -36,7 +36,7 @@ retornoMenuPrincipal :-
 erroMenuPrincipal :-
         clearScreen,
         writeln('                                                          '),
-        writeln('         |  Entrada Inválida. Tente novamente!  |         '),
+        writeln('         |  Entrada Inválida. Tente novamente!  |         '), nl,
         writeln('                                                          '),
         retornoMenuPrincipal.
 
@@ -44,7 +44,7 @@ erroMenuPrincipal :-
 erroMenuChat :-
         clearScreen,
         writeln('                                                          '),
-        writeln('         |  Entrada Inválida. Tente novamente!  |         '),
+        writeln('         |  Entrada Inválida. Tente novamente!  |         '), nl,
         writeln('                                                          '),
         menuChat.
 
@@ -121,13 +121,13 @@ deletarUsuario :-
 
         (Existe ->
                 write('Digite sua senha: '),
-                ler_string(Senha), nl,   
+                ler_string(Senha), nl, nl,
 
                 (verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) ->
                         removerUsuario('Database/usuarios.json', IdUsuario),
-                        removerUsuarioDeProjetos(IdUsuario)
+                        removerUsuarioDeProjetos(IdUsuario), nl
                 ; 
-                nl, writeln('       |      Senha incorreta. Tente novamente.        |'), nl
+                nl, writeln('       |      Senha incorreta. Tente novamente.        |'), nl, nl
                 )        
 
         ; clearScreen,
