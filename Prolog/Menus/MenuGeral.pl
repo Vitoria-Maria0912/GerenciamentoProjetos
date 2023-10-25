@@ -124,8 +124,7 @@ deletarUsuario :-
                 ler_string(Senha), nl,   
 
                 (verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) ->
-                        removerUsuario('Database/usuarios.json', IdUsuario),
-                        removerUsuarioDeProjetos(IdUsuario)
+                        removerUsuario('Database/usuarios.json', IdUsuario)
                 ; 
                 nl, writeln('       |      Senha incorreta. Tente novamente.        |'), nl
                 )        
@@ -324,17 +323,23 @@ enviarMGeral :-
                         imprimirProjetos_Gerente(IdUsuario, ProjetosDoSistema),
                         writeln(""),
                         writeln('Projetos em que o usuário é membro: '),
-                        imprimirProjetos_membro(IdUsuario, ProjetosDoSistema),
-                        writeln('Escolha o IdProjeto que deseja enviar uma mensagem para seus membros:'),
+                        imprimirProjetos_membro(IdUsuario, ProjetosDoSistema),writeln(''),
+                        write('Escolha o IdProjeto que deseja enviar uma mensagem para seus membros:'),
                             ler_string(IdMensagem),nl,
                             getProjetoJSON(IdMensagem,ProjetosDoSistema,Projeto),
                             (membroDoProjeto(IdUsuario,Projeto) ->
-                            writeln('Digite a mensagem a ser enviada para o IdProjeto selecionado: '),
+                            write('Digite a mensagem a ser enviada para o IdProjeto selecionado: '),
                             ler_string(Conteudo),nl,
+                            (nao_vazia(Conteudo) ->
                             salvarMensagem('Database/mensagens.json',Usuario.nome,Conteudo,IdMensagem),
                             writeln('                                                            '),
                             writeln('             |  Mensagem enviada com sucesso !  |           '),
                             writeln('                                                            ')
+
+                            ;
+                            writeln('      |    Mensagem não pode ser vazia. Tente novamente.    |')
+                            )
+
                             ;
 
                             writeln('                                                            '),
@@ -379,18 +384,27 @@ enviarMPrivada :-
                         % Verifica se pertence a algum projeto
                         exibeUsuarios_id_nome('Database/usuarios.json'),
                         % Pede o id que terá a mensagem privada encaminhada
-                        writeln('Digite o id usuário que deseja enviar uma mensagem privada'),
+                        write('Digite o id usuário que deseja enviar uma mensagem privada: '),nl,
                         ler_string(IdDestinatario),
+                        (IdUsuario == IdDestinatario ->
+                        writeln(''),
+                        writeln('         |    Mensagem não pode ser enviada para mesmo IdUsuario logado. Tente novamente.        |'), nl
+                        ;
                         verifica_id(IdDestinatario, UsuariosDoSistema, ExisteDestinatario),    
                         (ExisteDestinatario -> 
-                        writeln(""),
-                        writeln('Digite a mensagem a ser enviada para o Id escolhido:'),
-                            ler_string(ConteudoMsg),nl,
+                        write('Digite a mensagem a ser enviada para o Id escolhido: '),
+                        ler_string(ConteudoMsg),nl,
+                        (nao_vazia(ConteudoMsg)->
                             salvarMensagem('Database/mensagens.json',Usuario.nome,ConteudoMsg,IdDestinatario),
                             writeln('                                                            '),
                             writeln('             |  Mensagem enviada com sucesso !  |           '),
                             writeln('                                                            ')
-                            
+                        ;
+                        writeln('      |    Mensagem não pode ser vazia. Tente novamente.    |'), nl
+                        
+
+                        )
+                )
                             ;
                           
                             writeln('                                                                    '),
@@ -441,7 +455,7 @@ visualizarMensagensGerais :-
                         writeln(""),
                         writeln('Projetos em que o usuário é membro: '),
                         imprimirProjetos_membro(IdUsuario, ProjetosDoSistema),
-                        writeln('Escolha o IdProjeto que deseja visualizar uma mensagem geral:'),
+                        write('Escolha o IdProjeto que deseja visualizar uma mensagem geral: '),
                             ler_string(IdMensagem),nl,
                             getProjetoJSON(IdMensagem,ProjetosDoSistema,Projeto),
                             (membroDoProjeto(IdUsuario,Projeto) ->
