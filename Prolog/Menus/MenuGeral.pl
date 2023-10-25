@@ -124,7 +124,8 @@ deletarUsuario :-
                 ler_string(Senha), nl,   
 
                 (verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) ->
-                        removerUsuario('Database/usuarios.json', IdUsuario)
+                        removerUsuario('Database/usuarios.json', IdUsuario),
+                        removerUsuarioDeProjetos(IdUsuario)
                 ; 
                 nl, writeln('       |      Senha incorreta. Tente novamente.        |'), nl
                 )        
