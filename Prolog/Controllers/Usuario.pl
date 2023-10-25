@@ -1,9 +1,10 @@
 :- module(usuario, [usuarioToJSON/5, usuariosToJSON/2, salvarUsuario/5, exibirUsuariosAux/1, 
                     exibirUsuarios/1,getUsuarioJSON/3, removerUsuario/2, removerUsuarioJSON/3, 
                     verifica_id/3, editarAtividades/3, exibirUsuario/1,exibeUsuarios_id_nome/1,
-                    exibirUsuarios_id_nome_aux/1]).
+                    exibirUsuarios_id_nome_aux/1, removerUsuarioDeProjetos/1]).
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
+:- use_module("Controllers/Projeto.pl").
 
 
 % Cria um usuário
@@ -91,3 +92,22 @@ exibeUsuarios_id_nome(FilePath):-
 exibirUsuarios_id_nome_aux([]).
 exibirUsuarios_id_nome_aux([Usuario|T]) :-
     exibirUsuario(Usuario), nl, exibirUsuarios_id_nome_aux(T).
+
+listaProjetos(_, [], []).
+listaProjetos(IdUsuario, [Projeto|OutrosProjetos], [IdProjeto|OutrosIdsProjetos]) :-
+    ((string_para_numero(IdUsuario, Idfake), member(Idfake, Projeto.membros)) -> 
+    IdProjeto = Projeto.idProjeto,
+    listaProjetos(IdUsuario, OutrosProjetos, OutrosIdsProjetos);
+      listaProjetos(IdUsuario, OutrosProjetos, OutrosIdsProjetos)
+    ).
+
+removerUsuarioDeProjetosAux([], _).
+removerUsuarioDeProjetosAux([IdProjeto | Resto], IdUsuario) :-
+    removerMembro('Database/projetos.json', IdProjeto, IdUsuario),
+    removerUsuarioDeProjetosAux(Resto, IdUsuario).
+
+removerUsuarioDeProjetos(IdUsuario) :-
+    lerJSON('Database/projetos.json', Projetos),
+    listaProjetos(IdUsuario, Projetos, ListaProjetos),
+    removerUsuarioDeProjetosAux(ListaProjetos, IdUsuario).
+
