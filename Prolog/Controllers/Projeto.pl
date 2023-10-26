@@ -232,5 +232,4 @@ imprimirProjetos_membro(IdUsuario,OutrosProjetos).
 imprimirProjeto(Projeto) :-
     Nome = Projeto.nomeProjeto,
     Id = Projeto.idProjeto, writeln(""),
-    write(Nome),
-    write(' - (ID Projeto: '), write(Id), writeln(')').
+    write('|- '), write(Nome), write(' - (ID Projeto: '), write(Id), writeln(')').

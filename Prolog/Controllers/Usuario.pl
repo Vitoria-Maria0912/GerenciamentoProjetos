@@ -91,7 +91,7 @@ exibeUsuarios_id_nome(FilePath):-
 
 exibirUsuarios_id_nome_aux([]).
 exibirUsuarios_id_nome_aux([Usuario|T]) :-
-    exibirUsuario(Usuario), nl, exibirUsuarios_id_nome_aux(T).
+    exibirUsuario(Usuario), exibirUsuarios_id_nome_aux(T).
 
 listaProjetos(_, [], []).
 listaProjetos(IdUsuario, [Projeto|OutrosProjetos], [IdProjeto|OutrosIdsProjetos]) :-
