@@ -3,7 +3,7 @@
                     verifica_id_projeto/3, editarMembros/3, ehGerente/3, membroDoProjeto/2, ehMembro/2, 
                     addAtividadesProjeto/3, retornarMembros/2, exibirMembros/3, exibirAtividadesDoProjeto/3,
                     retornarAtividadesDoProjeto/2, removerMembro/3, removerMembroJSON/4, jaAtribuida/3,
-                    removerAtividadeProjeto/3, removerAtividadeProjetoJSON/4,imprimirProjetos_Gerente/2,imprimirProjetos_membro/2, imprimirProjeto/1]).
+                    removerAtividadeProjeto/3, removerAtividadeProjetoJSON/4,imprimirProjetos_Gerente/2,imprimirProjetos_membro/2, naListaDeAtv/2, imprimirProjeto/1]).
 
 :- use_module(library(http/json)).
 :- use_module("Controllers/Utils.pl").
@@ -208,6 +208,14 @@ removerMembro(FilePath, IdP, IdMembro) :-
     projetosToJSON(SaidaParcial, Saida),
     open(FilePath, write, Stream), write(Stream, Saida), close(Stream).
 
+% Checa se uma atividade já está atribuida ao projeto mas não a um membro
+naListaDeAtv(_, _):- false.
+naListaDeAtv(Atividade, Projeto) :-
+    Atividade.idMembroResponsavel = "Não atribuído!",
+    string_para_numero(Atividade.idAtividade, Idfake),
+    member(Idfake, Projeto.atividadesAtribuidas) -> true.
+        
+
 %Checa se está atribuida dentro do projeto ou se ela está atrelada a outro projeto.
 jaAtribuida(Atividade, IdProjeto, true) :-
     (Atividade.idMembroResponsavel \= "Não atribuído!",
@@ -215,7 +223,7 @@ jaAtribuida(Atividade, IdProjeto, true) :-
     (Atividade.idProjetoAtividade \= IdProjeto,
     Atividade.idProjetoAtividade \= "Não atribuído!").
 jaAtribuida(_, _, false).
-        
+
 % Exibição de projeto no CHAT
 imprimirProjetos_Gerente(_, []).
 imprimirProjetos_Gerente(IdUsuario, [Projeto|OutrosProjetos]) :-
