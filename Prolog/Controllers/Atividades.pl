@@ -30,13 +30,13 @@ salvarAtividade(FilePath, Titulo, Descricao, Dificuldade, Id_Atividade, Status, 
 % Exibe as atividade cadastradas 
 exibirAtividadesAux([]).
 exibirAtividadesAux([H|T]) :- 
-    write('|- ID Atividade: '), writeln(H.idAtividade), 
+    write('|- ID atividade: '), writeln(H.idAtividade), 
     write('|- Título: '), writeln(H.titulo),
 		write('|- Descricao: '), writeln(H.descricao), 
     write('|- Status: '), writeln(H.status), 
     write('|- Dificuldade: '), writeln(H.dificuldade), 
-    write('|- ID Projeto: '), writeln(H.idProjetoAtividade), 
-    write('|- ID Membro Responsavel: '), writeln(H.idMembroResponsavel), 
+    write('|- ID projeto: '), writeln(H.idProjetoAtividade), 
+    write('|- ID membro responsável: '), writeln(H.idMembroResponsavel), 
     write('|- Feedbacks: '), writeln(H.feedbacks), 
 		nl, exibirAtividadesAux(T).
 
@@ -46,7 +46,7 @@ exibirAtividades(FilePath) :-
 
 % Exibe as atividade cadastradas 
 exibirAtividade(Atividade) :- 
-    write('|- ID Atividade: '), writeln(Atividade.idAtividade), 
+    write('|- ID atividade: '), writeln(Atividade.idAtividade), 
     write('|- Título: '), writeln(Atividade.titulo),
     write('|- Descricao: '), writeln(Atividade.descricao), 
     write('|- Dificuldade: '), writeln(Atividade.dificuldade), 

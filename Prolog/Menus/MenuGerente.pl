@@ -315,7 +315,7 @@ removeMembroProjeto(IdProjeto) :-
 % | Exibe o menu das atividades, com todas as opções para o gerente de um projeto
 menuBancoDeAtividades :-
         writeln('                                                          '),
-        writeln('           |     Menu Banco de Atividades    |            '), nl,
+        writeln('           |     Menu banco de atividades    |            '), nl,
         writeln('                                                          '),
         writeln('                 Selecione uma opção:                     '), nl,
         writeln('                                                          '),
