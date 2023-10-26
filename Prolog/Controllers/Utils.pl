@@ -15,8 +15,7 @@ ler_string(X) :-
     atom_string(R, X).
 
 % | Limpa a tela, apagando os comandos anteriores
-clearScreen :- shell('clear'). % serve para unix 
-clearScreen :- shell('cls'). % seve para windows
+clearScreen :- shell('clear') ; shell('cls').
 
 % Lê um arquivo JSON
 lerJSON(FilePath, File) :-
