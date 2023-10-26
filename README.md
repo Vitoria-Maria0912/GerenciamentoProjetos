@@ -62,26 +62,27 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
  
      sudo apt-get update
      sudo apt-get install ghc cabal-install
+     
  **MacOs**
  
      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
      brew update
      brew install ghc cabal-install
+     
 **Windows**
 
     https://www.haskell.org/platform/windows.html
 
-
 ### Bibliotecas necessárias:
      cabal install --lib aeson
      cabal install --lib random
-
 
 ### Pode ser executado de duas maneiras:
              
 **Compila**
 
     ghc -o projeto Main.hs
+    
 **Executa** 
 
     ./projeto
@@ -106,6 +107,7 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
 **Compila**
 
     ghc -o projeto Main.hs
+    
 **Executa** 
 
     ./projeto
@@ -118,19 +120,19 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
  ### Instalação - Prolog:
  **Linux**
  
-     sudo apt-get install swi-prolog
-     sudo apt install gprolog
+    sudo apt-get install swi-prolog
+    sudo apt install gprolog
 
  **MacOs**
  
-     brew install swi-prolog
+    brew install swi-prolog
 
 **Windows**
 
     https://www.swi-prolog.org/Download.html
 
 ### Pode ser executado através do comando
-      swipl -q -s Main.pl
+    swipl -q -s Main.pl
       
 
  ### Desenvolvedoras:
