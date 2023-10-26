@@ -209,15 +209,27 @@ atribuirAtividade(IdProjeto) :-
 
                                 (ExisteUsuario, membroDoProjeto(IdMembro, Projeto) ->
 
-                                        editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjeto),
-                                        editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
-                                        addAtividadesProjeto('Database/projetos.json', IdProjeto, IdAtividade),
-                                        editarMembroResponsavelAtividade('Database/bancoDeAtividades.json', IdAtividade, IdMembro),
+                                        (naListaDeAtv(Atividade, Projeto) ->
+                                                editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
+                                                editarMembroResponsavelAtividade('Database/bancoDeAtividades.json', IdAtividade, IdMembro),
 
-                                        clearScreen,
-                                        writeln('                                                                '),
-                                        writeln('        |     Atividade atribuída com sucesso!    |             '),
-                                        writeln('                                                                ')
+                                                clearScreen,
+                                                writeln('                                                                '),
+                                                writeln('        |     Atividade atribuída com sucesso!    |             '),
+                                                writeln('                                                                ')
+                                                
+                                        ;
+
+                                                editarIdProjetoAtividade('Database/bancoDeAtividades.json', IdAtividade, IdProjeto),
+                                                editarAtividades('Database/usuarios.json', IdMembro, IdAtividade),
+                                                addAtividadesProjeto('Database/projetos.json', IdProjeto, IdAtividade),
+                                                editarMembroResponsavelAtividade('Database/bancoDeAtividades.json', IdAtividade, IdMembro),
+
+                                                clearScreen,
+                                                writeln('                                                                '),
+                                                writeln('        |     Atividade atribuída com sucesso!    |             '),
+                                                writeln('                                                                ')
+                                        )
                                 
                                 ; clearScreen,
                                         writeln('                                                                 '),
