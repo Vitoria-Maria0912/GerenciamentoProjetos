@@ -366,7 +366,7 @@ criaFeedback:-
                         criarFeedback('Database/bancoDeAtividades.json', Atividade, Feedback),
                         clearScreen,
                         writeln('                                                          '),
-                        writeln('   |  Comentário adicionado com sucesso a atividade de ID '), write(IdAtividade), write(' |                  '),
+                        write('   |  Comentário adicionado com sucesso a atividade de ID '), write(IdAtividade), writeln(' |                  '), nl,
                         writeln('                                                          '),
                         lerJSON('Database/bancoDeAtividades.json', AtividadesAtualizadas),
                         getAtividadeJSON(IdAtividade, AtividadesAtualizadas, AtividadeAtualizada),
