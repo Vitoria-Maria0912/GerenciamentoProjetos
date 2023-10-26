@@ -1,1 +1,102 @@
-[{"titulo":"Desenvolvimento iOS", "descricao":"Desenvolver um aplicativo mobile para iOS", "dificuldade":"Difícil", "idAtividade":"24363", "status":"Não atribuída!", "idProjetoAtividade":"Não atribuído!", "idMembroResponsavel":"Não atribuído!", "feedbacks":[]},{"titulo":"Configuração do Servidor", "descricao":"Configurar um servidor web usando Apache", "dificuldade":"Média", "idAtividade":"80843", "status":"Não atribuída!", "idProjetoAtividade":"Não atribuído!", "idMembroResponsavel":"Não atribuído!", "feedbacks":[]},{"titulo":"Algoritmo de Ordenação", "descricao":"Criar um algoritmo de ordenação eficiente", "dificuldade":"Fácil", "idAtividade":"29629", "status":"Não atribuída!", "idProjetoAtividade":"Não atribuído!", "idMembroResponsavel":"Não atribuído!", "feedbacks":[]},{"titulo":"Testes de Segurança", "descricao":"Realizar testes de segurança em um sistema", "dificuldade":"Média", "idAtividade":"79334", "status":"Não atribuída!", "idProjetoAtividade":"Não atribuído!", "idMembroResponsavel":"Não atribuído!", "feedbacks":[]},{"titulo":"Desenvolvimento Web", "descricao":"Criar um site responsivo usando HTML e CSS", "dificuldade":"Média", "idAtividade":"27292", "status":"Não atribuída!", "idProjetoAtividade":"Não atribuído!", "idMembroResponsavel":"Não atribuído!", "feedbacks":[]},{"titulo":"Otimização de Banco de Dados", "descricao":"Otimizar o desempenho de um banco de dados SQL", "dificuldade":"Fácil", "idAtividade":"81450", "status":"Não atribuída!", "idProjetoAtividade":"Não atribuído!", "idMembroResponsavel":"Não atribuído!", "feedbacks":[]},{"titulo":"Análise de Dados em Python", "descricao":"Criar um programa de análise de dados em Python", "dificuldade":"Fácil", "idAtividade":"47626", "status":"Não atribuída!", "idProjetoAtividade":"Não atribuído!", "idMembroResponsavel":"Não atribuído!", "feedbacks":[]},{"titulo":"Desenvolvimento de Chatbot", "descricao":"Programar um chatbot com IA", "dificuldade":"Difícil", "idAtividade":"89324", "status":"Não atribuída!", "idProjetoAtividade":"Não atribuído!", "idMembroResponsavel":"Não atribuído!", "feedbacks":[]},{"titulo":"Configuração de Firewall", "descricao":"Configurar um firewall para proteção de rede", "dificuldade":"Média", "idAtividade":"40051", "status":"Não atribuída!", "idProjetoAtividade":"Não atribuído!", "idMembroResponsavel":"Não atribuído!", "feedbacks":[]},{"titulo":"Desenvolvimento de Jogos", "descricao":"Desenvolver um jogo em Unity", "dificuldade":"Difícil", "idAtividade":"84790", "status":"Não atribuída!", "idProjetoAtividade":"Não atribuído!", "idMembroResponsavel":"Não atribuído!", "feedbacks":[]}]
+[
+  {
+    "titulo": "Desenvolvimento iOS",
+    "descricao": "Desenvolver um aplicativo mobile para iOS",
+    "dificuldade": "Difícil",
+    "idAtividade": "24363",
+    "status": "Não atribuída!",
+    "idProjetoAtividade": "Não atribuído!",
+    "idMembroResponsavel": "Não atribuído!",
+    "feedbacks": []
+  },
+  {
+    "titulo": "Configuração do Servidor",
+    "descricao": "Configurar um servidor web usando Apache",
+    "dificuldade": "Média",
+    "idAtividade": "80843",
+    "status": "Não atribuída!",
+    "idProjetoAtividade": "Não atribuído!",
+    "idMembroResponsavel": "Não atribuído!",
+    "feedbacks": []
+  },
+  {
+    "titulo": "Algoritmo de Ordenação",
+    "descricao": "Criar um algoritmo de ordenação eficiente",
+    "dificuldade": "Fácil",
+    "idAtividade": "29629",
+    "status": "Não atribuída!",
+    "idProjetoAtividade": "Não atribuído!",
+    "idMembroResponsavel": "Não atribuído!",
+    "feedbacks": []
+  },
+  {
+    "titulo": "Testes de Segurança",
+    "descricao": "Realizar testes de segurança em um sistema",
+    "dificuldade": "Média",
+    "idAtividade": "79334",
+    "status": "Não atribuída!",
+    "idProjetoAtividade": "Não atribuído!",
+    "idMembroResponsavel": "Não atribuído!",
+    "feedbacks": []
+  },
+  {
+    "titulo": "Desenvolvimento Web",
+    "descricao": "Criar um site responsivo usando HTML e CSS",
+    "dificuldade": "Média",
+    "idAtividade": "27292",
+    "status": "Não atribuída!",
+    "idProjetoAtividade": "Não atribuído!",
+    "idMembroResponsavel": "Não atribuído!",
+    "feedbacks": []
+  },
+  {
+    "titulo": "Otimização de Banco de Dados",
+    "descricao": "Otimizar o desempenho de um banco de dados SQL",
+    "dificuldade": "Fácil",
+    "idAtividade": "81450",
+    "status": "Não atribuída!",
+    "idProjetoAtividade": "Não atribuído!",
+    "idMembroResponsavel": "Não atribuído!",
+    "feedbacks": []
+  },
+  {
+    "titulo": "Análise de Dados em Python",
+    "descricao": "Criar um programa de análise de dados em Python",
+    "dificuldade": "Fácil",
+    "idAtividade": "47626",
+    "status": "Não atribuída!",
+    "idProjetoAtividade": "Não atribuído!",
+    "idMembroResponsavel": "Não atribuído!",
+    "feedbacks": []
+  },
+  {
+    "titulo": "Desenvolvimento de Chatbot",
+    "descricao": "Programar um chatbot com IA",
+    "dificuldade": "Difícil",
+    "idAtividade": "89324",
+    "status": "Não atribuída!",
+    "idProjetoAtividade": "Não atribuído!",
+    "idMembroResponsavel": "Não atribuído!",
+    "feedbacks": []
+  },
+  {
+    "titulo": "Configuração de Firewall",
+    "descricao": "Configurar um firewall para proteção de rede",
+    "dificuldade": "Média",
+    "idAtividade": "40051",
+    "status": "Não atribuída!",
+    "idProjetoAtividade": "Não atribuído!",
+    "idMembroResponsavel": "Não atribuído!",
+    "feedbacks": []
+  },
+  {
+    "titulo": "Desenvolvimento de Jogos",
+    "descricao": "Desenvolver um jogo em Unity",
+    "dificuldade": "Difícil",
+    "idAtividade": "84790",
+    "status": "Não atribuída!",
+    "idProjetoAtividade": "Não atribuído!",
+    "idMembroResponsavel": "Não atribuído!",
+    "feedbacks": []
+  }
+]

@@ -99,54 +99,64 @@ gerenciarMembros :-
         write('Digite seu ID: '),
         ler_string(IdUsuario), nl,
 
-        writeln('                                                                  '),
-        writeln('       |     Você é gerente destes projetos:    |                 '),
-        writeln('                                                                  '),
+        lerJSON('Database/usuarios.json', UsuariosDoSistema),
 
-        lerJSON('Database/projetos.json', ProjetosDoSistema),
-        imprimirProjetos_Gerente(IdUsuario, ProjetosDoSistema), nl, nl,
+        verifica_id(IdUsuario, UsuariosDoSistema, ExisteUsuario),
 
-        write('Digite o ID do projeto que deseja gerenciar os membros: '),
-        ler_string(IdProjeto), nl,
+        (ExisteUsuario ->
 
-        
-        verifica_id_projeto(IdProjeto, ProjetosDoSistema, ExisteProjeto),
+                writeln('                                                                  '),
+                writeln('       |     Você é gerente destes projetos:    |                 '),
+                writeln('                                                                  '),
 
-        getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
+                lerJSON('Database/projetos.json', ProjetosDoSistema),
+                imprimirProjetos_Gerente(IdUsuario, ProjetosDoSistema), nl, nl,
 
-        (ExisteProjeto, Projeto.idGerente == IdUsuario -> 
-                writeln('                                                          '),
-                writeln('                O que deseja fazer agora?                 '), nl,
-                writeln('                                                          '),
-                writeln('                  Selecione uma opção:                    '), nl,
-                writeln('                                                          '),
-                writeln('            M - Visualizar membros do projeto             '), nl,
-                writeln('            A - Atribuir atividade a um membro            '), nl,
-                writeln('            N - Adicionar membro ao projeto               '), nl,
-                writeln('            R - Remover membro do projeto                 '), nl,
-                writeln('            V - Voltar ao menu principal                  '), nl,
-                writeln('            P - Voltar ao menu de projetos                '), nl,
-                writeln('            S - Sair do sistema                           '),
-                writeln('                                                          '), 
-
-                get_single_char(CodigoASCII),
-                char_code(Input, CodigoASCII),
-                downcase_atom(Input, Entrada),
+                write('Digite o ID do projeto que deseja gerenciar os membros: '),
+                ler_string(IdProjeto), nl,
                 
-                ( Entrada == 'm' -> clearScreen, visualizarMembros(IdProjeto)
-                ; Entrada == 'a' -> clearScreen, atribuirAtividade(IdProjeto)
-                ; Entrada == 'n' -> clearScreen, adicionaNovoMembro(IdProjeto)
-                ; Entrada == 'r' -> clearScreen, removeMembroProjeto(IdProjeto)
-                ; Entrada == 'p' -> clearScreen, menuRestritoProjeto
-                ; Entrada == 'v' -> clearScreen, menuPrincipal
-                ; Entrada == 's' -> sairDoSistema
-                ; erroMenuProjeto)
-        
+                verifica_id_projeto(IdProjeto, ProjetosDoSistema, ExisteProjeto),
+
+                getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
+
+                (ExisteProjeto, Projeto.idGerente == IdUsuario -> 
+                        writeln('                                                          '),
+                        writeln('                O que deseja fazer agora?                 '), nl,
+                        writeln('                                                          '),
+                        writeln('                  Selecione uma opção:                    '), nl,
+                        writeln('                                                          '),
+                        writeln('            M - Visualizar membros do projeto             '), nl,
+                        writeln('            A - Atribuir atividade a um membro            '), nl,
+                        writeln('            N - Adicionar membro ao projeto               '), nl,
+                        writeln('            R - Remover membro do projeto                 '), nl,
+                        writeln('            V - Voltar ao menu principal                  '), nl,
+                        writeln('            P - Voltar ao menu de projetos                '), nl,
+                        writeln('            S - Sair do sistema                           '),
+                        writeln('                                                          '), 
+
+                        get_single_char(CodigoASCII),
+                        char_code(Input, CodigoASCII),
+                        downcase_atom(Input, Entrada),
+                        
+                        ( Entrada == 'm' -> clearScreen, visualizarMembros(IdProjeto)
+                        ; Entrada == 'a' -> clearScreen, atribuirAtividade(IdProjeto)
+                        ; Entrada == 'n' -> clearScreen, adicionaNovoMembro(IdProjeto)
+                        ; Entrada == 'r' -> clearScreen, removeMembroProjeto(IdProjeto)
+                        ; Entrada == 'p' -> clearScreen, menuRestritoProjeto
+                        ; Entrada == 'v' -> clearScreen, menuPrincipal
+                        ; Entrada == 's' -> sairDoSistema
+                        ; erroMenuProjeto)
+                
+                ; clearScreen,
+                writeln('                                                                                                                        '),
+                writeln(' |  Campo obrigatório vazio ou inválido, não foi possível gerenciar os membros do projeto, tente novamente!  |          '),
+                writeln('                                                                                                                        ')
+                )
+
         ; clearScreen,
         writeln('                                                                                                                        '),
         writeln(' |  Campo obrigatório vazio ou inválido, não foi possível gerenciar os membros do projeto, tente novamente!  |          '),
         writeln('                                                                                                                        ')
-
         ).
 
 % | Exibe todos os membros de um projeto específico
