@@ -116,13 +116,14 @@ deletarUsuario :-
         ler_string(IdUsuario), nl,         
 
         lerJSON('Database/usuarios.json', Usuarios),
-        nl, write('     |       Verificando usuário com ID: '), write(IdUsuario), writeln(' ............'), nl, nl,
+       
         verifica_id(IdUsuario, Usuarios, Existe),
 
         (Existe ->
                 write('Digite sua senha: '),
-                ler_string(Senha), nl,   
-
+                ler_string(Senha), nl, nl,
+                write('     |       Verificando usuário com ID: '), write(IdUsuario), writeln(' ............'), nl,
+                sleep(1.5),
                 (verificaSenhaIdUsuario(IdUsuario, Senha, Usuarios) ->
                         removerUsuario('Database/usuarios.json', IdUsuario)
                 ; 

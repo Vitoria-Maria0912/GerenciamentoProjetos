@@ -61,12 +61,19 @@ deletarProjeto :-
 
         (ExisteUsuario, ExisteProjeto -> 
 
+                
+                write('     |       Verificando projeto com ID: '), write(IdProjeto), writeln(' ............'), nl,
+                sleep(1.5),
+
                 write('Digite sua senha: '),
                 ler_string(Senha), nl,
 
                 getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
-
+                write('     |       Verificando usuário com ID: '), write(IdUsuario), writeln(' ............'), nl,
+                sleep(1.5),
+                
                 (Projeto.idGerente == IdUsuario, verificaSenhaIdUsuario(IdUsuario, Senha, UsuariosDoSistema) ->
+
                     removerProjeto('Database/projetos.json', IdProjeto)
                    
                 ; clearScreen,
