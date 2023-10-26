@@ -49,44 +49,15 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
 
 **2. Estrutura de dados:**
   Neste sistema os dados serão salvos em formato JSON.
-   
+  
 
  ### Pré-requesitos
- - Possuir a linguagens Haskell, o compilador ghc e o interpretador ghci instalados em seu computador.
+ - Possuir as linguagens Haskell e Prolog, o compilador ghc e os interpretadores ghci e swipl instalados em seu computador.
 
  ### Construído em 
  - Haskell e Prolog
 
- ### Instalação - Prolog:
- **Linux**
- 
-     sudo apt-get install swi-prolog
-     sudo apt install gprolog
-
- **MacOs**
- 
-     brew install swi-prolog
-
-**Windows**
-
-    https://www.swi-prolog.org/Download.html
-
-### Bibliotecas necessárias:
-
-### Pode ser executado de duas maneiras:
-             
-**Compila**
-
-    ghc -o projeto Main.hs
-**Executa** 
-
-    ./projeto
-    
-**Compila e executa** 
-
-    runhaskell Main.hs 
-
-### Instalação:
+### Instalação Haskell:
  **Linux**
  
      sudo apt-get update
@@ -105,6 +76,19 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
      cabal install --lib aeson
      cabal install --lib random
 
+
+### Pode ser executado de duas maneiras:
+             
+**Compila**
+
+    ghc -o projeto Main.hs
+**Executa** 
+
+    ./projeto
+    
+**Compila e executa** 
+
+    runhaskell Main.hs 
 
 ### Caso ocorra erro de compilação execute:
 **Linux** 
@@ -130,6 +114,24 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
 
     runhaskell Main.hs 
 
+
+ ### Instalação - Prolog:
+ **Linux**
+ 
+     sudo apt-get install swi-prolog
+     sudo apt install gprolog
+
+ **MacOs**
+ 
+     brew install swi-prolog
+
+**Windows**
+
+    https://www.swi-prolog.org/Download.html
+
+### Pode ser executado através do comando
+      swipl -q -s Main.pl
+      
 
  ### Desenvolvedoras:
    - Íris Almeida - [Github](https://github.com/irisalmeida)
