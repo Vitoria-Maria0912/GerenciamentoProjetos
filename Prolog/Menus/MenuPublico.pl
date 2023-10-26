@@ -75,7 +75,7 @@ visualizarProjetos :-
 % | Menu do banco, com opções limitadas
 menuPublicoBancoDeAtividades :-
         writeln('                                                         '),
-        writeln('           |  Menu Banco de Atividades  |                '), nl,
+        writeln('           |  Menu banco de atividades  |                '), nl,
         writeln('                                                         '),
         writeln('                 Selecione uma opção:                    '), nl,
         writeln('                                                         '),
@@ -127,7 +127,7 @@ criaAtividade :-
         
         write('Digite um título para sua atividade: '),
         ler_string(Titulo), nl,
-        write('Descreva, brevemente, o que se deve realizar para concluir esta atividade. '),
+        write('Descreva, brevemente, o que se deve realizar para concluir esta atividade: '),
         ler_string(Descricao), nl,
         write('Digite qual a complexidade para realizá-la (Fácil/Média/Difícil): '),
         ler_string(Dificuldade), nl,
@@ -140,7 +140,7 @@ criaAtividade :-
                 verifica_id_atividade(IdAtividade, AtividadesDoSistema, Existe),
                 (\+ Existe -> 
                         salvarAtividade('Database/bancoDeAtividades.json', Titulo, Descricao, Dificuldade, IdAtividade, 'Não atribuída!', 'Não atribuído!', 'Não atribuído!', []), 
-                        write('Atividade criada! E o ID dela é: '), writeln(IdAtividade), nl
+                        nl, write('       |   Atividade criada! E o ID dela é: '), write(IdAtividade), write('   |'), nl, nl
                         
                 ; clearScreen,
                   writeln('                                                          '),

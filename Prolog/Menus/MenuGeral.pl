@@ -99,7 +99,7 @@ cadastrarUsuario :-
                 (Existe ->
                         writeln('       |    O usuário já existe. Tente novamente.   |'), nl
                 ;
-                        salvarUsuario('Database/usuarios.json', Nome, Senha, IdUsuario, []),
+                        salvarUsuario('Database/usuarios.json', Nome, Senha, IdUsuario, []), nl,
                         write(' |    Usuário cadastrado com sucesso! O seu ID é: '), write(IdUsuario), writeln('   |'), nl
                 )
         ;
@@ -174,7 +174,7 @@ cadastrarProjeto :-
 
                         ( LowerOption == 's' -> adicionaNovoMembro(IdProjeto)
                 
-                        ; LowerOption == 'n' -> menuGeral
+                        ; LowerOption == 'n' -> menuPrincipal
                         ; erroMenuProjeto)
                         )
 

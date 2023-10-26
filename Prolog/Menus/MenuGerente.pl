@@ -92,10 +92,17 @@ gerenciarMembros :-
         write('Digite seu ID: '),
         ler_string(IdUsuario), nl,
 
-        write('Digite o ID do projeto: '),
-        ler_string(IdProjeto), nl,
+        writeln('                                                                  '),
+        writeln('       |     Você é gerente destes projetos:    |                 '),
+        writeln('                                                                  '),
 
         lerJSON('Database/projetos.json', ProjetosDoSistema),
+        imprimirProjetos_Gerente(IdUsuario, ProjetosDoSistema), nl, nl,
+
+        write('Digite o ID do projeto que deseja gerenciar os membros: '),
+        ler_string(IdProjeto), nl,
+
+        
         verifica_id_projeto(IdProjeto, ProjetosDoSistema, ExisteProjeto),
 
         getProjetoJSON(IdProjeto, ProjetosDoSistema, Projeto),
@@ -154,7 +161,7 @@ visualizarMembros(IdProjeto) :-
 % | Atribui a atividade a um membro, tornando-o membro responsável por ela
 atribuirAtividade(IdProjeto) :-
         writeln('                                                                  '),
-        writeln('       |     Atribuir uma atividade a um membro:    |             '),
+        writeln('       |     Atribuir uma atividade a um membro:    |             '), nl,
         writeln('                                                                  '),
 
         lerJSON('Database/projetos.json', ProjetosDoSistema),
@@ -315,7 +322,7 @@ removeMembroProjeto(IdProjeto) :-
 % | Exibe o menu das atividades, com todas as opções para o gerente de um projeto
 menuBancoDeAtividades :-
         writeln('                                                          '),
-        writeln('           |     Menu Banco de Atividades    |            '), nl,
+        writeln('           |     Menu banco de atividades    |            '), nl,
         writeln('                                                          '),
         writeln('                 Selecione uma opção:                     '), nl,
         writeln('                                                          '),
