@@ -45,7 +45,7 @@ Sistema que permitirá aos usuários gerenciar os seus projetos. Um projeto, al�
   As atividades podem ser classificadas em mais ou menos complexas e visualização em quais projetos elas já foram usadas. Isso ajudará o gerente na escolha de atividades para projetos que tenham características similares.
     
   **- Caixa de mensagens:**
-  Os usuários terão a possibilidade de interação através de uma caixa de mensagens. A caixa de mensagens terá a possibilidade de mensagens gerais (grupo do projeto) e mensagens privadas (de um usuário para outro do mesmo projeto). 
+  Os usuários terão a possibilidade de interação através de uma caixa de mensagens. A caixa de mensagens terá a possibilidade de mensagens gerais (grupo do projeto) e mensagens privadas (de um usuário para outro do mesmo sistema). 
 
 **2. Estrutura de dados:**
   Neste sistema os dados serão salvos em formato JSON.
